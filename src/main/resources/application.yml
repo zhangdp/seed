@@ -1,0 +1,30 @@
+server:
+  port: 9080
+spring:
+  application:
+    name: @artifactId@
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql//191.168.10.91:3306/seed
+    username: seed
+    password: Seed@2022
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: false
+  data:
+    redis:
+      database: 0
+      host: 191.168.10.91
+      port: 6379
+      password:
+  cache:
+    redis:
+      time-to-live: 3600
+mybatis-plus:
+  global-config:
+    db-config:
+      id-type: auto
+logging:
+  level:
+    root: info
+    com.zhangdp.seed: debug
