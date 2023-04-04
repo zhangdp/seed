@@ -11,21 +11,21 @@ spring:
   jackson:
     deserialization:
       fail-on-unknown-properties: false
-    date-format: yyyy-MM-dd HH:mm:ss.SSSSSS
+    date-format: yyyy-MM-dd HH:mm:ss
   data:
     redis:
-      database: 0
-      host: 191.168.10.91
-      port: 6379
-      password:
+      database: ${REDIS_DATABASE:0}
+      host: ${REDIS_HOST:191.168.10.91}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
   cache:
     redis:
       time-to-live: 3600
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://191.168.10.91:3306/seed
-    username: seed
-    password: Seed@2022
+    url: jdbc:mysql://${MYSQL_HOST:191.168.10.91}:${MYSQL_PORT:3306}/${MYSQL_DB:seed}
+    username: ${MYSQL_USER:seed}
+    password: ${MYSQL_PASSWORD:Seed@2022}
     hikari:
       maximum-pool-size: 20
       keepaliveTime: 60000
