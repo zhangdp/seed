@@ -10,4 +10,12 @@ import com.zhangdp.seed.entity.sys.SysUser;
  * @since 1.0.0
  */
 public interface SysUserService extends IService<SysUser> {
+
+    /**
+     * 根据账号查询
+     *
+     * @param username 账号
+     * @return 用户
+     */
+    SysUser getByUsername(String username);
 }

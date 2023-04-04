@@ -28,7 +28,7 @@ public class SysUser extends BaseEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 用户名
+     * 账号
      */
     private String username;
     /**

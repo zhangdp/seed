@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
  */
 @Configuration
 @Slf4j
-public class MybatisPlusConfig {
+public class MybatisPlusConfigurer {
 
     /**
      * 自动填充配置
@@ -32,6 +32,10 @@ public class MybatisPlusConfig {
                 this.strictInsertFill(metaObject, "createTime", LocalDateTime.class, now);
                 if (log.isTraceEnabled()) {
                     log.trace("填充createTime字段：{}", now);
+                }
+                this.strictInsertFill(metaObject, "update", LocalDateTime.class, now);
+                if (log.isTraceEnabled()) {
+                    log.trace("填充update字段：{}", now);
                 }
             }
 

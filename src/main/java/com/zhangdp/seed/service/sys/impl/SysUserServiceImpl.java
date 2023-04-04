@@ -13,5 +13,11 @@ import org.springframework.stereotype.Service;
  * @since 1.0.0
  */
 @Service
-public class SysUserImpl extends ServiceImpl<SysUserMapper, SysUser> implements SysUserService {
+public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements SysUserService {
+
+    @Override
+    public SysUser getByUsername(String username) {
+        return this.getOne(this.lambdaQuery().getWrapper().eq(SysUser::getUsername, username));
+    }
+
 }

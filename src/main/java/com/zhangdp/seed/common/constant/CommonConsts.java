@@ -57,7 +57,7 @@ public interface CommonConsts {
     /**
      * 时间格式化
      */
-    String TIME_FORMAT = "HH:mm:ss.SSS";
+    String TIME_FORMAT = "HH:mm:ss.SSSSSS";
 
     /**
      * 日期时间默认格式化

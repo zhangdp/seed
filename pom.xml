@@ -21,6 +21,7 @@
         <sa-token.version>1.34.0</sa-token.version>
         <pagehelper.version>1.4.6</pagehelper.version>
         <springdoc.version>2.1.0</springdoc.version>
+        <druid.version>1.2.16</druid.version>
     </properties>
 
     <dependencies>
@@ -62,7 +63,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- java工具大全 -->
+        <!-- java工具大全 https://www.hutool.cn/ -->
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
@@ -92,6 +93,14 @@
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>${springdoc.version}</version>
         </dependency>
+        <!-- alibaba数据库连接池 -->
+        <!-- springboot 3.0 暂不兼容durid
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid-spring-boot-starter</artifactId>
+            <version>${druid.version}</version>
+        </dependency>
+        -->
 
     </dependencies>
 
