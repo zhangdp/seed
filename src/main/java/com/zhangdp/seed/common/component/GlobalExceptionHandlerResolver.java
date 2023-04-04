@@ -3,7 +3,7 @@ package com.zhangdp.seed.common.component;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.zhangdp.seed.common.R;
-import com.zhangdp.seed.common.constant.CommonConsts;
+import com.zhangdp.seed.common.constant.CommonConst;
 import com.zhangdp.seed.common.exception.BizException;
 import com.zhangdp.seed.common.exception.ForbiddenException;
 import com.zhangdp.seed.common.exception.NotFoundException;
@@ -49,7 +49,7 @@ public class GlobalExceptionHandlerResolver {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public R handleGlobalException(Exception e, HttpServletRequest request) {
         log.error("全局异常信息：uri={}, ex={}", request.getRequestURI(), e.getLocalizedMessage(), e);
-        return new R<>().setCode(HttpStatus.INTERNAL_SERVER_ERROR.value()).setMsg("系统异常：" + StrUtil.maxLength(e.getLocalizedMessage(), CommonConsts.MAX_ERROR_MSG_LENGTH));
+        return new R<>().setCode(HttpStatus.INTERNAL_SERVER_ERROR.value()).setMsg("系统异常：" + StrUtil.maxLength(e.getLocalizedMessage(), CommonConst.MAX_ERROR_MSG_LENGTH));
     }
 
     /**
@@ -63,7 +63,7 @@ public class GlobalExceptionHandlerResolver {
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public R handleAccessDeniedException(AccessDeniedException e, HttpServletRequest request) {
         log.error("拒绝授权异常信息：uri={}, ex={}", request.getRequestURI(), e.getLocalizedMessage(), e);
-        return new R<>().setCode(HttpStatus.FORBIDDEN.value()).setMsg("访问受限：" + StrUtil.maxLength(e.getLocalizedMessage(), CommonConsts.MAX_ERROR_MSG_LENGTH));
+        return new R<>().setCode(HttpStatus.FORBIDDEN.value()).setMsg("访问受限：" + StrUtil.maxLength(e.getLocalizedMessage(), CommonConst.MAX_ERROR_MSG_LENGTH));
     }
 
     /**

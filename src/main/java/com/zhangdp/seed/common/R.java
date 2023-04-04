@@ -1,6 +1,7 @@
 package com.zhangdp.seed.common;
 
-import com.zhangdp.seed.common.constant.CommonConsts;
+import com.zhangdp.seed.common.constant.CommonConst;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "全局响应信息")
 public class R<T> implements Serializable {
 
     @Serial
@@ -27,14 +29,17 @@ public class R<T> implements Serializable {
     /**
      * 状态码
      */
+    @Schema(title = "状态码", description = CommonConst.RESULT_SUCCESS + "：成功，其它失败")
     private int code;
     /**
      * 描述
      */
+    @Schema(title = "描述")
     private String msg;
     /**
-     * 消息体
+     * 数据体
      */
+    @Schema(title = "数据体")
     private T data;
 
     /**
@@ -46,7 +51,7 @@ public class R<T> implements Serializable {
      * @return 成功返回
      */
     public static <T> R<T> success(String msg, T data) {
-        return new R<>(CommonConsts.RESULT_SUCCESS, msg, data);
+        return new R<>(CommonConst.RESULT_SUCCESS, msg, data);
     }
 
     /**
@@ -57,7 +62,7 @@ public class R<T> implements Serializable {
      * @return 成功返回
      */
     public static <T> R<T> success(T data) {
-        return new R<>(CommonConsts.RESULT_SUCCESS, null, data);
+        return new R<>(CommonConst.RESULT_SUCCESS, null, data);
     }
 
     /**
@@ -67,7 +72,7 @@ public class R<T> implements Serializable {
      * @return 错误返回
      */
     public static R<?> fail(String msg) {
-        return new R<>(CommonConsts.RESULT_FAIL, msg, null);
+        return new R<>(CommonConst.RESULT_FAIL, msg, null);
     }
 
 }

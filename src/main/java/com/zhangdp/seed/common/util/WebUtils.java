@@ -1,5 +1,6 @@
 package com.zhangdp.seed.common.util;
 
+import com.zhangdp.seed.common.constant.CommonConst;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,10 +22,6 @@ import java.util.Enumeration;
 @Slf4j
 public class WebUtils {
 
-    /**
-     * 默认编码
-     */
-    private static final String CHARSET = "UTF-8";
     /**
      * 默认true参数列表
      */
@@ -167,7 +164,7 @@ public class WebUtils {
             if (httpStatus != null) {
                 response.setStatus(httpStatus);
             }
-            response.setCharacterEncoding(CHARSET);
+            response.setCharacterEncoding(CommonConst.CHARSET);
             response.setContentType("application/json");
             response.getWriter().write(json);
             response.flushBuffer();
@@ -193,14 +190,13 @@ public class WebUtils {
         try {
             String disposition = "attachment";
             if (filename != null && (filename = filename.trim()).length() > 0) {
-                disposition += ";filename=\"" + URLEncoder.encode(filename, CHARSET) + "\"";
+                disposition += ";filename=\"" + URLEncoder.encode(filename, CommonConst.CHARSET) + "\"";
             }
             response.setHeader("Content-Disposition", disposition);
-            response.setCharacterEncoding(CHARSET);
+            response.setCharacterEncoding(CommonConst.CHARSET);
             response.setContentType(contentType != null && (contentType = contentType.trim()).length() > 0 ? contentType : "application/octet-stream");
             response.setContentLengthLong(fileSize);
             ServletOutputStream out = response.getOutputStream();
-            //读取文件输入流，写入到输出流ByteArray中，输入流转成了输出流
             byte[] buf = new byte[8192];
             while ((len = in.read(buf)) != -1) {
                 out.write(buf, 0, len);

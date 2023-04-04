@@ -2,6 +2,7 @@ package com.zhangdp.seed.entity.sys;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.zhangdp.seed.entity.BaseEntity;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -22,6 +23,7 @@ import java.time.LocalDate;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @TableName("sys_user")
+@Schema(description = "用户信息详情")
 public class SysUser extends BaseEntity implements Serializable {
 
     @Serial
@@ -30,10 +32,12 @@ public class SysUser extends BaseEntity implements Serializable {
     /**
      * 账号
      */
+    @Schema(title = "账号")
     private String username;
     /**
      * 密码
      */
+    @Schema(title = "密码")
     private String password;
     /**
      * 手机号
@@ -42,6 +46,7 @@ public class SysUser extends BaseEntity implements Serializable {
     /**
      * 性别，F：女，M：男，null：未知
      */
+    @Schema(title = "性别", description = "F：女，M：男，null：未知")
     private Character sex;
     /**
      * 生日

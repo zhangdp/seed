@@ -10,7 +10,7 @@ import java.time.LocalTime;
  * @author zhangdp
  * @since 1.0.0
  */
-public interface CommonConsts {
+public interface CommonConst {
 
     /**
      * 是
@@ -52,22 +52,27 @@ public interface CommonConsts {
     /**
      * 日期格式化
      */
-    String DATE_FORMAT = "yyyy-MM-dd";
+    String DATE_PATTERN = "yyyy-MM-dd";
 
     /**
      * 时间格式化
      */
-    String TIME_FORMAT = "HH:mm:ss.SSSSSS";
+    String TIME_PATTERN = "HH:mm:ss";
 
     /**
      * 日期时间默认格式化
      */
-    String DATETIME_FORMAT = DATE_FORMAT + TIME_FORMAT;
+    String DATETIME_PATTERN = DATE_PATTERN + TIME_PATTERN;
 
     /**
      * 默认根id
      */
     long ROOT_ID = 0L;
+
+    /**
+     * 默认分页页数1
+     */
+    int PAGE = 1;
 
     /**
      * 默认分页一页条数
@@ -82,11 +87,16 @@ public interface CommonConsts {
     /**
      * 接口返回状态码成功
      */
-    int RESULT_SUCCESS = 200;
+    int RESULT_SUCCESS = 0;
 
     /**
      * 接口返回错误
      */
-    int RESULT_FAIL = -1;
+    int RESULT_FAIL = 1;
+
+    /**
+     * 编码
+     */
+    String CHARSET = "UTF-8";
 
 }

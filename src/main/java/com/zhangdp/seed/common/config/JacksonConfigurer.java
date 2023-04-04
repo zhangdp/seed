@@ -1,6 +1,5 @@
 package com.zhangdp.seed.common.config;
 
-import cn.hutool.core.date.DatePattern;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
@@ -11,6 +10,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.InstantSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
+import com.zhangdp.seed.common.constant.CommonConst;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -25,7 +25,6 @@ import org.springframework.format.FormatterRegistry;
 import org.springframework.format.datetime.standard.DateTimeFormatterRegistrar;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -51,13 +50,13 @@ public class JacksonConfigurer implements WebMvcConfigurer {
             JavaTimeModule javaTimeModule = new JavaTimeModule();
             // yyyy-MM-dd HH:mm:ss
             javaTimeModule.addSerializer(LocalDateTime.class,
-                    new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(DatePattern.NORM_DATETIME_PATTERN)));
+                    new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(CommonConst.DATETIME_PATTERN)));
             // yyyy-MM-dd
             javaTimeModule.addSerializer(LocalDate.class,
-                    new LocalDateSerializer(DateTimeFormatter.ofPattern(DatePattern.NORM_DATE_PATTERN)));
+                    new LocalDateSerializer(DateTimeFormatter.ofPattern(CommonConst.DATE_PATTERN)));
             // HH:mm:ss
             javaTimeModule.addSerializer(LocalTime.class,
-                    new LocalTimeSerializer(DateTimeFormatter.ofPattern(DatePattern.NORM_TIME_PATTERN)));
+                    new LocalTimeSerializer(DateTimeFormatter.ofPattern(CommonConst.TIME_PATTERN)));
 
             // Instant 类型序列化
             javaTimeModule.addSerializer(Instant.class, InstantSerializer.INSTANCE);
@@ -65,13 +64,13 @@ public class JacksonConfigurer implements WebMvcConfigurer {
             // ======================= 时间反序列化规则 ==============================
             // yyyy-MM-dd HH:mm:ss
             javaTimeModule.addDeserializer(LocalDateTime.class,
-                    new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(DatePattern.NORM_DATETIME_PATTERN)));
+                    new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(CommonConst.DATETIME_PATTERN)));
             // yyyy-MM-dd
             javaTimeModule.addDeserializer(LocalDate.class,
-                    new LocalDateDeserializer(DateTimeFormatter.ofPattern(DatePattern.NORM_DATE_PATTERN)));
+                    new LocalDateDeserializer(DateTimeFormatter.ofPattern(CommonConst.DATE_PATTERN)));
             // HH:mm:ss
             javaTimeModule.addDeserializer(LocalTime.class,
-                    new LocalTimeDeserializer(DateTimeFormatter.ofPattern(DatePattern.NORM_TIME_PATTERN)));
+                    new LocalTimeDeserializer(DateTimeFormatter.ofPattern(CommonConst.TIME_PATTERN)));
             // Instant 反序列化
             javaTimeModule.addDeserializer(Instant.class, InstantDeserializer.INSTANT);
 
@@ -92,9 +91,9 @@ public class JacksonConfigurer implements WebMvcConfigurer {
     @Override
     public void addFormatters(FormatterRegistry registry) {
         DateTimeFormatterRegistrar registrar = new DateTimeFormatterRegistrar();
-        registrar.setTimeFormatter(DateTimeFormatter.ofPattern(DatePattern.NORM_TIME_PATTERN));
-        registrar.setDateFormatter(DateTimeFormatter.ofPattern(DatePattern.NORM_DATE_PATTERN));
-        registrar.setDateTimeFormatter(DateTimeFormatter.ofPattern(DatePattern.NORM_DATETIME_PATTERN));
+        registrar.setTimeFormatter(DateTimeFormatter.ofPattern(CommonConst.TIME_PATTERN));
+        registrar.setDateFormatter(DateTimeFormatter.ofPattern(CommonConst.DATE_PATTERN));
+        registrar.setDateTimeFormatter(DateTimeFormatter.ofPattern(CommonConst.DATETIME_PATTERN));
         registrar.registerFormatters(registry);
     }
 
@@ -106,7 +105,7 @@ public class JacksonConfigurer implements WebMvcConfigurer {
     @Bean
     public OrderedCharacterEncodingFilter characterEncodingFilter() {
         OrderedCharacterEncodingFilter filter = new OrderedCharacterEncodingFilter();
-        filter.setEncoding(StandardCharsets.UTF_8.name());
+        filter.setEncoding(CommonConst.CHARSET);
         filter.setForceEncoding(true);
         filter.setOrder(Ordered.HIGHEST_PRECEDENCE);
         return filter;

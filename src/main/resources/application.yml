@@ -63,7 +63,21 @@ mybatis-plus:
   global-config:
     db-config:
       id-type: assign_id
+sa-token:
+  isPrint: false
+  is-read-cookie: false
+  token-name: Authorization
+  tokenPrefix: Bearer
+  timeout: 86400
+  activity-timeout: 1800
+  is-concurrent: true
+  is-share: false
+  auto-renew: true
+  token-style: simple-uuid
 logging:
   level:
     root: info
     com.zhangdp.seed: debug
+springdoc:
+  api-docs:
+    enabled: true
