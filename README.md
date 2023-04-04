@@ -18,4 +18,4 @@
 | Spring Boot                           | 3.0.5   |
 | [Sa-Token](https://sa-token.cc/)      | 1.34.0  |
 | [Mybatis Plus](https://baomidou.com/) | 3.5.3.1 |
-| [hutool](https://www.hutool.cn/)      | 5.8.16  |
+| [Hutool](https://www.hutool.cn/)      | 5.8.16  |
