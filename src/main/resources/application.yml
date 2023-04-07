@@ -18,6 +18,12 @@ spring:
       host: ${REDIS_HOST:191.168.10.91}
       port: ${REDIS_PORT:6379}
       password: ${REDIS_PASSWORD:}
+      connect-timeout: 5000
+      lettuce:
+        pool:
+          max-active: 20
+          max-idle: 20
+          min-idle: 5
   cache:
     redis:
       time-to-live: 3600
@@ -28,12 +34,13 @@ spring:
     password: ${MYSQL_PASSWORD:Seed@2022}
     hikari:
       maximum-pool-size: 20
+      minimum-idle: 5
       keepaliveTime: 60000
 # druid 暂不兼容springboot3.0
 #    druid:
 #      keepAlive: true
-#      initial-size: 3
-#      min-idle: 3
+#      initial-size: 5
+#      min-idle: 5
 #      max-active: 20
 #      socket-timeout: 30000
 #      validationQuery: SELECT 1
@@ -63,6 +70,7 @@ mybatis-plus:
   global-config:
     db-config:
       id-type: assign_id
+    banner: false
 sa-token:
   isPrint: false
   is-read-cookie: false

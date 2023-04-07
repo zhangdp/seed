@@ -72,5 +72,9 @@ public class SysUser extends BaseEntity implements Serializable {
      * 部门id
      */
     private Long deptId;
+    /**
+     * 状态，0：正常，其它异常
+     */
+    private Integer status;
 
 }

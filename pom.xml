@@ -63,6 +63,11 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+        </dependency>
+
         <!-- java工具大全 https://www.hutool.cn/ -->
         <dependency>
             <groupId>cn.hutool</groupId>
@@ -84,7 +89,13 @@
         <!-- 轻量认证、鉴权 -->
         <dependency>
             <groupId>cn.dev33</groupId>
-            <artifactId>sa-token-spring-boot-starter</artifactId>
+            <artifactId>sa-token-spring-boot3-starter</artifactId>
+            <version>${sa-token.version}</version>
+        </dependency>
+        <!-- Sa-Token 整合 Redis （使用 jackson 序列化方式） -->
+        <dependency>
+            <groupId>cn.dev33</groupId>
+            <artifactId>sa-token-dao-redis-jackson</artifactId>
             <version>${sa-token.version}</version>
         </dependency>
         <!-- 接口文档 -->

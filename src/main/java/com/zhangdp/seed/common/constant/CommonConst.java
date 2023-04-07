@@ -62,7 +62,7 @@ public interface CommonConst {
     /**
      * 日期时间默认格式化
      */
-    String DATETIME_PATTERN = DATE_PATTERN + TIME_PATTERN;
+    String DATETIME_PATTERN = DATE_PATTERN + " " + TIME_PATTERN;
 
     /**
      * 默认根id

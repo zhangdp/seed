@@ -45,6 +45,15 @@ public class R<T> implements Serializable {
     /**
      * 生成成功返回
      *
+     * @return
+     */
+    public static R<?> success() {
+        return new R<>(CommonConst.RESULT_SUCCESS, null, null);
+    }
+
+    /**
+     * 生成成功返回
+     *
      * @param msg  描述
      * @param data 数据
      * @param <T>  任意类型

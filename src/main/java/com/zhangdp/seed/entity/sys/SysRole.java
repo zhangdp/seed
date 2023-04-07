@@ -2,6 +2,7 @@ package com.zhangdp.seed.entity.sys;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.zhangdp.seed.entity.BaseEntity;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -21,6 +22,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @TableName("sys_role")
+@Schema(description = "角色")
 public class SysRole extends BaseEntity implements Serializable {
 
     @Serial
@@ -29,14 +31,17 @@ public class SysRole extends BaseEntity implements Serializable {
     /**
      * 角色标识
      */
+    @Schema(title = "角色标识")
     private String code;
     /**
      * 角色名称
      */
+    @Schema(title = "角色名称")
     private String name;
     /**
      * 描述
      */
+    @Schema(title = "角色描述")
     private String description;
 
 }
