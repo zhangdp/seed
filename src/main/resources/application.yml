@@ -12,6 +12,12 @@ spring:
     deserialization:
       fail-on-unknown-properties: false
     date-format: yyyy-MM-dd HH:mm:ss
+  task:
+    execution:
+      pool:
+        core-size: 8
+        max-size: 16
+        queue-capacity: 32
   data:
     redis:
       database: ${REDIS_DATABASE:0}
@@ -19,22 +25,25 @@ spring:
       port: ${REDIS_PORT:6379}
       password: ${REDIS_PASSWORD:}
       connect-timeout: 5000
+      client-type: lettuce
       lettuce:
         pool:
-          max-active: 20
-          max-idle: 20
-          min-idle: 5
+          max-active: 16
+          max-idle: 16
+          min-idle: 4
   cache:
+    type: redis
     redis:
-      time-to-live: 3600
+      time-to-live: 1h
+      key-prefix: "cache::"
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${MYSQL_HOST:191.168.10.91}:${MYSQL_PORT:3306}/${MYSQL_DB:seed}
     username: ${MYSQL_USER:seed}
     password: ${MYSQL_PASSWORD:Seed@2022}
     hikari:
-      maximum-pool-size: 20
-      minimum-idle: 5
+      maximum-pool-size: 16
+      # minimum-idle: 8
       keepaliveTime: 60000
 # druid 暂不兼容springboot3.0
 #    druid:
@@ -81,7 +90,7 @@ sa-token:
   is-concurrent: true
   is-share: false
   auto-renew: true
-  token-style: simple-uuid
+  token-style: uuid
 logging:
   level:
     root: info

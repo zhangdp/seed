@@ -182,7 +182,7 @@ public class SecurityHelper implements StpInterface {
 
     @Override
     public List<String> getRoleList(Object loginId, String loginType) {
-        List<SysRole> roles = sysRoleService.listUserRoles((Long) loginId);
+        List<SysRole> roles = sysRoleService.listUserRoles(Long.parseLong(String.valueOf(loginId)));
         if (CollUtil.isEmpty(roles)) {
             return new ArrayList<>(0);
         }

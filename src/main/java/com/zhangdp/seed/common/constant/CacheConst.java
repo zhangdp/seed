@@ -11,7 +11,7 @@ public interface CacheConst {
     /**
      * redis key 文件夹分割
      */
-    String SPLIT = ":";
+    String SPLIT = "::";
     /**
      * 缓存名称：角色sys_role
      */

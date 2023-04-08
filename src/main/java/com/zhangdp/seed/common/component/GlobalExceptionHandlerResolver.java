@@ -1,5 +1,6 @@
 package com.zhangdp.seed.common.component;
 
+import cn.dev33.satoken.exception.NotLoginException;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.zhangdp.seed.common.R;
@@ -214,6 +215,20 @@ public class GlobalExceptionHandlerResolver {
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public R fstiForbiddenException(ForbiddenException e, HttpServletRequest request) {
         log.error("权限不足异常：uri={}, ex={}", request.getRequestURI(), e.getMessage(), e);
+        return new R().setCode(e.getCode()).setMsg(e.getMessage());
+    }
+
+    /**
+     * sa-token 未登录异常
+     *
+     * @param e
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(NotLoginException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public R notLoginException(NotLoginException e, HttpServletRequest request) {
+        log.error("未认证异常：uri={}, ex={}", request.getRequestURI(), e.getMessage(), e);
         return new R().setCode(e.getCode()).setMsg(e.getMessage());
     }
 
