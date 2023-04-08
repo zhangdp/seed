@@ -43,7 +43,7 @@ spring:
     password: ${MYSQL_PASSWORD:Seed@2022}
     hikari:
       maximum-pool-size: 16
-      # minimum-idle: 8
+      # minimum-idle: 4
       keepaliveTime: 60000
 # druid 暂不兼容springboot3.0
 #    druid:
