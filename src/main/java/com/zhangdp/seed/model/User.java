@@ -80,11 +80,11 @@ public class User implements Serializable {
     /**
      * 创建时间
      */
-    @Schema(title = "创建时间", description = "格式" + CommonConst.DATETIME_PATTERN)
+    @Schema(title = "创建时间", description = "格式" + CommonConst.DATETIME_FORMATTER)
     private LocalDateTime createTime;
     /**
      * 修改时间
      */
-    @Schema(title = "修改时间", description = "格式" + CommonConst.DATETIME_PATTERN)
+    @Schema(title = "修改时间", description = "格式" + CommonConst.DATETIME_FORMATTER)
     private LocalDateTime updateTime;
 }

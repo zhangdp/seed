@@ -45,13 +45,13 @@ public abstract class BaseEntity implements Serializable {
      * 创建时间
      */
     @TableField(fill = FieldFill.INSERT)
-    @Schema(title = "创建时间", description = "格式：" + CommonConst.DATETIME_PATTERN)
+    @Schema(title = "创建时间", description = "格式：" + CommonConst.DATETIME_FORMATTER)
     private LocalDateTime createTime;
     /**
      * 修改时间
      */
     @TableField(fill = FieldFill.INSERT_UPDATE)
-    @Schema(title = "修改时间", description = "格式：" + CommonConst.DATETIME_PATTERN)
+    @Schema(title = "修改时间", description = "格式：" + CommonConst.DATETIME_FORMATTER)
     private LocalDateTime updateTime;
     /**
      * 创建用户id

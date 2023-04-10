@@ -23,6 +23,7 @@ public class SysUserServiceTester {
     @Test
     public void add() {
         SysUser user = new SysUser();
+        user.setId(1L);
         user.setUsername("admin");
         user.setPassword("123456");
         user.setPhone("18900000000");
@@ -32,4 +33,10 @@ public class SysUserServiceTester {
         user.setFullName("管理员");
         sysUserService.save(user);
     }
+
+    @Test
+    public void get() {
+        System.out.println(sysUserService.getByUsername("admin"));
+    }
+
 }

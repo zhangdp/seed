@@ -151,7 +151,7 @@ public class SecurityHelper implements StpInterface {
         Assert.isTrue(sysUser.getStatus() == CommonConst.GOOD, "账号已被锁定");
         long dt = StpUtil.getDisableTime(sysUser.getId());
         Assert.isTrue(dt == -2, dt == -1 ? "账号已被永久封禁"
-                : "账号已被封禁，解封时间：" + LocalDateTimeUtil.format(LocalDateTime.now().plusSeconds(60L), CommonConst.DATETIME_PATTERN));
+                : "账号已被封禁，解封时间：" + LocalDateTimeUtil.format(LocalDateTime.now().plusSeconds(60L), CommonConst.DATETIME_FORMATTER));
     }
 
     /**

@@ -50,13 +50,13 @@ public class JacksonConfigurer implements WebMvcConfigurer {
             JavaTimeModule javaTimeModule = new JavaTimeModule();
             // yyyy-MM-dd HH:mm:ss
             javaTimeModule.addSerializer(LocalDateTime.class,
-                    new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(CommonConst.DATETIME_PATTERN)));
+                    new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(CommonConst.DATETIME_FORMATTER)));
             // yyyy-MM-dd
             javaTimeModule.addSerializer(LocalDate.class,
-                    new LocalDateSerializer(DateTimeFormatter.ofPattern(CommonConst.DATE_PATTERN)));
+                    new LocalDateSerializer(DateTimeFormatter.ofPattern(CommonConst.DATE_FORMATTER)));
             // HH:mm:ss
             javaTimeModule.addSerializer(LocalTime.class,
-                    new LocalTimeSerializer(DateTimeFormatter.ofPattern(CommonConst.TIME_PATTERN)));
+                    new LocalTimeSerializer(DateTimeFormatter.ofPattern(CommonConst.TIME_FORMATTER)));
 
             // Instant 类型序列化
             javaTimeModule.addSerializer(Instant.class, InstantSerializer.INSTANCE);
@@ -64,13 +64,13 @@ public class JacksonConfigurer implements WebMvcConfigurer {
             // ======================= 时间反序列化规则 ==============================
             // yyyy-MM-dd HH:mm:ss
             javaTimeModule.addDeserializer(LocalDateTime.class,
-                    new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(CommonConst.DATETIME_PATTERN)));
+                    new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(CommonConst.DATETIME_FORMATTER)));
             // yyyy-MM-dd
             javaTimeModule.addDeserializer(LocalDate.class,
-                    new LocalDateDeserializer(DateTimeFormatter.ofPattern(CommonConst.DATE_PATTERN)));
+                    new LocalDateDeserializer(DateTimeFormatter.ofPattern(CommonConst.DATE_FORMATTER)));
             // HH:mm:ss
             javaTimeModule.addDeserializer(LocalTime.class,
-                    new LocalTimeDeserializer(DateTimeFormatter.ofPattern(CommonConst.TIME_PATTERN)));
+                    new LocalTimeDeserializer(DateTimeFormatter.ofPattern(CommonConst.TIME_FORMATTER)));
             // Instant 反序列化
             javaTimeModule.addDeserializer(Instant.class, InstantDeserializer.INSTANT);
 
@@ -91,9 +91,9 @@ public class JacksonConfigurer implements WebMvcConfigurer {
     @Override
     public void addFormatters(FormatterRegistry registry) {
         DateTimeFormatterRegistrar registrar = new DateTimeFormatterRegistrar();
-        registrar.setTimeFormatter(DateTimeFormatter.ofPattern(CommonConst.TIME_PATTERN));
-        registrar.setDateFormatter(DateTimeFormatter.ofPattern(CommonConst.DATE_PATTERN));
-        registrar.setDateTimeFormatter(DateTimeFormatter.ofPattern(CommonConst.DATETIME_PATTERN));
+        registrar.setTimeFormatter(DateTimeFormatter.ofPattern(CommonConst.TIME_FORMATTER));
+        registrar.setDateFormatter(DateTimeFormatter.ofPattern(CommonConst.DATE_FORMATTER));
+        registrar.setDateTimeFormatter(DateTimeFormatter.ofPattern(CommonConst.DATETIME_FORMATTER));
         registrar.registerFormatters(registry);
     }
 

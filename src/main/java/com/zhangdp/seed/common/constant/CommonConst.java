@@ -52,17 +52,17 @@ public interface CommonConst {
     /**
      * 日期格式化
      */
-    String DATE_PATTERN = "yyyy-MM-dd";
+    String DATE_FORMATTER = "yyyy-MM-dd";
 
     /**
      * 时间格式化
      */
-    String TIME_PATTERN = "HH:mm:ss";
+    String TIME_FORMATTER = "HH:mm:ss";
 
     /**
      * 日期时间默认格式化
      */
-    String DATETIME_PATTERN = DATE_PATTERN + " " + TIME_PATTERN;
+    String DATETIME_FORMATTER = DATE_FORMATTER + " " + TIME_FORMATTER;
 
     /**
      * 默认根id
