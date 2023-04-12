@@ -11,7 +11,7 @@
  Target Server Version : 80032 (8.0.32)
  File Encoding         : 65001
 
- Date: 12/04/2023 16:33:20
+ Date: 12/04/2023 18:16:49
 */
 
 SET NAMES utf8mb4;
@@ -67,6 +67,62 @@ BEGIN;
 COMMIT;
 
 -- ----------------------------
+-- Table structure for sys_param
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_param`;
+CREATE TABLE `sys_param`
+(
+    `id`           bigint unsigned NOT NULL AUTO_INCREMENT,
+    `code`         varchar(32)  NOT NULL COMMENT '标识',
+    `description`  varchar(255) DEFAULT NULL COMMENT '描述',
+    `value`        varchar(255) NOT NULL COMMENT '值',
+    `is_encrypted` tinyint unsigned NOT NULL DEFAULT '0' COMMENT '值是否已加密，1：是；0：否，默认',
+    `is_system`    tinyint unsigned NOT NULL DEFAULT '0' COMMENT '是否系统内置，1：是；0：否，默认',
+    `create_time`  datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3) COMMENT '创建时间',
+    `update_time`  datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP (3) COMMENT '修改时间',
+    `is_deleted`   tinyint unsigned NOT NULL DEFAULT '0' COMMENT '逻辑删除，1：是；0：否，默认',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `sys_param_code_idx` (`code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='系统参数';
+
+-- ----------------------------
+-- Records of sys_param
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_resource
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_resource`;
+CREATE TABLE `sys_resource`
+(
+    `id`            bigint unsigned NOT NULL AUTO_INCREMENT,
+    `type`          tinyint unsigned NOT NULL COMMENT '资源类型 （1菜单 2按钮）',
+    `name`          varchar(32)  NOT NULL COMMENT '名称',
+    `permission`    varchar(32)  NOT NULL COMMENT '权限标识',
+    `parent_id`     bigint unsigned NOT NULL COMMENT '父节点id，根节点为0',
+    `icon`          varchar(64)           DEFAULT NULL COMMENT '图标',
+    `path`          varchar(255) NOT NULL COMMENT '路由路径',
+    `description`   varchar(255)          DEFAULT NULL COMMENT '描述',
+    `sorts`         int unsigned NOT NULL DEFAULT '0' COMMENT '排序',
+    `is_keep_alive` tinyint      NOT NULL DEFAULT '0' COMMENT '前端是否开启路由缓冲，1：是；0：否',
+    `is_visible`    tinyint unsigned NOT NULL DEFAULT '1' COMMENT '是否展示，1：是，默认；0：否',
+    `create_time`   datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3) COMMENT '创建时间',
+    `update_time`   datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP (3) COMMENT '修改时间',
+    `is_deleted`    tinyint unsigned NOT NULL DEFAULT '0' COMMENT '逻辑删除，1：是；0：否，默认',
+    PRIMARY KEY (`id`),
+    KEY             `sys_resource_permission_idx` (`permission`),
+    KEY             `sys_resource_parent_id_idx` (`parent_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='资源';
+
+-- ----------------------------
+-- Records of sys_resource
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
 -- Table structure for sys_role
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_role`;
@@ -89,6 +145,28 @@ CREATE TABLE `sys_role`
 BEGIN;
 INSERT INTO `sys_role` (`id`, `code`, `name`, `description`, `is_deleted`, `create_time`, `update_time`)
 VALUES (1, 'ROLE_ADMIN', '管理员', '', 0, '2023-04-07 15:12:32.000', NULL);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_role_resource
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_role_resource`;
+CREATE TABLE `sys_role_resource`
+(
+    `id`          bigint unsigned NOT NULL AUTO_INCREMENT,
+    `role_id`     bigint unsigned NOT NULL COMMENT '角色id，关联sys_role.id',
+    `resource_id` bigint unsigned NOT NULL COMMENT '资源id，关联sys_resource.id',
+    `create_time` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3) COMMENT '创建时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `sys_role_resource_uidx` (`role_id`,`resource_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='角色关联资源';
+
+-- ----------------------------
+-- Records of sys_role_resource
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_role_resource` (`id`, `role_id`, `resource_id`, `create_time`)
+VALUES (1, 1, 1, '2023-04-12 18:14:20.054');
 COMMIT;
 
 -- ----------------------------
