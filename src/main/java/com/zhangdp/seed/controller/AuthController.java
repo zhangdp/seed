@@ -8,7 +8,7 @@ import com.zhangdp.seed.model.LoginResult;
 import com.zhangdp.seed.service.sys.SysRoleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,15 +19,14 @@ import java.util.List;
  * @author zhangdp
  * @since 1.0.0
  */
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/auth")
 @Tag(name = "认证", description = "认证相关接口如登陆、注销等")
 public class AuthController {
 
-    @Autowired
-    private SecurityHelper securityHelper;
-    @Autowired
-    private SysRoleService sysRoleService;
+    private final SecurityHelper securityHelper;
+    private final SysRoleService sysRoleService;
 
     /**
      * 登陆

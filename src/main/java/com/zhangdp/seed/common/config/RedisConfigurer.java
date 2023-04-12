@@ -73,7 +73,7 @@ public class RedisConfigurer {
      *
      * @return
      */
-    private GenericJackson2JsonRedisSerializer jsonRedisSerializer() {
+    public GenericJackson2JsonRedisSerializer jsonRedisSerializer() {
         GenericJackson2JsonRedisSerializer valueSerializer = new GenericJackson2JsonRedisSerializer();
         // 通过反射获取Mapper对象, 增加一些配置, 增强兼容性
         try {

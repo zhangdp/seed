@@ -1,11 +1,11 @@
 package com.zhangdp.seed.common.component;
 
 import com.zhangdp.seed.common.annotation.EventHandler;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.SmartInitializingSingleton;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
@@ -13,13 +13,14 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 /**
- * 自动扫描注册带有@EventHandler注解的处理器类
+ * 2023/4/12 自动扫描注册带有@EventHandler注解的处理器类
  *
  * @author zhangdp
- * @date 2022/12/1
+ * @since 1.0.0
  */
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class EventHandlerRegister implements ApplicationContextAware, SmartInitializingSingleton {
 
     /**
@@ -29,8 +30,7 @@ public class EventHandlerRegister implements ApplicationContextAware, SmartIniti
     /**
      * 事件处理器容器
      */
-    @Autowired
-    private EventHandlerContainer eventHandlerContainer;
+    private final EventHandlerContainer eventHandlerContainer;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {

@@ -2,8 +2,8 @@ package com.zhangdp.seed.common.component;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.thread.ThreadUtil;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -18,13 +18,13 @@ import java.util.Map;
  */
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class EventDispatch {
 
     /**
      * 事件处理器容器
      */
-    @Autowired
-    private EventHandlerContainer eventHandlerContainer;
+    private final EventHandlerContainer eventHandlerContainer;
 
     /**
      * 异步调度事件

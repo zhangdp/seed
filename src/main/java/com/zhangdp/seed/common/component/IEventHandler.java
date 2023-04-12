@@ -6,10 +6,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * 事件处理器接口类
+ * 2023/4/12 事件处理器接口类
  *
  * @author zhangdp
- * @date 2022/12/2
+ * @since 1.0.0
  */
 public interface IEventHandler {
 

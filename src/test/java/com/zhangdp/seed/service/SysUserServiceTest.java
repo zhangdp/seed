@@ -2,8 +2,8 @@ package com.zhangdp.seed.service;
 
 import com.zhangdp.seed.entity.sys.SysUser;
 import com.zhangdp.seed.service.sys.SysUserService;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
@@ -15,10 +15,10 @@ import java.time.LocalDate;
  * @since 1.0.0
  */
 @SpringBootTest
+@RequiredArgsConstructor
 public class SysUserServiceTest {
 
-    @Autowired
-    private SysUserService sysUserService;
+    private final SysUserService sysUserService;
 
     @Test
     public void add() {

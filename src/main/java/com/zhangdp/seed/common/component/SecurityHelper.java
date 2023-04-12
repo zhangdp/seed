@@ -15,9 +15,9 @@ import com.zhangdp.seed.model.LoginResult;
 import com.zhangdp.seed.model.dto.User;
 import com.zhangdp.seed.service.sys.SysRoleService;
 import com.zhangdp.seed.service.sys.SysUserService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.stereotype.Component;
 
@@ -34,13 +34,12 @@ import java.util.List;
  */
 @ConditionalOnWebApplication
 @Component
+@RequiredArgsConstructor
 @Slf4j
 public class SecurityHelper implements StpInterface {
 
-    @Autowired
-    private SysUserService sysUserService;
-    @Autowired
-    private SysRoleService sysRoleService;
+    private final SysUserService sysUserService;
+    private final SysRoleService sysRoleService;
 
     /**
      * 获取session对象
@@ -175,16 +174,30 @@ public class SecurityHelper implements StpInterface {
         return user;
     }
 
+    /**
+     * 获取指定账号id所拥有的权限列表
+     *
+     * @param loginId   账号id
+     * @param loginType 账号类型
+     * @return
+     */
     @Override
     public List<String> getPermissionList(Object loginId, String loginType) {
         return null;
     }
 
+    /**
+     * 获取指定账号id所拥有的角色列表
+     *
+     * @param loginId   账号id
+     * @param loginType 账号类型
+     * @return
+     */
     @Override
     public List<String> getRoleList(Object loginId, String loginType) {
         List<SysRole> roles = sysRoleService.listUserRoles(Long.parseLong(String.valueOf(loginId)));
         if (CollUtil.isEmpty(roles)) {
-            return new ArrayList<>(0);
+            return new ArrayList<>();
         }
         return roles.stream().map(SysRole::getCode).toList();
     }
