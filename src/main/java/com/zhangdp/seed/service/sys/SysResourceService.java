@@ -20,4 +20,12 @@ public interface SysResourceService extends IService<SysResource> {
      * @return
      */
     List<SysResource> listRoleResources(Long roleId);
+
+    /**
+     * 获取某个用户拥有的资源列表
+     *
+     * @param userId
+     * @return
+     */
+    List<SysResource> listUserResources(Long userId);
 }

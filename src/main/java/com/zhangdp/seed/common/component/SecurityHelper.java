@@ -9,10 +9,12 @@ import cn.hutool.core.date.LocalDateTimeUtil;
 import cn.hutool.core.lang.Assert;
 import com.zhangdp.seed.common.constant.CommonConst;
 import com.zhangdp.seed.common.constant.SecurityConst;
+import com.zhangdp.seed.entity.sys.SysResource;
 import com.zhangdp.seed.entity.sys.SysRole;
 import com.zhangdp.seed.entity.sys.SysUser;
 import com.zhangdp.seed.model.LoginResult;
 import com.zhangdp.seed.model.dto.User;
+import com.zhangdp.seed.service.sys.SysResourceService;
 import com.zhangdp.seed.service.sys.SysRoleService;
 import com.zhangdp.seed.service.sys.SysUserService;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +42,7 @@ public class SecurityHelper implements StpInterface {
 
     private final SysUserService sysUserService;
     private final SysRoleService sysRoleService;
+    private final SysResourceService sysResourceService;
 
     /**
      * 获取session对象
@@ -183,7 +186,11 @@ public class SecurityHelper implements StpInterface {
      */
     @Override
     public List<String> getPermissionList(Object loginId, String loginType) {
-        return null;
+        List<SysResource> resources = sysResourceService.listUserResources(Long.parseLong(String.valueOf(loginId)));
+        if (CollUtil.isEmpty(resources)) {
+            return new ArrayList<>();
+        }
+        return resources.stream().map(SysResource::getPermission).toList();
     }
 
     /**

@@ -22,4 +22,10 @@ public class SysResourceServiceTest {
         Long roleId = 1L;
         System.out.println(sysResourceService.listRoleResources(roleId));
     }
+
+    @Test
+    public void listUserResources() {
+        Long userId = 1L;
+        System.out.println(sysResourceService.listUserResources(userId));
+    }
 }
