@@ -23,7 +23,7 @@ import java.time.LocalDate;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @TableName("sys_user")
-@Schema(description = "用户信息详情")
+@Schema(description = "用户")
 public class SysUser extends BaseEntity implements Serializable {
 
     @Serial

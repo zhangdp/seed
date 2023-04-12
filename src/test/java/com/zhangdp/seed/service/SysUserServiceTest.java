@@ -15,7 +15,7 @@ import java.time.LocalDate;
  * @since 1.0.0
  */
 @SpringBootTest
-public class SysUserServiceTester {
+public class SysUserServiceTest {
 
     @Autowired
     private SysUserService sysUserService;
@@ -23,14 +23,13 @@ public class SysUserServiceTester {
     @Test
     public void add() {
         SysUser user = new SysUser();
-        user.setId(1L);
-        user.setUsername("admin");
+        user.setUsername("test");
         user.setPassword("123456");
-        user.setPhone("18900000000");
-        user.setSex('F');
+        user.setPhone("13900000000");
+        user.setSex('M');
         user.setBirthDate(LocalDate.of(2000, 1, 1));
-        user.setEmail("admin@seed.com");
-        user.setFullName("管理员");
+        user.setEmail("test@seed.com");
+        user.setFullName("测试员");
         sysUserService.save(user);
     }
 

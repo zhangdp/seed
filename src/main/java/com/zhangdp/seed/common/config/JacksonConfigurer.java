@@ -43,39 +43,45 @@ import java.time.format.DateTimeFormatter;
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 public class JacksonConfigurer implements WebMvcConfigurer {
 
+    /**
+     * 时间格式化组件
+     */
+    public final static JavaTimeModule TIME_MODULE;
+
+    static {
+        TIME_MODULE = new JavaTimeModule();
+        // ======================= 时间序列化规则 ==============================
+        TIME_MODULE.addSerializer(LocalDateTime.class,
+                new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(CommonConst.DATETIME_FORMATTER)));
+        TIME_MODULE.addSerializer(LocalDate.class,
+                new LocalDateSerializer(DateTimeFormatter.ofPattern(CommonConst.DATE_FORMATTER)));
+        TIME_MODULE.addSerializer(LocalTime.class,
+                new LocalTimeSerializer(DateTimeFormatter.ofPattern(CommonConst.TIME_FORMATTER)));
+
+        // Instant 类型序列化
+        TIME_MODULE.addSerializer(Instant.class, InstantSerializer.INSTANCE);
+
+        // ======================= 时间反序列化规则 ==============================
+        TIME_MODULE.addDeserializer(LocalDateTime.class,
+                new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(CommonConst.DATETIME_FORMATTER)));
+        TIME_MODULE.addDeserializer(LocalDate.class,
+                new LocalDateDeserializer(DateTimeFormatter.ofPattern(CommonConst.DATE_FORMATTER)));
+        TIME_MODULE.addDeserializer(LocalTime.class,
+                new LocalTimeDeserializer(DateTimeFormatter.ofPattern(CommonConst.TIME_FORMATTER)));
+
+        // Instant 反序列化
+        TIME_MODULE.addDeserializer(Instant.class, InstantDeserializer.INSTANT);
+    }
+
+    /**
+     * 注册生效时间格式化组件
+     *
+     * @return
+     */
     @Bean
     @ConditionalOnMissingBean
     public Jackson2ObjectMapperBuilderCustomizer customizer() {
-        return builder -> {
-            JavaTimeModule javaTimeModule = new JavaTimeModule();
-            // yyyy-MM-dd HH:mm:ss
-            javaTimeModule.addSerializer(LocalDateTime.class,
-                    new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(CommonConst.DATETIME_FORMATTER)));
-            // yyyy-MM-dd
-            javaTimeModule.addSerializer(LocalDate.class,
-                    new LocalDateSerializer(DateTimeFormatter.ofPattern(CommonConst.DATE_FORMATTER)));
-            // HH:mm:ss
-            javaTimeModule.addSerializer(LocalTime.class,
-                    new LocalTimeSerializer(DateTimeFormatter.ofPattern(CommonConst.TIME_FORMATTER)));
-
-            // Instant 类型序列化
-            javaTimeModule.addSerializer(Instant.class, InstantSerializer.INSTANCE);
-
-            // ======================= 时间反序列化规则 ==============================
-            // yyyy-MM-dd HH:mm:ss
-            javaTimeModule.addDeserializer(LocalDateTime.class,
-                    new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(CommonConst.DATETIME_FORMATTER)));
-            // yyyy-MM-dd
-            javaTimeModule.addDeserializer(LocalDate.class,
-                    new LocalDateDeserializer(DateTimeFormatter.ofPattern(CommonConst.DATE_FORMATTER)));
-            // HH:mm:ss
-            javaTimeModule.addDeserializer(LocalTime.class,
-                    new LocalTimeDeserializer(DateTimeFormatter.ofPattern(CommonConst.TIME_FORMATTER)));
-            // Instant 反序列化
-            javaTimeModule.addDeserializer(Instant.class, InstantDeserializer.INSTANT);
-
-            builder.modules(javaTimeModule);
-        };
+        return builder -> builder.modules(TIME_MODULE);
     }
 
     /**

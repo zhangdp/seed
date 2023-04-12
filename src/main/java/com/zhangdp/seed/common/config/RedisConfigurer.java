@@ -2,15 +2,7 @@ package com.zhangdp.seed.common.config;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import com.zhangdp.seed.common.constant.CacheConst;
-import com.zhangdp.seed.common.constant.CommonConst;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
@@ -24,10 +16,6 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.RedisSerializer;
 
 import java.lang.reflect.Field;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 
 /**
  * 2023/4/7 redis配置
@@ -38,11 +26,6 @@ import java.time.format.DateTimeFormatter;
 @Configuration
 @Slf4j
 public class RedisConfigurer {
-
-    private static final String DATE_FORMATTER = CommonConst.DATE_FORMATTER;
-    // 保留毫秒
-    private static final String TIME_FORMATTER = CommonConst.TIME_FORMATTER + ".SSSSSS";
-    private static final String DATE_TIME_FORMATTER = DATE_FORMATTER + " " + TIME_FORMATTER;
 
     /**
      * 设置redistemplate key序列化方式为string，value序列化方式为json
@@ -65,7 +48,7 @@ public class RedisConfigurer {
     }
 
     /**
-     * 自定义redis缓存，设置为json序列化方式
+     * 自定义redis缓存管理器，设置为json序列化方式
      *
      * @param connectionFactory
      * @return
@@ -100,17 +83,7 @@ public class RedisConfigurer {
             // 配置[忽略未知字段]
             objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             // 配置[时间类型转换]
-            JavaTimeModule timeModule = new JavaTimeModule();
-            // LocalDateTime序列化与反序列化
-            timeModule.addSerializer(new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(DATE_TIME_FORMATTER)));
-            timeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(DATE_TIME_FORMATTER)));
-            // LocalDate序列化与反序列化
-            timeModule.addSerializer(new LocalDateSerializer(DateTimeFormatter.ofPattern(DATE_FORMATTER)));
-            timeModule.addDeserializer(LocalDate.class, new LocalDateDeserializer(DateTimeFormatter.ofPattern(DATE_FORMATTER)));
-            // LocalTime序列化与反序列化
-            timeModule.addSerializer(new LocalTimeSerializer(DateTimeFormatter.ofPattern(TIME_FORMATTER)));
-            timeModule.addDeserializer(LocalTime.class, new LocalTimeDeserializer(DateTimeFormatter.ofPattern(TIME_FORMATTER)));
-            objectMapper.registerModule(timeModule);
+            objectMapper.registerModule(JacksonConfigurer.TIME_MODULE);
         } catch (Exception e) {
             log.warn("配置redis值序列化为json失败", e);
         }

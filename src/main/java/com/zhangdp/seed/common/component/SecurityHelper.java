@@ -12,7 +12,7 @@ import com.zhangdp.seed.common.constant.SecurityConst;
 import com.zhangdp.seed.entity.sys.SysRole;
 import com.zhangdp.seed.entity.sys.SysUser;
 import com.zhangdp.seed.model.LoginResult;
-import com.zhangdp.seed.model.User;
+import com.zhangdp.seed.model.dto.User;
 import com.zhangdp.seed.service.sys.SysRoleService;
 import com.zhangdp.seed.service.sys.SysUserService;
 import lombok.extern.slf4j.Slf4j;

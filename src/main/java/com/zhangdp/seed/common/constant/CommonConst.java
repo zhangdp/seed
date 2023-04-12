@@ -28,14 +28,14 @@ public interface CommonConst {
     LocalDate MAX_LOCAL_DATE = LocalDate.of(9999, 12, 31);
 
     /**
-     * 最大LocalTime时间 - 23:59:59.999999
+     * 最大LocalTime时间 - 23:59:59.999
      */
-    LocalTime MAX_LOCAL_TIME = LocalTime.of(23, 59, 59, 999999);
+    LocalTime MAX_LOCAL_TIME = LocalTime.of(23, 59, 59, 999);
     // LocalTime.MAX 纳秒是999_999_999，存到pg数据库会溢出变成下一天0点
     // LocalTime MAX_LOCAL_TIME = LocalTime.MAX;
 
     /**
-     * 最大LocalDateTIme - 9999-12-31 23:59:59.999999
+     * 最大LocalDateTIme - 9999-12-31 23:59:59.999
      */
     LocalDateTime MAX_LOCAL_DATE_TIME = LocalDateTime.of(MAX_LOCAL_DATE, MAX_LOCAL_TIME);
 
@@ -55,9 +55,9 @@ public interface CommonConst {
     String DATE_FORMATTER = "yyyy-MM-dd";
 
     /**
-     * 时间格式化
+     * 时间格式化，注意[.SSS]可选的毫秒值
      */
-    String TIME_FORMATTER = "HH:mm:ss";
+    String TIME_FORMATTER = "HH:mm:ss[.SSS]";
 
     /**
      * 日期时间默认格式化

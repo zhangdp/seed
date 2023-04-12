@@ -1,4 +1,4 @@
-package com.zhangdp.seed.model;
+package com.zhangdp.seed.model.dto;
 
 import com.zhangdp.seed.common.ValidGroup;
 import com.zhangdp.seed.common.constant.CommonConst;

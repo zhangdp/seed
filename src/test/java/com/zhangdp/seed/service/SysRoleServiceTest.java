@@ -13,7 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  * @since
  */
 @SpringBootTest
-public class SysRoleServiceTester {
+public class SysRoleServiceTest {
 
     @Autowired
     private SysRoleService sysRoleService;
