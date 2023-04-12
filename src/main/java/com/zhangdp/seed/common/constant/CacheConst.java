@@ -30,4 +30,8 @@ public interface CacheConst {
      * 缓存名称：字典项
      */
     String CACHE_SYS_DICT_ITEM = "sys_dict_item";
+    /**
+     * 缓存名称：资源
+     */
+    String CACHE_SYS_RESOURCE = "sys_resource";
 }

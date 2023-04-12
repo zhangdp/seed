@@ -29,29 +29,25 @@ public class SysDictItem extends BaseEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 所属字典类id
+     * 所属字典id
      */
-    @Schema(title = "字典类id")
+    @Schema(title = "字典id")
     private Long dictId;
-
     /**
      * 数据值
      */
     @Schema(title = "数据值")
     private String value;
-
     /**
      * 标签名
      */
     @Schema(title = "标签名")
     private String label;
-
     /**
      * 描述
      */
     @Schema(title = "描述")
     private String description;
-
     /**
      * 排序（升序）
      */

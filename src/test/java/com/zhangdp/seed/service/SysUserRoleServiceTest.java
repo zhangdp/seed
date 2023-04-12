@@ -6,8 +6,8 @@ import com.zhangdp.seed.entity.sys.SysUserRole;
 import com.zhangdp.seed.service.sys.SysRoleService;
 import com.zhangdp.seed.service.sys.SysUserRoleService;
 import com.zhangdp.seed.service.sys.SysUserService;
-import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 /**
@@ -17,12 +17,14 @@ import org.springframework.boot.test.context.SpringBootTest;
  * @since
  */
 @SpringBootTest
-@RequiredArgsConstructor
 public class SysUserRoleServiceTest {
 
-    private final SysUserRoleService sysUserRoleService;
-    private final SysRoleService sysRoleService;
-    private final SysUserService sysUserService;
+    @Autowired
+    private SysUserRoleService sysUserRoleService;
+    @Autowired
+    private SysRoleService sysRoleService;
+    @Autowired
+    private SysUserService sysUserService;
 
     @Test
     public void add() {

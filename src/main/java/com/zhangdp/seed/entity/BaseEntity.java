@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.zhangdp.seed.common.ValidGroup;
 import com.zhangdp.seed.common.constant.CommonConst;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -15,10 +14,10 @@ import lombok.experimental.Accessors;
 import java.time.LocalDateTime;
 
 /**
- * 2023/4/3 资源类型entity基类
+ * 2023/4/3 entity基类
  *
  * @author zhangdp
- * @since
+ * @since 1.0.0
  */
 @Data
 @Accessors(chain = true)
@@ -36,7 +35,7 @@ public abstract class BaseEntity {
      */
     @TableLogic
     @Schema(title = "逻辑删除", description = "0：否，默认；1：已删除", hidden = true)
-    @JsonIgnore
+    // @JsonIgnore
     protected Integer isDeleted;
     /**
      * 创建时间

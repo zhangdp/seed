@@ -12,7 +12,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * 2023/4/12 字典
+ * 2023/4/12 系统参数
  *
  * @author zhangdp
  * @since 1.0.0
@@ -21,26 +21,36 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@TableName("sys_dict")
-@Schema(description = "字典")
-public class SysDict extends BaseEntity implements Serializable {
+@TableName("sys_param")
+@Schema(description = "系统参数")
+public class SysParam extends BaseEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     /**
-     * 类型
+     * 标识
      */
-    @Schema(title = "字典类型")
-    private String type;
+    @Schema(title = "标识")
+    private String code;
     /**
      * 描述
      */
     @Schema(title = "描述")
     private String description;
     /**
-     * 是否是系统内置
+     * 值
      */
-    @Schema(title = "系统内置", description = "系统内置的不允许页面修改。1：是；0：否")
+    @Schema(title = "值")
+    private String value;
+    /**
+     * 值是否加密
+     */
+    @Schema(title = "值是否加密", description = "1：是；0：否")
+    private Integer isEncrypted;
+    /**
+     * 是否系统内置
+     */
+    @Schema(title = "是否系统内置", description = "系统内置的不允许页面修改。1：是；0：否")
     private Integer isSystem;
 }
