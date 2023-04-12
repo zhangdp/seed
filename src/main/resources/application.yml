@@ -1,5 +1,5 @@
 server:
-  port: 9080
+  port: 8080
 spring:
   application:
     name: @artifactId@
@@ -38,7 +38,7 @@ spring:
       key-prefix: "cache::"
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${MYSQL_HOST:191.168.10.91}:${MYSQL_PORT:3306}/${MYSQL_DB:seed}
+    url: jdbc:mysql://${MYSQL_HOST:191.168.10.91}:${MYSQL_PORT:3306}/${MYSQL_DB:seed}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
     username: ${MYSQL_USER:seed}
     password: ${MYSQL_PASSWORD:Seed@2022}
     hikari:
@@ -48,9 +48,9 @@ spring:
 # druid 暂不兼容springboot3.0
 #    druid:
 #      keepAlive: true
-#      initial-size: 5
-#      min-idle: 5
-#      max-active: 20
+#      initial-size: 4
+#      min-idle: 8
+#      max-active: 16
 #      socket-timeout: 30000
 #      validationQuery: SELECT 1
 #      testWhileIdle: true
@@ -78,7 +78,7 @@ mybatis:
 mybatis-plus:
   global-config:
     db-config:
-      id-type: assign_id
+      id-type: auto
     banner: false
 sa-token:
   isPrint: false

@@ -5,8 +5,11 @@ import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
@@ -88,10 +91,10 @@ public class WebUtils {
      * 参数是否匹配给定的范围内，不区分大小写
      *
      * @param param
-     * @param matchs
+     * @param matches
      * @return
      */
-    public static boolean isParamMatch(Object param, String[] matchs) {
+    public static boolean isParamMatch(Object param, String[] matches) {
         if (param == null) {
             return false;
         }
@@ -99,7 +102,7 @@ public class WebUtils {
         if (p.length() == 0) {
             return false;
         }
-        return Arrays.stream(matchs).anyMatch(m -> m.equalsIgnoreCase(p));
+        return Arrays.stream(matches).anyMatch(m -> m.equalsIgnoreCase(p));
     }
 
     /**
@@ -147,8 +150,8 @@ public class WebUtils {
      * @param json
      * @return
      */
-    public static boolean writeJson(HttpServletResponse response, String json) {
-        return writeJson(response, null, json);
+    public static boolean responseJson(HttpServletResponse response, String json) {
+        return responseJson(response, 200, json);
     }
 
     /**
@@ -159,11 +162,9 @@ public class WebUtils {
      * @param json
      * @return
      */
-    public static boolean writeJson(HttpServletResponse response, Integer httpStatus, String json) {
+    public static boolean responseJson(HttpServletResponse response, int httpStatus, String json) {
         try {
-            if (httpStatus != null) {
-                response.setStatus(httpStatus);
-            }
+            response.setStatus(httpStatus);
             response.setCharacterEncoding(CommonConst.CHARSET);
             response.setContentType("application/json");
             response.getWriter().write(json);
@@ -185,7 +186,7 @@ public class WebUtils {
      * @param fileSize
      * @return
      */
-    public static long writeFile(HttpServletResponse response, InputStream in, String filename, String contentType, long fileSize) {
+    public static long responseFile(HttpServletResponse response, InputStream in, String filename, String contentType, long fileSize) {
         int len = -1;
         try {
             String disposition = "attachment";
@@ -213,6 +214,18 @@ public class WebUtils {
             }
         }
         return len;
+    }
+
+    /**
+     * 输出文件
+     *
+     * @param response
+     * @param file
+     * @return
+     */
+    @SneakyThrows
+    public static long responseFile(HttpServletResponse response, File file) {
+        return responseFile(response, new FileInputStream(file), file.getName(), null, file.length());
     }
 
 }

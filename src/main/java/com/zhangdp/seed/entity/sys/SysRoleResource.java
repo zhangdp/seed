@@ -12,15 +12,15 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * 2023/4/4 用户角色
+ * 2023/4/12 角色关联资源
  *
  * @author zhangdp
  * @since 1.0.0
  */
 @Data
 @Accessors(chain = true)
-@TableName("sys_user_role")
-public class SysUserRole implements Serializable {
+@TableName("sys_role_resource")
+public class SysRoleResource implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -31,9 +31,9 @@ public class SysUserRole implements Serializable {
     @TableId
     private Long id;
     /**
-     * 用户id
+     * 资源id
      */
-    private Long userId;
+    private Long resourceId;
     /**
      * 角色id
      */

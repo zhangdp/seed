@@ -9,7 +9,7 @@ import com.zhangdp.seed.entity.sys.SysUserRole;
 import com.zhangdp.seed.mapper.sys.SysRoleMapper;
 import com.zhangdp.seed.service.sys.SysRoleService;
 import com.zhangdp.seed.service.sys.SysUserRoleService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -23,13 +23,13 @@ import java.util.List;
  * @since 1.0.0
  */
 @CacheConfig(cacheNames = CacheConst.CACHE_SYS_ROLE)
+@RequiredArgsConstructor
 @Service
 public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> implements SysRoleService {
 
     private static final String CACHE_USER_ROLE = "user_roles" + CacheConst.SPLIT;
 
-    @Autowired
-    private SysUserRoleService sysUserRoleService;
+    private final SysUserRoleService sysUserRoleService;
 
     @Cacheable(key = "'" + CACHE_USER_ROLE + "' + #userId")
     @Override

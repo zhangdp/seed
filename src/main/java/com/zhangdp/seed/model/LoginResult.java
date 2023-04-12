@@ -1,5 +1,6 @@
 package com.zhangdp.seed.model;
 
+import com.zhangdp.seed.model.dto.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;

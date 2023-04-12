@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 public class MybatisPlusConfigurer {
 
     /**
-     * 自动填充配置
+     * 字段自动填充配置
      *
      * @return
      */

@@ -11,22 +11,17 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import java.io.Serial;
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * 2023/4/3 资源类型entity基类
+ * 2023/4/3 entity基类
  *
  * @author zhangdp
- * @since
+ * @since 1.0.0
  */
 @Data
 @Accessors(chain = true)
-public abstract class BaseEntity implements Serializable {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
+public abstract class BaseEntity {
 
     /**
      * 主键
@@ -40,27 +35,28 @@ public abstract class BaseEntity implements Serializable {
      */
     @TableLogic
     @Schema(title = "逻辑删除", description = "0：否，默认；1：已删除", hidden = true)
-    private Integer delFlag;
+    // @JsonIgnore
+    protected Integer isDeleted;
     /**
      * 创建时间
      */
     @TableField(fill = FieldFill.INSERT)
-    @Schema(title = "创建时间", description = "格式：" + CommonConst.DATETIME_PATTERN)
-    private LocalDateTime createTime;
+    @Schema(title = "创建时间", description = "格式：" + CommonConst.DATETIME_FORMATTER)
+    protected LocalDateTime createTime;
     /**
      * 修改时间
      */
     @TableField(fill = FieldFill.INSERT_UPDATE)
-    @Schema(title = "修改时间", description = "格式：" + CommonConst.DATETIME_PATTERN)
-    private LocalDateTime updateTime;
+    @Schema(title = "修改时间", description = "格式：" + CommonConst.DATETIME_FORMATTER)
+    protected LocalDateTime updateTime;
     /**
      * 创建用户id
      */
-    @Schema(title = "创建人id")
-    private Long createUserId;
+    // @Schema(title = "创建人id")
+    // protected Long createUserId;
     /**
      * 修改用户id
      */
-    @Schema(title = "修改人id")
-    private Long updateUserId;
+    // @Schema(title = "修改人id")
+    // protected Long updateUserId;
 }

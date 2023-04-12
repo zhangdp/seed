@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
  * 2023/4/3 部门mapper
  *
  * @author zhangdp
- * @since
+ * @since 1.0.0
  */
 @Mapper
 public interface SysDeptMapper extends BaseMapper<SysDept> {

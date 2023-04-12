@@ -1,5 +1,7 @@
-package com.zhangdp.seed.model;
+package com.zhangdp.seed.model.dto;
 
+import com.zhangdp.seed.model.query.BasePageQuery;
+import com.zhangdp.seed.model.query.PageQuery;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
