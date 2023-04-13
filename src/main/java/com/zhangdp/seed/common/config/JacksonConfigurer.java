@@ -17,10 +17,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
-import org.springframework.boot.web.servlet.filter.OrderedCharacterEncodingFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.format.datetime.standard.DateTimeFormatterRegistrar;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -101,20 +99,6 @@ public class JacksonConfigurer implements WebMvcConfigurer {
         registrar.setDateFormatter(DateTimeFormatter.ofPattern(CommonConst.DATE_FORMATTER));
         registrar.setDateTimeFormatter(DateTimeFormatter.ofPattern(CommonConst.DATETIME_FORMATTER));
         registrar.registerFormatters(registry);
-    }
-
-    /**
-     * 避免form 提交 context-type 不规范中文乱码
-     *
-     * @return Filter
-     */
-    @Bean
-    public OrderedCharacterEncodingFilter characterEncodingFilter() {
-        OrderedCharacterEncodingFilter filter = new OrderedCharacterEncodingFilter();
-        filter.setEncoding(CommonConst.CHARSET);
-        filter.setForceEncoding(true);
-        filter.setOrder(Ordered.HIGHEST_PRECEDENCE);
-        return filter;
     }
 
 }
