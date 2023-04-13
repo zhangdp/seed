@@ -12,7 +12,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * 2023/4/12 字典项
+ * 2023/4/12 字典数据
  *
  * @author zhangdp
  * @since 1.0.0
@@ -21,9 +21,9 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@TableName("sys_dict_item")
-@Schema(description = "字典项")
-public class SysDictItem extends BaseEntity implements Serializable {
+@TableName("sys_dict_data")
+@Schema(description = "字典数据")
+public class SysDictData extends BaseEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

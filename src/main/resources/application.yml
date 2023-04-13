@@ -11,13 +11,13 @@ spring:
   jackson:
     deserialization:
       fail-on-unknown-properties: false
-    date-format: yyyy-MM-dd HH:mm:ss
+    date-format: yyyy-MM-dd HH:mm:ss[.SSS]
   task:
     execution:
       pool:
         core-size: 8
         max-size: 16
-        queue-capacity: 32
+        queue-capacity: 256
   data:
     redis:
       database: ${REDIS_DATABASE:0}
@@ -81,10 +81,10 @@ mybatis-plus:
       id-type: auto
     banner: false
 sa-token:
-  isPrint: false
+  is-print: false
   is-read-cookie: false
   token-name: Authorization
-  tokenPrefix: Bearer
+  token-prefix: Bearer
   timeout: 86400
   activity-timeout: 1800
   is-concurrent: true

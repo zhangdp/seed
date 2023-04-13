@@ -50,7 +50,7 @@ public class EventDispatch {
      * @param tag
      */
     public void dispatch(String type, String tag, Map<String, Object> params, Object result, int delay) {
-        // 延迟执行，暂时用线程睡眠的方式
+        // todo 延迟执行，暂时用线程睡眠的方式，需换为更加合理的方案
         if (delay > 0) {
             ThreadUtil.sleep(delay);
         }

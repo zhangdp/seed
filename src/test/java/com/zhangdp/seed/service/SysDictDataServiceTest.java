@@ -1,6 +1,6 @@
 package com.zhangdp.seed.service;
 
-import com.zhangdp.seed.service.sys.SysDictItemService;
+import com.zhangdp.seed.service.sys.SysDictDataService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,14 +12,14 @@ import org.springframework.boot.test.context.SpringBootTest;
  * @since
  */
 @SpringBootTest
-public class SysDictItemServiceTest {
+public class SysDictDataServiceTest {
 
     @Autowired
-    private SysDictItemService sysDictItemService;
+    private SysDictDataService sysDictDataService;
 
     @Test
     public void listByDictId() {
         Long dictId = 1L;
-        System.out.println(sysDictItemService.listByDictId(dictId));
+        System.out.println(sysDictDataService.listByDictId(dictId));
     }
 }
