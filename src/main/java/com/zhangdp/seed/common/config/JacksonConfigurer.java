@@ -14,7 +14,6 @@ import com.zhangdp.seed.common.constant.CommonConst;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -38,7 +37,6 @@ import java.time.format.DateTimeFormatter;
 @Configuration
 @ConditionalOnClass(ObjectMapper.class)
 @AutoConfigureBefore(JacksonAutoConfiguration.class)
-@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 public class JacksonConfigurer implements WebMvcConfigurer {
 
     /**
@@ -85,9 +83,9 @@ public class JacksonConfigurer implements WebMvcConfigurer {
     /**
      * 增加GET请求参数中时间类型转换
      * <ul>
-     * <li>HH:mm:ss -> LocalTime</li>
+     * <li>HH:mm:ss[.SSS] -> LocalTime</li>
      * <li>yyyy-MM-dd -> LocalDate</li>
-     * <li>yyyy-MM-dd HH:mm:ss -> LocalDateTime</li>
+     * <li>yyyy-MM-dd HH:mm:ss[.SSS] -> LocalDateTime</li>
      * </ul>
      *
      * @param registry

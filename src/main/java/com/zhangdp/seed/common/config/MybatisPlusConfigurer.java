@@ -30,22 +30,15 @@ public class MybatisPlusConfigurer {
             public void insertFill(MetaObject metaObject) {
                 LocalDateTime now = LocalDateTime.now();
                 this.strictInsertFill(metaObject, "createTime", LocalDateTime.class, now);
-                if (log.isTraceEnabled()) {
-                    log.trace("填充createTime字段：{}", now);
-                }
-                this.strictInsertFill(metaObject, "update", LocalDateTime.class, now);
-                if (log.isTraceEnabled()) {
-                    log.trace("填充update字段：{}", now);
-                }
+                this.strictInsertFill(metaObject, "updateTime", LocalDateTime.class, now);
+                log.trace("insert填充创建时间：{}", now);
             }
 
             @Override
             public void updateFill(MetaObject metaObject) {
                 LocalDateTime now = LocalDateTime.now();
                 this.strictUpdateFill(metaObject, "updateTime", LocalDateTime.class, LocalDateTime.now());
-                if (log.isTraceEnabled()) {
-                    log.trace("填充updateTime字段：{}", now);
-                }
+                log.trace("update填充修改时间：{}", now);
             }
         };
     }

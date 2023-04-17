@@ -1,17 +1,17 @@
 package com.zhangdp.seed.controller;
 
-import cn.dev33.satoken.stp.StpUtil;
+import cn.dev33.satoken.annotation.SaIgnore;
 import com.zhangdp.seed.common.R;
 import com.zhangdp.seed.common.component.SecurityHelper;
-import com.zhangdp.seed.entity.sys.SysRole;
 import com.zhangdp.seed.model.LoginResult;
 import com.zhangdp.seed.service.sys.SysRoleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 2023/4/3 认证接口
@@ -37,6 +37,7 @@ public class AuthController {
      */
     @PostMapping("/login")
     @Operation(summary = "账号密码登陆", description = "根据账号密码登陆")
+    @SaIgnore
     public R<LoginResult> login(String username, String password) {
         return R.success(securityHelper.doLogin(username, password));
     }
@@ -51,18 +52,6 @@ public class AuthController {
     public R<?> logout() {
         securityHelper.doLogout();
         return R.success();
-    }
-
-    /**
-     * 获取当前登录用户的角色列表
-     *
-     * @return
-     */
-    @GetMapping("/roles")
-    @Operation(summary = "获取当前登录用户的角色列表", description = "获取当前登录用户的角色列表")
-    public R<List<SysRole>> listRoles() {
-        Long userId = StpUtil.getLoginIdAsLong();
-        return R.success(sysRoleService.listUserRoles(userId));
     }
 
 }

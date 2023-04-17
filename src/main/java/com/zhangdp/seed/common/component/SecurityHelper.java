@@ -136,11 +136,11 @@ public class SecurityHelper implements StpInterface {
         StpUtil.login(sysUser.getId());
         SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
         this.putLoginUser(user);
-        log.debug("tokenInfo:{}", tokenInfo);
 
         LoginResult ret = new LoginResult();
-        ret.setUser(user);
+        ret.setUserId(sysUser.getId());
         ret.setAccessToken(tokenInfo.getTokenValue());
+        ret.setUser(user);
         return ret;
     }
 

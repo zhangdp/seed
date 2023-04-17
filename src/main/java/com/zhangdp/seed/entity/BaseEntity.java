@@ -46,7 +46,7 @@ public abstract class BaseEntity {
     /**
      * 修改时间
      */
-    @TableField(fill = FieldFill.INSERT_UPDATE)
+    @TableField(fill = FieldFill.UPDATE)
     @Schema(title = "修改时间", description = "格式：" + CommonConst.DATETIME_FORMATTER)
     protected LocalDateTime updateTime;
     /**
