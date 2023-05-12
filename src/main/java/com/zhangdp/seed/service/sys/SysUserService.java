@@ -18,4 +18,21 @@ public interface SysUserService extends IService<SysUser> {
      * @return 用户
      */
     SysUser getByUsername(String username);
+
+    /**
+     * 是否已存在账号
+     *
+     * @param username
+     * @return
+     */
+    boolean existsUsername(String username);
+
+    /**
+     * 新增
+     *
+     * @param user
+     * @return
+     */
+    boolean insert(SysUser user);
+
 }

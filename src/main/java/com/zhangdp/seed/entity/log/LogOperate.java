@@ -35,10 +35,10 @@ public class LogOperate implements Serializable {
     @Schema(title = "id")
     private Long id;
     /**
-     * 登陆时间
+     * 操作时间
      */
     @TableField(fill = FieldFill.INSERT)
-    @Schema(title = "登陆时间", description = "格式：" + CommonConst.DATETIME_FORMATTER)
+    @Schema(title = "操作时间", description = "格式：" + CommonConst.DATETIME_FORMATTER)
     private LocalDateTime createTime;
     /**
      * 用户id
@@ -46,9 +46,16 @@ public class LogOperate implements Serializable {
     @Schema(title = "用户id")
     private Long userId;
     /**
+     * 操作类型
+     *
+     * @see com.zhangdp.seed.common.enums.OperateType
+     */
+    @Schema(title = "操作类型")
+    private String type;
+    /**
      * 请求uri
      */
-    @Schema(title = "用户id")
+    @Schema(title = "请求uri路径")
     private String uri;
     /**
      * 请求的http 方式
@@ -57,6 +64,16 @@ public class LogOperate implements Serializable {
      */
     @Schema(title = "http方式")
     private String httpMethod;
+    /**
+     * 用户浏览器标识
+     */
+    @Schema(title = "用户浏览器标识")
+    private String userAgent;
+    /**
+     * 客户端ip
+     */
+    @Schema(title = "客户端ip")
+    private String clientIp;
     /**
      * 执行的方法
      */
