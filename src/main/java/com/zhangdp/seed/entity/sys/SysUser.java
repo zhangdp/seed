@@ -1,5 +1,7 @@
 package com.zhangdp.seed.entity.sys;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.zhangdp.seed.entity.BaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -42,7 +44,8 @@ public class SysUser extends BaseEntity implements Serializable {
     /**
      * 手机号
      */
-    private String phone;
+    @Schema(title = "手机号")
+    private String mobile;
     /**
      * 性别，F：女，M：男，null：未知
      */
@@ -51,30 +54,43 @@ public class SysUser extends BaseEntity implements Serializable {
     /**
      * 生日
      */
+    @Schema(title = "生日")
     private LocalDate birthDate;
     /**
      * 邮箱
      */
+    @Schema(title = "邮箱")
     private String email;
     /**
      * 头像地址
      */
+    @Schema(title = "头像地址")
     private String avatarUrl;
     /**
      * 姓名
      */
-    private String fullName;
+    @Schema(title = "姓名")
+    private String name;
+    /**
+     * 住址
+     */
+    @Schema(title = "住址")
+    private String address;
     /**
      * 身份证号
      */
-    private String idCardNo;
+    @Schema(title = "身份证号")
+    private String citizenId;
     /**
      * 部门id
      */
+    @Schema(title = "部门id")
     private Long deptId;
     /**
      * 状态，0：正常，其它异常
      */
+    @Schema(title = "状态", description = "0：正常；其它：锁定或者异常")
+    @TableField(fill = FieldFill.INSERT)
     private Integer status;
 
 }

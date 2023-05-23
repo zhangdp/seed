@@ -1,10 +1,13 @@
 package com.zhangdp.seed.controller.sys;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.zhangdp.seed.common.R;
 import com.zhangdp.seed.common.annotation.OperateLog;
+import com.zhangdp.seed.common.constant.TableNameConst;
 import com.zhangdp.seed.common.enums.OperateType;
-import com.zhangdp.seed.entity.sys.SysUser;
+import com.zhangdp.seed.model.dto.UserInfo;
 import com.zhangdp.seed.service.sys.SysUserService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -34,10 +37,11 @@ public class SysUserController {
      * @return
      */
     @PostMapping("/add")
-    @OperateLog(type = OperateType.CREATE, refModule = "sys_user", refId = "#user.id")
-    public R<Boolean> add(@RequestBody @Valid SysUser user) {
-        user.setId(null);
-        return R.success(sysUserService.insert(user));
+    @SaCheckPermission("user:add")
+    @Operation(summary = "新增用户", description = "新增用户，无需传值id、createTime、updateTime")
+    @OperateLog(type = OperateType.CREATE, refModule = TableNameConst.SYS_USER, refId = "#user.id")
+    public R<Boolean> add(@RequestBody @Valid UserInfo user) {
+        return R.success(sysUserService.insert(user) != null);
     }
 
 }

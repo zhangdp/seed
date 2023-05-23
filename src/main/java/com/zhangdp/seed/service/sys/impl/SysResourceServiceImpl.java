@@ -1,6 +1,5 @@
 package com.zhangdp.seed.service.sys.impl;
 
-import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhangdp.seed.common.constant.CacheConst;
@@ -12,6 +11,7 @@ import com.zhangdp.seed.service.sys.SysResourceService;
 import com.zhangdp.seed.service.sys.SysRoleResourceService;
 import com.zhangdp.seed.service.sys.SysUserRoleService;
 import lombok.RequiredArgsConstructor;
+import org.dromara.hutool.core.collection.CollUtil;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.stereotype.Service;
 

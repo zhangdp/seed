@@ -1,12 +1,12 @@
 package com.zhangdp.seed.common.component;
 
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.lang.Assert;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.hutool.core.collection.CollUtil;
+import org.dromara.hutool.core.lang.Assert;
 import org.springframework.stereotype.Component;
 
 import java.util.*;

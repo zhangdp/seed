@@ -1,6 +1,6 @@
 package com.zhangdp.seed.model;
 
-import com.zhangdp.seed.model.dto.User;
+import com.zhangdp.seed.model.dto.UserInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -41,5 +41,5 @@ public class LoginResult implements Serializable {
      * 用户
      */
     @Schema(title = "用户信息")
-    private User user;
+    private UserInfo user;
 }

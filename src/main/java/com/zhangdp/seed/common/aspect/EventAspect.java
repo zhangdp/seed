@@ -1,6 +1,5 @@
 package com.zhangdp.seed.common.aspect;
 
-import cn.hutool.core.util.StrUtil;
 import com.zhangdp.seed.common.annotation.Event;
 import com.zhangdp.seed.common.component.EventDispatch;
 import lombok.extern.slf4j.Slf4j;
@@ -8,6 +7,7 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.Ordered;

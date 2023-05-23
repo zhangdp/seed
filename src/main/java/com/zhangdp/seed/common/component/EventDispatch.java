@@ -1,9 +1,9 @@
 package com.zhangdp.seed.common.component;
 
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.thread.ThreadUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.hutool.core.collection.CollUtil;
+import org.dromara.hutool.core.thread.ThreadUtil;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 

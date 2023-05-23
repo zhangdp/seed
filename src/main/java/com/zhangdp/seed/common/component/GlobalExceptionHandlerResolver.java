@@ -1,20 +1,17 @@
 package com.zhangdp.seed.common.component;
 
 import cn.dev33.satoken.exception.NotLoginException;
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.StrUtil;
 import com.zhangdp.seed.common.R;
-import com.zhangdp.seed.common.constant.CommonConst;
+import com.zhangdp.seed.common.enums.ErrorCode;
 import com.zhangdp.seed.common.exception.BizException;
-import com.zhangdp.seed.common.exception.ForbiddenException;
-import com.zhangdp.seed.common.exception.NotFoundException;
-import com.zhangdp.seed.common.exception.UnauthorizedException;
+import com.zhangdp.seed.model.ParamsError;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.hutool.core.collection.CollUtil;
 import org.springframework.http.HttpStatus;
+import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -24,13 +21,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import java.nio.file.AccessDeniedException;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 2023/4/3
- * 全局异常处理器
+ * 2023/4/3 全局异常处理器
  *
  * @author zhangdp
  * @since 1.0.0
@@ -40,7 +37,7 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandlerResolver {
 
     /**
-     * 全局异常.
+     * 全局异常
      *
      * @param e
      * @param request
@@ -48,23 +45,23 @@ public class GlobalExceptionHandlerResolver {
      */
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public R handleGlobalException(Exception e, HttpServletRequest request) {
-        log.error("全局异常信息：uri={}, ex={}", request.getRequestURI(), e.getLocalizedMessage(), e);
-        return new R<>().setCode(HttpStatus.INTERNAL_SERVER_ERROR.value()).setMsg("系统异常：" + StrUtil.maxLength(e.getLocalizedMessage(), CommonConst.MAX_ERROR_MSG_LENGTH));
+    public R<?> handleGlobalException(Exception e, HttpServletRequest request) {
+        log.error("全局异常：uri=" + request.getRequestURI(), e);
+        return new R<>(ErrorCode.SERVER_ERROR);
     }
 
     /**
-     * AccessDeniedException
+     * 数据库异常
      *
      * @param e
      * @param request
-     * @return R
+     * @return
      */
-    @ExceptionHandler(AccessDeniedException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    public R handleAccessDeniedException(AccessDeniedException e, HttpServletRequest request) {
-        log.error("拒绝授权异常信息：uri={}, ex={}", request.getRequestURI(), e.getLocalizedMessage(), e);
-        return new R<>().setCode(HttpStatus.FORBIDDEN.value()).setMsg("访问受限：" + StrUtil.maxLength(e.getLocalizedMessage(), CommonConst.MAX_ERROR_MSG_LENGTH));
+    @ExceptionHandler({SQLException.class, BadSqlGrammarException.class})
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public R<?> handleSQLException(Exception e, HttpServletRequest request) {
+        log.error("SQL异常：uri=" + request.getRequestURI(), e);
+        return new R<>(ErrorCode.SQL_ERROR);
     }
 
     /**
@@ -76,17 +73,27 @@ public class GlobalExceptionHandlerResolver {
      */
     @ExceptionHandler({MethodArgumentNotValidException.class, BindException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public R handleValidException(Exception e, HttpServletRequest request) {
+    public R<List<ParamsError>> handleValidException(Exception e, HttpServletRequest request) {
+        List<ParamsError> errors;
         List<FieldError> fieldErrors;
         if (e instanceof MethodArgumentNotValidException) {
             fieldErrors = ((MethodArgumentNotValidException) e).getBindingResult().getFieldErrors();
         } else {
             fieldErrors = ((BindException) e).getBindingResult().getFieldErrors();
         }
-        String allErrorMsgs = fieldErrors.stream().map(FieldError::getDefaultMessage).collect(Collectors.joining("、"));
-        log.warn("参数校验错误异常信息：uri={}, ex={}", request.getRequestURI(), allErrorMsgs, e);
-        String msg = fieldErrors.get(0).getDefaultMessage();
-        return new R<>().setCode(HttpStatus.BAD_REQUEST.value()).setMsg("参数错误：" + msg);
+        errors = new ArrayList<>(fieldErrors.size());
+        for (FieldError fieldError : fieldErrors) {
+            ParamsError pe = new ParamsError();
+            pe.setField(fieldError.getField());
+            pe.setMessage(fieldError.getDefaultMessage());
+            errors.add(pe);
+        }
+        if (log.isInfoEnabled()) {
+            log.info("参数校验错误异常信息：uri={}, errorMsg={}", request.getRequestURI(), errors.stream().map(ParamsError::getMessage).collect(Collectors.joining("、")));
+        }
+        return new R<>(ErrorCode.VALID_PARAMS_FAILED.code(),
+                CollUtil.isEmpty(errors) ? "参数校验失败" : errors.get(0).getMessage(),
+                errors);
     }
 
     /**
@@ -98,11 +105,18 @@ public class GlobalExceptionHandlerResolver {
      */
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public R constraintViolationException(ConstraintViolationException e, HttpServletRequest request) {
-        String allErrorMsgs = e.getConstraintViolations().stream().map(ConstraintViolation::getMessage).collect(Collectors.joining("、"));
-        log.warn("参数校验错误异常信息：uri={}, ex={}", request.getRequestURI(), allErrorMsgs, e);
-        String msg = CollUtil.getFirst(e.getConstraintViolations()).getMessage();
-        return new R<>().setCode(HttpStatus.BAD_REQUEST.value()).setMsg("参数错误：" + msg);
+    public R<List<ParamsError>> constraintViolationException(ConstraintViolationException e, HttpServletRequest request) {
+        List<ParamsError> errors = e.getConstraintViolations()
+                .stream()
+                .map(v -> new ParamsError(null, v.getMessage()))
+                .toList();
+        if (log.isInfoEnabled()) {
+            log.info("参数校验错误异常信息：uri={}, errorMsg={}", request.getRequestURI(),
+                    errors.stream().map(ParamsError::getMessage).collect(Collectors.joining("、")));
+        }
+        return new R<>(ErrorCode.VALID_PARAMS_FAILED.code(),
+                CollUtil.isEmpty(errors) ? "参数校验失败" : errors.get(0).getMessage(),
+                errors);
     }
 
     /**
@@ -114,9 +128,11 @@ public class GlobalExceptionHandlerResolver {
      */
     @ExceptionHandler(ServletException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public R handlerServletException(ServletException e, HttpServletRequest request) {
-        log.warn("请求异常：uri={}, ex={}", request.getRequestURI(), e.getMessage(), e);
-        return new R<>().setCode(HttpStatus.BAD_REQUEST.value()).setMsg(e.getLocalizedMessage());
+    public R<?> handlerServletException(ServletException e, HttpServletRequest request) {
+        if (log.isInfoEnabled()) {
+            log.info("ServletException：uri={}, errorMessage={}", request.getRequestURI(), e.getLocalizedMessage());
+        }
+        return new R<>(ErrorCode.BAD_REQUEST);
     }
 
     /**
@@ -128,10 +144,10 @@ public class GlobalExceptionHandlerResolver {
      */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public R methodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e, HttpServletRequest request) {
-        log.warn("参数类型异常：uri={}, ex={}", request.getRequestURI(), e.getMessage(), e);
+    public R<?> methodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e, HttpServletRequest request) {
+        log.warn("参数类型异常：uri={}, ex={}", request.getRequestURI(), e.getMessage());
         String msg = "参数错误：" + e.getName() + "需为" + e.getRequiredType().getSimpleName() + "类型";
-        return new R<>().setCode(HttpStatus.BAD_REQUEST.value()).setMsg(msg);
+        return new R<>(HttpStatus.BAD_REQUEST.value(), msg);
     }
 
     /**
@@ -143,9 +159,9 @@ public class GlobalExceptionHandlerResolver {
      */
     @ExceptionHandler(MissingServletRequestParameterException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public R missingServletRequestParameterException(MissingServletRequestParameterException e, HttpServletRequest request) {
-        log.warn("缺少参数异常：uri={}, ex={}", request.getRequestURI(), e.getMessage(), e);
-        return new R<>().setCode(HttpStatus.BAD_REQUEST.value()).setMsg("参数异常：" + e.getParameterName() + "不能为空");
+    public R<?> missingServletRequestParameterException(MissingServletRequestParameterException e, HttpServletRequest request) {
+        log.warn("缺少参数异常：uri={}, ex={}", request.getRequestURI(), e.getMessage());
+        return new R<>(HttpStatus.BAD_REQUEST.value(), "参数异常：" + e.getParameterName() + "不能为空");
     }
 
     /**
@@ -157,9 +173,9 @@ public class GlobalExceptionHandlerResolver {
      */
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public R illegalArgumentException(IllegalArgumentException e, HttpServletRequest request) {
-        log.warn("非法参数异常：uri={}, ex={}", request.getRequestURI(), e.getMessage(), e);
-        return new R<>().setCode(HttpStatus.BAD_REQUEST.value()).setMsg(e.getLocalizedMessage());
+    public R<?> illegalArgumentException(IllegalArgumentException e, HttpServletRequest request) {
+        log.warn("非法参数异常：uri={}, ex={}", request.getRequestURI(), e.getMessage());
+        return new R<>(HttpStatus.BAD_REQUEST.value(), e.getLocalizedMessage());
     }
 
     /**
@@ -170,52 +186,10 @@ public class GlobalExceptionHandlerResolver {
      * @return
      */
     @ExceptionHandler(BizException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public R BizException(BizException e, HttpServletRequest request) {
-        log.error("业务异常：uri={}, ex={}", request.getRequestURI(), e.getMessage(), e);
-        return new R().setCode(e.getCode()).setMsg(e.getMessage());
-    }
-
-    /**
-     * 资源不存在异常
-     *
-     * @param e
-     * @param request
-     * @return
-     */
-    @ExceptionHandler(NotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public R fstiNotFoundException(NotFoundException e, HttpServletRequest request) {
-        log.error("资源不存在异常：uri={}, ex={}", request.getRequestURI(), e.getMessage(), e);
-        return new R().setCode(e.getCode()).setMsg(e.getMessage());
-    }
-
-    /**
-     * 未认证异常
-     *
-     * @param e
-     * @param request
-     * @return
-     */
-    @ExceptionHandler(UnauthorizedException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public R fstiUnauthorizedException(UnauthorizedException e, HttpServletRequest request) {
-        log.error("未认证异常：uri={}, ex={}", request.getRequestURI(), e.getMessage(), e);
-        return new R().setCode(e.getCode()).setMsg(e.getMessage());
-    }
-
-    /**
-     * 权限不足异常
-     *
-     * @param e
-     * @param request
-     * @return
-     */
-    @ExceptionHandler(ForbiddenException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    public R fstiForbiddenException(ForbiddenException e, HttpServletRequest request) {
-        log.error("权限不足异常：uri={}, ex={}", request.getRequestURI(), e.getMessage(), e);
-        return new R().setCode(e.getCode()).setMsg(e.getMessage());
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public R<?> bizException(BizException e, HttpServletRequest request) {
+        log.warn("业务异常：uri={}", request.getRequestURI(), e);
+        return new R<>(e.getCode(), e.getLocalizedMessage());
     }
 
     /**
@@ -227,9 +201,9 @@ public class GlobalExceptionHandlerResolver {
      */
     @ExceptionHandler(NotLoginException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public R notLoginException(NotLoginException e, HttpServletRequest request) {
-        log.error("未认证异常：uri={}, ex={}", request.getRequestURI(), e.getMessage(), e);
-        return new R().setCode(e.getCode()).setMsg(e.getMessage());
+    public R<?> notLoginException(NotLoginException e, HttpServletRequest request) {
+        log.warn("未登陆异常：uri={}, ex={}", request.getRequestURI(), e.getMessage());
+        return new R<>(e.getCode() <= 0 ? ErrorCode.UNAUTHORIZED.code() : e.getCode(), "请先登录");
     }
 
 }

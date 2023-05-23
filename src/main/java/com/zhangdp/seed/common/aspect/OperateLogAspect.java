@@ -1,13 +1,8 @@
 package com.zhangdp.seed.common.aspect;
 
 import cn.dev33.satoken.stp.StpUtil;
-import cn.hutool.core.map.MapUtil;
-import cn.hutool.core.util.ArrayUtil;
-import cn.hutool.core.util.ClassUtil;
-import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zhangdp.seed.common.annotation.OperateLog;
-import com.zhangdp.seed.common.util.WebUtils;
 import com.zhangdp.seed.entity.log.LogOperate;
 import com.zhangdp.seed.service.log.LogOperateService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,6 +13,11 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.dromara.hutool.core.array.ArrayUtil;
+import org.dromara.hutool.core.map.MapUtil;
+import org.dromara.hutool.core.reflect.ClassUtil;
+import org.dromara.hutool.core.text.StrUtil;
+import org.dromara.hutool.http.server.servlet.JakartaServletUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.annotation.Order;
@@ -108,7 +108,7 @@ public class OperateLogAspect {
                 lo.setJsonResult(objectMapper.writeValueAsString(result));
             }
             lo.setType(operateLog.type().type());
-            lo.setRefModule(StrUtil.emptyToNull(operateLog.refModule()));
+            lo.setRefModule(StrUtil.nullIfEmpty(operateLog.refModule()));
             lo.setRefId(this.getRefId(operateLog.refId(), params, result));
             lo.setUserId(this.getLoginUserId());
             RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
@@ -117,7 +117,7 @@ public class OperateLogAspect {
                 lo.setUri(request.getRequestURI());
                 lo.setHttpMethod(request.getMethod());
                 lo.setUserAgent(request.getHeader("User-Agent"));
-                lo.setClientIp(WebUtils.getClientIP(request));
+                lo.setClientIp(JakartaServletUtil.getClientIP(request));
             }
             logOperateService.save(lo);
             if (log.isDebugEnabled()) {

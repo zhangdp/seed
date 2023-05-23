@@ -1,6 +1,6 @@
 package com.zhangdp.seed.common.component;
 
-import cn.hutool.core.util.ReflectUtil;
+import org.dromara.hutool.core.reflect.FieldUtil;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -108,7 +108,7 @@ public interface IEventHandler {
             return null;
         }
         try {
-            return ReflectUtil.getFieldValue(obj, filed);
+            return FieldUtil.getFieldValue(obj, filed);
         } catch (Exception e) {
             return null;
         }

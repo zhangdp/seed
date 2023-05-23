@@ -1,10 +1,13 @@
 package com.zhangdp.seed.common.exception;
 
+import com.zhangdp.seed.common.enums.ErrorCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serial;
+
 /**
- * 2023/4/3 业务异常，会输出http status 500
+ * 2023/4/3 业务异常，http状态码会输出400
  *
  * @author zhangdp
  * @since 1.0.0
@@ -13,35 +16,13 @@ import lombok.Setter;
 @Setter
 public class BizException extends RuntimeException {
 
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     /**
      * 异常码
      */
-    private int code = 500;
-
-    public BizException() {
-        super();
-    }
-
-    public BizException(String message) {
-        super(message);
-    }
-
-    public BizException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public BizException(Throwable cause) {
-        super(cause);
-    }
-
-    protected BizException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
-
-    public BizException(int code) {
-        super();
-        this.code = code;
-    }
+    private int code;
 
     public BizException(int code, String message) {
         super(message);
@@ -53,14 +34,25 @@ public class BizException extends RuntimeException {
         this.code = code;
     }
 
-    public BizException(int code, Throwable cause) {
-        super(cause);
-        this.code = code;
-    }
-
-    protected BizException(int code, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public BizException(int code, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
         this.code = code;
     }
-    
+
+    public BizException(ErrorCode errorCode) {
+        super(errorCode.message());
+        this.code = errorCode.code();
+    }
+
+    public BizException(ErrorCode errorCode, Throwable cause) {
+        super(errorCode.message(), cause);
+        this.code = errorCode.code();
+    }
+
+    public BizException(ErrorCode errorCode, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(errorCode.message(), cause, enableSuppression, writableStackTrace);
+        this.code = errorCode.code();
+        ;
+    }
+
 }

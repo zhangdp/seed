@@ -15,4 +15,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class SysDeptServiceImpl extends ServiceImpl<SysDeptMapper, SysDept> implements SysDeptService {
 
+    @Override
+    public boolean exists(Long id) {
+        return this.baseMapper.exists(this.lambdaQuery().getWrapper().eq(SysDept::getId, id));
+    }
 }

@@ -4,21 +4,21 @@ import cn.dev33.satoken.session.SaSession;
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpInterface;
 import cn.dev33.satoken.stp.StpUtil;
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.date.LocalDateTimeUtil;
-import cn.hutool.core.lang.Assert;
 import com.zhangdp.seed.common.constant.CommonConst;
 import com.zhangdp.seed.common.constant.SecurityConst;
 import com.zhangdp.seed.entity.sys.SysResource;
 import com.zhangdp.seed.entity.sys.SysRole;
 import com.zhangdp.seed.entity.sys.SysUser;
 import com.zhangdp.seed.model.LoginResult;
-import com.zhangdp.seed.model.dto.User;
+import com.zhangdp.seed.model.dto.UserInfo;
 import com.zhangdp.seed.service.sys.SysResourceService;
 import com.zhangdp.seed.service.sys.SysRoleService;
 import com.zhangdp.seed.service.sys.SysUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.hutool.core.collection.CollUtil;
+import org.dromara.hutool.core.date.DateUtil;
+import org.dromara.hutool.core.lang.Assert;
 import org.springframework.beans.BeanUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.stereotype.Component;
@@ -67,8 +67,8 @@ public class SecurityHelper implements StpInterface {
      *
      * @return
      */
-    public User loginUser() {
-        return this.getSessionAttr(SecurityConst.SESSION_USER, User.class);
+    public UserInfo loginUser() {
+        return this.getSessionAttr(SecurityConst.SESSION_USER, UserInfo.class);
     }
 
     /**
@@ -116,7 +116,7 @@ public class SecurityHelper implements StpInterface {
      *
      * @param user
      */
-    private void putLoginUser(User user) {
+    private void putLoginUser(UserInfo user) {
         this.putSessionAttr(SecurityConst.SESSION_USER, user);
     }
 
@@ -131,7 +131,7 @@ public class SecurityHelper implements StpInterface {
         SysUser sysUser = sysUserService.getByUsername(username);
         Assert.notNull(sysUser, "账号不存在或者密码错误");
         this.checkUser(sysUser);
-        User user = this.toUser(sysUser);
+        UserInfo user = this.toUser(sysUser);
 
         StpUtil.login(sysUser.getId());
         SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
@@ -152,8 +152,9 @@ public class SecurityHelper implements StpInterface {
     public void checkUser(SysUser sysUser) {
         Assert.isTrue(sysUser.getStatus() == CommonConst.GOOD, "账号已被锁定");
         long dt = StpUtil.getDisableTime(sysUser.getId());
+
         Assert.isTrue(dt == -2, dt == -1 ? "账号已被永久封禁"
-                : "账号已被封禁，解封时间：" + LocalDateTimeUtil.format(LocalDateTime.now().plusSeconds(60L), CommonConst.DATETIME_FORMATTER));
+                : "账号已被封禁，解封时间：" + DateUtil.format(LocalDateTime.now().plusSeconds(60L), CommonConst.DATETIME_FORMATTER));
     }
 
     /**
@@ -171,8 +172,8 @@ public class SecurityHelper implements StpInterface {
      * @param sysUser
      * @return
      */
-    private User toUser(SysUser sysUser) {
-        User user = new User();
+    private UserInfo toUser(SysUser sysUser) {
+        UserInfo user = new UserInfo();
         BeanUtils.copyProperties(sysUser, user, "password");
         return user;
     }

@@ -1,11 +1,11 @@
 package com.zhangdp.seed.common.filter;
 
-import com.zhangdp.seed.common.util.WebUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.hutool.http.server.servlet.JakartaServletUtil;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 
@@ -29,7 +29,7 @@ public class ContentCachingRequestFilter extends OncePerRequestFilter {
             log.debug("ContentCachingRequestFilter in:{}", request.getRequestURI());
         }
         // get请求没有body；不缓存文件防止过大内存溢出
-        if (!"GET".equalsIgnoreCase(request.getMethod()) && !WebUtils.isMultipart(request)) {
+        if (!"GET".equalsIgnoreCase(request.getMethod()) && !JakartaServletUtil.isMultipart(request)) {
             ContentCachingRequestWrapper wrapper = new ContentCachingRequestWrapper(request);
             filterChain.doFilter(wrapper, response);
         } else {

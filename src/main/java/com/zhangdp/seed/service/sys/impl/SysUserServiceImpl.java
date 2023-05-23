@@ -1,10 +1,17 @@
 package com.zhangdp.seed.service.sys.impl;
 
-import cn.hutool.core.lang.Assert;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zhangdp.seed.common.enums.ErrorCode;
+import com.zhangdp.seed.common.exception.BizException;
 import com.zhangdp.seed.entity.sys.SysUser;
 import com.zhangdp.seed.mapper.sys.SysUserMapper;
+import com.zhangdp.seed.model.dto.UserInfo;
+import com.zhangdp.seed.service.sys.SysDeptService;
 import com.zhangdp.seed.service.sys.SysUserService;
+import org.dromara.hutool.core.bean.BeanUtil;
+import org.dromara.hutool.core.lang.Assert;
+import org.dromara.hutool.core.text.StrUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements SysUserService {
+
+    @Autowired
+    private SysDeptService sysDeptService;
 
     @Override
     public SysUser getByUsername(String username) {
@@ -29,8 +39,18 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean insert(SysUser user) {
-        Assert.isFalse(this.existsUsername(user.getUsername()), "账号" + user.getUsername() + "已存在");
-        return this.save(user);
+    public SysUser insert(UserInfo user) {
+        SysUser bean = new SysUser();
+        BeanUtil.copyProperties(user, bean, "id");
+        Assert.isFalse(this.existsUsername(bean.getUsername()), () -> new BizException(ErrorCode.USERNAME_REPEAT.code(), "账号" + bean.getUsername() + "已存在"));
+        if (bean.getDeptId() != null) {
+            Assert.isTrue(sysDeptService.exists(bean.getDeptId()), () -> new BizException(ErrorCode.USERNAME_REPEAT.code(), "部门" + (StrUtil.isNotBlank(user.getDeptName()) ? user.getDeptName() : "id" + bean.getDeptId()) + "不存在"));
+        }
+        if (StrUtil.isNotBlank(bean.getPassword())) {
+            bean.setPassword(this.encryptPassword(bean.getPassword()));
+        }
+        this.save(bean);
+        return bean;
     }
+
 }
