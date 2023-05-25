@@ -6,8 +6,8 @@ spring:
   servlet:
     multipart:
       enabled: true
-      max-file-size: 200MB
-      max-request-size: 200MB
+      max-file-size: 100MB
+      max-request-size: 100MB
   jackson:
     deserialization:
       fail-on-unknown-properties: false
@@ -15,16 +15,16 @@ spring:
   task:
     execution:
       pool:
-        core-size: 8
-        max-size: 16
-        queue-capacity: 256
+        core-size: 16
+        max-size: 32
+        queue-capacity: 4096
   data:
     redis:
       database: ${REDIS_DATABASE:0}
       host: ${REDIS_HOST:191.168.10.91}
       port: ${REDIS_PORT:6379}
       password: ${REDIS_PASSWORD:}
-      connect-timeout: 5000
+      connect-timeout: 5s
       client-type: lettuce
       lettuce:
         pool:
@@ -45,6 +45,14 @@ spring:
       maximum-pool-size: 16
       # minimum-idle: 4
       keepaliveTime: 60000
+  boot:
+    admin:
+      client:
+        url: ${ADMIN_URL:http://127.0.0.1:18080}
+        instance:
+          metadata:
+            user.name: ${actuator.security.user}
+            user.password: ${actuator.security.password}
 # druid 暂不兼容springboot3.0
 #    druid:
 #      keepAlive: true
@@ -70,6 +78,18 @@ spring:
 #          slow-sql-millis: 10000
 #        wall:
 #          enabled: false
+management:
+  endpoint:
+    health:
+      show-details: when_authorized
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+actuator:
+  security:
+    user: seed
+    password: 123456
 mybatis:
   mapper-locations:
     - /mapper/**/*.xml
@@ -91,10 +111,10 @@ sa-token:
   is-share: false
   auto-renew: true
   token-style: uuid
+springdoc:
+  api-docs:
+    enabled: true
 logging:
   level:
     root: info
     com.zhangdp.seed: debug
-springdoc:
-  api-docs:
-    enabled: true

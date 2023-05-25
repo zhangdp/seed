@@ -1,5 +1,6 @@
 package com.zhangdp.seed.common.component;
 
+import cn.dev33.satoken.exception.NotBasicAuthException;
 import cn.dev33.satoken.exception.NotLoginException;
 import com.zhangdp.seed.common.R;
 import com.zhangdp.seed.common.enums.ErrorCode;
@@ -7,6 +8,7 @@ import com.zhangdp.seed.common.exception.BizException;
 import com.zhangdp.seed.model.ParamsError;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hutool.core.collection.CollUtil;
@@ -202,8 +204,23 @@ public class GlobalExceptionHandlerResolver {
     @ExceptionHandler(NotLoginException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public R<?> notLoginException(NotLoginException e, HttpServletRequest request) {
-        log.warn("未登陆异常：uri={}, ex={}", request.getRequestURI(), e.getMessage());
+        log.warn("未登录异常：uri={}, ex={}", request.getRequestURI(), e.getMessage());
         return new R<>(e.getCode() <= 0 ? ErrorCode.UNAUTHORIZED.code() : e.getCode(), "请先登录");
+    }
+
+    /**
+     * sa-token 未Http Basic认证
+     *
+     * @param e
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(NotBasicAuthException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public R<?> notLoginException(NotBasicAuthException e, HttpServletRequest request, HttpServletResponse response) {
+        log.warn("未Http Basic认证异常：uri={}, ex={}", request.getRequestURI(), e.getMessage());
+        response.setHeader("WWW-Authenticate", "Basic");
+        return new R<>(e.getCode() <= 0 ? ErrorCode.UNAUTHORIZED.code() : e.getCode(), "请先Http Basic认证");
     }
 
 }

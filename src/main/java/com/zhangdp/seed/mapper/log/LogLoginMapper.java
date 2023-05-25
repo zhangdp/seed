@@ -5,7 +5,7 @@ import com.zhangdp.seed.entity.log.LogLogin;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
- * 2023/4/17 登陆日志mapper
+ * 2023/4/17 登录日志mapper
  *
  * @author zhangdp
  * @since 1.0.0

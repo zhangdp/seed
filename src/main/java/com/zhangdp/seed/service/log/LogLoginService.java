@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.zhangdp.seed.entity.log.LogLogin;
 
 /**
- * 2023/4/17 登陆日志service
+ * 2023/4/17 登录日志service
  *
  * @author zhangdp
  * @since 1.0.0

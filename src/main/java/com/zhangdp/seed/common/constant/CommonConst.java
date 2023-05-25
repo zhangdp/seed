@@ -31,7 +31,7 @@ public interface CommonConst {
      * 最大LocalTime时间 - 23:59:59.999
      */
     LocalTime MAX_LOCAL_TIME = LocalTime.of(23, 59, 59, 999);
-    // LocalTime.MAX 纳秒是999_999_999，存到pg数据库会溢出变成下一天0点
+    // LocalTime.MAX 纳秒是999_999_999，存到数据库会溢出变成下一天0点
     // LocalTime MAX_LOCAL_TIME = LocalTime.MAX;
 
     /**
@@ -88,11 +88,6 @@ public interface CommonConst {
      * 接口返回状态码成功
      */
     int RESULT_SUCCESS = 0;
-
-    /**
-     * 接口返回错误
-     */
-    int RESULT_FAIL = 1;
 
     /**
      * 编码

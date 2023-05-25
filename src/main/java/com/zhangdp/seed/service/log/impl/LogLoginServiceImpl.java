@@ -7,7 +7,7 @@ import com.zhangdp.seed.service.log.LogLoginService;
 import org.springframework.stereotype.Service;
 
 /**
- * 2023/4/17 登陆日志service实现
+ * 2023/4/17 登录日志service实现
  *
  * @author zhangdp
  * @since 1.0.0

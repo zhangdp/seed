@@ -9,7 +9,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * 2023/4/7 登陆结果
+ * 2023/4/7 登录结果
  *
  * @author zhangdp
  * @since

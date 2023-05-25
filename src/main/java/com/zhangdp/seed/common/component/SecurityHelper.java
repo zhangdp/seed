@@ -121,7 +121,7 @@ public class SecurityHelper implements StpInterface {
     }
 
     /**
-     * 账号密码登陆
+     * 账号密码登录
      *
      * @param username
      * @param password

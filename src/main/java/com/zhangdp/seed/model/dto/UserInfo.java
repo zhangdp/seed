@@ -44,7 +44,7 @@ public class UserInfo implements Serializable {
      * 修改时间
      */
     @Schema(title = "修改时间", description = "格式：" + CommonConst.DATETIME_FORMATTER)
-    protected LocalDateTime updateTime;
+    private LocalDateTime updateTime;
     /**
      * 账号
      */

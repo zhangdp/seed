@@ -22,21 +22,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/auth")
-@Tag(name = "认证", description = "认证相关接口如登陆、注销等")
+@Tag(name = "认证", description = "认证相关接口如登录、注销等")
 public class AuthController {
 
     private final SecurityHelper securityHelper;
     private final SysRoleService sysRoleService;
 
     /**
-     * 登陆
+     * 登录
      *
      * @param username 账号
      * @param password 密码
      * @return
      */
     @PostMapping("/login")
-    @Operation(summary = "账号密码登陆", description = "根据账号密码登陆")
+    @Operation(summary = "账号密码登录", description = "根据账号密码登录")
     @SaIgnore
     public R<LoginResult> login(String username, String password) {
         return R.success(securityHelper.doLogin(username, password));

@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.0.6</version>
+        <version>3.1.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.zhangdp</groupId>
@@ -22,6 +22,7 @@
         <pagehelper.version>1.4.6</pagehelper.version>
         <springdoc.version>2.1.0</springdoc.version>
         <druid.version>1.2.17</druid.version>
+        <spring-boot-admin.version>3.0.4</spring-boot-admin.version>
     </properties>
 
     <dependencies>
@@ -44,6 +45,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
         <dependency>
@@ -116,6 +121,12 @@
             <version>${druid.version}</version>
         </dependency>
         -->
+        <!-- springboot admin监控 -->
+        <dependency>
+            <groupId>de.codecentric</groupId>
+            <artifactId>spring-boot-admin-starter-client</artifactId>
+            <version>${spring-boot-admin.version}</version>
+        </dependency>
 
     </dependencies>
 

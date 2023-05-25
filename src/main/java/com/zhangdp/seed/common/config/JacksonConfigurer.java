@@ -18,9 +18,6 @@ import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilde
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.format.FormatterRegistry;
-import org.springframework.format.datetime.standard.DateTimeFormatterRegistrar;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -37,7 +34,7 @@ import java.time.format.DateTimeFormatter;
 @Configuration
 @ConditionalOnClass(ObjectMapper.class)
 @AutoConfigureBefore(JacksonAutoConfiguration.class)
-public class JacksonConfigurer implements WebMvcConfigurer {
+public class JacksonConfigurer {
 
     /**
      * 时间格式化组件
@@ -78,25 +75,6 @@ public class JacksonConfigurer implements WebMvcConfigurer {
     @ConditionalOnMissingBean
     public Jackson2ObjectMapperBuilderCustomizer customizer() {
         return builder -> builder.modules(TIME_MODULE);
-    }
-
-    /**
-     * 增加GET请求参数中时间类型转换
-     * <ul>
-     * <li>HH:mm:ss[.SSS] -> LocalTime</li>
-     * <li>yyyy-MM-dd -> LocalDate</li>
-     * <li>yyyy-MM-dd HH:mm:ss[.SSS] -> LocalDateTime</li>
-     * </ul>
-     *
-     * @param registry
-     */
-    @Override
-    public void addFormatters(FormatterRegistry registry) {
-        DateTimeFormatterRegistrar registrar = new DateTimeFormatterRegistrar();
-        registrar.setTimeFormatter(DateTimeFormatter.ofPattern(CommonConst.TIME_FORMATTER));
-        registrar.setDateFormatter(DateTimeFormatter.ofPattern(CommonConst.DATE_FORMATTER));
-        registrar.setDateTimeFormatter(DateTimeFormatter.ofPattern(CommonConst.DATETIME_FORMATTER));
-        registrar.registerFormatters(registry);
     }
 
 }

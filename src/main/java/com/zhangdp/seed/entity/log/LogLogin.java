@@ -14,7 +14,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * 2023/4/14 登陆日志
+ * 2023/4/14 登录日志
  *
  * @author zhangdp
  * @since 1.0.0
@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 @Data
 @Accessors(chain = true)
 @TableName("log_login")
-@Schema(description = "登陆日志")
+@Schema(description = "登录日志")
 public class LogLogin implements Serializable {
 
     @Serial
@@ -35,10 +35,10 @@ public class LogLogin implements Serializable {
     @Schema(title = "id")
     private Long id;
     /**
-     * 登陆时间
+     * 登录时间
      */
     @TableField(fill = FieldFill.INSERT)
-    @Schema(title = "登陆时间", description = "格式：" + CommonConst.DATETIME_FORMATTER)
+    @Schema(title = "登录时间", description = "格式：" + CommonConst.DATETIME_FORMATTER)
     private LocalDateTime createTime;
     /**
      * 用户id
@@ -51,14 +51,14 @@ public class LogLogin implements Serializable {
     @Schema(title = "用户标识", description = "用户标识、如账号、手机号、邮箱等")
     private String userCode;
     /**
-     * 登陆类型
+     * 登录类型
      */
-    @Schema(title = "登陆类型", description = "密码、手机号验证码等")
+    @Schema(title = "登录类型", description = "密码、手机号验证码等")
     private Integer loginType;
     /**
-     * 登陆结果
+     * 登录结果
      */
-    @Schema(title = "登陆结果")
+    @Schema(title = "登录结果")
     private int resultCode;
     /**
      * 客户端ip

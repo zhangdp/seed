@@ -1,6 +1,6 @@
 ## 系统说明
 
-- 基于 Spring Boot 3.0 的 RBAC **权限管理系统** 种子项目
+- 基于 Spring Boot 3 的 RBAC **权限管理系统** 种子项目
 
 ### 环境要求
 
@@ -15,7 +15,7 @@
 
 | 依赖                                    | 版本      |
 |---------------------------------------|---------|
-| Spring Boot                           | 3.0.5   |
+| Spring Boot                           | 3.1.0   |
 | [Sa-Token](https://sa-token.cc/)      | 1.34.0  |
 | [Mybatis Plus](https://baomidou.com/) | 3.5.3.1 |
-| [Hutool](https://www.hutool.cn/)      | 5.8.16  |
+| [Hutool](https://www.hutool.cn/)      | 6.0.0M3 |
