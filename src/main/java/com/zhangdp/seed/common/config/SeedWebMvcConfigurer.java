@@ -7,7 +7,7 @@ import cn.dev33.satoken.router.SaRouter;
 import cn.dev33.satoken.stp.StpUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zhangdp.seed.common.R;
-import com.zhangdp.seed.common.component.SaTokenErrorHandler;
+import com.zhangdp.seed.common.component.SaTokenHelper;
 import com.zhangdp.seed.common.constant.CommonConst;
 import com.zhangdp.seed.common.enums.ErrorCode;
 import com.zhangdp.seed.common.filter.SaTokenCheckAuthFilter;
@@ -103,7 +103,7 @@ public class SeedWebMvcConfigurer implements WebMvcConfigurer {
                     try {
                         // 区分具体检查失败原因如是因为token不存在还是token已过期等
                         if (t instanceof SaTokenException) {
-                            r = SaTokenErrorHandler.resolveError((SaTokenException) t);
+                            r = SaTokenHelper.resolveError((SaTokenException) t);
                         } else {
                             r = new R<>(ErrorCode.SERVER_ERROR);
                         }
