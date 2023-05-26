@@ -28,8 +28,8 @@ spring:
       client-type: lettuce
       lettuce:
         pool:
-          max-active: 16
-          max-idle: 16
+          max-active: 12
+          max-idle: 12
           min-idle: 4
   cache:
     type: redis
@@ -48,6 +48,7 @@ spring:
   boot:
     admin:
       client:
+        enabled: false
         url: ${ADMIN_URL:http://127.0.0.1:18080}
         instance:
           metadata:
@@ -111,10 +112,36 @@ sa-token:
   is-share: false
   auto-renew: true
   token-style: uuid
-springdoc:
-  api-docs:
-    enabled: true
 logging:
   level:
     root: info
     com.zhangdp.seed: debug
+
+# 测试环境
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+logging:
+  file:
+    path: /var/log/${spring.application.name}
+  level:
+    root: info
+    com.zhangdp.seed: info
+
+# 生产环境
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+springdoc:
+  api-docs:
+    enabled: false
+logging:
+  file:
+    path: /var/log/${spring.application.name}
+  level:
+    root: warn
+    com.zhangdp.seed: info

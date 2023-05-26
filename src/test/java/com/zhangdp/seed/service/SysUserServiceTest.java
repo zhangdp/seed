@@ -25,11 +25,11 @@ public class SysUserServiceTest {
         SysUser user = new SysUser();
         user.setUsername("test");
         user.setPassword("123456");
-        user.setPhone("13900000000");
+        user.setMobile("13900000000");
         user.setSex('M');
         user.setBirthDate(LocalDate.of(2000, 1, 1));
         user.setEmail("test@seed.com");
-        user.setFullName("测试员");
+        user.setName("测试员");
         sysUserService.save(user);
     }
 
