@@ -18,13 +18,11 @@ import org.dromara.hutool.core.map.MapUtil;
 import org.dromara.hutool.core.reflect.ClassUtil;
 import org.dromara.hutool.core.text.StrUtil;
 import org.dromara.hutool.http.server.servlet.JakartaServletUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.annotation.Order;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
-import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -42,7 +40,6 @@ import java.util.Map;
  */
 @Aspect
 @Slf4j
-@Component
 @Order
 public class OperateLogAspect {
 
@@ -55,15 +52,18 @@ public class OperateLogAspect {
      */
     private final SpelExpressionParser spelExpressionParser = new SpelExpressionParser();
 
-    @Autowired
-    private LogOperateService logOperateService;
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final LogOperateService logOperateService;
+    private final ObjectMapper objectMapper;
+
+    public OperateLogAspect(LogOperateService logOperateService, ObjectMapper objectMapper) {
+        this.logOperateService = logOperateService;
+        this.objectMapper = objectMapper;
+    }
 
     /**
      * 忽略的参数类型
      */
-    private static final Class[] IGNORE_PARAMS_CLASS = {
+    private static final Class<?>[] IGNORE_PARAMS_CLASS = {
             HttpServletRequest.class,
             HttpServletResponse.class,
             MultipartFile.class,
@@ -109,7 +109,7 @@ public class OperateLogAspect {
             }
             lo.setType(operateLog.type().type());
             lo.setRefModule(StrUtil.nullIfEmpty(operateLog.refModule()));
-            lo.setRefId(this.getRefId(operateLog.refId(), params, result));
+            lo.setRefId(this.getRefId(operateLog.refIdEl(), params, result));
             lo.setUserId(this.getLoginUserId());
             RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
             if (requestAttributes != null) {

@@ -24,7 +24,7 @@ public @interface OperateLog {
     OperateType type();
 
     /**
-     * 关联模块，spel表达式
+     * 关联模块
      *
      * @return
      */
@@ -35,7 +35,7 @@ public @interface OperateLog {
      *
      * @return
      */
-    String refId() default "";
+    String refIdEl() default "";
 
     /**
      * 忽略的参数名称

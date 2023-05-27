@@ -3,6 +3,7 @@ package com.zhangdp.seed.entity.sys;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.zhangdp.seed.common.constant.TableNameConst;
 import com.zhangdp.seed.entity.BaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -24,7 +25,7 @@ import java.time.LocalDate;
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@TableName("sys_user")
+@TableName(TableNameConst.SYS_USER)
 @Schema(description = "用户")
 public class SysUser extends BaseEntity implements Serializable {
 

@@ -87,7 +87,11 @@ public enum ErrorCode {
     /**
      * 部门不存在
      */
-    DEPT_NOT_EXISTS(20002, "部门不存在"),
+    DEPT_NOT_EXISTS(20100, "部门不存在"),
+    /**
+     * 父部门不存在
+     */
+    DEPT_PARENT_NOT_EXISTS(20101, "父部门不存在"),
 
 
     /**

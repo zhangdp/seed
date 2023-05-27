@@ -39,7 +39,7 @@ public class SysUserController {
     @PostMapping("/add")
     @SaCheckPermission("user:add")
     @Operation(summary = "新增用户", description = "新增用户，无需传值id、createTime、updateTime")
-    @OperateLog(type = OperateType.CREATE, refModule = TableNameConst.SYS_USER, refId = "#user.id")
+    @OperateLog(type = OperateType.CREATE, refModule = TableNameConst.SYS_USER, refIdEl = "#user.id")
     public R<Boolean> add(@RequestBody @Valid UserInfo user) {
         return R.success(sysUserService.insert(user) != null);
     }

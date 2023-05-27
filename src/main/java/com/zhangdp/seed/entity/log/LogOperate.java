@@ -112,6 +112,6 @@ public class LogOperate implements Serializable {
     /**
      * 异常堆栈
      */
-    @Schema(title = "异常堆栈")
-    private String errorTrace;
+    // @Schema(title = "异常堆栈")
+    // private String errorTrace;
 }
