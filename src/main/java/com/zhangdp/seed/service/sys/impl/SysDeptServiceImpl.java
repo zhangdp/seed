@@ -9,6 +9,7 @@ import com.zhangdp.seed.entity.sys.SysDept;
 import com.zhangdp.seed.mapper.sys.SysDeptMapper;
 import com.zhangdp.seed.model.dto.DeptTreeNode;
 import com.zhangdp.seed.service.sys.SysDeptService;
+import org.dromara.hutool.core.bean.BeanUtil;
 import org.dromara.hutool.core.collection.CollUtil;
 import org.dromara.hutool.core.lang.Assert;
 import org.springframework.stereotype.Service;
@@ -54,8 +55,20 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptMapper, SysDept> impl
     @Transactional(rollbackFor = Exception.class)
     public boolean insert(SysDept dept) {
         if (!dept.getParentId().equals(CommonConst.ROOT_ID)) {
-            Assert.isFalse(this.exists(dept.getParentId()), () -> new BizException(ErrorCode.DEPT_PARENT_NOT_EXISTS));
+            Assert.isTrue(this.exists(dept.getParentId()), () -> new BizException(ErrorCode.DEPT_PARENT_NOT_EXISTS.code(), "父部门（id=" + dept.getParentId() + "）已不存在"));
         }
         return this.save(dept);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean update(SysDept dept) {
+        Assert.isFalse(this.exists(dept.getId()), () -> new BizException(ErrorCode.DEPT_NOT_EXISTS.code(), "部门（id=" + dept.getId() + "）已不存在"));
+        SysDept bean = new SysDept();
+        BeanUtil.copyProperties(dept, bean, "createTime", "updateTime");
+        if (bean.getParentId() != null && !bean.getParentId().equals(CommonConst.ROOT_ID)) {
+            Assert.isTrue(this.exists(dept.getId()), () -> new BizException(ErrorCode.DEPT_PARENT_NOT_EXISTS.code(), "父部门（id=" + dept.getParentId() + "）已不存在"));
+        }
+        return this.updateById(bean);
     }
 }

@@ -37,5 +37,11 @@ public interface SysDeptService extends IService<SysDept> {
      */
     boolean insert(SysDept dept);
 
-
+    /**
+     * 修改部门
+     *
+     * @param dept
+     * @return
+     */
+    boolean update(SysDept dept);
 }
