@@ -78,7 +78,7 @@ public class SeedWebMvcConfigurer implements WebMvcConfigurer {
                 .includePaths("/**")
                 // 不需要检查登录的请求
                 .excludePaths("/favicon.ico", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/druid/**",
-                        "/actuator/health", "/actuator/info", "/auth/login", "/auth/logout")
+                        "/actuator/health", "/actuator/info", "/auth/login", "/auth/logout", "/test/**")
                 // 检查策略
                 .check(request -> {
                     // actuator端点检查，需要basic认证

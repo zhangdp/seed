@@ -103,7 +103,11 @@ public enum ErrorCode {
     /**
      * 4开头的错误码，错误来源是中间件
      */
-    SQL_ERROR(41000, "系统错误"),
+    SQL_ERROR(40000, "系统错误"),
+    /**
+     * 查询IP地理位置失败
+     */
+    SEARCH_IP_REGION_FAILED(40100, "查询IP地理位置失败"),
     ;
     /**
      * 状态码

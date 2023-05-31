@@ -15,7 +15,7 @@ import java.util.List;
  * @since 1.0.0
  */
 @Data
-@Accessors
+@Accessors(chain = true)
 @Schema(title = "树节点")
 public class TreeNode<T> implements Serializable {
 

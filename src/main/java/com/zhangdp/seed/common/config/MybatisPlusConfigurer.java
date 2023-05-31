@@ -28,7 +28,7 @@ public class MybatisPlusConfigurer {
             @Override
             public void insertFill(MetaObject metaObject) {
                 LocalDateTime now = LocalDateTime.now();
-                this.strictInsertFill(metaObject, "createTime", LocalDateTime.class, now);
+                this.strictInsertFill(metaObject, "addTime", LocalDateTime.class, now);
                 this.strictInsertFill(metaObject, "updateTime", LocalDateTime.class, now);
                 this.strictInsertFill(metaObject, "status", Integer.class, CommonConst.GOOD);
             }

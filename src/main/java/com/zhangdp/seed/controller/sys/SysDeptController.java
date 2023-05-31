@@ -1,7 +1,6 @@
 package com.zhangdp.seed.controller.sys;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import com.zhangdp.seed.common.R;
 import com.zhangdp.seed.common.ValidGroup;
 import com.zhangdp.seed.common.annotation.OperateLog;
 import com.zhangdp.seed.common.enums.OperateType;
@@ -37,8 +36,8 @@ public class SysDeptController {
      */
     @GetMapping("/tree")
     @Operation(summary = "获取部门树")
-    public R<List<DeptTreeNode>> tree() {
-        return R.success(sysDeptService.listTree());
+    public List<DeptTreeNode> tree() {
+        return sysDeptService.listTree();
     }
 
     /**
@@ -51,8 +50,8 @@ public class SysDeptController {
     @SaCheckPermission("dept:add")
     @Operation(summary = "新增部门", description = "新增用户，无需传值id、createTime、updateTime")
     @OperateLog(type = OperateType.CREATE, refModule = "sys_dept", refIdEl = "#dept.id")
-    public R<Boolean> add(@RequestBody @Validated(ValidGroup.Update.class) SysDept dept) {
-        return R.success(sysDeptService.insert(dept));
+    public boolean add(@RequestBody @Validated(ValidGroup.Update.class) SysDept dept) {
+        return sysDeptService.insert(dept);
     }
 
 
@@ -66,8 +65,8 @@ public class SysDeptController {
     @SaCheckPermission("dept:update")
     @Operation(summary = "修改部门", description = "修改部门，需传值id")
     @OperateLog(type = OperateType.UPDATE, refModule = "sys_dept", refIdEl = "#dept.id")
-    public R<Boolean> update(@RequestBody @Validated(ValidGroup.Update.class) SysDept dept) {
-        return R.success(sysDeptService.update(dept));
+    public boolean update(@RequestBody @Validated(ValidGroup.Update.class) SysDept dept) {
+        return sysDeptService.update(dept);
     }
 
     /**
@@ -80,8 +79,8 @@ public class SysDeptController {
     @SaCheckPermission("dept:delete")
     @Operation(summary = "删除部门", description = "根据id删除部门")
     @OperateLog(type = OperateType.DELETE, refModule = "sys_dept", refIdEl = "#id")
-    public R<Boolean> delete(@PathVariable Long id) {
-        return R.success(sysDeptService.removeById(id));
+    public boolean delete(@PathVariable Long id) {
+        return sysDeptService.removeById(id);
     }
 
 }

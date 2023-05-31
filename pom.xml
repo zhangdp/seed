@@ -23,6 +23,7 @@
         <springdoc.version>2.1.0</springdoc.version>
         <druid.version>1.2.17</druid.version>
         <spring-boot-admin.version>3.0.4</spring-boot-admin.version>
+        <ip2region.version>2.7.0</ip2region.version>
     </properties>
 
     <dependencies>
@@ -126,6 +127,12 @@
             <groupId>de.codecentric</groupId>
             <artifactId>spring-boot-admin-starter-client</artifactId>
             <version>${spring-boot-admin.version}</version>
+        </dependency>
+        <!-- ip离线数据库 -->
+        <dependency>
+            <groupId>org.lionsoul</groupId>
+            <artifactId>ip2region</artifactId>
+            <version>${ip2region.version}</version>
         </dependency>
 
     </dependencies>

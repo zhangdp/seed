@@ -1,9 +1,7 @@
 package com.zhangdp.seed.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.zhangdp.seed.common.ValidGroup;
 import com.zhangdp.seed.common.constant.CommonConst;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -26,7 +24,7 @@ public abstract class BaseEntity {
     /**
      * 主键
      */
-    @TableId
+    @TableId(type = IdType.AUTO)
     @Schema(title = "id", description = "修改时需传")
     @NotNull(message = "id不能为空", groups = ValidGroup.Update.class)
     protected Long id;
@@ -35,14 +33,14 @@ public abstract class BaseEntity {
      */
     @TableLogic
     @Schema(title = "逻辑删除", description = "0：否，默认；1：已删除", hidden = true)
-    // @JsonIgnore
+    @JsonIgnore
     protected Integer isDeleted;
     /**
      * 创建时间
      */
     @TableField(fill = FieldFill.INSERT)
-    @Schema(title = "创建时间", description = "格式：" + CommonConst.DATETIME_FORMATTER)
-    protected LocalDateTime createTime;
+    @Schema(title = "添加时间", description = "格式：" + CommonConst.DATETIME_FORMATTER)
+    protected LocalDateTime addTime;
     /**
      * 修改时间
      */
@@ -53,7 +51,7 @@ public abstract class BaseEntity {
      * 创建用户id
      */
     // @Schema(title = "创建人id")
-    // protected Long createUserId;
+    // protected Long addUserId;
     /**
      * 修改用户id
      */

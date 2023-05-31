@@ -1,7 +1,6 @@
 package com.zhangdp.seed.controller.sys;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import com.zhangdp.seed.common.R;
 import com.zhangdp.seed.common.annotation.OperateLog;
 import com.zhangdp.seed.common.constant.TableNameConst;
 import com.zhangdp.seed.common.enums.OperateType;
@@ -40,8 +39,8 @@ public class SysUserController {
     @SaCheckPermission("user:add")
     @Operation(summary = "新增用户", description = "新增用户，无需传值id、createTime、updateTime")
     @OperateLog(type = OperateType.CREATE, refModule = TableNameConst.SYS_USER, refIdEl = "#user.id")
-    public R<Boolean> add(@RequestBody @Valid UserInfo user) {
-        return R.success(sysUserService.insert(user) != null);
+    public boolean add(@RequestBody @Valid UserInfo user) {
+        return sysUserService.insert(user) != null;
     }
 
 }

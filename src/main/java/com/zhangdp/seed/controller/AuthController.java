@@ -1,7 +1,6 @@
 package com.zhangdp.seed.controller;
 
 import cn.dev33.satoken.annotation.SaIgnore;
-import com.zhangdp.seed.common.R;
 import com.zhangdp.seed.common.component.SecurityHelper;
 import com.zhangdp.seed.model.LoginResult;
 import com.zhangdp.seed.service.sys.SysRoleService;
@@ -38,8 +37,8 @@ public class AuthController {
     @PostMapping("/login")
     @Operation(summary = "账号密码登录", description = "根据账号密码登录")
     @SaIgnore
-    public R<LoginResult> login(String username, String password) {
-        return R.success(securityHelper.doLogin(username, password));
+    public LoginResult login(String username, String password) {
+        return securityHelper.doLogin(username, password);
     }
 
     /**
@@ -49,9 +48,8 @@ public class AuthController {
      */
     @DeleteMapping("/logout")
     @Operation(summary = "注销", description = "注销，如果本来就未登录不报错")
-    public R<?> logout() {
+    public void logout() {
         securityHelper.doLogout();
-        return R.success();
     }
 
 }
