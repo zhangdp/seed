@@ -21,6 +21,13 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 @Slf4j
 public class GlobeResponseBodyAdvice implements ResponseBodyAdvice<Object> {
 
+    /**
+     * 处理条件判断
+     *
+     * @param returnType
+     * @param converterType
+     * @return
+     */
     @Override
     public boolean supports(@NotNull MethodParameter returnType, @NotNull Class<? extends HttpMessageConverter<?>> converterType) {
         // 本身已经是R或者R的子类则不处理

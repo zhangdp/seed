@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @RestControllerAdvice
-public class GlobalExceptionHandlerResolver {
+public class GlobalExceptionHandleAdvice {
 
     /**
      * 全局异常
