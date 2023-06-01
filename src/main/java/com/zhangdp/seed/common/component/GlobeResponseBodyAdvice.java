@@ -17,7 +17,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  * @author zhangdp
  * @since 1.0.0
  */
-@RestControllerAdvice
+@RestControllerAdvice(basePackages = "com.zhangdp.seed.controller")
 @Slf4j
 public class GlobeResponseBodyAdvice implements ResponseBodyAdvice<Object> {
 

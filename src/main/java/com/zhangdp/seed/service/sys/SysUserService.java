@@ -1,8 +1,11 @@
 package com.zhangdp.seed.service.sys;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.github.pagehelper.PageInfo;
 import com.zhangdp.seed.entity.sys.SysUser;
 import com.zhangdp.seed.model.dto.UserInfo;
+import com.zhangdp.seed.model.query.PageQuery;
+import com.zhangdp.seed.model.query.UserQuery;
 import org.dromara.hutool.crypto.digest.BCrypt;
 
 /**
@@ -30,12 +33,37 @@ public interface SysUserService extends IService<SysUser> {
     boolean existsUsername(String username);
 
     /**
+     * 是否已存在账号且id不等于
+     *
+     * @param username
+     * @param id
+     * @return
+     */
+    boolean existsUsernameAndIdNot(String username, Long id);
+
+    /**
      * 新增
      *
      * @param user
      * @return
      */
-    SysUser insert(UserInfo user);
+    boolean insert(SysUser user);
+
+    /**
+     * 修改用户信息
+     *
+     * @param user
+     * @return
+     */
+    boolean update(SysUser user);
+
+    /**
+     * 分页查询
+     *
+     * @param pageQuery
+     * @return
+     */
+    PageInfo<UserInfo> pageQuery(PageQuery<UserQuery> pageQuery);
 
     /**
      * 加密密码
@@ -57,4 +85,5 @@ public interface SysUserService extends IService<SysUser> {
     default boolean checkPassword(String plainPassword, String encryptedPassword) {
         return BCrypt.checkpw(plainPassword, encryptedPassword);
     }
+
 }

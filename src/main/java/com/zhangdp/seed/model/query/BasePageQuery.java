@@ -29,13 +29,13 @@ public class BasePageQuery implements Serializable {
      * 页数
      */
     @Schema(title = "页数", description = "默认" + CommonConst.PAGE)
-    @Min(value = 1, message = "最小页数1")
+    @Min(value = 1, message = "最小页数{value}")
     protected Integer page = CommonConst.PAGE;
     /**
      * 每页条数
      */
     @Schema(title = "每页条数", description = "默认" + CommonConst.PAGE_SIZE)
-    @Min(value = 1, message = "至少1条")
+    @Min(value = 1, message = "每页至少{value}条")
     protected Integer size = CommonConst.PAGE_SIZE;
     /**
      * 排序

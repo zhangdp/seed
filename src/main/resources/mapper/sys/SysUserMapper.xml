@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhangdp.seed.mapper.sys.SysUserMapper">
+
+    <select id="queryList" resultType="com.zhangdp.seed.model.dto.UserInfo"
+            parameterType="com.zhangdp.seed.model.query.UserQuery">
+        SELECT
+        u.*
+        FROM
+        sys_user u
+        WHERE
+        u.is_deleted = 0
+        <if test="username != null and username != ''">
+            AND u.username ILIKE #{username}
+        </if>
+        <if test="mobile != null and mobile != ''">
+            AND u.mobile = #{mobile}
+        </if>
+        <if test="nameLike != null and nameLike != ''">
+            AND u.name ILIKE '%' || #{nameLike} || '%'
+        </if>
+        <if test="deptId != null">
+            AND u.dept_id = #{deptId}
+        </if>
+        <if test="status != null">
+            AND u.status = #{status}
+        </if>
+        <if test="sex != null and sex != ''">
+            AND u.sex = #{sex}
+        </if>
+        ORDER BY u.id DESC
+    </select>
+</mapper>

@@ -1,19 +1,24 @@
 package com.zhangdp.seed.service.sys.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.zhangdp.seed.common.enums.ErrorCode;
 import com.zhangdp.seed.common.exception.BizException;
 import com.zhangdp.seed.entity.sys.SysUser;
 import com.zhangdp.seed.mapper.sys.SysUserMapper;
 import com.zhangdp.seed.model.dto.UserInfo;
+import com.zhangdp.seed.model.query.PageQuery;
+import com.zhangdp.seed.model.query.UserQuery;
 import com.zhangdp.seed.service.sys.SysDeptService;
 import com.zhangdp.seed.service.sys.SysUserService;
-import org.dromara.hutool.core.bean.BeanUtil;
 import org.dromara.hutool.core.lang.Assert;
 import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * 2023/4/3 用户service实现
@@ -38,19 +43,40 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public SysUser insert(UserInfo user) {
-        SysUser bean = new SysUser();
-        BeanUtil.copyProperties(user, bean, "id");
-        Assert.isFalse(this.existsUsername(bean.getUsername()), () -> new BizException(ErrorCode.USERNAME_REPEAT.code(), "账号" + bean.getUsername() + "已存在"));
-        if (bean.getDeptId() != null) {
-            Assert.isTrue(sysDeptService.exists(bean.getDeptId()), () -> new BizException(ErrorCode.USERNAME_REPEAT.code(), "部门" + (StrUtil.isNotBlank(user.getDeptName()) ? user.getDeptName() : "id" + bean.getDeptId()) + "不存在"));
-        }
-        if (StrUtil.isNotBlank(bean.getPassword())) {
-            bean.setPassword(this.encryptPassword(bean.getPassword()));
-        }
-        this.save(bean);
-        return bean;
+    public boolean existsUsernameAndIdNot(String username, Long id) {
+        return this.baseMapper.exists(this.lambdaQuery().getWrapper().eq(SysUser::getUsername, username).ne(SysUser::getId, id));
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean insert(SysUser user) {
+        Assert.isFalse(this.existsUsername(user.getUsername()), () -> new BizException(ErrorCode.USERNAME_REPEAT.code(), "账号" + user.getUsername() + "已存在"));
+        if (user.getDeptId() != null) {
+            Assert.isTrue(sysDeptService.exists(user.getDeptId()), () -> new BizException(ErrorCode.USERNAME_REPEAT.code(), "所属" + user.getDeptId() + "已不存在"));
+        }
+        if (StrUtil.isNotBlank(user.getPassword())) {
+            user.setPassword(this.encryptPassword(user.getPassword()));
+        }
+        return this.save(user);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean update(SysUser user) {
+        Assert.isFalse(this.existsUsernameAndIdNot(user.getUsername(), user.getId()), () -> new BizException(ErrorCode.USERNAME_REPEAT.code(), "账号" + user.getUsername() + "已存在"));
+        if (user.getDeptId() != null) {
+            Assert.isTrue(sysDeptService.exists(user.getDeptId()), () -> new BizException(ErrorCode.USERNAME_REPEAT.code(), "所属" + user.getDeptId() + "已不存在"));
+        }
+        if (StrUtil.isNotBlank(user.getPassword())) {
+            user.setPassword(this.encryptPassword(user.getPassword()));
+        }
+        return this.updateById(user);
+    }
+
+    @Override
+    public PageInfo<UserInfo> pageQuery(PageQuery<UserQuery> pageQuery) {
+        PageHelper.startPage(pageQuery.getPage(), pageQuery.getSize(), pageQuery.getOrderBy());
+        List<UserInfo> list = this.baseMapper.queryList(pageQuery.getParams());
+        return new PageInfo<>(list);
+    }
 }

@@ -11,6 +11,7 @@ spring:
   jackson:
     deserialization:
       fail-on-unknown-properties: false
+      accept-empty-string-as-null-object: true
     date-format: yyyy-MM-dd HH:mm:ss[.SSS]
   task:
     execution:
@@ -116,6 +117,9 @@ logging:
   level:
     root: info
     com.zhangdp.seed: debug
+springdoc:
+  api-docs:
+    enabled: true
 
 # 测试环境
 ---
