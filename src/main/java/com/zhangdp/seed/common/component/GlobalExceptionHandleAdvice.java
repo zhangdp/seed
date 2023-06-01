@@ -18,9 +18,9 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.sql.SQLException;
@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
  * @since 1.0.0
  */
 @Slf4j
-@RestControllerAdvice
+@ControllerAdvice
 public class GlobalExceptionHandleAdvice {
 
     /**
@@ -47,7 +47,7 @@ public class GlobalExceptionHandleAdvice {
      */
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public R<?> handleGlobalException(Exception e, HttpServletRequest request) {
+    public R<?> exception(Exception e, HttpServletRequest request) {
         log.error("全局异常：uri=" + request.getRequestURI(), e);
         return new R<>(ErrorCode.SERVER_ERROR);
     }
@@ -61,7 +61,7 @@ public class GlobalExceptionHandleAdvice {
      */
     @ExceptionHandler({SQLException.class, BadSqlGrammarException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public R<?> handleSQLException(Exception e, HttpServletRequest request) {
+    public R<?> sqlException(Exception e, HttpServletRequest request) {
         log.error("SQL异常：uri=" + request.getRequestURI(), e);
         return new R<>(ErrorCode.SQL_ERROR);
     }
@@ -75,7 +75,7 @@ public class GlobalExceptionHandleAdvice {
      */
     @ExceptionHandler({MethodArgumentNotValidException.class, BindException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public R<List<ParamsError>> handleValidException(Exception e, HttpServletRequest request) {
+    public R<List<ParamsError>> validException(Exception e, HttpServletRequest request) {
         List<ParamsError> errors;
         List<FieldError> fieldErrors;
         if (e instanceof MethodArgumentNotValidException) {
@@ -130,7 +130,7 @@ public class GlobalExceptionHandleAdvice {
      */
     @ExceptionHandler(ServletException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public R<?> handlerServletException(ServletException e, HttpServletRequest request) {
+    public R<?> servletException(ServletException e, HttpServletRequest request) {
         if (log.isInfoEnabled()) {
             log.info("ServletException：uri={}, error={}", request.getRequestURI(), e.getLocalizedMessage());
         }
@@ -179,7 +179,9 @@ public class GlobalExceptionHandleAdvice {
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public R<?> illegalArgumentException(IllegalArgumentException e, HttpServletRequest request) {
-        log.warn("非法参数异常：uri={}, error={}", request.getRequestURI(), e.getLocalizedMessage());
+        if (log.isInfoEnabled()) {
+            log.info("非法参数异常：uri={}, error={}", request.getRequestURI(), e.getLocalizedMessage());
+        }
         return new R<>(ErrorCode.BAD_REQUEST.code(), StrUtil.defaultIfBlank(e.getLocalizedMessage(), ErrorCode.BAD_REQUEST.message()));
     }
 
@@ -207,9 +209,7 @@ public class GlobalExceptionHandleAdvice {
     @ExceptionHandler(NotLoginException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public R<?> notLoginException(NotLoginException e, HttpServletRequest request) {
-        if (log.isInfoEnabled()) {
-            log.info("未登录异常：uri={}, error={}", request.getRequestURI(), e.getLocalizedMessage());
-        }
+        log.warn("未登录异常：uri={}, error={}", request.getRequestURI(), e.getLocalizedMessage());
         return SaTokenHelper.resolveNoLoginError(e);
     }
 
@@ -223,9 +223,7 @@ public class GlobalExceptionHandleAdvice {
     @ExceptionHandler(NotBasicAuthException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public R<?> notBasicAuthException(NotBasicAuthException e, HttpServletRequest request, HttpServletResponse response) {
-        if (log.isInfoEnabled()) {
-            log.info("未Http Basic认证异常：uri={}, error={}", request.getRequestURI(), e.getLocalizedMessage());
-        }
+        log.warn("未Http Basic认证异常：uri={}, error={}", request.getRequestURI(), e.getLocalizedMessage());
         response.setHeader("WWW-Authenticate", "Basic");
         return SaTokenHelper.resolveError(e);
     }
@@ -240,9 +238,7 @@ public class GlobalExceptionHandleAdvice {
     @ExceptionHandler(NotRoleException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public R<?> notRoleException(NotRoleException e, HttpServletRequest request) {
-        if (log.isInfoEnabled()) {
-            log.info("角色不满足异常：uri={}, error={}", request.getRequestURI(), e.getLocalizedMessage());
-        }
+        log.info("角色不满足异常：uri={}, error={}", request.getRequestURI(), e.getLocalizedMessage());
         return SaTokenHelper.resolveError(e);
     }
 
@@ -256,9 +252,7 @@ public class GlobalExceptionHandleAdvice {
     @ExceptionHandler(NotPermissionException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public R<?> notPermissionException(NotPermissionException e, HttpServletRequest request) {
-        if (log.isInfoEnabled()) {
-            log.info("权限不足异常：uri={}, error={}", request.getRequestURI(), e.getLocalizedMessage());
-        }
+        log.warn("权限不足异常：uri={}, error={}", request.getRequestURI(), e.getLocalizedMessage());
         return SaTokenHelper.resolveError(e);
     }
 
