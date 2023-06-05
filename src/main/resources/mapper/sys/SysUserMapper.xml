@@ -11,7 +11,7 @@
         WHERE
         u.is_deleted = 0
         <if test="username != null and username != ''">
-            AND u.username ILIKE #{username}
+            AND u.username LIKE #{username}
         </if>
         <if test="mobile != null and mobile != ''">
             AND u.mobile = #{mobile}
