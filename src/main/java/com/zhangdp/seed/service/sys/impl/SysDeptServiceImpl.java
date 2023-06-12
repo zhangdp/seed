@@ -3,7 +3,7 @@ package com.zhangdp.seed.service.sys.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhangdp.seed.common.constant.CommonConst;
 import com.zhangdp.seed.common.enums.ErrorCode;
-import com.zhangdp.seed.common.exception.BizException;
+import com.zhangdp.seed.common.exception.SeedException;
 import com.zhangdp.seed.common.util.TreeUtil;
 import com.zhangdp.seed.entity.sys.SysDept;
 import com.zhangdp.seed.mapper.sys.SysDeptMapper;
@@ -55,7 +55,7 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptMapper, SysDept> impl
     @Transactional(rollbackFor = Exception.class)
     public boolean insert(SysDept dept) {
         if (!dept.getParentId().equals(CommonConst.ROOT_ID)) {
-            Assert.isTrue(this.exists(dept.getParentId()), () -> new BizException(ErrorCode.DEPT_PARENT_NOT_EXISTS.code(), "父部门（id=" + dept.getParentId() + "）已不存在"));
+            Assert.isTrue(this.exists(dept.getParentId()), () -> new SeedException(ErrorCode.DEPT_PARENT_NOT_EXISTS.code(), "父部门（id=" + dept.getParentId() + "）已不存在"));
         }
         return this.save(dept);
     }
@@ -63,11 +63,11 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptMapper, SysDept> impl
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean update(SysDept dept) {
-        Assert.isFalse(this.exists(dept.getId()), () -> new BizException(ErrorCode.DEPT_NOT_EXISTS.code(), "部门（id=" + dept.getId() + "）已不存在"));
+        Assert.isFalse(this.exists(dept.getId()), () -> new SeedException(ErrorCode.DEPT_NOT_EXISTS.code(), "部门（id=" + dept.getId() + "）已不存在"));
         SysDept bean = new SysDept();
         BeanUtil.copyProperties(dept, bean, "createTime", "updateTime");
         if (bean.getParentId() != null && !bean.getParentId().equals(CommonConst.ROOT_ID)) {
-            Assert.isTrue(this.exists(dept.getId()), () -> new BizException(ErrorCode.DEPT_PARENT_NOT_EXISTS.code(), "父部门（id=" + dept.getParentId() + "）已不存在"));
+            Assert.isTrue(this.exists(dept.getId()), () -> new SeedException(ErrorCode.DEPT_PARENT_NOT_EXISTS.code(), "父部门（id=" + dept.getParentId() + "）已不存在"));
         }
         return this.updateById(bean);
     }

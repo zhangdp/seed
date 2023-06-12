@@ -5,13 +5,9 @@ import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -151,7 +147,7 @@ public class WebUtils {
      * @return
      */
     public static boolean responseJson(HttpServletResponse response, String json) {
-        return responseJson(response, 200, json);
+        return responseJson(response, HttpServletResponse.SC_OK, json);
     }
 
     /**
@@ -165,7 +161,7 @@ public class WebUtils {
     public static boolean responseJson(HttpServletResponse response, int httpStatus, String json) {
         try {
             response.setStatus(httpStatus);
-            response.setCharacterEncoding(CommonConst.CHARSET);
+            // response.setCharacterEncoding(CommonConst.CHARSET);
             response.setContentType("application/json");
             response.getWriter().write(json);
             response.flushBuffer();
@@ -194,7 +190,7 @@ public class WebUtils {
                 disposition += ";filename=\"" + URLEncoder.encode(filename, CommonConst.CHARSET) + "\"";
             }
             response.setHeader("Content-Disposition", disposition);
-            response.setCharacterEncoding(CommonConst.CHARSET);
+            // response.setCharacterEncoding(CommonConst.CHARSET);
             response.setContentType(contentType != null && (contentType = contentType.trim()).length() > 0 ? contentType : "application/octet-stream");
             response.setContentLengthLong(fileSize);
             ServletOutputStream out = response.getOutputStream();
@@ -224,9 +220,20 @@ public class WebUtils {
      * @param contentType
      * @return
      */
-    @SneakyThrows
-    public static long responseFile(HttpServletResponse response, File file, String contentType) {
+    public static long responseFile(HttpServletResponse response, File file, String contentType) throws FileNotFoundException {
         return responseFile(response, new FileInputStream(file), file.getName(), contentType, file.length());
+    }
+
+    /**
+     * 输出文件
+     *
+     * @param response
+     * @param path
+     * @param contentType
+     * @return
+     */
+    public static long responseFile(HttpServletResponse response, String path, String contentType) throws FileNotFoundException {
+        return responseFile(response, new File(path), contentType);
     }
 
 }

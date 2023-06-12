@@ -3,7 +3,8 @@ package com.zhangdp.seed.common.component;
 import cn.dev33.satoken.exception.*;
 import com.zhangdp.seed.common.R;
 import com.zhangdp.seed.common.enums.ErrorCode;
-import com.zhangdp.seed.common.exception.BizException;
+import com.zhangdp.seed.common.exception.NotFoundException;
+import com.zhangdp.seed.common.exception.SeedException;
 import com.zhangdp.seed.model.ParamsError;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -131,9 +132,7 @@ public class GlobalExceptionHandleAdvice {
     @ExceptionHandler(ServletException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public R<?> servletException(ServletException e, HttpServletRequest request) {
-        if (log.isInfoEnabled()) {
-            log.info("ServletException：uri={}, error={}", request.getRequestURI(), e.getLocalizedMessage());
-        }
+        log.warn("servlet异常：uri={}, error={}", request.getRequestURI(), e.getLocalizedMessage());
         return new R<>(ErrorCode.BAD_REQUEST);
     }
 
@@ -186,16 +185,30 @@ public class GlobalExceptionHandleAdvice {
     }
 
     /**
-     * 自定义业务异常
+     * 资源不存在异常
      *
      * @param e
      * @param request
      * @return
      */
-    @ExceptionHandler(BizException.class)
+    @ExceptionHandler(NotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public R<?> notFoundException(NotFoundException e, HttpServletRequest request) {
+        log.warn("资源不存在异常：uri={}", request.getRequestURI());
+        return new R<>(e.getCode(), e.getLocalizedMessage());
+    }
+
+    /**
+     * 自定义异常
+     *
+     * @param e
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(SeedException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public R<?> bizException(BizException e, HttpServletRequest request) {
-        log.warn("业务异常：uri={}", request.getRequestURI(), e);
+    public R<?> seedException(SeedException e, HttpServletRequest request) {
+        log.warn("自定义异常：uri=" + request.getRequestURI(), e);
         return new R<>(e.getCode(), e.getLocalizedMessage());
     }
 
@@ -238,7 +251,7 @@ public class GlobalExceptionHandleAdvice {
     @ExceptionHandler(NotRoleException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public R<?> notRoleException(NotRoleException e, HttpServletRequest request) {
-        log.info("角色不满足异常：uri={}, error={}", request.getRequestURI(), e.getLocalizedMessage());
+        log.warn("角色不满足异常：uri={}, error={}", request.getRequestURI(), e.getLocalizedMessage());
         return SaTokenHelper.resolveError(e);
     }
 

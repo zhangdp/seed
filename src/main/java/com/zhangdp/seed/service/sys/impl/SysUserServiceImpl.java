@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.zhangdp.seed.common.enums.ErrorCode;
-import com.zhangdp.seed.common.exception.BizException;
+import com.zhangdp.seed.common.exception.SeedException;
 import com.zhangdp.seed.entity.sys.SysUser;
 import com.zhangdp.seed.mapper.sys.SysUserMapper;
 import com.zhangdp.seed.model.dto.UserInfo;
@@ -50,9 +50,9 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean insert(SysUser user) {
-        Assert.isFalse(this.existsUsername(user.getUsername()), () -> new BizException(ErrorCode.USERNAME_REPEAT.code(), "账号" + user.getUsername() + "已存在"));
+        Assert.isFalse(this.existsUsername(user.getUsername()), () -> new SeedException(ErrorCode.USERNAME_REPEAT.code(), "账号" + user.getUsername() + "已存在"));
         if (user.getDeptId() != null) {
-            Assert.isTrue(sysDeptService.exists(user.getDeptId()), () -> new BizException(ErrorCode.USERNAME_REPEAT.code(), "所属" + user.getDeptId() + "已不存在"));
+            Assert.isTrue(sysDeptService.exists(user.getDeptId()), () -> new SeedException(ErrorCode.USERNAME_REPEAT.code(), "所属" + user.getDeptId() + "已不存在"));
         }
         if (StrUtil.isNotBlank(user.getPassword())) {
             user.setPassword(this.encryptPassword(user.getPassword()));
@@ -63,9 +63,9 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean update(SysUser user) {
-        Assert.isFalse(this.existsUsernameAndIdNot(user.getUsername(), user.getId()), () -> new BizException(ErrorCode.USERNAME_REPEAT.code(), "账号" + user.getUsername() + "已存在"));
+        Assert.isFalse(this.existsUsernameAndIdNot(user.getUsername(), user.getId()), () -> new SeedException(ErrorCode.USERNAME_REPEAT.code(), "账号" + user.getUsername() + "已存在"));
         if (user.getDeptId() != null) {
-            Assert.isTrue(sysDeptService.exists(user.getDeptId()), () -> new BizException(ErrorCode.USERNAME_REPEAT.code(), "所属" + user.getDeptId() + "已不存在"));
+            Assert.isTrue(sysDeptService.exists(user.getDeptId()), () -> new SeedException(ErrorCode.USERNAME_REPEAT.code(), "所属" + user.getDeptId() + "已不存在"));
         }
         if (StrUtil.isNotBlank(user.getPassword())) {
             user.setPassword(this.encryptPassword(user.getPassword()));

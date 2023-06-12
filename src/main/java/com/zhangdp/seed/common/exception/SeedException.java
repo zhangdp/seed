@@ -14,7 +14,7 @@ import java.io.Serial;
  */
 @Getter
 @Setter
-public class BizException extends RuntimeException {
+public class SeedException extends RuntimeException {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -24,32 +24,32 @@ public class BizException extends RuntimeException {
      */
     private int code;
 
-    public BizException(int code, String message) {
+    public SeedException(int code, String message) {
         super(message);
         this.code = code;
     }
 
-    public BizException(int code, String message, Throwable cause) {
+    public SeedException(int code, String message, Throwable cause) {
         super(message, cause);
         this.code = code;
     }
 
-    public BizException(int code, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public SeedException(int code, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
         this.code = code;
     }
 
-    public BizException(ErrorCode errorCode) {
+    public SeedException(ErrorCode errorCode) {
         super(errorCode.message());
         this.code = errorCode.code();
     }
 
-    public BizException(ErrorCode errorCode, Throwable cause) {
+    public SeedException(ErrorCode errorCode, Throwable cause) {
         super(errorCode.message(), cause);
         this.code = errorCode.code();
     }
 
-    public BizException(ErrorCode errorCode, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public SeedException(ErrorCode errorCode, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(errorCode.message(), cause, enableSuppression, writableStackTrace);
         this.code = errorCode.code();
     }

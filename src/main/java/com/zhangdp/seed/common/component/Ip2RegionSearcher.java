@@ -1,7 +1,7 @@
 package com.zhangdp.seed.common.component;
 
 import com.zhangdp.seed.common.enums.ErrorCode;
-import com.zhangdp.seed.common.exception.BizException;
+import com.zhangdp.seed.common.exception.SeedException;
 import com.zhangdp.seed.model.IpRegion;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hutool.core.io.resource.ResourceUtil;
@@ -45,7 +45,7 @@ public class Ip2RegionSearcher implements InitializingBean, DisposableBean {
             }
             return this.formatter(region);
         } catch (Exception e) {
-            throw new BizException(ErrorCode.SEARCH_IP_REGION_FAILED, e);
+            throw new SeedException(ErrorCode.SEARCH_IP_REGION_FAILED, e);
         }
     }
 
