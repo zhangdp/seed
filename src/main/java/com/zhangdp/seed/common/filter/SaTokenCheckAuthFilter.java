@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.annotation.Order;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -24,6 +25,7 @@ import java.util.List;
  * @since 1.0.0
  */
 @Slf4j
+@Order(-100)
 public class SaTokenCheckAuthFilter extends OncePerRequestFilter {
 
     /**

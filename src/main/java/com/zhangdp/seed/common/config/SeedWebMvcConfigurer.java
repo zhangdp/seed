@@ -1,6 +1,7 @@
 package com.zhangdp.seed.common.config;
 
 import cn.dev33.satoken.basic.SaBasicUtil;
+import cn.dev33.satoken.config.SaTokenConfig;
 import cn.dev33.satoken.exception.NotBasicAuthException;
 import cn.dev33.satoken.exception.SaTokenException;
 import cn.dev33.satoken.router.SaRouter;
@@ -11,6 +12,7 @@ import com.zhangdp.seed.common.component.SaTokenHelper;
 import com.zhangdp.seed.common.constant.CommonConst;
 import com.zhangdp.seed.common.enums.ErrorCode;
 import com.zhangdp.seed.common.filter.SaTokenCheckAuthFilter;
+import com.zhangdp.seed.common.filter.SaTokenParameterResolveFilter;
 import com.zhangdp.seed.common.util.WebUtils;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotNull;
@@ -18,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.format.datetime.standard.DateTimeFormatterRegistrar;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -71,7 +72,6 @@ public class SeedWebMvcConfigurer implements WebMvcConfigurer {
      * @return
      */
     @Bean
-    @Order(-100)
     public SaTokenCheckAuthFilter saTokenCheckAuthFilter(ObjectMapper objectMapper) {
         return new SaTokenCheckAuthFilter()
                 // 拦截全部请求
@@ -112,6 +112,17 @@ public class SeedWebMvcConfigurer implements WebMvcConfigurer {
                         log.error("SaToken filter error处理出错", e);
                     }
                 });
+    }
+
+    /**
+     * 从参数中解析token过滤器
+     *
+     * @param saTokenConfig
+     * @return
+     */
+    @Bean
+    public SaTokenParameterResolveFilter saTokenParameterResolveFilter(SaTokenConfig saTokenConfig) {
+        return new SaTokenParameterResolveFilter(saTokenConfig);
     }
 
 }
