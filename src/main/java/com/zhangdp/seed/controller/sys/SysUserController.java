@@ -2,9 +2,7 @@ package com.zhangdp.seed.controller.sys;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.github.pagehelper.PageInfo;
-import com.zhangdp.seed.common.annotation.LoginUserId;
 import com.zhangdp.seed.common.annotation.OperateLog;
-import com.zhangdp.seed.common.component.Session;
 import com.zhangdp.seed.common.constant.TableNameConst;
 import com.zhangdp.seed.common.enums.OperateType;
 import com.zhangdp.seed.entity.sys.SysUser;
@@ -22,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
  * 2023/5/12
  *
  * @author zhangdp
- * @since
+ * @since 1.0.0
  */
 @RequiredArgsConstructor
 @RestController
@@ -76,9 +74,7 @@ public class SysUserController {
      */
     @PostMapping("/page")
     @Operation(summary = "分页查询用户")
-    public PageInfo<UserInfo> pageQuery(@RequestBody @Valid PageQuery<UserQuery> pageQuery, @LoginUserId Long userId, Session session) {
-        System.out.println(userId);
-        session.setAttribute("a", pageQuery);
+    public PageInfo<UserInfo> pageQuery(@RequestBody @Valid PageQuery<UserQuery> pageQuery) {
         return sysUserService.pageQuery(pageQuery);
     }
 
