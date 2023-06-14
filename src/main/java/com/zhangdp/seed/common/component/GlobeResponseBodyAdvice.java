@@ -46,7 +46,6 @@ public class GlobeResponseBodyAdvice implements ResponseBodyAdvice<Object> {
     @Override
     public boolean supports(@NotNull MethodParameter returnType, @NotNull Class<? extends HttpMessageConverter<?>> converterType) {
         // 忽略的类型则不处理
-        System.out.println(returnType.getParameterType());
         for (Class<?> clazz : IGNORE_CLASS) {
             if (returnType.getParameterType().isAssignableFrom(clazz)) {
                 return false;

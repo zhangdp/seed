@@ -8,7 +8,9 @@ import cn.dev33.satoken.router.SaRouter;
 import cn.dev33.satoken.stp.StpUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zhangdp.seed.common.R;
+import com.zhangdp.seed.common.component.LoginUserIdArgumentResolver;
 import com.zhangdp.seed.common.component.SaTokenHelper;
+import com.zhangdp.seed.common.component.SessionArgumentResolver;
 import com.zhangdp.seed.common.constant.CommonConst;
 import com.zhangdp.seed.common.enums.ErrorCode;
 import com.zhangdp.seed.common.filter.SaTokenCheckAuthFilter;
@@ -22,9 +24,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.format.datetime.standard.DateTimeFormatterRegistrar;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 /**
  * 2023/5/25 mvc配置
@@ -64,6 +68,19 @@ public class SeedWebMvcConfigurer implements WebMvcConfigurer {
         registrar.setDateFormatter(DateTimeFormatter.ofPattern(CommonConst.DATE_FORMATTER));
         registrar.setDateTimeFormatter(DateTimeFormatter.ofPattern(CommonConst.DATETIME_FORMATTER));
         registrar.registerFormatters(registry);
+    }
+
+    /**
+     * 添加参数解析器
+     *
+     * @param resolvers initially an empty list
+     */
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+        // 添加参数解析-当前登录用户id
+        resolvers.add(new LoginUserIdArgumentResolver());
+        // 添加参数解析-当前登录session
+        resolvers.add(new SessionArgumentResolver());
     }
 
     /**

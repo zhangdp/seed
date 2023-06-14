@@ -59,6 +59,14 @@ public enum ErrorCode {
      */
     FORBIDDEN_NO_PERMISSION(10102, "无权限"),
     /**
+     * 用户不存在或者密码错误
+     */
+    LOGIN_PWD_ERROR(10200, "账号不存在或者密码错误"),
+    /**
+     * 账号已被封禁
+     */
+    ACCOUNT_BANNED(10210, "账号已被封禁"),
+    /**
      * 资源不存在
      */
     NOT_FOUND(11000, "资源不存在"),

@@ -27,18 +27,19 @@ import java.util.List;
 @Service
 public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> implements SysRoleService {
 
-    private static final String CACHE_USER_ROLE = "user_roles" + CacheConst.SPLIT;
+    private static final String CACHE_USER_ROLES = "user_roles" + CacheConst.SPLIT;
 
     private final SysUserRoleService sysUserRoleService;
 
-    @Cacheable(key = "'" + CACHE_USER_ROLE + "' + #userId")
+    @Cacheable(key = "'" + CACHE_USER_ROLES + "' + #userId")
     @Override
     public List<SysRole> listUserRoles(Long userId) {
         List<SysUserRole> pks = sysUserRoleService.listByUserId(userId);
         if (CollUtil.isEmpty(pks)) {
             return null;
         }
-        return this.list(Wrappers.lambdaQuery(SysRole.class).in(SysRole::getId, pks.stream().map(SysUserRole::getRoleId).toList()));
+        return this.list(Wrappers.lambdaQuery(SysRole.class)
+                .in(SysRole::getId, pks.stream().map(SysUserRole::getRoleId).toList()));
     }
 
     @Override

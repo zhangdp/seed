@@ -6,6 +6,8 @@ import cn.dev33.satoken.stp.StpInterface;
 import cn.dev33.satoken.stp.StpUtil;
 import com.zhangdp.seed.common.constant.CommonConst;
 import com.zhangdp.seed.common.constant.SecurityConst;
+import com.zhangdp.seed.common.enums.ErrorCode;
+import com.zhangdp.seed.common.exception.SeedException;
 import com.zhangdp.seed.entity.sys.SysResource;
 import com.zhangdp.seed.entity.sys.SysRole;
 import com.zhangdp.seed.entity.sys.SysUser;
@@ -17,15 +19,16 @@ import com.zhangdp.seed.service.sys.SysUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hutool.core.collection.CollUtil;
-import org.dromara.hutool.core.date.DateUtil;
 import org.dromara.hutool.core.lang.Assert;
+import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 2023/4/4 认证相关帮助类
@@ -127,12 +130,23 @@ public class SecurityHelper implements StpInterface {
      * @param password
      * @return
      */
-    public LoginResult doLogin(String username, String password) {
+    public LoginResult loginByPassword(String username, String password) {
         SysUser sysUser = sysUserService.getByUsername(username);
-        Assert.notNull(sysUser, "账号不存在或者密码错误");
-        this.checkUser(sysUser);
-        UserInfo user = this.toUser(sysUser);
+        Assert.notNull(sysUser, () -> new SeedException(ErrorCode.LOGIN_PWD_ERROR));
+        Assert.isTrue(sysUserService.checkPassword(password, sysUser.getPassword()), () -> new SeedException(ErrorCode.LOGIN_PWD_ERROR));
+        return this.doLogin(sysUser);
+    }
 
+    /**
+     * 执行登录
+     *
+     * @param sysUser
+     * @return
+     */
+    private LoginResult doLogin(SysUser sysUser) {
+        this.checkUser(sysUser);
+
+        UserInfo user = this.userInfo(sysUser);
         StpUtil.login(sysUser.getId());
         SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
         this.putLoginUser(user);
@@ -150,17 +164,14 @@ public class SecurityHelper implements StpInterface {
      * @param sysUser
      */
     public void checkUser(SysUser sysUser) {
-        Assert.isTrue(sysUser.getStatus() == CommonConst.GOOD, "账号已被锁定");
-        long dt = StpUtil.getDisableTime(sysUser.getId());
-
-        Assert.isTrue(dt == -2, dt == -1 ? "账号已被永久封禁"
-                : "账号已被封禁，解封时间：" + DateUtil.format(LocalDateTime.now().plusSeconds(60L), CommonConst.DATETIME_FORMATTER));
+        Assert.isTrue(sysUser.getStatus() == CommonConst.GOOD, () -> new SeedException(ErrorCode.ACCOUNT_BANNED));
+        // long dt = StpUtil.getDisableTime(sysUser.getId());
+        // Assert.isTrue(dt == -2, dt == -1 ? "账号已被永久封禁"
+        //        : "账号已被封禁，解封时间：" + DateUtil.format(LocalDateTime.now().plusSeconds(60L), CommonConst.DATETIME_FORMATTER));
     }
 
     /**
      * 注销
-     *
-     * @return
      */
     public void doLogout() {
         StpUtil.logout();
@@ -172,7 +183,7 @@ public class SecurityHelper implements StpInterface {
      * @param sysUser
      * @return
      */
-    private UserInfo toUser(SysUser sysUser) {
+    private UserInfo userInfo(SysUser sysUser) {
         UserInfo user = new UserInfo();
         BeanUtils.copyProperties(sysUser, user, "password");
         return user;
@@ -187,11 +198,22 @@ public class SecurityHelper implements StpInterface {
      */
     @Override
     public List<String> getPermissionList(Object loginId, String loginType) {
-        List<SysResource> resources = sysResourceService.listUserResources(Long.parseLong(String.valueOf(loginId)));
-        if (CollUtil.isEmpty(resources)) {
-            return new ArrayList<>();
+        List<SysRole> roles = sysRoleService.listUserRoles(Long.parseLong(String.valueOf(loginId)));
+        if (CollUtil.isEmpty(roles)) {
+            return new ArrayList<>(0);
         }
-        return resources.stream().map(SysResource::getPermission).toList();
+        Set<String> set = new HashSet<>(32);
+        for (SysRole role : roles) {
+            List<SysResource> resources = sysResourceService.listRoleResources(role.getId());
+            if (CollUtil.isNotEmpty(resources)) {
+                for (SysResource resource : resources) {
+                    if (StrUtil.isNotBlank(resource.getPermission())) {
+                        set.add(resource.getPermission());
+                    }
+                }
+            }
+        }
+        return new ArrayList<>(set);
     }
 
     /**
@@ -205,7 +227,7 @@ public class SecurityHelper implements StpInterface {
     public List<String> getRoleList(Object loginId, String loginType) {
         List<SysRole> roles = sysRoleService.listUserRoles(Long.parseLong(String.valueOf(loginId)));
         if (CollUtil.isEmpty(roles)) {
-            return new ArrayList<>();
+            return new ArrayList<>(0);
         }
         return roles.stream().map(SysRole::getCode).toList();
     }

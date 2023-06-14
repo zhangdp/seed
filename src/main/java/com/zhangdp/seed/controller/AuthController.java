@@ -38,7 +38,7 @@ public class AuthController {
     @Operation(summary = "账号密码登录", description = "根据账号密码登录")
     @SaIgnore
     public LoginResult login(String username, String password) {
-        return securityHelper.doLogin(username, password);
+        return securityHelper.loginByPassword(username, password);
     }
 
     /**
