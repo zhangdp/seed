@@ -14,6 +14,14 @@ import java.util.List;
 public interface SysResourceService extends IService<SysResource> {
 
     /**
+     * 是否存在
+     *
+     * @param id
+     * @return
+     */
+    boolean isExists(Long id);
+
+    /**
      * 获取某个角色拥有的资源列表
      *
      * @param roleId
@@ -21,4 +29,19 @@ public interface SysResourceService extends IService<SysResource> {
      */
     List<SysResource> listRoleResources(Long roleId);
 
+    /**
+     * 添加
+     *
+     * @param resource
+     * @return
+     */
+    boolean insert(SysResource resource);
+
+    /**
+     * 修改
+     *
+     * @param resource
+     * @return
+     */
+    boolean update(SysResource resource);
 }

@@ -100,6 +100,10 @@ public enum ErrorCode {
      * 父部门不存在
      */
     DEPT_PARENT_NOT_EXISTS(20101, "父部门不存在"),
+    /**
+     * 父级资源不存在
+     */
+    RESOURCE_PARENT_NOT_EXISTS(20201, "父级资源不存在"),
 
 
     /**

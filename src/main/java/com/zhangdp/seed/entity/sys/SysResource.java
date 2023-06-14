@@ -2,6 +2,7 @@ package com.zhangdp.seed.entity.sys;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.zhangdp.seed.common.constant.CommonConst;
+import com.zhangdp.seed.common.constant.TableNameConst;
 import com.zhangdp.seed.entity.BaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -24,7 +25,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@TableName("sys_resource")
+@TableName(TableNameConst.SYS_RESOURCE)
 @Schema(description = "资源")
 public class SysResource extends BaseEntity implements Serializable {
 

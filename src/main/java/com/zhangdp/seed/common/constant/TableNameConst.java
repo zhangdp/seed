@@ -9,7 +9,29 @@ package com.zhangdp.seed.common.constant;
 public interface TableNameConst {
 
     /**
+     * 分隔符
+     */
+    String SPLIT = "_";
+
+    /**
+     * 前缀-sys系统相关表
+     */
+    String PREFIX_SYS = "sys";
+    /**
+     * 前缀-log日志表
+     */
+    String PREFIX_LOG = "log";
+
+    /**
      * 用户表
      */
-    String SYS_USER = "sys_user";
+    String SYS_USER = PREFIX_SYS + SPLIT + "user";
+    /**
+     * 部门表
+     */
+    String SYS_DEPT = PREFIX_SYS + SPLIT + "dept";
+    /**
+     * 资源表
+     */
+    String SYS_RESOURCE = PREFIX_SYS + SPLIT + "resource";
 }

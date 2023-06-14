@@ -48,12 +48,11 @@ public class SysDeptController {
      */
     @PostMapping("/add")
     @SaCheckPermission("dept:add")
-    @Operation(summary = "新增部门", description = "新增用户，无需传值id、createTime、updateTime")
+    @Operation(summary = "新增部门", description = "新增部门，无需传值id、createTime、updateTime")
     @OperateLog(type = OperateType.CREATE, refModule = "sys_dept", refIdEl = "#dept.id")
     public boolean add(@RequestBody @Validated(ValidGroup.Update.class) SysDept dept) {
         return sysDeptService.insert(dept);
     }
-
 
     /**
      * 修改部门
