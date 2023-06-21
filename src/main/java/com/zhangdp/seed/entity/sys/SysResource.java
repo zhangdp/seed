@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import org.hibernate.validator.constraints.Length;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -42,6 +43,7 @@ public class SysResource extends BaseEntity implements Serializable {
      * 名称
      */
     @NotBlank(message = "名称不能为空")
+    @Length(max = 32, message = "名称不能超过{max}个字符")
     @Schema(title = "名称")
     private String name;
     /**
@@ -84,6 +86,6 @@ public class SysResource extends BaseEntity implements Serializable {
      * 是否展示
      */
     @Schema(title = "是否显示", description = "0：否；1：是")
-    private String isVisible;
+    private Integer isVisible;
 
 }

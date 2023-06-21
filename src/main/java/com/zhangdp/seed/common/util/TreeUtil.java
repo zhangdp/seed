@@ -20,10 +20,10 @@ public class TreeUtil {
     /**
      * 列表转树形结构
      *
-     * @param list
-     * @param rootId
-     * @param <T>
-     * @param <K>
+     * @param list   列表
+     * @param rootId 根id
+     * @param <T>    节点类型，需继承TreeNode
+     * @param <K>    根id类型
      * @return
      */
     public static <T extends TreeNode<K>, K> List<T> listToTree(List<T> list, K rootId) {
@@ -49,12 +49,12 @@ public class TreeUtil {
             // 循环递归寻找孩子节点
             for (T node : list) {
                 List<T> tmp = findChildren(map, node.getId());
+                int size = CollUtil.size(tmp);
                 // T不匹配TreeNode<K>，无法直接set列表，只能一个个添加
-                node.setChilds(new ArrayList<>(CollUtil.size(tmp)));
-                if (CollUtil.isNotEmpty(tmp)) {
-                    for (T t : tmp) {
-                        node.getChilds().add(t);
-                    }
+                List<TreeNode<K>> children = new ArrayList<>(size);
+                node.setChildren(children);
+                if (size > 0) {
+                    children.addAll(tmp);
                 }
             }
         }

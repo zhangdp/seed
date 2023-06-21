@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.Hidden;
 import java.lang.annotation.*;
 
 /**
- * 2023/6/14 spring mvc controller自动注入当前登录用户注解
+ * 2023/6/14 spring mvc controller自动注入当前登录用户id注解
  *
  * @author zhangdp
  * @since 1.0.0

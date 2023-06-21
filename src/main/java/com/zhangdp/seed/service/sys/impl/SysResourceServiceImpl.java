@@ -9,6 +9,7 @@ import com.zhangdp.seed.common.exception.SeedException;
 import com.zhangdp.seed.entity.sys.SysResource;
 import com.zhangdp.seed.entity.sys.SysRoleResource;
 import com.zhangdp.seed.mapper.sys.SysResourceMapper;
+import com.zhangdp.seed.model.dto.ResourceTreeNode;
 import com.zhangdp.seed.service.sys.SysResourceService;
 import com.zhangdp.seed.service.sys.SysRoleResourceService;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +50,7 @@ public class SysResourceServiceImpl extends ServiceImpl<SysResourceMapper, SysRe
             return null;
         }
         return this.list(Wrappers.lambdaQuery(SysResource.class)
-                .in(SysResource::getId, pks.stream().map(SysRoleResource::getResourceId).toList())
+                .in(SysResource::getId, pks.stream().map(SysRoleResource::getResourceId).distinct().toList())
                 .orderByAsc(SysResource::getParentId)
                 .orderByAsc(SysResource::getSorts));
     }
@@ -70,5 +71,10 @@ public class SysResourceServiceImpl extends ServiceImpl<SysResourceMapper, SysRe
             Assert.isTrue(this.isExists(resource.getParentId()), () -> new SeedException(ErrorCode.RESOURCE_PARENT_NOT_EXISTS));
         }
         return this.updateById(resource);
+    }
+
+    @Override
+    public List<ResourceTreeNode> listTree() {
+        return this.toTree(this.list());
     }
 }

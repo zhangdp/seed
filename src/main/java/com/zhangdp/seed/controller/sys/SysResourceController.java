@@ -2,16 +2,21 @@ package com.zhangdp.seed.controller.sys;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.zhangdp.seed.common.ValidGroup;
+import com.zhangdp.seed.common.annotation.LoginUserId;
 import com.zhangdp.seed.common.annotation.OperateLog;
+import com.zhangdp.seed.common.component.SecurityHelper;
 import com.zhangdp.seed.common.constant.TableNameConst;
 import com.zhangdp.seed.common.enums.OperateType;
 import com.zhangdp.seed.entity.sys.SysResource;
+import com.zhangdp.seed.model.dto.ResourceTreeNode;
 import com.zhangdp.seed.service.sys.SysResourceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 2023/6/14 资源相关接口
@@ -26,6 +31,7 @@ import org.springframework.web.bind.annotation.*;
 public class SysResourceController {
 
     private final SysResourceService sysResourceService;
+    private final SecurityHelper securityHelper;
 
     /**
      * 新增资源
@@ -67,6 +73,29 @@ public class SysResourceController {
     @OperateLog(type = OperateType.DELETE, refModule = TableNameConst.SYS_RESOURCE, refIdEl = "#id")
     public boolean delete(@PathVariable Long id) {
         return sysResourceService.removeById(id);
+    }
+
+    /**
+     * 获取树形资源列表
+     *
+     * @return
+     */
+    @GetMapping("tree")
+    @Operation(summary = "获取资源树", description = "获取资源树列表")
+    public List<ResourceTreeNode> tree() {
+        return sysResourceService.listTree();
+    }
+
+    /**
+     * 获取当前登录用户的菜单树列表
+     *
+     * @param userId
+     * @return
+     */
+    @GetMapping("menu/user/tree")
+    @Operation(summary = "获取用户的菜单树", description = "获取当前登录用户的菜单树")
+    public List<ResourceTreeNode> usersMenu(@LoginUserId Long userId) {
+        return securityHelper.listUsersMenuTree(userId);
     }
 
 }

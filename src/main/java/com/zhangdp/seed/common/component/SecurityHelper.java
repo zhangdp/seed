@@ -7,11 +7,13 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.zhangdp.seed.common.constant.CommonConst;
 import com.zhangdp.seed.common.constant.SecurityConst;
 import com.zhangdp.seed.common.enums.ErrorCode;
+import com.zhangdp.seed.common.enums.ResourceType;
 import com.zhangdp.seed.common.exception.SeedException;
 import com.zhangdp.seed.entity.sys.SysResource;
 import com.zhangdp.seed.entity.sys.SysRole;
 import com.zhangdp.seed.entity.sys.SysUser;
 import com.zhangdp.seed.model.LoginResult;
+import com.zhangdp.seed.model.dto.ResourceTreeNode;
 import com.zhangdp.seed.model.dto.UserInfo;
 import com.zhangdp.seed.service.sys.SysResourceService;
 import com.zhangdp.seed.service.sys.SysRoleService;
@@ -231,4 +233,30 @@ public class SecurityHelper implements StpInterface {
         }
         return roles.stream().map(SysRole::getCode).toList();
     }
+
+    /**
+     * 获取某个用户的菜单树列表
+     *
+     * @param userId
+     * @return
+     */
+    public List<ResourceTreeNode> listUsersMenuTree(Long userId) {
+        List<SysRole> roles = sysRoleService.listUserRoles(userId);
+        if (CollUtil.isEmpty(roles)) {
+            return new ArrayList<>(0);
+        }
+        Set<SysResource> set = new HashSet<>(32);
+        for (SysRole role : roles) {
+            List<SysResource> resources = sysResourceService.listRoleResources(role.getId());
+            if (CollUtil.isNotEmpty(resources)) {
+                for (SysResource resource : resources) {
+                    if (resource.getType() == ResourceType.MENU.type()) {
+                        set.add(resource);
+                    }
+                }
+            }
+        }
+        return sysResourceService.toTree(set);
+    }
+
 }

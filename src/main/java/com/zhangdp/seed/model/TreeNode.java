@@ -33,6 +33,21 @@ public class TreeNode<T> implements Serializable {
     @Schema(title = "名称")
     protected String label;
     /**
+     * 图标
+     */
+    @Schema(title = "图标")
+    protected String icon;
+    /**
+     * 描述
+     */
+    @Schema(title = "图标")
+    protected String description;
+    /**
+     * 是否叶子节点
+     */
+    @Schema(title = "是否叶子节点")
+    protected Boolean isLeaf = false;
+    /**
      * 父id
      */
     @Schema(title = "父id")
@@ -41,5 +56,5 @@ public class TreeNode<T> implements Serializable {
      * 孩子节点列表
      */
     @Schema(title = "孩子节点")
-    protected List<TreeNode<T>> childs;
+    protected List<TreeNode<T>> children;
 }
