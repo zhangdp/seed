@@ -13,7 +13,7 @@ public interface CacheConst {
     /**
      * 默认过期时间：1小时
      */
-    Duration ttl = Duration.ofHours(1);
+    Duration TTL = Duration.ofHours(1);
     /**
      * 缓存key前缀
      */

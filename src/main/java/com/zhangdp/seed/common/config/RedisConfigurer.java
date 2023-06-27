@@ -58,7 +58,7 @@ public class RedisConfigurer {
         // todo 这里应改为默认配置取自application.yml配置，在这基础上配置建、值序列化方式
         RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
                 // 过期时间
-                .entryTtl(CacheConst.ttl)
+                .entryTtl(CacheConst.TTL)
                 // 前缀
                 .prefixCacheNameWith(CacheConst.PREFIX + CacheConst.SPLIT)
                 // 键序列化方式 redis字符串序列化
