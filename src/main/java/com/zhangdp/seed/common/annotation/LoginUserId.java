@@ -13,7 +13,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
 @Documented
-@Hidden
+@Hidden // 继承@Hidden从swagger文档中隐藏
 public @interface LoginUserId {
 
 }

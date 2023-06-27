@@ -44,6 +44,12 @@ public class SysUserController {
         return sysUserService.insert(user);
     }
 
+    /**
+     * 修改用户
+     *
+     * @param user
+     * @return
+     */
     @PutMapping("/update")
     @SaCheckPermission("user:update")
     @Operation(summary = "修改用户", description = "修改用户，需传值id，无需传createTime、updateTime")
