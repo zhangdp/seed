@@ -13,9 +13,9 @@
 
 ### 核心依赖
 
-| 依赖                                    | 版本      |
-|---------------------------------------|---------|
-| Spring Boot                           | 3.1.0   |
-| [Sa-Token](https://sa-token.cc/)      | 1.34.0  |
-| [Mybatis Plus](https://baomidou.com/) | 3.5.3.1 |
-| [Hutool](https://www.hutool.cn/)      | 6.0.0M3 |
+| 依赖                                    | 版本       |
+|---------------------------------------|----------|
+| Spring Boot                           | 3.1.1    |
+| [Sa-Token](https://sa-token.cc/)      | 1.34.0   |
+| [Mybatis Plus](https://baomidou.com/) | 3.5.3.1  |
+| [Hutool](https://www.hutool.cn/)      | 6.0.0-M4 |

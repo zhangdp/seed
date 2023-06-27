@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.0</version>
+        <version>3.1.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.zhangdp</groupId>
@@ -16,13 +16,13 @@
 
     <properties>
         <java.version>17</java.version>
-        <hutool.version>6.0.0.M3</hutool.version>
+        <hutool.version>6.0.0-M4</hutool.version>
         <mybatis-plus.version>3.5.3.1</mybatis-plus.version>
         <sa-token.version>1.34.0</sa-token.version>
-        <pagehelper.version>1.4.6</pagehelper.version>
+        <pagehelper.version>1.4.7</pagehelper.version>
         <springdoc.version>2.1.0</springdoc.version>
-        <druid.version>1.2.17</druid.version>
-        <spring-boot-admin.version>3.0.4</spring-boot-admin.version>
+        <druid.version>1.2.18</druid.version>
+        <spring-boot-admin.version>3.1.0</spring-boot-admin.version>
         <ip2region.version>2.7.0</ip2region.version>
     </properties>
 
@@ -115,10 +115,10 @@
             <version>${springdoc.version}</version>
         </dependency>
         <!-- alibaba数据库连接池 -->
-        <!-- springboot 3.0 暂不兼容druid
+        <!--
         <dependency>
             <groupId>com.alibaba</groupId>
-            <artifactId>druid-spring-boot-starter</artifactId>
+            <artifactId>druid-spring-boot-3-starter</artifactId>
             <version>${druid.version}</version>
         </dependency>
         -->
