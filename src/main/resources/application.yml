@@ -18,7 +18,7 @@ spring:
       pool:
         core-size: 16
         max-size: 32
-        queue-capacity: 4096
+        queue-capacity: 1024
   data:
     redis:
       database: ${REDIS_DATABASE:0}
@@ -37,15 +37,6 @@ spring:
     redis:
       time-to-live: 1h
       key-prefix: "cache::"
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${MYSQL_HOST:191.168.10.91}:${MYSQL_PORT:3306}/${MYSQL_DB:seed}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
-    username: ${MYSQL_USER:seed}
-    password: ${MYSQL_PASSWORD:Seed@2022}
-    hikari:
-      maximum-pool-size: 16
-      # minimum-idle: 4
-      keepaliveTime: 60000
   boot:
     admin:
       client:
@@ -55,6 +46,15 @@ spring:
           metadata:
             user.name: ${actuator.security.user}
             user.password: ${actuator.security.password}
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${MYSQL_HOST:191.168.10.91}:${MYSQL_PORT:3306}/${MYSQL_DB:seed}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    username: ${MYSQL_USER:seed}
+    password: ${MYSQL_PASSWORD:Seed@2022}
+    hikari:
+      maximum-pool-size: 16
+      # minimum-idle: 4
+      keepaliveTime: 60000
 # druid 暂不兼容springboot3.0
 #    druid:
 #      keepAlive: true

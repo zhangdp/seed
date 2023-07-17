@@ -1,5 +1,6 @@
 package com.zhangdp.seed.model;
 
+import com.zhangdp.seed.common.constant.CommonConst;
 import com.zhangdp.seed.model.dto.UserInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -31,7 +32,7 @@ public class LoginResult implements Serializable {
      * 令牌类型
      */
     @Schema(title = "令牌类型")
-    private String tokenType;
+    private String tokenType = CommonConst.BEARER_TYPE;
     /**
      * 用户id
      */

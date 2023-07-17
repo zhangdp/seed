@@ -45,7 +45,7 @@ public class SaTokenHelper {
         return switch (e.getCode()) {
             case SaErrorCode.CODE_11001, SaErrorCode.CODE_11011 -> new R<>(ErrorCode.TOKEN_NOT_FOUND);
             case SaErrorCode.CODE_11012 -> new R<>(ErrorCode.TOKEN_INVALID);
-            case SaErrorCode.CODE_11013 -> new R<>(ErrorCode.TOKEN_EXPIRED);
+            case SaErrorCode.CODE_11013, SaErrorCode.CODE_11016 -> new R<>(ErrorCode.TOKEN_EXPIRED);
             case SaErrorCode.CODE_11014 -> new R<>(ErrorCode.TOKEN_REPLACED);
             case SaErrorCode.CODE_11015 -> new R<>(ErrorCode.TOKEN_KICK_OUT);
             default -> new R<>(ErrorCode.UNAUTHORIZED);

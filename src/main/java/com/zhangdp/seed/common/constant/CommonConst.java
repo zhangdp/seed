@@ -94,4 +94,8 @@ public interface CommonConst {
      */
     String CHARSET = "UTF-8";
 
+    /**
+     * Bearer
+     */
+    String BEARER_TYPE = "Bearer";
 }

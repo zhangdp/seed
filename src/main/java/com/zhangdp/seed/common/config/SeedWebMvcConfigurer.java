@@ -2,7 +2,6 @@ package com.zhangdp.seed.common.config;
 
 import cn.dev33.satoken.basic.SaBasicUtil;
 import cn.dev33.satoken.config.SaTokenConfig;
-import cn.dev33.satoken.exception.NotBasicAuthException;
 import cn.dev33.satoken.exception.SaTokenException;
 import cn.dev33.satoken.interceptor.SaInterceptor;
 import cn.dev33.satoken.router.SaRouter;
@@ -123,24 +122,20 @@ public class SeedWebMvcConfigurer implements WebMvcConfigurer {
                     log.warn("SaTokenCheckAuthFilter 失败: uri={}, error={}", request.getRequestURI(), t.getLocalizedMessage());
                     // 统一响应401状态码
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    /* Sa-Token 框架已自动添加此header
                     // Basic认证未通过时需输出要求Basic的响应头
                     if (t instanceof NotBasicAuthException) {
-                        // Sa-Token 框架已自行添加此header
-                        // response.addHeader("WWW-Authenticate", "Basic");
-                        return;
+                        response.addHeader("WWW-Authenticate", "Basic");
                     }
+                    */
                     R<?> r;
-                    try {
-                        // 区分具体检查失败原因如是因为token不存在还是token已过期等
-                        if (t instanceof SaTokenException) {
-                            r = SaTokenHelper.resolveError((SaTokenException) t);
-                        } else {
-                            r = new R<>(ErrorCode.SERVER_ERROR);
-                        }
-                        WebUtils.responseJson(response, objectMapper.writeValueAsString(r));
-                    } catch (Exception e) {
-                        log.error("SaToken filter error处理出错", e);
+                    // 区分具体检查失败原因如是因为token不存在还是token已过期等
+                    if (t instanceof SaTokenException) {
+                        r = SaTokenHelper.resolveError((SaTokenException) t);
+                    } else {
+                        r = new R<>(ErrorCode.UNAUTHORIZED);
                     }
+                    WebUtils.responseJson(response, objectMapper.writeValueAsString(r));
                 });
     }
 

@@ -90,7 +90,7 @@ public class WebUtils {
      * @param matches
      * @return
      */
-    public static boolean isParamMatch(Object param, String[] matches) {
+    public static boolean isParamMatch(Object param, String... matches) {
         if (param == null) {
             return false;
         }
@@ -99,6 +99,29 @@ public class WebUtils {
             return false;
         }
         return Arrays.stream(matches).anyMatch(m -> m.equalsIgnoreCase(p));
+    }
+
+    /**
+     * url追加参数
+     *
+     * @param url
+     * @param name
+     * @param value
+     * @return
+     */
+    public static String appendParameter(String url, String name, Object value) {
+        StringBuilder sb = new StringBuilder(url);
+        if (url.indexOf('/') > -1) {
+            sb.append('&');
+        } else {
+            sb.append('?');
+        }
+        sb.append(name);
+        sb.append('=');
+        if (value != null) {
+            sb.append(value);
+        }
+        return sb.toString();
     }
 
     /**
@@ -147,7 +170,7 @@ public class WebUtils {
      * @return
      */
     public static boolean responseJson(HttpServletResponse response, String json) {
-        return responseJson(response, HttpServletResponse.SC_OK, json);
+        return responseJson(response, null, json);
     }
 
     /**
@@ -158,10 +181,12 @@ public class WebUtils {
      * @param json
      * @return
      */
-    public static boolean responseJson(HttpServletResponse response, int httpStatus, String json) {
+    public static boolean responseJson(HttpServletResponse response, Integer httpStatus, String json) {
         try {
-            response.setStatus(httpStatus);
-            // response.setCharacterEncoding(CommonConst.CHARSET);
+            if (httpStatus != null) {
+                response.setStatus(httpStatus);
+            }
+            response.setCharacterEncoding("UTF-8");
             response.setContentType("application/json");
             response.getWriter().write(json);
             response.flushBuffer();
@@ -190,7 +215,7 @@ public class WebUtils {
                 disposition += ";filename=\"" + URLEncoder.encode(filename, CommonConst.CHARSET) + "\"";
             }
             response.setHeader("Content-Disposition", disposition);
-            // response.setCharacterEncoding(CommonConst.CHARSET);
+            // response.setCharacterEncoding("UTF-8");
             response.setContentType(contentType != null && (contentType = contentType.trim()).length() > 0 ? contentType : "application/octet-stream");
             response.setContentLengthLong(fileSize);
             ServletOutputStream out = response.getOutputStream();
