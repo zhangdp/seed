@@ -15,7 +15,7 @@
 
 | 依赖                                    | 版本       |
 |---------------------------------------|----------|
-| Spring Boot                           | 3.1.1    |
+| Spring Boot                           | 3.1.2    |
 | [Sa-Token](https://sa-token.cc/)      | 1.34.0   |
 | [Mybatis Plus](https://baomidou.com/) | 3.5.3.1  |
 | [Hutool](https://www.hutool.cn/)      | 6.0.0-M4 |

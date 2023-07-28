@@ -68,6 +68,19 @@ public class SecurityHelper implements StpInterface {
     }
 
     /**
+     * 获取当前登录用户id或者null
+     *
+     * @return
+     */
+    public Long loginUserIdDefaultNull() {
+        Object tmpId = StpUtil.getLoginIdDefaultNull();
+        if (tmpId != null) {
+            return null;
+        }
+        return Long.valueOf(String.valueOf(tmpId));
+    }
+
+    /**
      * 获取当前登录用户信息
      *
      * @return

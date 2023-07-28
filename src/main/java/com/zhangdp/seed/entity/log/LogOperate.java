@@ -97,8 +97,8 @@ public class LogOperate implements Serializable {
     /**
      * 返回结果标识
      */
-    @Schema(title = "返回结果标识")
-    private Long resultCode;
+    @Schema(title = "返回结果状态码")
+    private Integer resultCode;
     /**
      * json格式的返回值
      */
