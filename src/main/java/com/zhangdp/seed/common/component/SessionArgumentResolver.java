@@ -1,6 +1,7 @@
 package com.zhangdp.seed.common.component;
 
 import cn.dev33.satoken.stp.StpUtil;
+import com.zhangdp.seed.common.data.Session;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;

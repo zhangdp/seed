@@ -102,13 +102,13 @@ public class LogOperate implements Serializable {
     /**
      * json格式的返回值
      */
-    @Schema(title = "json格式的返回值")
-    private String jsonResult;
+    @Schema(title = "返回值")
+    private String result;
     /**
      * json格式的入参
      */
-    @Schema(title = "json格式的入参")
-    private String jsonParams;
+    @Schema(title = "入参")
+    private String params;
     /**
      * 异常堆栈
      */

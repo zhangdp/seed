@@ -74,7 +74,7 @@ public class SecurityHelper implements StpInterface {
      */
     public Long loginUserIdDefaultNull() {
         Object tmpId = StpUtil.getLoginIdDefaultNull();
-        if (tmpId != null) {
+        if (tmpId == null) {
             return null;
         }
         return Long.valueOf(String.valueOf(tmpId));

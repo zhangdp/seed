@@ -1,6 +1,6 @@
 package com.zhangdp.seed;
 
-import com.zhangdp.seed.common.aspect.EnableLogOperate;
+import com.zhangdp.seed.common.annotation.EnableLogOperate;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;

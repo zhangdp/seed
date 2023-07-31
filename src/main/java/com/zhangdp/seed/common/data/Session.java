@@ -1,4 +1,4 @@
-package com.zhangdp.seed.common.component;
+package com.zhangdp.seed.common.data;
 
 import cn.dev33.satoken.session.SaSession;
 import io.swagger.v3.oas.annotations.Hidden;

@@ -1,5 +1,6 @@
-package com.zhangdp.seed.common.aspect;
+package com.zhangdp.seed.common.annotation;
 
+import com.zhangdp.seed.common.aspect.OperateLogAspect;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;
