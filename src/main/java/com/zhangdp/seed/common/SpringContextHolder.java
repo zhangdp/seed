@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 /**
- * Spring 工具类
+ * Spring 上下文工具类
  *
  * @author zhangdp
  * @since 1.0.0

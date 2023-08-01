@@ -24,6 +24,13 @@ public @interface OperateLog {
     OperateType type();
 
     /**
+     * 操作描述
+     *
+     * @return
+     */
+    String title();
+
+    /**
      * 关联模块
      *
      * @return
@@ -51,5 +58,18 @@ public @interface OperateLog {
      */
     boolean logIfError() default false;
 
+    /**
+     * 是否记录结果
+     *
+     * @return
+     */
+    boolean logResult() default true;
+
+    /**
+     * 是否记录入参
+     *
+     * @return
+     */
+    boolean logParams() default true;
 
 }

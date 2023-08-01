@@ -42,7 +42,7 @@ public class SysResourceController {
     @PostMapping("add")
     @SaCheckPermission(TableNameConst.SYS_RESOURCE + TableNameConst.SPLIT + "add")
     @Operation(summary = "新增资源", description = "新增资源，无需传值id、createTime、updateTime")
-    @OperateLog(type = OperateType.CREATE, refModule = TableNameConst.SYS_RESOURCE, refIdEl = "#resource.id")
+    @OperateLog(type = OperateType.CREATE, title = "新增资源", refModule = TableNameConst.SYS_RESOURCE, refIdEl = "#resource.id")
     public boolean add(@RequestBody @Validated SysResource resource) {
         return sysResourceService.insert(resource);
     }
@@ -56,7 +56,7 @@ public class SysResourceController {
     @PatchMapping("update")
     @SaCheckPermission(TableNameConst.SYS_RESOURCE + TableNameConst.SPLIT + "update")
     @Operation(summary = "修改资源", description = "修改资源，需传值id")
-    @OperateLog(type = OperateType.UPDATE, refModule = TableNameConst.SYS_RESOURCE, refIdEl = "#resource.id")
+    @OperateLog(type = OperateType.UPDATE, title = "修改资源", refModule = TableNameConst.SYS_RESOURCE, refIdEl = "#resource.id")
     public boolean update(@RequestBody @Validated(ValidGroup.Update.class) SysResource resource) {
         return sysResourceService.update(resource);
     }
@@ -70,7 +70,7 @@ public class SysResourceController {
     @DeleteMapping("delete/{id}")
     @SaCheckPermission(TableNameConst.SYS_RESOURCE + TableNameConst.SPLIT + "delete")
     @Operation(summary = "删除资源", description = "根据id删除资源")
-    @OperateLog(type = OperateType.DELETE, refModule = TableNameConst.SYS_RESOURCE, refIdEl = "#id")
+    @OperateLog(type = OperateType.DELETE, title = "删除资源", refModule = TableNameConst.SYS_RESOURCE, refIdEl = "#id")
     public boolean delete(@PathVariable Long id) {
         return sysResourceService.removeById(id);
     }

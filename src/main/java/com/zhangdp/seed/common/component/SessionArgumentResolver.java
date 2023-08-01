@@ -22,7 +22,7 @@ public class SessionArgumentResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public boolean supportsParameter(@NotNull MethodParameter parameter) {
-        return parameter.getParameterType().isAssignableFrom(Session.class);
+        return Session.class.isAssignableFrom(parameter.getParameterType());
     }
 
     @Override

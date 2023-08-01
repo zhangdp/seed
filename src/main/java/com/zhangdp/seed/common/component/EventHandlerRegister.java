@@ -24,13 +24,13 @@ import java.util.Map;
 public class EventHandlerRegister implements ApplicationContextAware, SmartInitializingSingleton {
 
     /**
-     * spring环境
-     */
-    private ApplicationContext applicationContext;
-    /**
      * 事件处理器容器
      */
     private final EventHandlerContainer eventHandlerContainer;
+    /**
+     * spring环境
+     */
+    private ApplicationContext applicationContext;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -53,7 +53,7 @@ public class EventHandlerRegister implements ApplicationContextAware, SmartIniti
      */
     private void registerHandler(String name, Object bean) {
         Class<?> clazz = AopProxyUtils.ultimateTargetClass(bean);
-        if (!IEventHandler.class.isAssignableFrom(bean.getClass())) {
+        if (!(bean instanceof IEventHandler)) {
             throw new IllegalStateException(clazz + " 不属于 " + IEventHandler.class.getName());
         }
         EventHandler annotation = clazz.getAnnotation(EventHandler.class);

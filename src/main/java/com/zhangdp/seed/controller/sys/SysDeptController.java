@@ -49,7 +49,7 @@ public class SysDeptController {
     @PostMapping("/add")
     @SaCheckPermission("dept:add")
     @Operation(summary = "新增部门", description = "新增部门，无需传值id、createTime、updateTime")
-    @OperateLog(type = OperateType.CREATE, refModule = "sys_dept", refIdEl = "#dept.id")
+    @OperateLog(type = OperateType.CREATE, title = "新增部门", refModule = "sys_dept", refIdEl = "#dept.id")
     public boolean add(@RequestBody @Validated(ValidGroup.Update.class) SysDept dept) {
         return sysDeptService.insert(dept);
     }
@@ -63,7 +63,7 @@ public class SysDeptController {
     @PutMapping("/update")
     @SaCheckPermission("dept:update")
     @Operation(summary = "修改部门", description = "修改部门，需传值id")
-    @OperateLog(type = OperateType.UPDATE, refModule = "sys_dept", refIdEl = "#dept.id")
+    @OperateLog(type = OperateType.UPDATE, title = "修改部门", refModule = "sys_dept", refIdEl = "#dept.id")
     public boolean update(@RequestBody @Validated(ValidGroup.Update.class) SysDept dept) {
         return sysDeptService.update(dept);
     }
@@ -77,7 +77,7 @@ public class SysDeptController {
     @DeleteMapping("/delete/{id}")
     @SaCheckPermission("dept:delete")
     @Operation(summary = "删除部门", description = "根据id删除部门")
-    @OperateLog(type = OperateType.DELETE, refModule = "sys_dept", refIdEl = "#id")
+    @OperateLog(type = OperateType.DELETE, title = "删除部门", refModule = "sys_dept", refIdEl = "#id")
     public boolean delete(@PathVariable Long id) {
         return sysDeptService.removeById(id);
     }

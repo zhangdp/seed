@@ -24,4 +24,21 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
      * @return
      */
     List<UserInfo> queryList(UserQuery params);
+
+    /**
+     * 统计指定账号的用户个数（包含逻辑删除的）
+     *
+     * @param username
+     * @return
+     */
+    int countByUsername(String username);
+
+    /**
+     * 统计指定账号但id不为指定id的用户个数（包含逻辑删除的）
+     *
+     * @param username
+     * @param id
+     * @return
+     */
+    int countByUsernameAndIdNot(String username, Long id);
 }

@@ -39,12 +39,14 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
     @Override
     public boolean existsUsername(String username) {
-        return this.baseMapper.exists(this.lambdaQuery().getWrapper().eq(SysUser::getUsername, username));
+        // return this.baseMapper.exists(this.lambdaQuery().getWrapper().eq(SysUser::getUsername, username));
+        return this.baseMapper.countByUsername(username) > 0;
     }
 
     @Override
     public boolean existsUsernameAndIdNot(String username, Long id) {
-        return this.baseMapper.exists(this.lambdaQuery().getWrapper().eq(SysUser::getUsername, username).ne(SysUser::getId, id));
+        // return this.baseMapper.exists(this.lambdaQuery().getWrapper().eq(SysUser::getUsername, username).ne(SysUser::getId, id));
+        return this.baseMapper.countByUsernameAndIdNot(username, id) > 0;
     }
 
     @Override

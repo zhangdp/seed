@@ -35,6 +35,11 @@ public class LogOperate implements Serializable {
     @Schema(title = "id")
     private Long id;
     /**
+     * 操作描述
+     */
+    @Schema(title = "操作描述")
+    private String title;
+    /**
      * 操作时间
      */
     @TableField(fill = FieldFill.INSERT)
@@ -97,8 +102,13 @@ public class LogOperate implements Serializable {
     /**
      * 返回结果标识
      */
-    @Schema(title = "返回结果状态码")
-    private Integer resultCode;
+    // @Schema(title = "返回结果状态码")
+    // private Integer resultCode;
+    /**
+     * 是否成功
+     */
+    @Schema(title = "是否成功")
+    private Boolean succeed;
     /**
      * json格式的返回值
      */
@@ -112,6 +122,6 @@ public class LogOperate implements Serializable {
     /**
      * 异常堆栈
      */
-    // @Schema(title = "异常堆栈")
-    // private String errorTrace;
+    @Schema(title = "异常堆栈")
+    private String errorStrace;
 }

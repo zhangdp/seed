@@ -8,8 +8,9 @@ import lombok.experimental.Accessors;
 import org.springframework.context.ApplicationEvent;
 
 import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Map;
+import java.util.LinkedHashMap;
 
 /**
  * 2023/7/31 操作日志事件
@@ -31,6 +32,10 @@ public class OperateLogEvent extends ApplicationEvent {
      */
     private OperateType type;
     /**
+     * 操作描述
+     */
+    private String title;
+    /**
      * 关联模块
      */
     private String refModule;
@@ -45,11 +50,11 @@ public class OperateLogEvent extends ApplicationEvent {
     /**
      * 参数
      */
-    private Map<String, Object> params;
+    private LinkedHashMap<String, Object> params;
     /**
      * 结果
      */
-    private Object result;
+    private Serializable result;
     /**
      * 开始时间
      */
@@ -61,7 +66,7 @@ public class OperateLogEvent extends ApplicationEvent {
     /**
      * 用户id
      */
-    private Long loginUserId;
+    private Long userId;
     /**
      * 请求uri
      */
@@ -78,6 +83,14 @@ public class OperateLogEvent extends ApplicationEvent {
      * 客户端ip
      */
     private String clientIp;
+    /**
+     * 异常
+     */
+    private Throwable throwable;
+    /**
+     * 是否成功
+     */
+    private boolean succeed;
 
     public OperateLogEvent(Object source) {
         super(source);

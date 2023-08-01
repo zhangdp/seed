@@ -39,7 +39,7 @@ public class SysParamController {
     @PostMapping("/add")
     @SaCheckPermission("param:add")
     @Operation(summary = "新增参数", description = "新增参数，无需传值id、createTime、updateTime")
-    @OperateLog(type = OperateType.CREATE, refModule = "sys_param", refIdEl = "#param.id")
+    @OperateLog(type = OperateType.CREATE, title = "新增参数", refModule = "sys_param", refIdEl = "#param.id")
     public boolean add(@RequestBody @Validated(ValidGroup.Update.class) SysParam param) {
         return sysParamService.insert(param);
     }
@@ -53,7 +53,7 @@ public class SysParamController {
     @PutMapping("/update")
     @SaCheckPermission("param:update")
     @Operation(summary = "修改参数", description = "修改参数，需传值id")
-    @OperateLog(type = OperateType.UPDATE, refModule = "sys_param", refIdEl = "#param.id")
+    @OperateLog(type = OperateType.UPDATE, title = "修改参数", refModule = "sys_param", refIdEl = "#param.id")
     public boolean update(@RequestBody @Validated(ValidGroup.Update.class) SysParam param) {
         return sysParamService.update(param);
     }
@@ -67,7 +67,7 @@ public class SysParamController {
     @DeleteMapping("/delete/{id}")
     @SaCheckPermission("param:delete")
     @Operation(summary = "删除参数", description = "根据id删除参数")
-    @OperateLog(type = OperateType.DELETE, refModule = "sys_param", refIdEl = "#id")
+    @OperateLog(type = OperateType.DELETE, title = "删除参数", refModule = "sys_param", refIdEl = "#id")
     public boolean delete(@PathVariable Long id) {
         return sysParamService.delete(id);
     }
