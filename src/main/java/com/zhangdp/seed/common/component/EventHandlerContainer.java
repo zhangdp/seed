@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hutool.core.collection.CollUtil;
 import org.dromara.hutool.core.lang.Assert;
@@ -24,7 +25,7 @@ public class EventHandlerContainer {
     /**
      * 处理器链，按照order升序
      */
-    private final Map<String, List<EventHandlerWrapper>> handlerMap = new HashMap<>();
+    private final Map<String, List<EventHandlerWrapper>> handlerMap = new HashMap<>(32);
 
     /**
      * 添加处理器
@@ -72,10 +73,20 @@ public class EventHandlerContainer {
         return handlerMap.containsKey(type);
     }
 
+    /**
+     * 事件处理器包装类
+     */
     @Data
+    @Accessors(chain = true)
     @AllArgsConstructor
     private static class EventHandlerWrapper {
+        /**
+         * 顺序
+         */
         private int order;
+        /**
+         * 处理器
+         */
         private IEventHandler eventHandler;
     }
 

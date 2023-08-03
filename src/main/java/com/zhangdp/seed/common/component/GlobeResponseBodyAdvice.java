@@ -32,7 +32,7 @@ public class GlobeResponseBodyAdvice implements ResponseBodyAdvice<Object> {
      */
     private final static Class<?>[] IGNORE_CLASS = {R.class};
     /**
-     * jsckson
+     * jackson
      */
     private final ObjectMapper objectMapper;
 
@@ -45,7 +45,7 @@ public class GlobeResponseBodyAdvice implements ResponseBodyAdvice<Object> {
      */
     @Override
     public boolean supports(@NotNull MethodParameter returnType, @NotNull Class<? extends HttpMessageConverter<?>> converterType) {
-        // 忽略的类型则不处理
+        // 忽略的类型以及子类则不处理
         for (Class<?> clazz : IGNORE_CLASS) {
             if (clazz.isAssignableFrom(returnType.getParameterType())) {
                 return false;

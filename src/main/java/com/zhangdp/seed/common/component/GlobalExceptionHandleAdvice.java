@@ -68,7 +68,7 @@ public class GlobalExceptionHandleAdvice {
     }
 
     /**
-     * validation Exception
+     * 参数校验异常
      *
      * @param e
      * @param request
@@ -199,7 +199,7 @@ public class GlobalExceptionHandleAdvice {
     }
 
     /**
-     * 自定义异常
+     * 自定义异常即业务异常
      *
      * @param e
      * @param request

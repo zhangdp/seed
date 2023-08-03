@@ -5,7 +5,7 @@ import com.zhangdp.seed.common.enums.OperateType;
 import java.lang.annotation.*;
 
 /**
- * 2023/4/17 记录操作日志注解
+ * 2023/4/17 记录操作日志注解，在controller方法失效
  *
  * @author zhangdp
  * @since 1.0.0

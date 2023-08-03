@@ -1,8 +1,9 @@
 package com.zhangdp.seed.common.component;
 
+import com.zhangdp.seed.common.annotation.ThrowSeedException;
 import com.zhangdp.seed.common.enums.ErrorCode;
-import com.zhangdp.seed.common.exception.SeedException;
 import com.zhangdp.seed.model.IpRegion;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hutool.core.io.resource.ResourceUtil;
 import org.dromara.hutool.core.lang.Assert;
@@ -37,16 +38,14 @@ public class Ip2RegionSearcher implements InitializingBean, DisposableBean {
      * @param ip
      * @return
      */
+    @ThrowSeedException(ErrorCode.SEARCH_IP_REGION_FAILED)
+    @SneakyThrows
     public IpRegion search(String ip) {
-        try {
-            String region = this.searcher.search(ip);
-            if (StrUtil.isBlank(region)) {
-                return null;
-            }
-            return this.formatter(region);
-        } catch (Exception e) {
-            throw new SeedException(ErrorCode.SEARCH_IP_REGION_FAILED, e);
+        String region = this.searcher.search(ip);
+        if (StrUtil.isBlank(region)) {
+            return null;
         }
+        return this.formatter(region);
     }
 
     /**

@@ -40,7 +40,7 @@ public class EventHandlerRegister implements ApplicationContextAware, SmartIniti
     @Override
     public void afterSingletonsInstantiated() {
         Map<String, Object> beans = this.applicationContext.getBeansWithAnnotation(EventHandler.class);
-        if (beans != null && !beans.isEmpty()) {
+        if (!beans.isEmpty()) {
             beans.forEach(this::registerHandler);
         }
     }

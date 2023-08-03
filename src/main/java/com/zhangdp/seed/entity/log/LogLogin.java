@@ -66,11 +66,6 @@ public class LogLogin implements Serializable {
     @Schema(title = "客户端ip")
     private String clientIp;
     /**
-     * 客户端地区
-     */
-    @Schema(title = "地区")
-    private String clientArea;
-    /**
      * userAgent
      */
     @Schema(title = "浏览器标识")
