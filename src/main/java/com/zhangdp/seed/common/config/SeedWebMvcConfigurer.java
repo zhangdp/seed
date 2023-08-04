@@ -115,7 +115,12 @@ public class SeedWebMvcConfigurer implements WebMvcConfigurer {
                             .check(o -> SaBasicUtil.check(this.actuatorUser + ":" + this.actuatorPassword))
                             .stop();
                     // 其余全部路径需要登录检查
-                    SaRouter.match("/**").check(StpUtil::checkLogin);
+                    SaRouter.match("/**").check(o -> {
+                        // 检查是否登录
+                        StpUtil.checkLogin();
+                        // 检查成功后续签token有效期
+                        StpUtil.updateLastActivityToNow();
+                    });
                 })
                 // 失败策略
                 .error((request, response, t) -> {

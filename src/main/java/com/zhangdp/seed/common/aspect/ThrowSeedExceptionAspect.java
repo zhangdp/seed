@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 public class ThrowSeedExceptionAspect {
 
     /**
-     * 带有@ThrowSeedException注解的方法抛异常后处理
+     * 带有@ThrowSeedException注解的方法抛异常后转为自定义异常SeedException抛出
      *
      * @param joinPoint
      * @param throwable

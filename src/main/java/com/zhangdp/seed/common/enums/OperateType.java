@@ -27,7 +27,7 @@ public enum OperateType {
 
     private final String type;
 
-    private OperateType(String type) {
+    OperateType(String type) {
         this.type = type;
     }
 
