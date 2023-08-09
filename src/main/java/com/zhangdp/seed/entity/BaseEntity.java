@@ -34,27 +34,27 @@ public abstract class BaseEntity {
     @TableLogic
     @Schema(title = "逻辑删除", description = "0：否，默认；1：已删除", hidden = true)
     @JsonIgnore
-    protected Integer isDeleted;
+    protected Integer deleted;
     /**
      * 创建时间
      */
     @TableField(fill = FieldFill.INSERT)
     @Schema(title = "添加时间", description = "格式：" + CommonConst.DATETIME_FORMATTER)
-    protected LocalDateTime addTime;
+    protected LocalDateTime createdDate;
     /**
      * 修改时间
      */
     @TableField(fill = FieldFill.UPDATE)
     @Schema(title = "修改时间", description = "格式：" + CommonConst.DATETIME_FORMATTER)
-    protected LocalDateTime updateTime;
+    protected LocalDateTime modifiedDate;
     /**
      * 创建用户id
      */
     // @Schema(title = "创建人id")
-    // protected Long addUserId;
+    // protected Long createdUserId;
     /**
      * 修改用户id
      */
     // @Schema(title = "修改人id")
-    // protected Long updateUserId;
+    // protected Long modifiedUserId;
 }
