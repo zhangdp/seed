@@ -22,16 +22,4 @@ public interface CacheConst {
      * redis key 文件夹分割
      */
     String SPLIT = "::";
-    /**
-     * 缓存名称：角色
-     */
-    String CACHE_SYS_ROLE = "sys_role";
-    /**
-     * 缓存名称：字典项
-     */
-    String CACHE_SYS_DICT_ITEM = "sys_dict_item";
-    /**
-     * 缓存名称：资源
-     */
-    String CACHE_SYS_RESOURCE = "sys_resource";
 }

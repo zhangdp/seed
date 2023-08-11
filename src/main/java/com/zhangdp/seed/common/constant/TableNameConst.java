@@ -34,4 +34,17 @@ public interface TableNameConst {
      * 资源表
      */
     String SYS_RESOURCE = PREFIX_SYS + SPLIT + "resource";
+    /**
+     * 参数表
+     */
+    String SYS_PARAM = PREFIX_SYS + SPLIT + "param";
+    /**
+     * 字典表
+     */
+    String SYS_DICT_DATA = PREFIX_SYS + SPLIT + "dict_data";
+    /**
+     * 角色表
+     */
+    String SYS_ROLE = PREFIX_SYS + SPLIT + "sys_role";
+    ;
 }

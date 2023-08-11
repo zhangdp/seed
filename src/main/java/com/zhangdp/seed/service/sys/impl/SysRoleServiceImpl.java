@@ -3,6 +3,7 @@ package com.zhangdp.seed.service.sys.impl;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhangdp.seed.common.constant.CacheConst;
+import com.zhangdp.seed.common.constant.TableNameConst;
 import com.zhangdp.seed.entity.sys.SysRole;
 import com.zhangdp.seed.entity.sys.SysUserRole;
 import com.zhangdp.seed.mapper.sys.SysRoleMapper;
@@ -22,7 +23,7 @@ import java.util.List;
  * @author zhangdp
  * @since 1.0.0
  */
-@CacheConfig(cacheNames = CacheConst.CACHE_SYS_ROLE)
+@CacheConfig(cacheNames = TableNameConst.SYS_ROLE)
 @RequiredArgsConstructor
 @Service
 public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> implements SysRoleService {

@@ -104,7 +104,10 @@ public enum ErrorCode {
      * 父级资源不存在
      */
     RESOURCE_PARENT_NOT_EXISTS(20201, "父级资源不存在"),
-
+    /**
+     * 系统参数不存在
+     */
+    PARAM_NOT_FOUND(20300, "系统参数不存在"),
 
     /**
      * 3开头的错误码，错误来源是系统

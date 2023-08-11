@@ -25,16 +25,19 @@ public class ThrowSeedExceptionAspect {
      * 带有@ThrowSeedException注解的方法抛异常后转为自定义异常SeedException抛出
      *
      * @param joinPoint
-     * @param throwable
+     * @param throwing
      * @param throwSeedException
      */
-    @AfterThrowing(throwing = "throwable", value = "@annotation(throwSeedException)")
-    public void afterThrowing(JoinPoint joinPoint, Throwable throwable, ThrowSeedException throwSeedException) {
+    @AfterThrowing(throwing = "throwing", value = "@annotation(throwSeedException)")
+    public void afterThrowing(JoinPoint joinPoint, Throwable throwing, ThrowSeedException throwSeedException) {
         if (log.isDebugEnabled()) {
             String method = joinPoint.getTarget().getClass().getName() + "." + joinPoint.getSignature().getName();
-            log.debug("SeedExceptionAspect afterThrowing: method={}, throwable={}", method, throwable.getClass().getName());
+            log.debug("SeedExceptionAspect afterThrowing: method={}, throwing={}", method, throwing.getClass().getName());
+        }
+        if (throwing instanceof SeedException se) {
+            throw se;
         }
         ErrorCode errorCode = throwSeedException.value();
-        throw new SeedException(errorCode.code(), StrUtil.defaultIfEmpty(throwSeedException.message(), errorCode.message()), throwable);
+        throw new SeedException(errorCode.code(), StrUtil.defaultIfEmpty(throwSeedException.message(), errorCode.message()), throwing);
     }
 }

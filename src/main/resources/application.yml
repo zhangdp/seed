@@ -146,7 +146,7 @@ springdoc:
     enabled: false
 logging:
   file:
-    path: /var/log/${spring.application.name}
+    path: logs/${spring.application.name}
   level:
     root: warn
     com.zhangdp.seed: info

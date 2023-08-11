@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhangdp.seed.common.constant.CacheConst;
 import com.zhangdp.seed.common.constant.CommonConst;
+import com.zhangdp.seed.common.constant.TableNameConst;
 import com.zhangdp.seed.common.enums.ErrorCode;
 import com.zhangdp.seed.common.exception.SeedException;
 import com.zhangdp.seed.entity.sys.SysResource;
@@ -28,7 +29,7 @@ import java.util.List;
  * @author zhangdp
  * @since 1.0.0
  */
-@CacheConfig(cacheNames = CacheConst.CACHE_SYS_RESOURCE)
+@CacheConfig(cacheNames = TableNameConst.SYS_RESOURCE)
 @RequiredArgsConstructor
 @Service
 public class SysResourceServiceImpl extends ServiceImpl<SysResourceMapper, SysResource> implements SysResourceService {

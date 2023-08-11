@@ -3,6 +3,7 @@ package com.zhangdp.seed.service.sys.impl;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhangdp.seed.common.constant.CacheConst;
+import com.zhangdp.seed.common.constant.TableNameConst;
 import com.zhangdp.seed.entity.sys.SysDictData;
 import com.zhangdp.seed.mapper.sys.SysDictDataMapper;
 import com.zhangdp.seed.service.sys.SysDictDataService;
@@ -19,7 +20,7 @@ import java.util.List;
  * @since 1.0.0
  */
 @Service
-@CacheConfig(cacheNames = CacheConst.CACHE_SYS_DICT_ITEM)
+@CacheConfig(cacheNames = TableNameConst.SYS_DICT_DATA)
 public class SysDictDataServiceImpl extends ServiceImpl<SysDictDataMapper, SysDictData> implements SysDictDataService {
 
     private static final String CACHE_LIST = "list" + CacheConst.SPLIT;
