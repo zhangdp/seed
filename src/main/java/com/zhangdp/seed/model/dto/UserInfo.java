@@ -1,6 +1,9 @@
 package com.zhangdp.seed.model.dto;
 
+import com.zhangdp.seed.common.annotation.Desensitization;
 import com.zhangdp.seed.common.constant.CommonConst;
+import com.zhangdp.seed.common.enums.DesensitizationType;
+import com.zhangdp.seed.entity.BaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -25,7 +28,7 @@ import java.time.LocalDateTime;
 @Data
 @Accessors(chain = true)
 @Schema(title = "用户信息")
-public class UserInfo implements Serializable {
+public class UserInfo extends BaseEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -39,12 +42,12 @@ public class UserInfo implements Serializable {
      * 创建时间
      */
     @Schema(title = "创建时间", description = "格式：" + CommonConst.DATETIME_FORMATTER)
-    private LocalDateTime createTime;
+    private LocalDateTime createdDate;
     /**
      * 修改时间
      */
     @Schema(title = "修改时间", description = "格式：" + CommonConst.DATETIME_FORMATTER)
-    private LocalDateTime updateTime;
+    private LocalDateTime modifiedDate;
     /**
      * 账号
      */
@@ -59,29 +62,32 @@ public class UserInfo implements Serializable {
     @Schema(title = "密码")
     @NotBlank(message = "密码不能为空")
     @Length(min = 8, max = 32, message = "密码最少8位、最多32位字符")
+    @Desensitization(DesensitizationType.PASSWORD)
     private String password;
     /**
      * 手机号
      */
     @NotBlank(message = "手机号不能为空")
     @Pattern(regexp = RegexPool.MOBILE, message = "手机号格式不正确")
+    @Desensitization(DesensitizationType.MOBILE)
     private String mobile;
     /**
      * 性别，F：女，M：男，null：未知
      */
     @Schema(title = "性别", description = "F：女，M：男，null：未知")
-    private Character sex;
+    private Character gender;
     /**
      * 生日
      */
     @Schema(title = "生日", description = "格式：" + CommonConst.DATETIME_FORMATTER)
     @PastOrPresent(message = "生日需为过去日期")
-    private LocalDate birthDate;
+    private LocalDate birth;
     /**
      * 邮箱
      */
     @Schema(title = "邮箱")
     @Email(message = "邮箱格式不正确")
+    @Desensitization(DesensitizationType.EMAIL)
     private String email;
     /**
      * 头像url地址
@@ -94,18 +100,21 @@ public class UserInfo implements Serializable {
      */
     @Schema(title = "姓名")
     @Pattern(regexp = RegexPool.CHINESE_NAME, message = "姓名格式不正确")
+    @Desensitization(DesensitizationType.CHINESE_NAME)
     private String name;
     /**
      * 住址
      */
     @Schema(title = "住址")
     @Length(max = 255, message = "住址最多255个字符")
+    @Desensitization(DesensitizationType.ADDRESS)
     private String address;
     /**
      * 身份证号
      */
     @Schema(title = "身份证号")
     @Pattern(regexp = RegexPool.CITIZEN_ID, message = "身份证号码不正确")
+    @Desensitization(DesensitizationType.CITIZEN_ID)
     private String citizenId;
     /**
      * 部门id

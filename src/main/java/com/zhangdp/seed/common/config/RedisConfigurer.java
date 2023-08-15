@@ -15,8 +15,6 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.RedisSerializer;
 
-import java.lang.reflect.Field;
-
 /**
  * 2023/4/7 redis配置
  *
@@ -74,20 +72,14 @@ public class RedisConfigurer {
      * @return
      */
     public GenericJackson2JsonRedisSerializer jsonRedisSerializer() {
-        GenericJackson2JsonRedisSerializer valueSerializer = new GenericJackson2JsonRedisSerializer();
-        // 通过反射获取Mapper对象, 增加一些配置, 增强兼容性
-        try {
-            Field field = GenericJackson2JsonRedisSerializer.class.getDeclaredField("mapper");
-            field.setAccessible(true);
-            ObjectMapper objectMapper = (ObjectMapper) field.get(valueSerializer);
-            // 配置[忽略未知字段]
-            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            // 配置[时间类型转换]
-            objectMapper.registerModule(JacksonConfigurer.TIME_MODULE);
-        } catch (Exception e) {
-            log.warn("配置redis值序列化为json失败", e);
-        }
-        return valueSerializer;
+        ObjectMapper objectMapper = new ObjectMapper();
+        // 配置[忽略未知字段]
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        // 配置【空字符串反序列化为对象时为null】
+        objectMapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
+        // 配置[时间类型转换]
+        objectMapper.registerModule(JacksonConfigurer.TIME_MODULE);
+        return new GenericJackson2JsonRedisSerializer(objectMapper);
     }
 
 }

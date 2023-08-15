@@ -51,12 +51,12 @@ public class SysUser extends BaseEntity implements Serializable {
      * 性别，F：女，M：男，null：未知
      */
     @Schema(title = "性别", description = "F：女，M：男，null：未知")
-    private Character sex;
+    private Character gender;
     /**
      * 生日
      */
     @Schema(title = "生日")
-    private LocalDate birthDate;
+    private LocalDate birth;
     /**
      * 邮箱
      */
