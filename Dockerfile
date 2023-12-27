@@ -1,6 +1,8 @@
-FROM eclipse-temurin:17-jre
+FROM eclipse-temurin:21-jre
 WORKDIR /app
-ARG JAR_FILE=target/*.jar
-COPY ${JAR_FILE} app.jar
-ENV TZ=Asia/Shanghai JAVA_OPTS="-Xms1024m -Xmx2048m -Dspring.profiles.active=prod"
-ENTRYPOINT ["sh", "-c", "java ${JAVA_OPTS} -jar app.jar"]
+EXPOSE 8080
+ARG jar_file=target/*.jar
+ARG app_name=seed
+ENV TZ=Asia/Shanghai APP_NAME=${app_name} JAVA_OPTS="-server -Xms2048m -Xmx2048m -XX:MetaspaceSize=256m -XX:MaxMetaspaceSize=256m"
+COPY ${jar_file} ${APP_NAME}.jar
+CMD java -jar ${JAVA_OPTS} ${APP_NAME}.jar

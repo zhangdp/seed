@@ -1,6 +1,5 @@
 package com.zhangdp.seed.service.sys;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.zhangdp.seed.entity.sys.SysDept;
 import com.zhangdp.seed.model.dto.DeptTreeNode;
 
@@ -12,7 +11,7 @@ import java.util.List;
  * @author zhangdp
  * @since 1.0.0
  */
-public interface SysDeptService extends IService<SysDept> {
+public interface SysDeptService {
 
     /**
      * 获取部门树
@@ -44,4 +43,12 @@ public interface SysDeptService extends IService<SysDept> {
      * @return
      */
     boolean update(SysDept dept);
+
+    /**
+     * 根据id删除
+     *
+     * @param id
+     * @return
+     */
+    boolean delete(Long id);
 }

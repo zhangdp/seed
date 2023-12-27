@@ -95,7 +95,7 @@ public class WebUtils {
             return false;
         }
         String p = param.toString().trim();
-        if (p.length() == 0) {
+        if (p.isEmpty()) {
             return false;
         }
         return Arrays.stream(matches).anyMatch(m -> m.equalsIgnoreCase(p));
@@ -140,7 +140,7 @@ public class WebUtils {
                 continue;
             }
             String s = o.toString().trim();
-            if (s.length() == 0) {
+            if (s.isEmpty()) {
                 continue;
             }
             sb.append('/');
@@ -211,12 +211,12 @@ public class WebUtils {
         int len = -1;
         try {
             String disposition = "attachment";
-            if (filename != null && (filename = filename.trim()).length() > 0) {
+            if (filename != null && !filename.isEmpty()) {
                 disposition += ";filename=\"" + URLEncoder.encode(filename, CommonConst.CHARSET) + "\"";
             }
             response.setHeader("Content-Disposition", disposition);
             // response.setCharacterEncoding("UTF-8");
-            response.setContentType(contentType != null && (contentType = contentType.trim()).length() > 0 ? contentType : "application/octet-stream");
+            response.setContentType(contentType != null && !contentType.isEmpty() ? contentType : "application/octet-stream");
             response.setContentLengthLong(fileSize);
             ServletOutputStream out = response.getOutputStream();
             byte[] buf = new byte[8192];

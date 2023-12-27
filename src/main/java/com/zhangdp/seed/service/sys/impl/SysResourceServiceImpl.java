@@ -1,7 +1,5 @@
 package com.zhangdp.seed.service.sys.impl;
 
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhangdp.seed.common.constant.CacheConst;
 import com.zhangdp.seed.common.constant.CommonConst;
 import com.zhangdp.seed.common.constant.TableNameConst;
@@ -21,6 +19,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -32,15 +31,16 @@ import java.util.List;
 @CacheConfig(cacheNames = TableNameConst.SYS_RESOURCE)
 @RequiredArgsConstructor
 @Service
-public class SysResourceServiceImpl extends ServiceImpl<SysResourceMapper, SysResource> implements SysResourceService {
+public class SysResourceServiceImpl implements SysResourceService {
 
     private static final String CACHE_ROLE_RESOURCES = "role_resources" + CacheConst.SPLIT;
 
     private final SysRoleResourceService sysRoleResourceService;
+    private final SysResourceMapper sysResourceMapper;
 
     @Override
     public boolean isExists(Long id) {
-        return this.baseMapper.exists(Wrappers.lambdaQuery(SysResource.class).eq(SysResource::getId, id));
+        return sysResourceMapper.existsById(id);
     }
 
     @Cacheable(key = "'" + CACHE_ROLE_RESOURCES + "' + #roleId")
@@ -48,21 +48,18 @@ public class SysResourceServiceImpl extends ServiceImpl<SysResourceMapper, SysRe
     public List<SysResource> listRoleResources(Long roleId) {
         List<SysRoleResource> pks = sysRoleResourceService.listByRoleId(roleId);
         if (CollUtil.isEmpty(pks)) {
-            return null;
+            return Collections.emptyList();
         }
-        return this.list(Wrappers.lambdaQuery(SysResource.class)
-                .in(SysResource::getId, pks.stream().map(SysRoleResource::getResourceId).distinct().toList())
-                .orderByAsc(SysResource::getParentId)
-                .orderByAsc(SysResource::getSorts));
+        return sysResourceMapper.selectListByIdIn(pks.stream().map(SysRoleResource::getResourceId).distinct().toList());
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean insert(SysResource resource) {
+    public boolean add(SysResource resource) {
         if (resource.getParentId() != CommonConst.ROOT_ID) {
             Assert.isTrue(this.isExists(resource.getParentId()), () -> new SeedException(ErrorCode.RESOURCE_PARENT_NOT_EXISTS));
         }
-        return this.save(resource);
+        return sysResourceMapper.insert(resource) > 0;
     }
 
     @Override
@@ -71,11 +68,11 @@ public class SysResourceServiceImpl extends ServiceImpl<SysResourceMapper, SysRe
         if (resource.getParentId() != CommonConst.ROOT_ID) {
             Assert.isTrue(this.isExists(resource.getParentId()), () -> new SeedException(ErrorCode.RESOURCE_PARENT_NOT_EXISTS));
         }
-        return this.updateById(resource);
+        return sysResourceMapper.updateById(resource) > 0;
     }
 
     @Override
     public List<ResourceTreeNode> listTree() {
-        return this.toTree(this.list());
+        return this.toTree(sysResourceMapper.selectAll());
     }
 }

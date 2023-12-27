@@ -1,7 +1,5 @@
 package com.zhangdp.seed.service.sys.impl;
 
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhangdp.seed.common.constant.CacheConst;
 import com.zhangdp.seed.common.constant.TableNameConst;
 import com.zhangdp.seed.entity.sys.SysRole;
@@ -26,11 +24,12 @@ import java.util.List;
 @CacheConfig(cacheNames = TableNameConst.SYS_ROLE)
 @RequiredArgsConstructor
 @Service
-public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> implements SysRoleService {
+public class SysRoleServiceImpl implements SysRoleService {
 
     private static final String CACHE_USER_ROLES = "user_roles" + CacheConst.SPLIT;
 
     private final SysUserRoleService sysUserRoleService;
+    private final SysRoleMapper sysRoleMapper;
 
     @Cacheable(key = "'" + CACHE_USER_ROLES + "' + #userId")
     @Override
@@ -39,12 +38,12 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         if (CollUtil.isEmpty(pks)) {
             return null;
         }
-        return this.list(Wrappers.lambdaQuery(SysRole.class)
-                .in(SysRole::getId, pks.stream().map(SysUserRole::getRoleId).toList()));
+        List<Long> roleIds = pks.stream().map(SysUserRole::getRoleId).distinct().toList();
+        return sysRoleMapper.selectListByRoleIdIn(roleIds);
     }
 
     @Override
     public SysRole getByCode(String code) {
-        return this.getOne(Wrappers.lambdaQuery(SysRole.class).eq(SysRole::getCode, code));
+        return sysRoleMapper.selectOneByCode(code);
     }
 }

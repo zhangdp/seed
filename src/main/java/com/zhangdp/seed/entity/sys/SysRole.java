@@ -1,5 +1,6 @@
 package com.zhangdp.seed.entity.sys;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.zhangdp.seed.entity.BaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -10,6 +11,7 @@ import lombok.experimental.Accessors;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 2023/4/4 角色
@@ -43,5 +45,7 @@ public class SysRole extends BaseEntity implements Serializable {
      */
     @Schema(title = "角色描述")
     private String description;
+    @TableField(exist = false)
+    private Date now = new Date();
 
 }

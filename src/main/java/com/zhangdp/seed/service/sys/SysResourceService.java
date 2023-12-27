@@ -1,6 +1,5 @@
 package com.zhangdp.seed.service.sys;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.zhangdp.seed.common.constant.CommonConst;
 import com.zhangdp.seed.common.enums.ResourceType;
 import com.zhangdp.seed.common.util.TreeUtil;
@@ -20,7 +19,7 @@ import java.util.stream.Collectors;
  * @author zhangdp
  * @since 1.0.0
  */
-public interface SysResourceService extends IService<SysResource> {
+public interface SysResourceService {
 
     /**
      * 是否存在
@@ -44,7 +43,7 @@ public interface SysResourceService extends IService<SysResource> {
      * @param resource
      * @return
      */
-    boolean insert(SysResource resource);
+    boolean add(SysResource resource);
 
     /**
      * 修改

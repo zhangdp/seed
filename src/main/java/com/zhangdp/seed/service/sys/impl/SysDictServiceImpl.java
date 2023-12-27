@@ -1,10 +1,9 @@
 package com.zhangdp.seed.service.sys.impl;
 
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhangdp.seed.entity.sys.SysDict;
 import com.zhangdp.seed.mapper.sys.SysDictMapper;
 import com.zhangdp.seed.service.sys.SysDictService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
@@ -14,10 +13,13 @@ import org.springframework.stereotype.Service;
  * @since 1.0.0
  */
 @Service
-public class SysDictServiceImpl extends ServiceImpl<SysDictMapper, SysDict> implements SysDictService {
+@RequiredArgsConstructor
+public class SysDictServiceImpl implements SysDictService {
+
+    private final SysDictMapper sysDictMapper;
 
     @Override
     public SysDict getByType(String type) {
-        return this.getOne(Wrappers.lambdaQuery(SysDict.class).eq(SysDict::getType, type));
+        return sysDictMapper.selectOneByType(type);
     }
 }

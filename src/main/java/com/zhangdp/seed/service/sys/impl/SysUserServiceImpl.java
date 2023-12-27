@@ -1,12 +1,10 @@
 package com.zhangdp.seed.service.sys.impl;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.zhangdp.seed.common.enums.ErrorCode;
 import com.zhangdp.seed.common.exception.SeedException;
 import com.zhangdp.seed.entity.sys.SysUser;
 import com.zhangdp.seed.mapper.sys.SysUserMapper;
+import com.zhangdp.seed.model.PageData;
 import com.zhangdp.seed.model.dto.UserInfo;
 import com.zhangdp.seed.model.query.PageQuery;
 import com.zhangdp.seed.model.query.UserQuery;
@@ -18,8 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 /**
  * 2023/4/3 用户service实现
  *
@@ -27,26 +23,28 @@ import java.util.List;
  * @since 1.0.0
  */
 @Service
-public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements SysUserService {
+public class SysUserServiceImpl implements SysUserService {
 
     @Autowired
     private SysDeptService sysDeptService;
+    @Autowired
+    private SysUserMapper sysUserMapper;
 
     @Override
     public SysUser getByUsername(String username) {
-        return this.getOne(this.lambdaQuery().getWrapper().eq(SysUser::getUsername, username));
+        return sysUserMapper.selectOneByUsername(username);
     }
 
     @Override
     public boolean existsUsername(String username) {
         // return this.baseMapper.exists(this.lambdaQuery().getWrapper().eq(SysUser::getUsername, username));
-        return this.baseMapper.countByUsername(username) > 0;
+        return sysUserMapper.countByUsername(username) > 0;
     }
 
     @Override
     public boolean existsUsernameAndIdNot(String username, Long id) {
         // return this.baseMapper.exists(this.lambdaQuery().getWrapper().eq(SysUser::getUsername, username).ne(SysUser::getId, id));
-        return this.baseMapper.countByUsernameAndIdNot(username, id) > 0;
+        return sysUserMapper.countByUsernameAndIdNot(username, id) > 0;
     }
 
     @Override
@@ -59,7 +57,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         if (StrUtil.isNotBlank(user.getPassword())) {
             user.setPassword(this.encryptPassword(user.getPassword()));
         }
-        return this.save(user);
+        return sysUserMapper.insert(user) > 0;
     }
 
     @Override
@@ -72,13 +70,17 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         if (StrUtil.isNotBlank(user.getPassword())) {
             user.setPassword(this.encryptPassword(user.getPassword()));
         }
-        return this.updateById(user);
+        return sysUserMapper.updateById(user) > 0;
     }
 
     @Override
-    public PageInfo<UserInfo> pageQuery(PageQuery<UserQuery> pageQuery) {
-        PageHelper.startPage(pageQuery.getPage(), pageQuery.getSize(), pageQuery.getOrderBy());
-        List<UserInfo> list = this.baseMapper.queryList(pageQuery.getParams());
-        return new PageInfo<>(list);
+    public PageData<UserInfo> pageQuery(PageQuery<UserQuery> pageQuery) {
+        return sysUserMapper.pageQuery(pageQuery);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean delete(Long id) {
+        return sysUserMapper.deleteById(id) > 0;
     }
 }

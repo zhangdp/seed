@@ -3,7 +3,6 @@ package com.zhangdp.seed.model.dto;
 import com.zhangdp.seed.common.annotation.Desensitization;
 import com.zhangdp.seed.common.constant.CommonConst;
 import com.zhangdp.seed.common.enums.DesensitizationType;
-import com.zhangdp.seed.entity.BaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -13,11 +12,17 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import org.dromara.hutool.core.regex.RegexPool;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * 2023/5/17 用户信息
@@ -28,7 +33,7 @@ import java.time.LocalDateTime;
 @Data
 @Accessors(chain = true)
 @Schema(title = "用户信息")
-public class UserInfo extends BaseEntity implements Serializable {
+public class UserInfo implements Serializable, UserDetails {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -131,5 +136,50 @@ public class UserInfo extends BaseEntity implements Serializable {
      */
     @Schema(title = "部门")
     private String deptName;
+    /**
+     * 角色列表
+     */
+    @Schema(title = "角色列表")
+    private List<String> roles;
+    /**
+     * 权限列表
+     */
+    @Schema(title = "权限列表")
+    private List<String> permissions;
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        if (roles != null && !roles.isEmpty()) {
+            for (String role : roles) {
+                authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
+            }
+        }
+        if (permissions != null && !permissions.isEmpty()) {
+            for (String permission : permissions) {
+                authorities.add(new SimpleGrantedAuthority(permission));
+            }
+        }
+        return authorities;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return this.status == CommonConst.GOOD;
+    }
 }

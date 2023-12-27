@@ -1,7 +1,7 @@
 package com.zhangdp.seed.mapper.log;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.zhangdp.seed.entity.log.LogOperate;
+import com.zhangdp.seed.entity.log.LogOperation;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -11,5 +11,5 @@ import org.apache.ibatis.annotations.Mapper;
  * @since 1.0.0
  */
 @Mapper
-public interface LogOperateMapper extends BaseMapper<LogOperate> {
+public interface LogOperationMapper extends BaseMapper<LogOperation> {
 }

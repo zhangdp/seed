@@ -1,6 +1,5 @@
 package com.zhangdp.seed.service.sys;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.zhangdp.seed.entity.sys.SysDictData;
 
 import java.util.List;
@@ -11,7 +10,7 @@ import java.util.List;
  * @author zhangdp
  * @since 1.0.0
  */
-public interface SysDictDataService extends IService<SysDictData> {
+public interface SysDictDataService {
 
     /**
      * 根据字典id获取字典项列表

@@ -1,6 +1,5 @@
 package com.zhangdp.seed.service.sys;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.github.pagehelper.PageInfo;
 import com.zhangdp.seed.entity.sys.SysParam;
 import com.zhangdp.seed.model.query.BaseQueryParams;
@@ -12,7 +11,7 @@ import com.zhangdp.seed.model.query.PageQuery;
  * @author zhangdp
  * @since 1.0.0
  */
-public interface SysParamService extends IService<SysParam> {
+public interface SysParamService {
 
     /**
      * 根据标识获取
@@ -28,7 +27,7 @@ public interface SysParamService extends IService<SysParam> {
      * @param param
      * @return
      */
-    boolean insert(SysParam param);
+    boolean add(SysParam param);
 
     /**
      * 修改

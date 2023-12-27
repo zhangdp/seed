@@ -1,8 +1,7 @@
 package com.zhangdp.seed.service.sys;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.github.pagehelper.PageInfo;
 import com.zhangdp.seed.entity.sys.SysUser;
+import com.zhangdp.seed.model.PageData;
 import com.zhangdp.seed.model.dto.UserInfo;
 import com.zhangdp.seed.model.query.PageQuery;
 import com.zhangdp.seed.model.query.UserQuery;
@@ -14,7 +13,7 @@ import org.dromara.hutool.crypto.digest.BCrypt;
  * @author zhangdp
  * @since 1.0.0
  */
-public interface SysUserService extends IService<SysUser> {
+public interface SysUserService {
 
     /**
      * 根据账号查询
@@ -58,12 +57,20 @@ public interface SysUserService extends IService<SysUser> {
     boolean update(SysUser user);
 
     /**
+     * 根据id删除
+     *
+     * @param id
+     * @return
+     */
+    boolean delete(Long id);
+
+    /**
      * 分页查询
      *
      * @param pageQuery
      * @return
      */
-    PageInfo<UserInfo> pageQuery(PageQuery<UserQuery> pageQuery);
+    PageData<UserInfo> pageQuery(PageQuery<UserQuery> pageQuery);
 
     /**
      * 加密密码

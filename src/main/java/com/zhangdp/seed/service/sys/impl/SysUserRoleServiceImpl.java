@@ -1,10 +1,9 @@
 package com.zhangdp.seed.service.sys.impl;
 
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhangdp.seed.entity.sys.SysUserRole;
 import com.zhangdp.seed.mapper.sys.SysUserRoleMapper;
 import com.zhangdp.seed.service.sys.SysUserRoleService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,10 +15,13 @@ import java.util.List;
  * @since 1.0.0
  */
 @Service
-public class SysUserRoleServiceImpl extends ServiceImpl<SysUserRoleMapper, SysUserRole> implements SysUserRoleService {
+@RequiredArgsConstructor
+public class SysUserRoleServiceImpl implements SysUserRoleService {
+
+    private final SysUserRoleMapper sysUserRoleMapper;
 
     @Override
     public List<SysUserRole> listByUserId(Long userId) {
-        return this.list(Wrappers.lambdaQuery(SysUserRole.class).eq(SysUserRole::getUserId, userId));
+        return sysUserRoleMapper.selectListByUserId(userId);
     }
 }

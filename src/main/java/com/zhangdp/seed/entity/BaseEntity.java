@@ -22,6 +22,15 @@ import java.time.LocalDateTime;
 public abstract class BaseEntity {
 
     /**
+     * 字段名称：创建时间
+     */
+    public static final String CREATED_AT = "createdAt";
+    /**
+     * 字段名称：修改时间
+     */
+    public static final String MODIFIED_AT = "modifiedAt";
+
+    /**
      * 主键
      */
     @TableId(type = IdType.AUTO)
@@ -40,21 +49,21 @@ public abstract class BaseEntity {
      */
     @TableField(fill = FieldFill.INSERT)
     @Schema(title = "添加时间", description = "格式：" + CommonConst.DATETIME_FORMATTER)
-    protected LocalDateTime createdDate;
+    protected LocalDateTime createdAt;
     /**
      * 修改时间
      */
     @TableField(fill = FieldFill.UPDATE)
     @Schema(title = "修改时间", description = "格式：" + CommonConst.DATETIME_FORMATTER)
-    protected LocalDateTime modifiedDate;
+    protected LocalDateTime modifiedAt;
     /**
      * 创建用户id
      */
-    // @Schema(title = "创建人id")
-    // protected Long createdUserId;
+    // @Schema(title = "创建人")
+    // protected Long createdBy;
     /**
      * 修改用户id
      */
-    // @Schema(title = "修改人id")
-    // protected Long modifiedUserId;
+    // @Schema(title = "修改人")
+    // protected Long modifiedBy;
 }

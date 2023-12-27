@@ -9,9 +9,9 @@
         FROM
         sys_user u
         WHERE
-        u.is_deleted = 0
+        u.deleted = 0
         <if test="username != null and username != ''">
-            AND u.username LIKE #{username}
+            AND u.username = #{username}
         </if>
         <if test="mobile != null and mobile != ''">
             AND u.mobile = #{mobile}

@@ -1,9 +1,8 @@
 package com.zhangdp.seed.controller.sys;
 
-import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.github.pagehelper.PageInfo;
 import com.zhangdp.seed.common.ValidGroup;
-import com.zhangdp.seed.common.annotation.OperateLog;
+import com.zhangdp.seed.common.annotation.OperationLog;
 import com.zhangdp.seed.common.enums.OperateType;
 import com.zhangdp.seed.entity.sys.SysParam;
 import com.zhangdp.seed.model.query.BaseQueryParams;
@@ -37,11 +36,10 @@ public class SysParamController {
      * @return
      */
     @PostMapping("/add")
-    @SaCheckPermission("param:add")
     @Operation(summary = "新增参数", description = "新增参数，无需传值id、createTime、updateTime")
-    @OperateLog(type = OperateType.CREATE, title = "新增参数", refModule = "sys_param", refIdEl = "#param.id")
+    @OperationLog(type = OperateType.CREATE, title = "新增参数", refModule = "sys_param", refIdEl = "#param.id")
     public boolean add(@RequestBody @Validated(ValidGroup.Update.class) SysParam param) {
-        return sysParamService.insert(param);
+        return sysParamService.add(param);
     }
 
     /**
@@ -51,9 +49,8 @@ public class SysParamController {
      * @return
      */
     @PutMapping("/update")
-    @SaCheckPermission("param:update")
     @Operation(summary = "修改参数", description = "修改参数，需传值id")
-    @OperateLog(type = OperateType.UPDATE, title = "修改参数", refModule = "sys_param", refIdEl = "#param.id")
+    @OperationLog(type = OperateType.UPDATE, title = "修改参数", refModule = "sys_param", refIdEl = "#param.id")
     public boolean update(@RequestBody @Validated(ValidGroup.Update.class) SysParam param) {
         return sysParamService.update(param);
     }
@@ -65,9 +62,8 @@ public class SysParamController {
      * @return
      */
     @DeleteMapping("/delete/{id}")
-    @SaCheckPermission("param:delete")
     @Operation(summary = "删除参数", description = "根据id删除参数")
-    @OperateLog(type = OperateType.DELETE, title = "删除参数", refModule = "sys_param", refIdEl = "#id")
+    @OperationLog(type = OperateType.DELETE, title = "删除参数", refModule = "sys_param", refIdEl = "#id")
     public boolean delete(@PathVariable Long id) {
         return sysParamService.delete(id);
     }

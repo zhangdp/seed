@@ -56,7 +56,7 @@ public class SysUser extends BaseEntity implements Serializable {
      * 生日
      */
     @Schema(title = "生日")
-    private LocalDate birth;
+    private LocalDate birthDate;
     /**
      * 邮箱
      */

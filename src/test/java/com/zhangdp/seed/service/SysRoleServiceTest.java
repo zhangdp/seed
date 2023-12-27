@@ -27,4 +27,10 @@ public class SysRoleServiceTest {
         sysRoleService.save(role);
     }
 
+    @Test
+    public void listUserRoles() {
+        Long userId = 1L;
+        System.out.println(sysRoleService.listUserRoles(userId));
+    }
+
 }

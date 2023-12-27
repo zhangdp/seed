@@ -1,6 +1,5 @@
 package com.zhangdp.seed.service.sys;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.zhangdp.seed.entity.sys.SysDict;
 
 /**
@@ -9,7 +8,7 @@ import com.zhangdp.seed.entity.sys.SysDict;
  * @author zhangdp
  * @since 1.0.0
  */
-public interface SysDictService extends IService<SysDict> {
+public interface SysDictService {
 
     /**
      * 根据类型获取

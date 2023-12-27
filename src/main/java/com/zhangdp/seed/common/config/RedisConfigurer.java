@@ -1,8 +1,8 @@
 package com.zhangdp.seed.common.config;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zhangdp.seed.common.constant.CacheConst;
+import com.zhangdp.seed.common.constant.CommonConst;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
@@ -35,9 +35,10 @@ public class RedisConfigurer {
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
+        RedisSerializer<String> stringRedisSerializer = RedisSerializer.string();
         // 使用 String 序列化方式，序列化 KEY 。
-        template.setKeySerializer(RedisSerializer.string());
-        template.setHashKeySerializer(RedisSerializer.string());
+        template.setKeySerializer(stringRedisSerializer);
+        template.setHashKeySerializer(stringRedisSerializer);
         // 使用 JSON 序列化方式（库是 Jackson ），序列化 VALUE 。
         GenericJackson2JsonRedisSerializer jsonRedisSerializer = this.jsonRedisSerializer();
         template.setValueSerializer(jsonRedisSerializer);
@@ -72,14 +73,14 @@ public class RedisConfigurer {
      * @return
      */
     public GenericJackson2JsonRedisSerializer jsonRedisSerializer() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        // 配置[忽略未知字段]
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        // 配置【空字符串反序列化为对象时为null】
-        objectMapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
-        // 配置[时间类型转换]
-        objectMapper.registerModule(JacksonConfigurer.TIME_MODULE);
-        return new GenericJackson2JsonRedisSerializer(objectMapper);
+        GenericJackson2JsonRedisSerializer jsonRedisSerializer = new GenericJackson2JsonRedisSerializer();
+        jsonRedisSerializer.configure(config -> {
+            // 配置jdk8时间格式化
+            config.registerModule(JacksonConfigurer.timeModule(CommonConst.DATE_FORMATTER, CommonConst.TIME_FORMATTER, CommonConst.DATETIME_FORMATTER));
+            // 配置忽略未知字段
+            config.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        });
+        return jsonRedisSerializer;
     }
 
 }

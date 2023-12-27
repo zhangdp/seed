@@ -1,10 +1,10 @@
 package com.zhangdp.seed.common.util;
 
 import com.zhangdp.seed.model.TreeNode;
-import org.dromara.hutool.core.collection.CollUtil;
 import org.dromara.hutool.core.collection.ListUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -27,8 +27,8 @@ public class TreeUtil {
      * @return
      */
     public static <T extends TreeNode<K>, K> List<T> listToTree(List<T> list, K rootId) {
-        if (CollUtil.isEmpty(list)) {
-            return new ArrayList<>(0);
+        if (list == null || list.isEmpty()) {
+            return Collections.emptyList();
         }
         Map<K, List<T>> map = list.stream().collect(Collectors.groupingBy(TreeNode::getParentId));
         return findChildren(map, rootId);
@@ -45,11 +45,11 @@ public class TreeUtil {
      */
     private static <T extends TreeNode<K>, K> List<T> findChildren(Map<K, List<T>> map, K rootId) {
         List<T> list = map.getOrDefault(rootId, ListUtil.empty());
-        if (!list.isEmpty()) {
+        if (list != null && !list.isEmpty()) {
             // 循环递归寻找孩子节点
             for (T node : list) {
                 List<T> tmp = findChildren(map, node.getId());
-                int size = CollUtil.size(tmp);
+                int size = tmp.size();
                 // T不匹配TreeNode<K>，无法直接set列表，只能一个个添加
                 List<TreeNode<K>> children = new ArrayList<>(size);
                 node.setChildren(children);

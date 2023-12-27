@@ -14,7 +14,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-public @interface OperateLog {
+public @interface OperationLog {
 
     /**
      * 操作类型

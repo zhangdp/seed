@@ -2,11 +2,9 @@ package com.zhangdp.seed.common.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.InstantSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
@@ -19,7 +17,6 @@ import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -38,32 +35,31 @@ public class JacksonConfigurer {
 
     /**
      * 时间格式化组件
+     *
+     * @param dateFormatter
+     * @param timeFormatter
+     * @param dateTimeFormatter
+     * @return
      */
-    public final static JavaTimeModule TIME_MODULE;
-
-    static {
-        TIME_MODULE = new JavaTimeModule();
+    public static JavaTimeModule timeModule(String dateFormatter, String timeFormatter, String dateTimeFormatter) {
+        JavaTimeModule timeModule = new JavaTimeModule();
         // ======================= 时间序列化规则 ==============================
-        TIME_MODULE.addSerializer(LocalDateTime.class,
-                new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(CommonConst.DATETIME_FORMATTER)));
-        TIME_MODULE.addSerializer(LocalDate.class,
-                new LocalDateSerializer(DateTimeFormatter.ofPattern(CommonConst.DATE_FORMATTER)));
-        TIME_MODULE.addSerializer(LocalTime.class,
-                new LocalTimeSerializer(DateTimeFormatter.ofPattern(CommonConst.TIME_FORMATTER)));
-
-        // Instant 类型序列化
-        TIME_MODULE.addSerializer(Instant.class, InstantSerializer.INSTANCE);
+        timeModule.addSerializer(LocalDateTime.class,
+                new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(dateTimeFormatter)));
+        timeModule.addSerializer(LocalDate.class,
+                new LocalDateSerializer(DateTimeFormatter.ofPattern(dateFormatter)));
+        timeModule.addSerializer(LocalTime.class,
+                new LocalTimeSerializer(DateTimeFormatter.ofPattern(timeFormatter)));
 
         // ======================= 时间反序列化规则 ==============================
-        TIME_MODULE.addDeserializer(LocalDateTime.class,
-                new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(CommonConst.DATETIME_FORMATTER)));
-        TIME_MODULE.addDeserializer(LocalDate.class,
-                new LocalDateDeserializer(DateTimeFormatter.ofPattern(CommonConst.DATE_FORMATTER)));
-        TIME_MODULE.addDeserializer(LocalTime.class,
-                new LocalTimeDeserializer(DateTimeFormatter.ofPattern(CommonConst.TIME_FORMATTER)));
+        timeModule.addDeserializer(LocalDateTime.class,
+                new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(dateTimeFormatter)));
+        timeModule.addDeserializer(LocalDate.class,
+                new LocalDateDeserializer(DateTimeFormatter.ofPattern(dateFormatter)));
+        timeModule.addDeserializer(LocalTime.class,
+                new LocalTimeDeserializer(DateTimeFormatter.ofPattern(timeFormatter)));
 
-        // Instant 反序列化
-        TIME_MODULE.addDeserializer(Instant.class, InstantDeserializer.INSTANT);
+        return timeModule;
     }
 
     /**
@@ -74,7 +70,7 @@ public class JacksonConfigurer {
     @Bean
     @ConditionalOnMissingBean
     public Jackson2ObjectMapperBuilderCustomizer customizer() {
-        return builder -> builder.modules(TIME_MODULE);
+        return builder -> builder.modules(timeModule(CommonConst.DATE_FORMATTER, CommonConst.TIME_FORMATTER, CommonConst.DATETIME_FORMATTER));
     }
 
 }

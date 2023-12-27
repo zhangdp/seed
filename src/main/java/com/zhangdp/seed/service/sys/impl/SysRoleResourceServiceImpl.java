@@ -1,10 +1,9 @@
 package com.zhangdp.seed.service.sys.impl;
 
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhangdp.seed.entity.sys.SysRoleResource;
 import com.zhangdp.seed.mapper.sys.SysRoleResourceMapper;
 import com.zhangdp.seed.service.sys.SysRoleResourceService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -17,15 +16,18 @@ import java.util.List;
  * @since 1.0.0
  */
 @Service
-public class SysRoleResourceServiceImpl extends ServiceImpl<SysRoleResourceMapper, SysRoleResource> implements SysRoleResourceService {
+@RequiredArgsConstructor
+public class SysRoleResourceServiceImpl implements SysRoleResourceService {
+
+    private final SysRoleResourceMapper sysRoleResourceMapper;
 
     @Override
     public List<SysRoleResource> listByRoleId(Long roleId) {
-        return this.list(Wrappers.lambdaQuery(SysRoleResource.class).eq(SysRoleResource::getRoleId, roleId));
+        return sysRoleResourceMapper.selectListByRoleId(roleId);
     }
 
     @Override
     public List<SysRoleResource> listByRoleIds(Collection<Long> roleIds) {
-        return this.list(Wrappers.lambdaQuery(SysRoleResource.class).in(SysRoleResource::getRoleId, roleIds));
+        return sysRoleResourceMapper.selectListByRoleIdIn(roleIds);
     }
 }

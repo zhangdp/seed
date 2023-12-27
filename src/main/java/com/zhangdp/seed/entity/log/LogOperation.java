@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 @Accessors(chain = true)
 @TableName("log_operate")
 @Schema(description = "操作日志")
-public class LogOperate implements Serializable {
+public class LogOperation implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

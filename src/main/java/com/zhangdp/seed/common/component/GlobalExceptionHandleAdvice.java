@@ -1,6 +1,5 @@
 package com.zhangdp.seed.common.component;
 
-import cn.dev33.satoken.exception.*;
 import com.zhangdp.seed.common.R;
 import com.zhangdp.seed.common.enums.ErrorCode;
 import com.zhangdp.seed.common.exception.NotFoundException;
@@ -8,7 +7,6 @@ import com.zhangdp.seed.common.exception.SeedException;
 import com.zhangdp.seed.model.ParamsError;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hutool.core.collection.CollUtil;
@@ -211,76 +209,76 @@ public class GlobalExceptionHandleAdvice {
         log.warn("自定义异常：uri=" + request.getRequestURI(), e);
         return new R<>(e.getCode(), e.getLocalizedMessage());
     }
-
-    /**
-     * sa-token 未登录异常
-     *
-     * @param e
-     * @param request
-     * @return
-     */
-    @ExceptionHandler(NotLoginException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public R<?> notLoginException(NotLoginException e, HttpServletRequest request) {
-        log.warn("未登录异常：uri={}, error={}", request.getRequestURI(), e.getLocalizedMessage());
-        return SaTokenHelper.resolveNoLoginError(e);
-    }
-
-    /**
-     * sa-token 未Http Basic认证
-     *
-     * @param e
-     * @param request
-     * @return
-     */
-    @ExceptionHandler(NotBasicAuthException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public R<?> notBasicAuthException(NotBasicAuthException e, HttpServletRequest request, HttpServletResponse response) {
-        log.warn("未Http Basic认证异常：uri={}, error={}", request.getRequestURI(), e.getLocalizedMessage());
-        response.setHeader("WWW-Authenticate", "Basic");
-        return SaTokenHelper.resolveError(e);
-    }
-
-    /**
-     * sa-token 角色不满足
-     *
-     * @param e
-     * @param request
-     * @return
-     */
-    @ExceptionHandler(NotRoleException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    public R<?> notRoleException(NotRoleException e, HttpServletRequest request) {
-        log.warn("角色不满足异常：uri={}, error={}", request.getRequestURI(), e.getLocalizedMessage());
-        return SaTokenHelper.resolveError(e);
-    }
-
-    /**
-     * sa-token 权限不足
-     *
-     * @param e
-     * @param request
-     * @return
-     */
-    @ExceptionHandler(NotPermissionException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    public R<?> notPermissionException(NotPermissionException e, HttpServletRequest request) {
-        log.warn("权限不足异常：uri={}, error={}", request.getRequestURI(), e.getLocalizedMessage());
-        return SaTokenHelper.resolveError(e);
-    }
-
-    /**
-     * sa-token 异常兜底
-     *
-     * @param e
-     * @param request
-     * @return
-     */
-    @ExceptionHandler(SaTokenException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public R<?> saTokenException(SaTokenException e, HttpServletRequest request) {
-        log.warn("SaToken异常：uri={}, error={}", request.getRequestURI(), e.getLocalizedMessage());
-        return SaTokenHelper.resolveError(e);
-    }
+//
+//    /**
+//     * sa-token 未登录异常
+//     *
+//     * @param e
+//     * @param request
+//     * @return
+//     */
+//    @ExceptionHandler(NotLoginException.class)
+//    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+//    public R<?> notLoginException(NotLoginException e, HttpServletRequest request) {
+//        log.warn("未登录异常：uri={}, error={}", request.getRequestURI(), e.getLocalizedMessage());
+//        return SaTokenHelper.resolveNoLoginError(e);
+//    }
+//
+//    /**
+//     * sa-token 未Http Basic认证
+//     *
+//     * @param e
+//     * @param request
+//     * @return
+//     */
+//    @ExceptionHandler(NotBasicAuthException.class)
+//    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+//    public R<?> notBasicAuthException(NotBasicAuthException e, HttpServletRequest request, HttpServletResponse response) {
+//        log.warn("未Http Basic认证异常：uri={}, error={}", request.getRequestURI(), e.getLocalizedMessage());
+//        response.setHeader("WWW-Authenticate", "Basic");
+//        return SaTokenHelper.resolveError(e);
+//    }
+//
+//    /**
+//     * sa-token 角色不满足
+//     *
+//     * @param e
+//     * @param request
+//     * @return
+//     */
+//    @ExceptionHandler(NotRoleException.class)
+//    @ResponseStatus(HttpStatus.FORBIDDEN)
+//    public R<?> notRoleException(NotRoleException e, HttpServletRequest request) {
+//        log.warn("角色不满足异常：uri={}, error={}", request.getRequestURI(), e.getLocalizedMessage());
+//        return SaTokenHelper.resolveError(e);
+//    }
+//
+//    /**
+//     * sa-token 权限不足
+//     *
+//     * @param e
+//     * @param request
+//     * @return
+//     */
+//    @ExceptionHandler(NotPermissionException.class)
+//    @ResponseStatus(HttpStatus.FORBIDDEN)
+//    public R<?> notPermissionException(NotPermissionException e, HttpServletRequest request) {
+//        log.warn("权限不足异常：uri={}, error={}", request.getRequestURI(), e.getLocalizedMessage());
+//        return SaTokenHelper.resolveError(e);
+//    }
+//
+//    /**
+//     * sa-token 异常兜底
+//     *
+//     * @param e
+//     * @param request
+//     * @return
+//     */
+//    @ExceptionHandler(SaTokenException.class)
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+//    public R<?> saTokenException(SaTokenException e, HttpServletRequest request) {
+//        log.warn("SaToken异常：uri={}, error={}", request.getRequestURI(), e.getLocalizedMessage());
+//        return SaTokenHelper.resolveError(e);
+//    }
 
 }

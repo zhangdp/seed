@@ -6,6 +6,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.scheduling.annotation.EnableAsync;
 
+/**
+ * 启动类
+ *
+ * @author zhangdp
+ * @since 1.0.0
+ */
 @SpringBootApplication
 @EnableAsync
 @EnableCaching
