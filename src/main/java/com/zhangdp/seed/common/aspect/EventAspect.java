@@ -56,12 +56,12 @@ public class EventAspect {
      * 事件产生后执行后续动作
      *
      * @param joinPoint
-     * @param event
+     * @param annotation
      */
-    @AfterReturning(value = "@annotation(event)", returning = "result")
-    public void afterAdvice(JoinPoint joinPoint, Event event, Object result) {
+    @AfterReturning(value = "@annotation(annotation)", returning = "result")
+    public void afterAdvice(JoinPoint joinPoint, Event annotation, Object result) {
         if (log.isDebugEnabled()) {
-            log.debug("EventAspect in: joinPoint={}, event={}", joinPoint, event);
+            log.debug("EventAspect AfterReturning in: joinPoint={}, event={}", joinPoint, annotation);
         }
         boolean flag = true;
         try {
@@ -69,7 +69,7 @@ public class EventAspect {
             // 获取参数列表
             String[] parameterNames = parameterNameDiscoverer.getParameterNames(signature.getMethod());
             Object[] args = joinPoint.getArgs();
-            if (StrUtil.isNotBlank(event.condition())) {
+            if (StrUtil.isNotBlank(annotation.condition())) {
                 // 设置表达式上下文
                 EvaluationContext context = new StandardEvaluationContext();
                 context.setVariable("result", result);
@@ -79,7 +79,7 @@ public class EventAspect {
                     }
                 }
                 // 根据表达式获取是否执行
-                flag = Boolean.TRUE.equals(spelExpressionParser.parseExpression(event.condition()).getValue(context, Boolean.class));
+                flag = Boolean.TRUE.equals(spelExpressionParser.parseExpression(annotation.condition()).getValue(context, Boolean.class));
             }
             if (flag) {
                 Map<String, Object> params = new LinkedHashMap<>();
@@ -88,14 +88,14 @@ public class EventAspect {
                         params.put(parameterNames[i], args[i]);
                     }
                 }
-                if (event.isAsync()) {
-                    eventDispatch.dispatchAsync(event.type(), event.tag(), params, result, event.delay());
+                if (annotation.isAsync()) {
+                    eventDispatch.dispatchAsync(annotation.type(), annotation.tag(), params, result, annotation.delay());
                 } else {
-                    eventDispatch.dispatch(event.type(), event.tag(), params, result, event.delay());
+                    eventDispatch.dispatch(annotation.type(), annotation.tag(), params, result, annotation.delay());
                 }
             }
         } catch (Exception e) {
-            log.error("EventAspect error: joinPoint=" + joinPoint + ", event=" + event, e);
+            log.error("EventAspect error: joinPoint=" + joinPoint + ", event=" + annotation, e);
         }
     }
 }

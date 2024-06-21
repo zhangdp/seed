@@ -12,6 +12,7 @@ import org.dromara.hutool.core.collection.CollUtil;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -45,5 +46,11 @@ public class SysRoleServiceImpl implements SysRoleService {
     @Override
     public SysRole getByCode(String code) {
         return sysRoleMapper.selectOneByCode(code);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean add(SysRole entity) {
+        return sysRoleMapper.insert(entity) > 0;
     }
 }

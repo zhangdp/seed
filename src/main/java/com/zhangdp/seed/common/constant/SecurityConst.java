@@ -12,5 +12,16 @@ public interface SecurityConst {
      * session key 用户信息
      */
     String SESSION_USER = "user";
-
+    /**
+     * 认证类型:BEARER
+     */
+    String AUTH_TYPE_BEARER = "Bearer";
+    /**
+     * 认证头
+     */
+    String AUTHORIZATION_HEADER = "Authorization";
+    /**
+     * 认证参数名称
+     */
+    String AUTHORIZATION_PARAMETER = "access_token";
 }

@@ -9,6 +9,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -19,7 +21,10 @@ import java.time.LocalDateTime;
  */
 @Data
 @Accessors(chain = true)
-public abstract class BaseEntity {
+public abstract class BaseEntity implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     /**
      * 字段名称：创建时间

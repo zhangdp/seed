@@ -2,19 +2,17 @@ package com.zhangdp.seed.common.exception;
 
 import com.zhangdp.seed.common.enums.ErrorCode;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.io.Serial;
 
 /**
- * 2023/4/3 业务异常，http状态码会输出400
+ * 2023/4/3 业务异常，http状态码会输出正常的200
  *
  * @author zhangdp
  * @since 1.0.0
  */
 @Getter
-@Setter
-public class SeedException extends RuntimeException {
+public class BizException extends RuntimeException {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -22,34 +20,34 @@ public class SeedException extends RuntimeException {
     /**
      * 异常码
      */
-    private int code;
+    private final int code;
 
-    public SeedException(int code, String message) {
+    public BizException(int code, String message) {
         super(message);
         this.code = code;
     }
 
-    public SeedException(int code, String message, Throwable cause) {
+    public BizException(int code, String message, Throwable cause) {
         super(message, cause);
         this.code = code;
     }
 
-    public SeedException(int code, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public BizException(int code, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
         this.code = code;
     }
 
-    public SeedException(ErrorCode errorCode) {
+    public BizException(ErrorCode errorCode) {
         super(errorCode.message());
         this.code = errorCode.code();
     }
 
-    public SeedException(ErrorCode errorCode, Throwable cause) {
+    public BizException(ErrorCode errorCode, Throwable cause) {
         super(errorCode.message(), cause);
         this.code = errorCode.code();
     }
 
-    public SeedException(ErrorCode errorCode, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public BizException(ErrorCode errorCode, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(errorCode.message(), cause, enableSuppression, writableStackTrace);
         this.code = errorCode.code();
     }

@@ -27,4 +27,12 @@ public interface SysRoleService {
      * @return
      */
     SysRole getByCode(String code);
+
+    /**
+     * 新增
+     *
+     * @param entity
+     * @return
+     */
+    boolean add(SysRole entity);
 }

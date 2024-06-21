@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.1</version>
+        <version>3.2.6</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.zhangdp</groupId>
@@ -17,12 +17,12 @@
     <properties>
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <hutool.version>6.0.0-M9</hutool.version>
+        <hutool.version>6.0.0-M13</hutool.version>
         <mybatis-starter.version>3.0.3</mybatis-starter.version>
-        <mybatis-plus.version>3.5.5</mybatis-plus.version>
+        <mybatis-plus.version>3.5.7</mybatis-plus.version>
         <pagehelper.version>2.0.0</pagehelper.version>
-        <springdoc.version>2.3.0</springdoc.version>
-        <spring-boot-admin-client.version>3.2.0</spring-boot-admin-client.version>
+        <springdoc.version>2.5.0</springdoc.version>
+        <spring-boot-admin-client.version>3.2.3</spring-boot-admin-client.version>
     </properties>
 
     <dependencies>
@@ -60,18 +60,13 @@
         </dependency>
 
         <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
-            <scope>runtime</scope>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -83,6 +78,11 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-pool2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- java工具大全 https://www.hutool.cn/ -->

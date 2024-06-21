@@ -2,7 +2,7 @@ package com.zhangdp.seed.common.aspect;
 
 import com.zhangdp.seed.common.annotation.ThrowSeedException;
 import com.zhangdp.seed.common.enums.ErrorCode;
-import com.zhangdp.seed.common.exception.SeedException;
+import com.zhangdp.seed.common.exception.BizException;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterThrowing;
@@ -34,10 +34,10 @@ public class ThrowSeedExceptionAspect {
             String method = joinPoint.getTarget().getClass().getName() + "." + joinPoint.getSignature().getName();
             log.debug("SeedExceptionAspect afterThrowing: method={}, throwing={}", method, throwing.getClass().getName());
         }
-        if (throwing instanceof SeedException se) {
+        if (throwing instanceof BizException se) {
             throw se;
         }
         ErrorCode errorCode = throwSeedException.value();
-        throw new SeedException(errorCode.code(), StrUtil.defaultIfEmpty(throwSeedException.message(), errorCode.message()), throwing);
+        throw new BizException(errorCode.code(), StrUtil.defaultIfEmpty(throwSeedException.message(), errorCode.message()), throwing);
     }
 }

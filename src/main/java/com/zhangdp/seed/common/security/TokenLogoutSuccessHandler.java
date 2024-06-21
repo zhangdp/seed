@@ -15,10 +15,10 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
 import java.io.IOException;
 
 /**
- * 2023/9/1
+ * 2023/9/1 Spring Security 注销成功处理器
  *
  * @author zhangdp
- * @since
+ * @since 1.0.0
  */
 @Slf4j
 @RequiredArgsConstructor

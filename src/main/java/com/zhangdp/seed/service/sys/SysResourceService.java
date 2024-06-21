@@ -61,6 +61,14 @@ public interface SysResourceService {
     List<ResourceTreeNode> listTree();
 
     /**
+     * 删除
+     *
+     * @param id
+     * @return
+     */
+    boolean delete(Long id);
+
+    /**
      * 转为树形节点
      *
      * @param coll

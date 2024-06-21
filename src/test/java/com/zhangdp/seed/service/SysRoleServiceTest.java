@@ -24,7 +24,7 @@ public class SysRoleServiceTest {
         role.setCode("ROLE_ADMIN");
         role.setName("管理员");
         role.setDescription("");
-        sysRoleService.save(role);
+        sysRoleService.add(role);
     }
 
     @Test

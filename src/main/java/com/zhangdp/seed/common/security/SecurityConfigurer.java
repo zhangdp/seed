@@ -1,13 +1,19 @@
 package com.zhangdp.seed.common.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zhangdp.seed.common.component.SecurityHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -38,12 +44,12 @@ public class SecurityConfigurer {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 // 禁用csrf(防止跨站请求伪造攻击)
-                // .csrf(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable)
                 // 使用无状态session，即不使用session缓存数据
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(req -> req
                         // 放行url
-                        .requestMatchers("/test/**").permitAll()
+                        .requestMatchers("/test/**", "/swagger-ui.html").permitAll()
                         // OPTIONS请求放行
                         .requestMatchers(HttpMethod.OPTIONS).permitAll()
                         // 其余url都必须认证
@@ -61,6 +67,33 @@ public class SecurityConfigurer {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    /**
+     * 身份验证提供程序
+     *
+     * @param securityHelper
+     * @param passwordEncoder
+     * @return
+     */
+    @Bean
+    public AuthenticationProvider authenticationProvider(SecurityHelper securityHelper, PasswordEncoder passwordEncoder) {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(securityHelper);
+        authProvider.setPasswordEncoder(passwordEncoder);
+        return authProvider;
+    }
+
+    /**
+     * 基于用户名和密码或使用用户名和密码进行身份验证
+     *
+     * @param config
+     * @return
+     * @throws Exception
+     */
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
     }
 
 }

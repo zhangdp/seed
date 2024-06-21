@@ -8,12 +8,13 @@ spring:
   servlet:
     multipart:
       enabled: true
-      max-file-size: 200MB
-      max-request-size: 200MB
+      max-file-size: 500MB
+      max-request-size: 500MB
   jackson:
     deserialization:
       fail-on-unknown-properties: false
-      accept-empty-string-as-null-object: true
+    serialization:
+      write-dates-as-timestamps: true
     date-format: yyyy-MM-dd HH:mm:ss
   task:
     execution:
@@ -23,10 +24,10 @@ spring:
         queue-capacity: 1024
   data:
     redis:
-      database: ${REDIS_DATABASE:0}
-      host: ${REDIS_HOST:191.168.10.91}
+      database: ${REDIS_DATABASE:15}
+      host: ${REDIS_HOST:191.168.10.71}
       port: ${REDIS_PORT:6379}
-      password: ${REDIS_PASSWORD:}
+      password: ${REDIS_PASSWORD:Itsm@2022}
       connect-timeout: 5s
       lettuce:
         pool:
@@ -51,38 +52,13 @@ spring:
             user.password: ${ADMIN_PASSWORD:123456}
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${MYSQL_HOST:191.168.10.91}:${MYSQL_PORT:3306}/${MYSQL_DB:seed}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://${MYSQL_HOST:191.168.10.71}:${MYSQL_PORT:3306}/${MYSQL_DB:seed}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
     username: ${MYSQL_USER:seed}
     password: ${MYSQL_PASSWORD:Seed@2022}
     hikari:
       maximum-pool-size: 10
       minimum-idle: 10
-      keepaliveTime: 60000
-# druid 暂不兼容springboot3.0
-#    druid:
-#      keepAlive: true
-#      initial-size: 4
-#      min-idle: 8
-#      max-active: 16
-#      socket-timeout: 30000
-#      validationQuery: SELECT 1
-#      testWhileIdle: true
-#      test-on-borrow: false
-#      test-on-return: false
-#      timeBetweenEvictionRunsMillis: 600000
-#      stat-view-servlet:
-#        enabled: true
-#        url-pattern: /druid/*
-#        login-username: druid
-#        login-password: Druid2022
-#        reset-enable: false
-#      filter:
-#        stat:
-#          enabled: true
-#          log-slow-sql: true
-#          slow-sql-millis: 10000
-#        wall:
-#          enabled: false
+      keepalive-time: 600000
 management:
   endpoint:
     health:

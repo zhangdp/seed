@@ -70,7 +70,7 @@ public class OperateLogEventListener {
             if (MapUtil.isNotEmpty(event.getParams())) {
                 lo.setParams(objectMapper.writeValueAsString(event.getParams()));
             }
-            logOperationService.save(lo);
+            logOperationService.add(lo);
         } catch (Exception e) {
             log.error("操作日志事件处理失败，event=" + event, e);
         }

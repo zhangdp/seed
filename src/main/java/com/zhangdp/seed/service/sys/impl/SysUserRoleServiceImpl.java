@@ -5,6 +5,7 @@ import com.zhangdp.seed.mapper.sys.SysUserRoleMapper;
 import com.zhangdp.seed.service.sys.SysUserRoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -23,5 +24,11 @@ public class SysUserRoleServiceImpl implements SysUserRoleService {
     @Override
     public List<SysUserRole> listByUserId(Long userId) {
         return sysUserRoleMapper.selectListByUserId(userId);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean add(SysUserRole entity) {
+        return sysUserRoleMapper.insert(entity) > 0;
     }
 }

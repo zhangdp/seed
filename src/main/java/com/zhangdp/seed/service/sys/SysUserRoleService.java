@@ -19,4 +19,12 @@ public interface SysUserRoleService {
      * @return
      */
     List<SysUserRole> listByUserId(Long userId);
+
+    /**
+     * 新增
+     *
+     * @param entity
+     * @return
+     */
+    boolean add(SysUserRole entity);
 }

@@ -8,7 +8,7 @@ import java.io.Serial;
  * @author zhangdp
  * @since 1.0.0
  */
-public class NotFoundException extends SeedException {
+public class NotFoundException extends BizException {
 
     @Serial
     private static final long serialVersionUID = 1L;
