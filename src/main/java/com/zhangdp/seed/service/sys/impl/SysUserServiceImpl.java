@@ -6,8 +6,8 @@ import com.zhangdp.seed.entity.sys.SysUser;
 import com.zhangdp.seed.mapper.sys.SysUserMapper;
 import com.zhangdp.seed.model.PageData;
 import com.zhangdp.seed.model.dto.UserInfo;
-import com.zhangdp.seed.model.query.PageQuery;
-import com.zhangdp.seed.model.query.UserQuery;
+import com.zhangdp.seed.model.params.PageQuery;
+import com.zhangdp.seed.model.params.UserQuery;
 import com.zhangdp.seed.service.sys.SysDeptService;
 import com.zhangdp.seed.service.sys.SysUserService;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +35,16 @@ public class SysUserServiceImpl implements SysUserService {
     }
 
     @Override
+    public SysUser getByMobile(String mobile) {
+        return sysUserMapper.selectOneByMobile(mobile);
+    }
+
+    @Override
+    public SysUser getByEmail(String email) {
+        return sysUserMapper.selectOneByEmail(email);
+    }
+
+    @Override
     public boolean existsUsername(String username) {
         // return this.baseMapper.exists(this.lambdaQuery().getWrapper().eq(SysUser::getUsername, username));
         return sysUserMapper.countByUsername(username) > 0;
@@ -54,7 +64,7 @@ public class SysUserServiceImpl implements SysUserService {
             Assert.isTrue(sysDeptService.exists(user.getDeptId()), () -> new BizException(ErrorCode.USERNAME_REPEAT.code(), "所属" + user.getDeptId() + "已不存在"));
         }
         if (StrUtil.isNotBlank(user.getPassword())) {
-            user.setPassword(this.encryptPassword(user.getPassword()));
+            user.setPassword(user.getPassword());
         }
         return sysUserMapper.insert(user) > 0;
     }
@@ -67,7 +77,7 @@ public class SysUserServiceImpl implements SysUserService {
             Assert.isTrue(sysDeptService.exists(user.getDeptId()), () -> new BizException(ErrorCode.USERNAME_REPEAT.code(), "所属" + user.getDeptId() + "已不存在"));
         }
         if (StrUtil.isNotBlank(user.getPassword())) {
-            user.setPassword(this.encryptPassword(user.getPassword()));
+            user.setPassword(user.getPassword());
         }
         return sysUserMapper.updateById(user) > 0;
     }
@@ -82,4 +92,5 @@ public class SysUserServiceImpl implements SysUserService {
     public boolean delete(Long id) {
         return sysUserMapper.deleteById(id) > 0;
     }
+
 }

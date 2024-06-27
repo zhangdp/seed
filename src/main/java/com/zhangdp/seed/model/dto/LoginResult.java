@@ -1,7 +1,6 @@
-package com.zhangdp.seed.model;
+package com.zhangdp.seed.model.dto;
 
 import com.zhangdp.seed.common.constant.CommonConst;
-import com.zhangdp.seed.model.dto.UserInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
 import com.zhangdp.seed.common.constant.CommonConst;
+import com.zhangdp.seed.entity.BaseEntity;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,14 +31,14 @@ public class MybatisPlusConfigurer {
             @Override
             public void insertFill(MetaObject metaObject) {
                 LocalDateTime now = LocalDateTime.now();
-                this.strictInsertFill(metaObject, "createdAt", LocalDateTime.class, now);
-                this.strictInsertFill(metaObject, "modifiedAt", LocalDateTime.class, now);
+                this.strictInsertFill(metaObject, BaseEntity.CREATED_DATE, LocalDateTime.class, now);
+                this.strictInsertFill(metaObject, BaseEntity.LAST_MODIFIED_DATE, LocalDateTime.class, now);
                 this.strictInsertFill(metaObject, "status", Integer.class, CommonConst.GOOD);
             }
 
             @Override
             public void updateFill(MetaObject metaObject) {
-                this.strictUpdateFill(metaObject, "modifiedAt", LocalDateTime.class, LocalDateTime.now());
+                this.strictUpdateFill(metaObject, BaseEntity.LAST_MODIFIED_DATE, LocalDateTime.class, LocalDateTime.now());
             }
         };
     }

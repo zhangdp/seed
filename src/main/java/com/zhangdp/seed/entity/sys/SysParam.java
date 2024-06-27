@@ -2,7 +2,7 @@ package com.zhangdp.seed.entity.sys;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.zhangdp.seed.common.constant.TableNameConst;
-import com.zhangdp.seed.entity.BaseEntity;
+import com.zhangdp.seed.entity.LogicBaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -27,7 +27,7 @@ import java.io.Serializable;
 @ToString(callSuper = true)
 @TableName(TableNameConst.SYS_PARAM)
 @Schema(description = "系统参数")
-public class SysParam extends BaseEntity implements Serializable {
+public class SysParam extends LogicBaseEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

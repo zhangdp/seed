@@ -3,7 +3,7 @@ package com.zhangdp.seed.common.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zhangdp.seed.common.R;
 import com.zhangdp.seed.common.util.WebUtils;
-import com.zhangdp.seed.model.LoginResult;
+import com.zhangdp.seed.model.dto.LoginResult;
 import com.zhangdp.seed.model.dto.UserInfo;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

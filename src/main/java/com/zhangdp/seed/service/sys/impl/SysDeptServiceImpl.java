@@ -68,7 +68,7 @@ public class SysDeptServiceImpl implements SysDeptService {
     public boolean update(SysDept dept) {
         Assert.isFalse(this.exists(dept.getId()), () -> new BizException(ErrorCode.DEPT_NOT_EXISTS.code(), "部门（id=" + dept.getId() + "）已不存在"));
         SysDept bean = new SysDept();
-        BeanUtil.copyProperties(dept, bean, BaseEntity.CREATED_AT, BaseEntity.MODIFIED_AT);
+        BeanUtil.copyProperties(dept, bean, BaseEntity.CREATED_DATE, BaseEntity.LAST_MODIFIED_DATE);
         if (bean.getParentId() != null && !bean.getParentId().equals(CommonConst.ROOT_ID)) {
             Assert.isTrue(this.exists(dept.getId()), () -> new BizException(ErrorCode.DEPT_PARENT_NOT_EXISTS.code(), "父部门（id=" + dept.getParentId() + "）已不存在"));
         }

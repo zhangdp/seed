@@ -3,7 +3,9 @@ package com.zhangdp.seed.common.component;
 import com.zhangdp.seed.common.R;
 import com.zhangdp.seed.common.enums.ErrorCode;
 import com.zhangdp.seed.common.exception.BizException;
+import com.zhangdp.seed.common.exception.ForbiddenException;
 import com.zhangdp.seed.common.exception.NotFoundException;
+import com.zhangdp.seed.common.exception.UnauthorizedException;
 import com.zhangdp.seed.model.ParamsError;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,12 +16,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -62,6 +66,35 @@ public class GlobalExceptionHandleAdvice {
     public R<?> sqlException(Exception e, HttpServletRequest request) {
         log.error("SQL异常：uri={}", request.getRequestURI(), e);
         return new R<>(ErrorCode.SQL_ERROR);
+    }
+
+
+    /**
+     * 请求路径不存在异常
+     *
+     * @param e
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(NoResourceFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public R<?> noResourceFoundException(NoResourceFoundException e, HttpServletRequest request) {
+        log.warn("请求路径不存在异常：uri={}, error={}", request.getRequestURI(), e.getMessage());
+        return new R<>(ErrorCode.NOT_FOUND);
+    }
+
+    /**
+     * 请求http method不对
+     *
+     * @param e
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+    public R<?> httpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e, HttpServletRequest request) {
+        log.warn("请求http method不符合异常：uri={}, error={}", request.getRequestURI(), e.getMessage());
+        return new R<>(ErrorCode.BAD_REQUEST.code(), "请求Http Method \"" + e.getMethod() + "\"不支持");
     }
 
     /**
@@ -185,6 +218,34 @@ public class GlobalExceptionHandleAdvice {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public R<?> notFoundException(NotFoundException e, HttpServletRequest request) {
         log.warn("资源不存在异常：uri={}, error={}", request.getRequestURI(), e.getMessage());
+        return new R<>(e.getCode(), e.getMessage());
+    }
+
+    /**
+     * 权限不足异常
+     *
+     * @param e
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(ForbiddenException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public R<?> forbiddenException(ForbiddenException e, HttpServletRequest request) {
+        log.warn("权限不足异常：uri={}, error={}", request.getRequestURI(), e.getMessage());
+        return new R<>(e.getCode(), e.getMessage());
+    }
+
+    /**
+     * 未登录异常
+     *
+     * @param e
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(UnauthorizedException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public R<?> unauthorizedException(UnauthorizedException e, HttpServletRequest request) {
+        log.warn("未登录异常：uri={}, error={}", request.getRequestURI(), e.getMessage());
         return new R<>(e.getCode(), e.getMessage());
     }
 

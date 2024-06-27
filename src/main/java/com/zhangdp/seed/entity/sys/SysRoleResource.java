@@ -1,15 +1,14 @@
 package com.zhangdp.seed.entity.sys;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.zhangdp.seed.entity.BaseEntity;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 /**
  * 2023/4/12 角色关联资源
@@ -19,17 +18,14 @@ import java.time.LocalDateTime;
  */
 @Data
 @Accessors(chain = true)
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @TableName("sys_role_resource")
-public class SysRoleResource implements Serializable {
+public class SysRoleResource extends BaseEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 主键
-     */
-    @TableId
-    private Long id;
     /**
      * 资源id
      */
@@ -38,9 +34,4 @@ public class SysRoleResource implements Serializable {
      * 角色id
      */
     private Long roleId;
-    /**
-     * 创建时间
-     */
-    @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createTime;
 }

@@ -1,7 +1,9 @@
 package com.zhangdp.seed.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.zhangdp.seed.common.ValidGroup;
 import com.zhangdp.seed.common.constant.CommonConst;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -27,13 +29,13 @@ public abstract class BaseEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 字段名称：创建时间
+     * 创建时间字段名称
      */
-    public static final String CREATED_AT = "createdAt";
+    public static final String CREATED_DATE = "createdDate";
     /**
-     * 字段名称：修改时间
+     * 最后修改时间字段名称
      */
-    public static final String MODIFIED_AT = "modifiedAt";
+    public static final String LAST_MODIFIED_DATE = "lastModifiedDate";
 
     /**
      * 主键
@@ -45,22 +47,22 @@ public abstract class BaseEntity implements Serializable {
     /**
      * 逻辑删除，0：否，默认；1：已删除
      */
-    @TableLogic
-    @Schema(title = "逻辑删除", description = "0：否，默认；1：已删除", hidden = true)
-    @JsonIgnore
-    protected Integer deleted;
+    // @TableLogic
+    // @Schema(title = "逻辑删除", description = "0：否，默认；1：已删除", hidden = true)
+    // @JsonIgnore
+    // protected Integer isDeleted;
     /**
      * 创建时间
      */
     @TableField(fill = FieldFill.INSERT)
-    @Schema(title = "添加时间", description = "格式：" + CommonConst.DATETIME_FORMATTER)
-    protected LocalDateTime createdAt;
+    @Schema(title = "添加时间", description = "格式：" + CommonConst.DATETIME_FORMATTER + "。保存时忽略")
+    protected LocalDateTime createdDate;
     /**
      * 修改时间
      */
     @TableField(fill = FieldFill.UPDATE)
-    @Schema(title = "修改时间", description = "格式：" + CommonConst.DATETIME_FORMATTER)
-    protected LocalDateTime modifiedAt;
+    @Schema(title = "修改时间", description = "格式：" + CommonConst.DATETIME_FORMATTER + "。保存时忽略")
+    protected LocalDateTime lastModifiedDate;
     /**
      * 创建用户id
      */

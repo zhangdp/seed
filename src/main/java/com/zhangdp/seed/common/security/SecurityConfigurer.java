@@ -1,7 +1,9 @@
 package com.zhangdp.seed.common.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zhangdp.seed.common.component.SecurityHelper;
+import com.zhangdp.seed.service.sys.SysResourceService;
+import com.zhangdp.seed.service.sys.SysRoleService;
+import com.zhangdp.seed.service.sys.SysUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +17,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -43,13 +46,12 @@ public class SecurityConfigurer {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
-                // 禁用csrf(防止跨站请求伪造攻击)
                 .csrf(AbstractHttpConfigurer::disable)
                 // 使用无状态session，即不使用session缓存数据
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(req -> req
                         // 放行url
-                        .requestMatchers("/test/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers("/test/**", "/swagger-ui/**", "/v3/**", "/auth/login").permitAll()
                         // OPTIONS请求放行
                         .requestMatchers(HttpMethod.OPTIONS).permitAll()
                         // 其余url都必须认证
@@ -72,14 +74,13 @@ public class SecurityConfigurer {
     /**
      * 身份验证提供程序
      *
-     * @param securityHelper
      * @param passwordEncoder
      * @return
      */
     @Bean
-    public AuthenticationProvider authenticationProvider(SecurityHelper securityHelper, PasswordEncoder passwordEncoder) {
+    public AuthenticationProvider authenticationProvider(PasswordEncoder passwordEncoder, UserDetailsService userDetailsService) {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(securityHelper);
+        authProvider.setUserDetailsService(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder);
         return authProvider;
     }
@@ -94,6 +95,30 @@ public class SecurityConfigurer {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
+    }
+
+    /**
+     * 认证用户服务类
+     *
+     * @param sysUserService
+     * @param sysRoleService
+     * @param sysResourceService
+     * @return
+     */
+    @Bean
+    public UserDetailsService userDetailsService(SysUserService sysUserService, SysRoleService sysRoleService, SysResourceService sysResourceService) {
+        return new UserDetailsServiceImpl(sysUserService, sysRoleService, sysResourceService);
+    }
+
+    /**
+     * 认证服务类
+     *
+     * @param authenticationManager
+     * @return
+     */
+    @Bean
+    public SecurityService securityService(AuthenticationManager authenticationManager) {
+        return new SecurityService(authenticationManager);
     }
 
 }

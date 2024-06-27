@@ -19,7 +19,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <hutool.version>6.0.0-M13</hutool.version>
         <mybatis-starter.version>3.0.3</mybatis-starter.version>
-        <mybatis-plus.version>3.5.7</mybatis-plus.version>
+        <mybatis-plus.version>3.5.5</mybatis-plus.version>
         <pagehelper.version>2.0.0</pagehelper.version>
         <springdoc.version>2.5.0</springdoc.version>
         <spring-boot-admin-client.version>3.2.3</spring-boot-admin-client.version>

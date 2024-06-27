@@ -2,8 +2,8 @@ package com.zhangdp.seed.service.sys;
 
 import com.github.pagehelper.PageInfo;
 import com.zhangdp.seed.entity.sys.SysParam;
-import com.zhangdp.seed.model.query.BaseQueryParams;
-import com.zhangdp.seed.model.query.PageQuery;
+import com.zhangdp.seed.model.params.BaseQueryParams;
+import com.zhangdp.seed.model.params.PageQuery;
 
 /**
  * 2023/4/12 系统参数service

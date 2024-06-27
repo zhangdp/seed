@@ -2,7 +2,7 @@ package com.zhangdp.seed.entity.sys;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.zhangdp.seed.common.constant.CommonConst;
-import com.zhangdp.seed.entity.BaseEntity;
+import com.zhangdp.seed.entity.LogicBaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -28,7 +28,7 @@ import java.io.Serializable;
 @ToString(callSuper = true)
 @TableName("sys_dept")
 @Schema(description = "部门")
-public class SysDept extends BaseEntity implements Serializable {
+public class SysDept extends LogicBaseEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -52,5 +52,6 @@ public class SysDept extends BaseEntity implements Serializable {
      */
     @Schema(title = "排序", description = "同级排序，升序")
     private Integer sorts;
+
 
 }

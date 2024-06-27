@@ -1,4 +1,4 @@
-package com.zhangdp.seed.common.constant;
+package com.zhangdp.seed.common.security;
 
 /**
  * 2023/4/4 认证相关常量
@@ -24,4 +24,8 @@ public interface SecurityConst {
      * 认证参数名称
      */
     String AUTHORIZATION_PARAMETER = "access_token";
+    /**
+     * 角色前缀
+     */
+    String ROLE_PREFIX = "ROLE_";
 }

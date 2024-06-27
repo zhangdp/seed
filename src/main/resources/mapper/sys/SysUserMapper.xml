@@ -3,7 +3,7 @@
 <mapper namespace="com.zhangdp.seed.mapper.sys.SysUserMapper">
 
     <select id="queryList" resultType="com.zhangdp.seed.model.dto.UserInfo"
-            parameterType="com.zhangdp.seed.model.query.UserQuery">
+            parameterType="com.zhangdp.seed.model.params.UserQuery">
         SELECT
         u.*
         FROM

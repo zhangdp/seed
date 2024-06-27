@@ -1,4 +1,4 @@
-package com.zhangdp.seed.model.query;
+package com.zhangdp.seed.model.params;
 
 import com.zhangdp.seed.common.constant.CommonConst;
 import io.swagger.v3.oas.annotations.media.Schema;

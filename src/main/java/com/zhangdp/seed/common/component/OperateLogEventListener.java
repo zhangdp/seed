@@ -48,7 +48,7 @@ public class OperateLogEventListener {
             }
             LogOperation lo = new LogOperation();
             lo.setTitle(event.getTitle());
-            lo.setCreateTime(event.getStartTime());
+            lo.setCreatedDate(event.getStartTime());
             lo.setUserId(event.getUserId());
             lo.setType(event.getType().type());
             lo.setUri(event.getUri());

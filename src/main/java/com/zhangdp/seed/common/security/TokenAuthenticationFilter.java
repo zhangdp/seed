@@ -1,6 +1,5 @@
 package com.zhangdp.seed.common.security;
 
-import com.zhangdp.seed.common.constant.SecurityConst;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,7 +18,7 @@ import java.io.IOException;
  */
 @Slf4j
 // @Component
-public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
+public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {

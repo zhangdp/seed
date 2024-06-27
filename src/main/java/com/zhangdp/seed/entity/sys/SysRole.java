@@ -1,8 +1,7 @@
 package com.zhangdp.seed.entity.sys;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.zhangdp.seed.entity.BaseEntity;
+import com.zhangdp.seed.entity.LogicBaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,7 +10,6 @@ import lombok.experimental.Accessors;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * 2023/4/4 角色
@@ -25,7 +23,7 @@ import java.util.Date;
 @ToString(callSuper = true)
 @TableName("sys_role")
 @Schema(description = "角色")
-public class SysRole extends BaseEntity implements Serializable {
+public class SysRole extends LogicBaseEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -45,7 +43,5 @@ public class SysRole extends BaseEntity implements Serializable {
      */
     @Schema(title = "角色描述")
     private String description;
-    @TableField(exist = false)
-    private Date now = new Date();
 
 }
