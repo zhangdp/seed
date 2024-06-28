@@ -28,4 +28,16 @@ public interface SecurityConst {
      * 角色前缀
      */
     String ROLE_PREFIX = "ROLE_";
+    /**
+     * 认证相关url
+     */
+    String AUTH_URL = "/auth";
+    /**
+     * 登录url
+     */
+    String LOGIN_URL = AUTH_URL + "/login";
+    /**
+     * 注销url
+     */
+    String LOGOUT_URL = AUTH_URL + "/logout";
 }

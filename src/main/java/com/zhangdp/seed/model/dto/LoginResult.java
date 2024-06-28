@@ -1,6 +1,7 @@
 package com.zhangdp.seed.model.dto;
 
 import com.zhangdp.seed.common.constant.CommonConst;
+import com.zhangdp.seed.common.security.LoginUser;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -12,7 +13,7 @@ import java.io.Serializable;
  * 2023/4/7 登录结果
  *
  * @author zhangdp
- * @since
+ * @since 1.0.0
  */
 @Data
 @Accessors(chain = true)
@@ -33,6 +34,14 @@ public class LoginResult implements Serializable {
     @Schema(title = "令牌类型")
     private String tokenType = CommonConst.BEARER_TYPE;
     /**
+     * 刷新领票
+     */
+    private String refreshToken;
+    /**
+     * 剩余token有效期，单位：秒
+     */
+    private Long ttl;
+    /**
      * 用户id
      */
     @Schema(title = "用户id")
@@ -40,6 +49,6 @@ public class LoginResult implements Serializable {
     /**
      * 用户
      */
-    @Schema(title = "用户信息")
-    private UserInfo user;
+    @Schema(title = "登录用户信息")
+    private LoginUser user;
 }

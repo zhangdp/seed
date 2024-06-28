@@ -65,7 +65,15 @@ public enum ErrorCode {
     /**
      * 账号已被封禁
      */
-    ACCOUNT_LOCKED(10210, "账号已被锁定"),
+    ACCOUNT_LOCKED(10201, "账号已被锁定"),
+    /**
+     * 账号不可用
+     */
+    ACCOUNT_DISABLED(10202, "账号不可用"),
+    /**
+     * 登录失败
+     */
+    LOGIN_FAILURE(10203, "登录失败"),
     /**
      * 资源不存在
      */
