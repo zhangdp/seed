@@ -37,6 +37,7 @@ public class SecurityConfigurer {
     private final TokenAuthenticationFailureHandler tokenAuthenticationFailureHandler;
     private final TokenAccessDeniedHandler tokenAccessDeniedHandler;
     private final TokenAuthenticationEntryPoint tokenAuthenticationEntryPoint;
+    private final TokenService tokenService;
 
     /**
      * springsecurity配置
@@ -75,6 +76,7 @@ public class SecurityConfigurer {
                         .authenticationEntryPoint(tokenAuthenticationEntryPoint)
                 )
                 // 自定义登录过滤器
+                .addFilterBefore(this.tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(this.tokenUsernamePasswordAuthenticationFilter(httpSecurity.getSharedObject(AuthenticationManager.class)), UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
     }
@@ -129,6 +131,10 @@ public class SecurityConfigurer {
         //认证失败处理器
         filter.setAuthenticationFailureHandler(tokenAuthenticationFailureHandler);
         return filter;
+    }
+
+    public TokenAuthenticationFilter tokenAuthenticationFilter() {
+        return new TokenAuthenticationFilter(tokenService);
     }
 
 }

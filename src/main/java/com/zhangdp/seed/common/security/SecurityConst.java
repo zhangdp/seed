@@ -40,4 +40,24 @@ public interface SecurityConst {
      * 注销url
      */
     String LOGOUT_URL = AUTH_URL + "/logout";
+    /**
+     * 访问令牌有效期
+     */
+    int ACCESS_TOKEN_TTL = 30 * 60;
+    /**
+     * 刷新令牌有效期
+     */
+    int REFRESH_TOKEN_TTL = 24 * 60 * 60;
+    /**
+     * redis key 前缀
+     */
+    String REDIS_PREFIX = "auth";
+    /**
+     * redis key 分隔符
+     */
+    String REDIS_SPLIT = "::";
+    /**
+     * redis 访问令牌key前缀
+     */
+    String REDIS_ACCESS_TOKEN_PREFIX = REDIS_PREFIX + REDIS_SPLIT + "access";
 }

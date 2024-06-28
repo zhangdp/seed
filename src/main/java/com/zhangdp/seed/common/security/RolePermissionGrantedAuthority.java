@@ -1,5 +1,6 @@
 package com.zhangdp.seed.common.security;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -28,6 +29,7 @@ public class RolePermissionGrantedAuthority implements GrantedAuthority {
     /**
      * 权限类型
      */
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private AuthorityType type;
     /**
      * id

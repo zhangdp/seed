@@ -34,13 +34,13 @@ public class LoginResult implements Serializable {
     @Schema(title = "令牌类型")
     private String tokenType = CommonConst.BEARER_TYPE;
     /**
-     * 刷新领票
+     * 刷新令牌
      */
     private String refreshToken;
     /**
-     * 剩余token有效期，单位：秒
+     * 剩余访问令牌有效期，单位：秒
      */
-    private Long ttl;
+    private Integer expiresIn;
     /**
      * 用户id
      */
@@ -49,6 +49,16 @@ public class LoginResult implements Serializable {
     /**
      * 用户
      */
-    @Schema(title = "登录用户信息")
-    private LoginUser user;
+    // @Schema(title = "登录用户信息")
+    // private LoginUser user;
+    /**
+     * 账号
+     */
+    @Schema(title = "账号")
+    private String username;
+    /**
+     * 名称
+     */
+    @Schema(title = "名称")
+    private String name;
 }

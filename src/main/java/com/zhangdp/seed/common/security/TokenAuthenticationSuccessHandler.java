@@ -27,6 +27,7 @@ import java.io.IOException;
 public class TokenAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
     private final ObjectMapper objectMapper;
+    private final TokenService tokenService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -34,9 +35,26 @@ public class TokenAuthenticationSuccessHandler implements AuthenticationSuccessH
             log.debug("登录成功处理器：{}", authentication);
         }
         LoginUser user = (LoginUser) authentication.getPrincipal();
+        // 生成token信息
+        TokenInfo tokenInfo = tokenService.createToken(user);
         LoginResult loginResult = new LoginResult();
-        loginResult.setUser(user);
+        loginResult.setAccessToken(tokenInfo.getAccessToken());
+        loginResult.setRefreshToken(tokenInfo.getRefreshToken());
+        loginResult.setExpiresIn(tokenInfo.getAccessTokenExpiresIn());
         loginResult.setUserId(user.getId());
+        loginResult.setUsername(user.getUsername());
+        loginResult.setName(user.getName());
+        this.response(response, loginResult);
+    }
+
+    /**
+     * 输出结果
+     *
+     * @param response
+     * @param loginResult
+     * @throws IOException
+     */
+    private void response(HttpServletResponse response, LoginResult loginResult) throws IOException {
         R<LoginResult> r = R.success(loginResult);
         WebUtils.responseJson(response, objectMapper.writeValueAsString(r));
     }

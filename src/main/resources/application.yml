@@ -57,8 +57,9 @@ spring:
     password: ${MYSQL_PASSWORD:Seed@2022}
     hikari:
       maximum-pool-size: 10
-      minimum-idle: 10
+      minimum-idle: ${spring.datasource.hikari.maximum-pool-size}
       keepalive-time: 600000
+      max-lifetime: 7200000
 management:
   endpoint:
     health:
