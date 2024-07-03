@@ -3,7 +3,7 @@ package com.zhangdp.seed.service.sys.impl;
 import com.zhangdp.seed.common.constant.CommonConst;
 import com.zhangdp.seed.common.enums.ErrorCode;
 import com.zhangdp.seed.common.exception.BizException;
-import com.zhangdp.seed.common.util.TreeUtil;
+import com.zhangdp.seed.util.TreeUtils;
 import com.zhangdp.seed.entity.BaseEntity;
 import com.zhangdp.seed.entity.sys.SysDept;
 import com.zhangdp.seed.mapper.sys.SysDeptMapper;
@@ -46,7 +46,7 @@ public class SysDeptServiceImpl implements SysDeptService {
             tn.setSorts(d.getSorts());
             return tn;
         }).sorted(Comparator.comparingInt(DeptTreeNode::getSorts)).collect(Collectors.toList());
-        return TreeUtil.listToTree(treeList, CommonConst.ROOT_ID);
+        return TreeUtils.listToTree(treeList, CommonConst.ROOT_ID);
     }
 
     @Override

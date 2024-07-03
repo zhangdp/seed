@@ -1,4 +1,4 @@
-package com.zhangdp.seed.common.security;
+package com.zhangdp.seed.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zhangdp.seed.model.params.PasswordLoginParams;

@@ -1,4 +1,4 @@
-package com.zhangdp.seed.common.util;
+package com.zhangdp.seed.util;
 
 import com.zhangdp.seed.common.constant.CommonConst;
 import jakarta.servlet.ServletOutputStream;

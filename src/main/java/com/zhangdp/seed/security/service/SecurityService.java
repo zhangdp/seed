@@ -1,26 +1,26 @@
-package com.zhangdp.seed.common.security;
+package com.zhangdp.seed.security.service;
 
 import com.zhangdp.seed.common.constant.CommonConst;
+import com.zhangdp.seed.security.data.RolePermissionGrantedAuthority;
+import com.zhangdp.seed.security.SecurityConst;
 import com.zhangdp.seed.entity.sys.SysResource;
 import com.zhangdp.seed.entity.sys.SysRole;
 import com.zhangdp.seed.entity.sys.SysUser;
+import com.zhangdp.seed.security.data.LoginUser;
 import com.zhangdp.seed.service.sys.SysResourceService;
 import com.zhangdp.seed.service.sys.SysRoleService;
 import com.zhangdp.seed.service.sys.SysUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hutool.core.collection.CollUtil;
+import org.dromara.hutool.core.lang.Assert;
 import org.dromara.hutool.core.lang.Validator;
 import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.beans.BeanUtils;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
-import org.springframework.util.PatternMatchUtils;
 
 import java.util.*;
 
@@ -41,17 +41,16 @@ public class SecurityService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        SysUser sysUser;
+        SysUser sysUser = null;
         if (Validator.isMobile(username)) {
             sysUser = sysUserService.getByMobile(username);
         } else if (Validator.isEmail(username)) {
             sysUser = sysUserService.getByEmail(username);
-        } else {
-            sysUser = sysUserService.getByUsername(username);
         }
         if (sysUser == null) {
-            throw new UsernameNotFoundException("不存在账号：" + username);
+            sysUser = sysUserService.getByUsername(username);
         }
+        Assert.notNull(sysUser, () -> new UsernameNotFoundException("不存在账号：" + username));
         return this.toUserDetails(sysUser);
     }
 

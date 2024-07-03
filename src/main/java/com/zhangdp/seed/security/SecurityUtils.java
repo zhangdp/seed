@@ -1,11 +1,10 @@
-package com.zhangdp.seed.common.security;
+package com.zhangdp.seed.security;
 
+import com.zhangdp.seed.security.data.LoginUser;
 import jakarta.servlet.http.HttpServletRequest;
 import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-
-import java.util.Optional;
 
 /**
  * 认证相关工具类

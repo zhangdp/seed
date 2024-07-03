@@ -1,9 +1,12 @@
-package com.zhangdp.seed.common.security;
+package com.zhangdp.seed.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zhangdp.seed.common.R;
-import com.zhangdp.seed.common.util.WebUtils;
-import com.zhangdp.seed.model.dto.LoginResult;
+import com.zhangdp.seed.security.service.TokenService;
+import com.zhangdp.seed.util.WebUtils;
+import com.zhangdp.seed.security.data.LoginResult;
+import com.zhangdp.seed.security.data.LoginUser;
+import com.zhangdp.seed.security.data.TokenInfo;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

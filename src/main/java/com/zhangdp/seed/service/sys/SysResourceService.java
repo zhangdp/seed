@@ -2,7 +2,7 @@ package com.zhangdp.seed.service.sys;
 
 import com.zhangdp.seed.common.constant.CommonConst;
 import com.zhangdp.seed.common.enums.ResourceType;
-import com.zhangdp.seed.common.util.TreeUtil;
+import com.zhangdp.seed.util.TreeUtils;
 import com.zhangdp.seed.entity.sys.SysResource;
 import com.zhangdp.seed.model.dto.ResourceTreeNode;
 import org.dromara.hutool.core.collection.CollUtil;
@@ -97,7 +97,7 @@ public interface SysResourceService {
                 })
                 .sorted(Comparator.comparingInt(ResourceTreeNode::getSorts))
                 .collect(Collectors.toList());
-        return TreeUtil.listToTree(treeList, CommonConst.ROOT_ID);
+        return TreeUtils.listToTree(treeList, CommonConst.ROOT_ID);
     }
 
 }

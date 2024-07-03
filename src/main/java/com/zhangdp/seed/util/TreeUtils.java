@@ -1,4 +1,4 @@
-package com.zhangdp.seed.common.util;
+package com.zhangdp.seed.util;
 
 import com.zhangdp.seed.model.TreeNode;
 import org.dromara.hutool.core.collection.ListUtil;
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
  * @author zhangdp
  * @since 1.0.0
  */
-public class TreeUtil {
+public class TreeUtils {
 
     /**
      * 列表转树形结构

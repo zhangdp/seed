@@ -1,4 +1,4 @@
-package com.zhangdp.seed.common.security;
+package com.zhangdp.seed.security.handler;
 
 import com.zhangdp.seed.common.enums.ErrorCode;
 import com.zhangdp.seed.common.exception.UnauthorizedException;

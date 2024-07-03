@@ -1,4 +1,4 @@
-package com.zhangdp.seed.common.security;
+package com.zhangdp.seed.security.service;
 
 import org.springframework.security.core.userdetails.UserDetails;
 

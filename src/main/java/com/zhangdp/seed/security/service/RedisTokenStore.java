@@ -1,5 +1,6 @@
-package com.zhangdp.seed.common.security;
+package com.zhangdp.seed.security.service;
 
+import com.zhangdp.seed.security.SecurityConst;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;

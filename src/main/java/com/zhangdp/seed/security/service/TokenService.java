@@ -1,14 +1,12 @@
-package com.zhangdp.seed.common.security;
+package com.zhangdp.seed.security.service;
 
+import com.zhangdp.seed.security.SecurityConst;
+import com.zhangdp.seed.security.data.TokenInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hutool.core.data.id.UUID;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-
-import java.time.Duration;
 
 /**
  * 2024/6/27 token服务

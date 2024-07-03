@@ -1,6 +1,10 @@
-package com.zhangdp.seed.common.security;
+package com.zhangdp.seed.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zhangdp.seed.security.service.TokenService;
+import com.zhangdp.seed.security.filter.TokenAuthenticationFilter;
+import com.zhangdp.seed.security.filter.TokenUsernamePasswordAuthenticationFilter;
+import com.zhangdp.seed.security.handler.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -56,8 +60,8 @@ public class SecurityConfigurer {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // 禁用httpBasic
                 .httpBasic(AbstractHttpConfigurer::disable)
-                // 禁用登录页面
-                .formLogin(AbstractHttpConfigurer::disable)
+                // 默认账号密码登录
+                // .formLogin(AbstractHttpConfigurer::disable)
                 // 登出
                 .logout(c -> c.logoutUrl("/auth/logout").logoutSuccessHandler(tokenLogoutSuccessHandler))
                 .authorizeHttpRequests(req -> req
@@ -74,8 +78,9 @@ public class SecurityConfigurer {
                         // 未登录处理器
                         .authenticationEntryPoint(tokenAuthenticationEntryPoint)
                 )
-                // 自定义登录过滤器
+                // 解析token过滤器
                 .addFilterBefore(this.tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                // 自定义账号密码登录过滤器
                 .addFilterBefore(this.tokenUsernamePasswordAuthenticationFilter(httpSecurity.getSharedObject(AuthenticationManager.class)), UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
     }

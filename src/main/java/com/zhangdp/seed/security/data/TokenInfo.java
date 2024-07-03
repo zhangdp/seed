@@ -1,4 +1,4 @@
-package com.zhangdp.seed.common.security;
+package com.zhangdp.seed.security.data;
 
 import lombok.Data;
 import lombok.experimental.Accessors;

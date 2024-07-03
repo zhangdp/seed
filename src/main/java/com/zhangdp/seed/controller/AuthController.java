@@ -1,6 +1,6 @@
 package com.zhangdp.seed.controller;
 
-import com.zhangdp.seed.common.security.SecurityService;
+import com.zhangdp.seed.security.service.SecurityService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMapping;

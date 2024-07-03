@@ -1,4 +1,4 @@
-package com.zhangdp.seed.common.security;
+package com.zhangdp.seed.security;
 
 /**
  * 2023/4/4 认证相关常量
