@@ -30,10 +30,10 @@ public class TokenService {
      */
     public TokenInfo createToken(UserDetails userDetails) {
         String accessToken = this.generateToken();
-        tokenStore.storeAccessToken(accessToken, userDetails, SecurityConst.ACCESS_TOKEN_TTL);
         TokenInfo tokenInfo = new TokenInfo();
         tokenInfo.setAccessToken(accessToken);
         tokenInfo.setAccessTokenExpiresIn(SecurityConst.ACCESS_TOKEN_TTL);
+        tokenStore.storeAccessToken(accessToken, userDetails, SecurityConst.ACCESS_TOKEN_TTL);
         return tokenInfo;
     }
 
@@ -52,8 +52,26 @@ public class TokenService {
      *
      * @return
      */
-    private String generateToken() {
+    public String generateToken() {
         return UUID.randomUUID().toString();
     }
 
+    /**
+     * 删除token
+     *
+     * @param accessToken
+     * @return
+     */
+    public boolean removeToken(String accessToken) {
+        return tokenStore.removeAccessToken(accessToken);
+    }
+
+    /**
+     * 重置访问令牌过期时间
+     *
+     * @param accessToken
+     */
+    public boolean resetTokenExpireIn(String accessToken) {
+        return tokenStore.updateAccessTokenExpiresIn(accessToken, SecurityConst.ACCESS_TOKEN_TTL);
+    }
 }

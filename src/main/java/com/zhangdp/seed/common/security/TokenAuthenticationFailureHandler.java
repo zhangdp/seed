@@ -32,6 +32,9 @@ public class TokenAuthenticationFailureHandler implements AuthenticationFailureH
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+        if (log.isDebugEnabled()) {
+            log.debug("TokenAuthenticationFailureHandler:{}", request.getRequestURI());
+        }
         Exception ex;
         if (exception instanceof BadCredentialsException) {
             ex = new BizException(ErrorCode.USERNAME_NOT_FOUND_OR_BAD_CREDENTIALS, exception);
@@ -40,7 +43,8 @@ public class TokenAuthenticationFailureHandler implements AuthenticationFailureH
         } else if (exception instanceof LockedException) {
             ex = new BizException(ErrorCode.ACCOUNT_LOCKED, exception);
         } else {
-            ex = new BizException(ErrorCode.LOGIN_FAILURE, exception);
+            // ex = new BizException(ErrorCode.LOGIN_FAILURE, exception);
+            ex = exception;
         }
         // 转为自定义异常，并委托给异常处理器
         handlerExceptionResolver.resolveException(request, response, null, ex);

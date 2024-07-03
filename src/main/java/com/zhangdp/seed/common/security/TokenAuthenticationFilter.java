@@ -31,33 +31,21 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String token = this.resolveToken(request);
+        if (log.isDebugEnabled()) {
+            log.debug("TokenAuthenticationFilter: {}", request.getRequestURI());
+        }
+        String token = SecurityUtils.resolveToken(request);
         if (StrUtil.isNotBlank(token)) {
             UserDetails userDetails = tokenService.loadPrincipal(token);
             if (userDetails != null) {
                 Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails.getUsername(),
                         userDetails.getPassword(), userDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+                // 重置token过期时间
+                tokenService.resetTokenExpireIn(token);
             }
         }
         filterChain.doFilter(request, response);
     }
 
-    /**
-     * 取出token
-     *
-     * @param request
-     * @return
-     */
-    private String resolveToken(HttpServletRequest request) {
-        String token = request.getHeader(SecurityConst.AUTHORIZATION_HEADER);
-        if (StrUtil.isNotBlank(token)) {
-            token = token.substring(SecurityConst.AUTH_TYPE_BEARER.length() + 1);
-        }
-        // 如果header中没有token，则从请求参数中获取
-        if (StrUtil.isBlank(token)) {
-            token = request.getParameter(SecurityConst.AUTHORIZATION_PARAMETER);
-        }
-        return token;
-    }
 }

@@ -74,7 +74,7 @@ public class UserInfo implements Serializable, UserDetails {
      */
     @NotBlank(message = "手机号不能为空")
     @Pattern(regexp = RegexPool.MOBILE, message = "手机号格式不正确")
-    @Desensitization(DesensitizationType.MOBILE)
+    // @Desensitization(DesensitizationType.MOBILE)
     private String mobile;
     /**
      * 性别，F：女，M：男，null：未知
@@ -92,7 +92,6 @@ public class UserInfo implements Serializable, UserDetails {
      */
     @Schema(title = "邮箱")
     @Email(message = "邮箱格式不正确")
-    @Desensitization(DesensitizationType.EMAIL)
     private String email;
     /**
      * 头像url地址
@@ -105,21 +104,19 @@ public class UserInfo implements Serializable, UserDetails {
      */
     @Schema(title = "姓名")
     @Pattern(regexp = RegexPool.CHINESE_NAME, message = "姓名格式不正确")
-    @Desensitization(DesensitizationType.CHINESE_NAME)
     private String name;
     /**
      * 住址
      */
     @Schema(title = "住址")
     @Length(max = 255, message = "住址最多255个字符")
-    @Desensitization(DesensitizationType.ADDRESS)
     private String address;
     /**
      * 身份证号
      */
     @Schema(title = "身份证号")
     @Pattern(regexp = RegexPool.CITIZEN_ID, message = "身份证号码不正确")
-    @Desensitization(DesensitizationType.CITIZEN_ID)
+    // @Desensitization(DesensitizationType.CITIZEN_ID)
     private String citizenId;
     /**
      * 部门id

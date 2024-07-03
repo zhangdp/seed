@@ -13,7 +13,9 @@ import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.jdbc.BadSqlGrammarException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -50,6 +52,10 @@ public class GlobalExceptionHandleAdvice {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public R<?> exception(Exception e, HttpServletRequest request) {
+        // 如果是spring security的AccessDeniedException异常则继续往外抛，由配置的AccessDeniedHandler处理
+        if (e instanceof AccessDeniedException accessDeniedException) {
+            throw accessDeniedException;
+        }
         log.error("全局异常：uri={}", request.getRequestURI(), e);
         return new R<>(ErrorCode.SERVER_ERROR);
     }
@@ -109,6 +115,20 @@ public class GlobalExceptionHandleAdvice {
     public R<?> servletException(ServletException e, HttpServletRequest request) {
         log.warn("servlet异常：uri={}, error={}", request.getRequestURI(), e.getMessage());
         return new R<>(ErrorCode.BAD_REQUEST);
+    }
+
+    /**
+     * 缺少请求体异常
+     *
+     * @param e
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public R<?> httpMessageNotReadableException(HttpMessageNotReadableException e, HttpServletRequest request) {
+        log.warn("缺少请求体异常：uri={}, error={}", request.getRequestURI(), e.getMessage());
+        return new R<>(ErrorCode.REQUEST_BODY_NOT_FOUND);
     }
 
     /**

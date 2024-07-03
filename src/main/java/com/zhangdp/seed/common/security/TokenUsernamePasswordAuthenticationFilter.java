@@ -38,7 +38,7 @@ public class TokenUsernamePasswordAuthenticationFilter extends AbstractAuthentic
             String username = params.getUsername();
             String password = params.getPassword();
             if (log.isDebugEnabled()) {
-                log.debug("账号密码登录过滤器：{}", username);
+                log.debug("TokenUsernamePasswordAuthenticationFilter：{}", username);
             }
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(params.getUsername(), password);
             return this.getAuthenticationManager().authenticate(auth);

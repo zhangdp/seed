@@ -13,15 +13,16 @@ import org.dromara.hutool.core.collection.CollUtil;
 import org.dromara.hutool.core.lang.Validator;
 import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.beans.BeanUtils;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
+import org.springframework.util.PatternMatchUtils;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 2024/6/27 认证服务类
@@ -67,17 +68,24 @@ public class SecurityService implements UserDetailsService {
         List<RolePermissionGrantedAuthority> authorities = new ArrayList<>();
         user.setAuthorities(authorities);
         List<SysRole> roleList = sysRoleService.listUserRoles(user.getId());
-        Set<String> permissionIdCache = new HashSet<>();
+        Set<String> permissionCache = new HashSet<>();
         if (CollUtil.isNotEmpty(roleList)) {
             for (SysRole role : roleList) {
-                authorities.add(new RolePermissionGrantedAuthority(SecurityConst.ROLE_PREFIX + role.getCode().toUpperCase(),
+                String roleCode = role.getCode().trim().toUpperCase();
+                if (!roleCode.startsWith(SecurityConst.ROLE_PREFIX)) {
+                    roleCode = SecurityConst.ROLE_PREFIX + roleCode;
+                }
+                authorities.add(new RolePermissionGrantedAuthority(roleCode,
                         RolePermissionGrantedAuthority.AuthorityType.ROLE, role.getId()));
                 List<SysResource> resources = sysResourceService.listRoleResources(role.getId());
                 if (CollUtil.isNotEmpty(resources)) {
                     for (SysResource resource : resources) {
-                        if (StrUtil.isNotBlank(resource.getPermission()) && permissionIdCache.add(resource.getPermission())) {
-                            authorities.add(new RolePermissionGrantedAuthority(resource.getPermission(),
-                                    RolePermissionGrantedAuthority.AuthorityType.PERMISSION, resource.getId()));
+                        if (StrUtil.isNotBlank(resource.getPermission())) {
+                            String permissionCode = resource.getPermission().trim().toUpperCase();
+                            if (permissionCache.add(permissionCode)) {
+                                authorities.add(new RolePermissionGrantedAuthority(permissionCode,
+                                        RolePermissionGrantedAuthority.AuthorityType.PERMISSION, resource.getId()));
+                            }
                         }
                     }
                 }

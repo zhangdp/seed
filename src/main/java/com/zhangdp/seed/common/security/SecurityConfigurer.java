@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -52,9 +53,7 @@ public class SecurityConfigurer {
                 // 禁用csrf
                 .csrf(AbstractHttpConfigurer::disable)
                 // 使用无状态session，即不使用session缓存数据
-                // .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // 禁用session
-                .sessionManagement(AbstractHttpConfigurer::disable)
+                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // 禁用httpBasic
                 .httpBasic(AbstractHttpConfigurer::disable)
                 // 禁用登录页面
@@ -92,7 +91,7 @@ public class SecurityConfigurer {
     }
 
     /**
-     * 身份验证提供程序
+     * 用户密码登录认证器
      *
      * @param passwordEncoder
      * @return
@@ -133,6 +132,11 @@ public class SecurityConfigurer {
         return filter;
     }
 
+    /**
+     * 校验token过滤器
+     *
+     * @return
+     */
     public TokenAuthenticationFilter tokenAuthenticationFilter() {
         return new TokenAuthenticationFilter(tokenService);
     }

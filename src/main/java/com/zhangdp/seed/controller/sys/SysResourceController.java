@@ -1,13 +1,13 @@
 package com.zhangdp.seed.controller.sys;
 
 import com.zhangdp.seed.common.ValidGroup;
-import com.zhangdp.seed.common.annotation.LoginUserId;
 import com.zhangdp.seed.common.annotation.OperationLog;
 import com.zhangdp.seed.common.constant.TableNameConst;
 import com.zhangdp.seed.common.enums.OperateType;
 import com.zhangdp.seed.entity.sys.SysResource;
 import com.zhangdp.seed.model.dto.ResourceTreeNode;
 import com.zhangdp.seed.service.sys.SysResourceService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -36,7 +36,7 @@ public class SysResourceController {
      * @return
      */
     @PostMapping("add")
-    @io.swagger.v3.oas.annotations.Operation(summary = "新增资源", description = "新增资源，无需传值id、createTime、updateTime")
+    @Operation(summary = "新增资源", description = "新增资源，无需传值id、createTime、updateTime")
     @OperationLog(type = OperateType.CREATE, title = "新增资源", refModule = TableNameConst.SYS_RESOURCE, refIdEl = "#resource.id")
     public boolean add(@RequestBody @Validated SysResource resource) {
         return sysResourceService.add(resource);
@@ -49,7 +49,7 @@ public class SysResourceController {
      * @return
      */
     @PatchMapping("update")
-    @io.swagger.v3.oas.annotations.Operation(summary = "修改资源", description = "修改资源，需传值id")
+    @Operation(summary = "修改资源", description = "修改资源，需传值id")
     @OperationLog(type = OperateType.UPDATE, title = "修改资源", refModule = TableNameConst.SYS_RESOURCE, refIdEl = "#resource.id")
     public boolean update(@RequestBody @Validated(ValidGroup.Update.class) SysResource resource) {
         return sysResourceService.update(resource);
@@ -62,7 +62,7 @@ public class SysResourceController {
      * @return
      */
     @DeleteMapping("delete/{id}")
-    @io.swagger.v3.oas.annotations.Operation(summary = "删除资源", description = "根据id删除资源")
+    @Operation(summary = "删除资源", description = "根据id删除资源")
     @OperationLog(type = OperateType.DELETE, title = "删除资源", refModule = TableNameConst.SYS_RESOURCE, refIdEl = "#id")
     public boolean delete(@PathVariable Long id) {
         return sysResourceService.delete(id);
@@ -74,7 +74,7 @@ public class SysResourceController {
      * @return
      */
     @GetMapping("tree")
-    @io.swagger.v3.oas.annotations.Operation(summary = "获取资源树", description = "获取资源树列表")
+    @Operation(summary = "获取资源树", description = "获取资源树列表")
     public List<ResourceTreeNode> tree() {
         return sysResourceService.listTree();
     }
@@ -82,12 +82,11 @@ public class SysResourceController {
     /**
      * 获取当前登录用户的菜单树列表
      *
-     * @param userId
      * @return
      */
     @GetMapping("menu/user/tree")
-    @io.swagger.v3.oas.annotations.Operation(summary = "获取用户的菜单树", description = "获取当前登录用户的菜单树")
-    public List<ResourceTreeNode> usersMenu(@LoginUserId Long userId) {
+    @Operation(summary = "获取用户的菜单树", description = "获取当前登录用户的菜单树")
+    public List<ResourceTreeNode> usersMenu() {
         return null;
     }
 

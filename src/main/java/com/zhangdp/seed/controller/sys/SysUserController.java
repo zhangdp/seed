@@ -9,9 +9,11 @@ import com.zhangdp.seed.model.dto.UserInfo;
 import com.zhangdp.seed.model.params.PageQuery;
 import com.zhangdp.seed.model.params.UserQuery;
 import com.zhangdp.seed.service.sys.SysUserService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -35,7 +37,7 @@ public class SysUserController {
      * @return
      */
     @PostMapping("/add")
-    @io.swagger.v3.oas.annotations.Operation(summary = "新增用户", description = "新增用户，无需传值id、createTime、updateTime")
+    @Operation(summary = "新增用户", description = "新增用户，无需传值id、createTime、updateTime")
     @OperationLog(type = OperateType.CREATE, title = "新增用户", refModule = TableNameConst.SYS_USER, refIdEl = "#user.id", logIfError = true)
     public boolean add(@RequestBody @Valid SysUser user) {
         return sysUserService.insert(user);
@@ -48,7 +50,7 @@ public class SysUserController {
      * @return
      */
     @PutMapping("/update")
-    @io.swagger.v3.oas.annotations.Operation(summary = "修改用户", description = "修改用户，需传值id，无需传createTime、updateTime")
+    @Operation(summary = "修改用户", description = "修改用户，需传值id，无需传createTime、updateTime")
     @OperationLog(type = OperateType.UPDATE, title = "修改用户", refModule = TableNameConst.SYS_USER, refIdEl = "#user.id")
     public boolean update(@RequestBody @Valid SysUser user) {
         return sysUserService.update(user);
@@ -61,7 +63,7 @@ public class SysUserController {
      * @return
      */
     @DeleteMapping("/delete/{id}")
-    @io.swagger.v3.oas.annotations.Operation(summary = "删除用户", description = "根据id删除用户，如果本来就不存在则返回false")
+    @Operation(summary = "删除用户", description = "根据id删除用户，如果本来就不存在则返回false")
     @OperationLog(type = OperateType.DELETE, title = "删除用户", refModule = TableNameConst.SYS_USER, refIdEl = "#id")
     public boolean delete(@PathVariable Long id) {
         return sysUserService.delete(id);
@@ -74,7 +76,8 @@ public class SysUserController {
      * @return
      */
     @PostMapping("/page")
-    @io.swagger.v3.oas.annotations.Operation(summary = "分页查询用户")
+    @Operation(summary = "分页查询用户")
+    @PreAuthorize("hasRole('ROLE_HAHAHA')")
     public PageData<UserInfo> pageQuery(@RequestBody @Valid PageQuery<UserQuery> pageQuery) {
         return sysUserService.pageQuery(pageQuery);
     }

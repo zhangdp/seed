@@ -1,8 +1,8 @@
 package com.zhangdp.seed.common.security;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -16,6 +16,7 @@ import java.io.Serial;
  */
 @Data
 @Accessors(chain = true)
+@NoArgsConstructor
 @AllArgsConstructor
 public class RolePermissionGrantedAuthority implements GrantedAuthority {
 
@@ -25,11 +26,10 @@ public class RolePermissionGrantedAuthority implements GrantedAuthority {
     /**
      * 权限标识符
      */
-    private String code;
+    private String authority;
     /**
      * 权限类型
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private AuthorityType type;
     /**
      * id
@@ -43,9 +43,5 @@ public class RolePermissionGrantedAuthority implements GrantedAuthority {
         ROLE, PERMISSION
     }
 
-    @Override
-    public String getAuthority() {
-        return this.code;
-    }
 }
 

@@ -90,6 +90,10 @@ public enum ErrorCode {
      * 参数类型不符合
      */
     PARAMETER_TYPE_ERROR(12002, "参数类型不符合"),
+    /**
+     * 缺少请求体
+     */
+    REQUEST_BODY_NOT_FOUND(12003, "缺少请求体"),
 
 
     /**

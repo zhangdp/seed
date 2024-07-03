@@ -5,11 +5,11 @@
     <select id="queryList" resultType="com.zhangdp.seed.model.dto.UserInfo"
             parameterType="com.zhangdp.seed.model.params.UserQuery">
         SELECT
-        u.*
+          u.*
         FROM
-        sys_user u
+          sys_user u
         WHERE
-        u.deleted = 0
+          u.is_deleted = 0
         <if test="username != null and username != ''">
             AND u.username = #{username}
         </if>
@@ -33,7 +33,7 @@
 
     <select id="countByUsername" resultType="java.lang.Integer">
         SELECT COUNT(*)
-        FROM sys_user
+          FROM sys_user
         WHERE username = #{username}
     </select>
 
