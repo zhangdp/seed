@@ -1,6 +1,6 @@
 package com.zhangdp.seed.security.data;
 
-import com.zhangdp.seed.common.constant.CommonConst;
+import com.zhangdp.seed.security.SecurityConst;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -31,7 +31,7 @@ public class LoginResult implements Serializable {
      * 令牌类型
      */
     @Schema(title = "令牌类型")
-    private String tokenType = CommonConst.BEARER_TYPE;
+    private String tokenType = SecurityConst.AUTH_TYPE_BEARER;
     /**
      * 刷新令牌
      */

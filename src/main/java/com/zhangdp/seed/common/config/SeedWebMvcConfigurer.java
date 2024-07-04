@@ -1,14 +1,17 @@
 package com.zhangdp.seed.common.config;
 
+import com.zhangdp.seed.common.component.LoginUserArgumentResolver;
 import com.zhangdp.seed.common.constant.CommonConst;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.format.datetime.standard.DateTimeFormatterRegistrar;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 /**
  * 2023/5/25 mvc配置
@@ -37,6 +40,17 @@ public class SeedWebMvcConfigurer implements WebMvcConfigurer {
         registrar.setDateFormatter(DateTimeFormatter.ofPattern(CommonConst.DATE_FORMATTER));
         registrar.setDateTimeFormatter(DateTimeFormatter.ofPattern(CommonConst.DATETIME_FORMATTER));
         registrar.registerFormatters(registry);
+    }
+
+    /**
+     * 添加自定义controller参数注入
+     *
+     * @param resolvers
+     */
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+        // 添加参数注入-当前登录用户
+        resolvers.add(new LoginUserArgumentResolver());
     }
 
 }

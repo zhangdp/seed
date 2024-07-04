@@ -63,10 +63,10 @@ public class SecurityConfigurer {
                 // 默认账号密码登录
                 // .formLogin(AbstractHttpConfigurer::disable)
                 // 登出
-                .logout(c -> c.logoutUrl("/auth/logout").logoutSuccessHandler(tokenLogoutSuccessHandler))
+                .logout(c -> c.logoutUrl(SecurityConst.LOGOUT_URL).logoutSuccessHandler(tokenLogoutSuccessHandler))
                 .authorizeHttpRequests(req -> req
                         // 放行url
-                        .requestMatchers("/test/**", "/swagger-ui/**", "/v3/**", "/auth/login").permitAll()
+                        .requestMatchers("/test/**", "/swagger-ui/**", "/v3/**").permitAll()
                         // OPTIONS请求放行
                         .requestMatchers(HttpMethod.OPTIONS).permitAll()
                         // 其余url都必须认证

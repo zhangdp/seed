@@ -51,7 +51,7 @@ public class SysParam extends LogicBaseEntity implements Serializable {
     @Schema(title = "参数值")
     @NotBlank(message = "参数值不能为空")
     @Length(max = 255, message = "参数值最多{max}个字符")
-    private String value;
+    private String paramValue;
     /**
      * 值是否加密
      */

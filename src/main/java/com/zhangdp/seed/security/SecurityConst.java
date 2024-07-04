@@ -60,4 +60,8 @@ public interface SecurityConst {
      * redis 访问令牌key前缀
      */
     String REDIS_ACCESS_TOKEN_PREFIX = REDIS_PREFIX + REDIS_SPLIT + "access";
+    /**
+     * 访问令牌过期时间配置key
+     */
+    String ACCESS_TOKEN_TTL_PARAM_KEY = "ACCESS_TOKEN_TTL";
 }

@@ -39,8 +39,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         if (StrUtil.isNotBlank(token)) {
             UserDetails userDetails = tokenService.loadPrincipal(token);
             if (userDetails != null) {
-                Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails.getUsername(),
-                        userDetails.getPassword(), userDetails.getAuthorities());
+                Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 // 重置token过期时间
                 tokenService.resetTokenExpireIn(token);

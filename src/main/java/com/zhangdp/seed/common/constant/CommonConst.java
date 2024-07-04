@@ -94,13 +94,4 @@ public interface CommonConst {
      */
     String CHARSET = "UTF-8";
 
-    /**
-     * Bearer
-     */
-    String BEARER_TYPE = "Bearer";
-
-    /**
-     * request attribute之操作日志
-     */
-    String REQUEST_ATTR_OPERATE_LOG = "REQUEST_ATTR_OPERATE_LOG";
 }

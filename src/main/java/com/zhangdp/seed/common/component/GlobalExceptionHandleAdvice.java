@@ -61,6 +61,20 @@ public class GlobalExceptionHandleAdvice {
     }
 
     /**
+     * 非法异常，正常是断言产生的
+     *
+     * @param e
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public R<?> illegalArgumentException(IllegalArgumentException e, HttpServletRequest request) {
+        log.warn("非法异常：uri={}}", request.getRequestURI(), e);
+        return new R<>(ErrorCode.SYSTEM_ERROR.code(), ErrorCode.SYSTEM_ERROR.message() + ": " + e.getMessage());
+    }
+
+    /**
      * 数据库异常
      *
      * @param e
@@ -211,20 +225,6 @@ public class GlobalExceptionHandleAdvice {
         List<ParamsError> errors = new ArrayList<>();
         errors.add(new ParamsError(e.getParameterName(), errMsg));
         return new R<>(ErrorCode.PARAMETER_MISSING.code(), "参数错误：" + errMsg, errors);
-    }
-
-    /**
-     * 非法参数异常
-     *
-     * @param e
-     * @param request
-     * @return
-     */
-    @ExceptionHandler(IllegalArgumentException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public R<?> illegalArgumentException(IllegalArgumentException e, HttpServletRequest request) {
-        log.warn("非法参数异常：uri={}, error={}", request.getRequestURI(), e.getMessage());
-        return new R<>(ErrorCode.BAD_REQUEST.code(), StrUtil.defaultIfBlank(e.getMessage(), ErrorCode.BAD_REQUEST.message()));
     }
 
     /**

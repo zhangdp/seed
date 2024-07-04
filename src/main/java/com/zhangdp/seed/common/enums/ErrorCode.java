@@ -117,14 +117,22 @@ public enum ErrorCode {
      */
     RESOURCE_PARENT_NOT_EXISTS(20201, "父级资源不存在"),
     /**
-     * 系统参数不存在
+     * 参数不存在
      */
-    PARAM_NOT_FOUND(20300, "系统参数不存在"),
+    PARAM_NOT_FOUND(20300, "参数不存在"),
+    /**
+     * 系统级别的参数不允许删除
+     */
+    SYSTEM_PARAM_CAN_NOT_DELETE(20301, "系统级别的参数不允许删除"),
 
     /**
      * 3开头的错误码，错误来源是系统
      */
     SERVER_ERROR(30000, "系统错误"),
+    /**
+     * 系统错误
+     */
+    SYSTEM_ERROR(30001, "系统错误"),
 
     /// 4xxxx开头，中间件或者第三方导致的错误
     /**

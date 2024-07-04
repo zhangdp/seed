@@ -2,6 +2,7 @@ package com.zhangdp.seed.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zhangdp.seed.model.params.PasswordLoginParams;
+import com.zhangdp.seed.security.SecurityConst;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,7 +28,7 @@ public class TokenUsernamePasswordAuthenticationFilter extends AbstractAuthentic
     private final ObjectMapper objectMapper;
 
     public TokenUsernamePasswordAuthenticationFilter(ObjectMapper objectMapper) {
-        super(new AntPathRequestMatcher("/auth/login", "POST"));
+        super(new AntPathRequestMatcher(SecurityConst.LOGIN_URL, "POST"));
         this.objectMapper = objectMapper;
     }
 

@@ -8,12 +8,15 @@ import com.zhangdp.seed.model.PageData;
 import com.zhangdp.seed.model.dto.UserInfo;
 import com.zhangdp.seed.model.params.PageQuery;
 import com.zhangdp.seed.model.params.UserQuery;
+import com.zhangdp.seed.security.data.LoginUser;
 import com.zhangdp.seed.service.sys.SysUserService;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -37,8 +40,9 @@ public class SysUserController {
      * @return
      */
     @PostMapping("/add")
+    @PreAuthorize("hasPermission('sys:user:add')")
     @Operation(summary = "新增用户", description = "新增用户，无需传值id、createTime、updateTime")
-    @OperationLog(type = OperateType.CREATE, title = "新增用户", refModule = TableNameConst.SYS_USER, refIdEl = "#user.id", logIfError = true)
+    @OperationLog(type = OperateType.CREATE, title = "新增用户", refModule = TableNameConst.SYS_USER)
     public boolean add(@RequestBody @Valid SysUser user) {
         return sysUserService.insert(user);
     }
@@ -77,7 +81,6 @@ public class SysUserController {
      */
     @PostMapping("/page")
     @Operation(summary = "分页查询用户")
-    @PreAuthorize("hasRole('ROLE_HAHAHA')")
     public PageData<UserInfo> pageQuery(@RequestBody @Valid PageQuery<UserQuery> pageQuery) {
         return sysUserService.pageQuery(pageQuery);
     }

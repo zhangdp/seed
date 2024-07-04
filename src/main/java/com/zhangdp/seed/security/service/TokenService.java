@@ -1,10 +1,14 @@
 package com.zhangdp.seed.security.service;
 
+import com.zhangdp.seed.entity.sys.SysParam;
 import com.zhangdp.seed.security.SecurityConst;
 import com.zhangdp.seed.security.data.TokenInfo;
+import com.zhangdp.seed.service.sys.SysParamService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.hutool.core.cache.impl.TimedCache;
 import org.dromara.hutool.core.data.id.UUID;
+import org.dromara.hutool.core.lang.Assert;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +24,7 @@ import org.springframework.stereotype.Component;
 public class TokenService {
 
     private final TokenStore tokenStore;
+    private final SysParamService sysParamService;
 
     /**
      * 创建token
@@ -27,11 +32,12 @@ public class TokenService {
      * @return
      */
     public TokenInfo createToken(UserDetails userDetails) {
+        int ttl = this.getTokenTtlSetting();
         String accessToken = this.generateToken();
         TokenInfo tokenInfo = new TokenInfo();
         tokenInfo.setAccessToken(accessToken);
-        tokenInfo.setAccessTokenExpiresIn(SecurityConst.ACCESS_TOKEN_TTL);
-        tokenStore.storeAccessToken(accessToken, userDetails, SecurityConst.ACCESS_TOKEN_TTL);
+        tokenInfo.setAccessTokenExpiresIn(ttl);
+        tokenStore.storeAccessToken(accessToken, userDetails, ttl);
         return tokenInfo;
     }
 
@@ -70,6 +76,17 @@ public class TokenService {
      * @param accessToken
      */
     public boolean resetTokenExpireIn(String accessToken) {
-        return tokenStore.updateAccessTokenExpiresIn(accessToken, SecurityConst.ACCESS_TOKEN_TTL);
+        return tokenStore.updateAccessTokenExpiresIn(accessToken, this.getTokenTtlSetting());
+    }
+
+    /**
+     * 获取访问令牌过期时间配置
+     *
+     * @return
+     */
+    private int getTokenTtlSetting() {
+        SysParam param = sysParamService.getByCode(SecurityConst.ACCESS_TOKEN_TTL_PARAM_KEY);
+        Assert.notNull(param, "不存在配置" + SecurityConst.ACCESS_TOKEN_TTL_PARAM_KEY);
+        return Integer.parseInt(param.getParamValue());
     }
 }
