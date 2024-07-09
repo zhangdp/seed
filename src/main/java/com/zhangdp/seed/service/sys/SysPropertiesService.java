@@ -1,7 +1,7 @@
 package com.zhangdp.seed.service.sys;
 
 import com.github.pagehelper.PageInfo;
-import com.zhangdp.seed.entity.sys.SysParam;
+import com.zhangdp.seed.entity.sys.SysProperties;
 import com.zhangdp.seed.model.params.BaseQueryParams;
 import com.zhangdp.seed.model.params.PageQuery;
 
@@ -11,7 +11,7 @@ import com.zhangdp.seed.model.params.PageQuery;
  * @author zhangdp
  * @since 1.0.0
  */
-public interface SysParamService {
+public interface SysPropertiesService {
 
     /**
      * 根据标识获取
@@ -19,23 +19,23 @@ public interface SysParamService {
      * @param code
      * @return
      */
-    SysParam getByCode(String code);
+    SysProperties getByCode(String code);
 
     /**
      * 新增
      *
-     * @param param
+     * @param entity
      * @return
      */
-    boolean add(SysParam param);
+    boolean add(SysProperties entity);
 
     /**
      * 修改
      *
-     * @param param
+     * @param entity
      * @return
      */
-    boolean update(SysParam param);
+    boolean update(SysProperties entity);
 
     /**
      * 删除
@@ -51,5 +51,5 @@ public interface SysParamService {
      * @param pageQuery
      * @return
      */
-    PageInfo<SysParam> pageQuery(PageQuery<BaseQueryParams> pageQuery);
+    PageInfo<SysProperties> pageQuery(PageQuery<BaseQueryParams> pageQuery);
 }

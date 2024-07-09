@@ -85,6 +85,6 @@ public interface SysUserService {
      * @param pageQuery
      * @return
      */
-    PageData<UserInfo> pageQuery(PageQuery<UserQuery> pageQuery);
+    PageData<UserInfo> queryPage(PageQuery<UserQuery> pageQuery);
 
 }

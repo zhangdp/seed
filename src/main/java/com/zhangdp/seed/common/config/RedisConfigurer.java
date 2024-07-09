@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.zhangdp.seed.common.constant.CacheConst;
 import com.zhangdp.seed.common.constant.CommonConst;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.cache.CacheProperties;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -48,31 +49,11 @@ public class RedisConfigurer {
     }
 
     /**
-     * 自定义redis缓存管理器，设置为json序列化方式
-     *
-     * @param connectionFactory
-     * @return
-     */
-    @Bean
-    public CacheManager cacheManager(RedisConnectionFactory connectionFactory) {
-        // todo 这里应改为默认配置取自application.yml配置，在这基础上配置建、值序列化方式
-        RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
-                // 过期时间
-                .entryTtl(CacheConst.TTL)
-                // 前缀
-                .prefixCacheNameWith(CacheConst.PREFIX + CacheConst.SPLIT)
-                // 键序列化方式 redis字符串序列化
-                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(RedisSerializer.string()))
-                // 值序列化方式 json序列化
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(this.jsonRedisSerializer()));
-        return RedisCacheManager.builder(connectionFactory).cacheDefaults(config).build();
-    }
-
-    /**
      * json格式的序列化方式
      *
      * @return
      */
+    @Bean
     public GenericJackson2JsonRedisSerializer jsonRedisSerializer() {
         GenericJackson2JsonRedisSerializer jsonRedisSerializer = new GenericJackson2JsonRedisSerializer();
         jsonRedisSerializer.configure(config -> {

@@ -1,6 +1,6 @@
 package com.zhangdp.seed;
 
-import com.zhangdp.seed.common.annotation.EnableLogOperate;
+import com.zhangdp.seed.common.annotation.EnableLogOperation;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
@@ -15,7 +15,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @SpringBootApplication
 @EnableAsync
 @EnableCaching
-@EnableLogOperate
+@EnableLogOperation
 public class SeedApplication {
 
     public static void main(String[] args) {

@@ -18,6 +18,7 @@ import org.dromara.hutool.core.map.MapUtil;
 import org.dromara.hutool.core.reflect.ClassUtil;
 import org.dromara.hutool.core.text.StrUtil;
 import org.dromara.hutool.http.server.servlet.ServletUtil;
+import org.springframework.boot.context.properties.bind.BindResult;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.expression.EvaluationContext;
@@ -50,7 +51,8 @@ public class OperateLogAspect {
             HttpServletRequest.class,
             HttpServletResponse.class,
             MultipartFile.class,
-            HttpSession.class
+            HttpSession.class,
+            BindResult.class
     };
     /**
      * 方法参数解析器
@@ -155,7 +157,7 @@ public class OperateLogAspect {
             for (int i = 0; i < parameterNames.length; i++) {
                 String name = parameterNames[i];
                 Object obj = args[i];
-                if (ArrayUtil.contains(operationLog.ignoreParams(), name)) {
+                if (ArrayUtil.contains(operationLog.ignoreParamsNames(), name)) {
                     continue;
                 }
                 Class<?> clazz = ClassUtil.getClass(obj);

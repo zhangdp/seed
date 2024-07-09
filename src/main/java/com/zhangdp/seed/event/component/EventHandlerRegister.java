@@ -1,6 +1,6 @@
-package com.zhangdp.seed.common.component;
+package com.zhangdp.seed.event.component;
 
-import com.zhangdp.seed.common.annotation.EventHandler;
+import com.zhangdp.seed.event.annotation.EventHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.framework.AopProxyUtils;

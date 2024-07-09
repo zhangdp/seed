@@ -83,7 +83,7 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
      * @param pageQuery
      * @return
      */
-    default PageData<UserInfo> pageQuery(PageQuery<UserQuery> pageQuery) {
+    default PageData<UserInfo> queryPage(PageQuery<UserQuery> pageQuery) {
         PageHelper.startPage(pageQuery.getPage(), pageQuery.getSize(), pageQuery.getOrderBy());
         List<UserInfo> list = this.queryList(pageQuery.getParams());
         PageInfo<UserInfo> pi = new PageInfo<>(list);

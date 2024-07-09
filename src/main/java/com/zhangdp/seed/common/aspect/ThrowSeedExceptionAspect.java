@@ -11,7 +11,7 @@ import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.stereotype.Component;
 
 /**
- * 2023/8/3 带有@ThrowSeedException注解的方法抛异常后转为自定义异常SeedException抛出
+ * 2023/8/3 带有@ThrowSeedException注解的方法抛异常后转为自定义异常BizException抛出
  *
  * @author zhangdp
  * @since 1.0.0
@@ -34,10 +34,13 @@ public class ThrowSeedExceptionAspect {
             String method = joinPoint.getTarget().getClass().getName() + "." + joinPoint.getSignature().getName();
             log.debug("SeedExceptionAspect afterThrowing: method={}, throwing={}", method, throwing.getClass().getName());
         }
+        BizException bizException;
         if (throwing instanceof BizException se) {
-            throw se;
+            bizException = se;
+        } else {
+            ErrorCode errorCode = throwSeedException.value();
+            bizException = new BizException(errorCode.code(), StrUtil.defaultIfEmpty(throwSeedException.message(), errorCode.message()), throwing);
         }
-        ErrorCode errorCode = throwSeedException.value();
-        throw new BizException(errorCode.code(), StrUtil.defaultIfEmpty(throwSeedException.message(), errorCode.message()), throwing);
+        throw bizException;
     }
 }

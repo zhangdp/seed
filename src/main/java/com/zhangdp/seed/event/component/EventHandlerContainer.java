@@ -1,4 +1,4 @@
-package com.zhangdp.seed.common.component;
+package com.zhangdp.seed.event.component;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

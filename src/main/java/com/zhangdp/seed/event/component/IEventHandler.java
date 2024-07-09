@@ -1,4 +1,4 @@
-package com.zhangdp.seed.common.component;
+package com.zhangdp.seed.event.component;
 
 import org.dromara.hutool.core.reflect.FieldUtil;
 

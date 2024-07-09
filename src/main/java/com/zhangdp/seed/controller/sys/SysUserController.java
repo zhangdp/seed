@@ -81,8 +81,13 @@ public class SysUserController {
      */
     @PostMapping("/page")
     @Operation(summary = "分页查询用户")
-    public PageData<UserInfo> pageQuery(@RequestBody @Valid PageQuery<UserQuery> pageQuery) {
-        return sysUserService.pageQuery(pageQuery);
+    public PageData<UserInfo> queryPage(@RequestBody @Valid PageQuery<UserQuery> pageQuery, LoginUser loginUser) {
+        UserQuery params = pageQuery.getParams();
+        if (params == null) {
+            params = new UserQuery();
+        }
+        params.setLoginUserId(loginUser.getId());
+        return sysUserService.queryPage(pageQuery);
     }
 
 }

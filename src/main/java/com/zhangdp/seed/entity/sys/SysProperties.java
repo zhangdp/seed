@@ -16,7 +16,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * 2023/4/12 系统参数
+ * 2023/4/12 系统配置
  *
  * @author zhangdp
  * @since 1.0.0
@@ -25,9 +25,9 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@TableName(TableNameConst.SYS_PARAM)
-@Schema(description = "系统参数")
-public class SysParam extends LogicBaseEntity implements Serializable {
+@TableName(TableNameConst.SYS_PROPERTIES)
+@Schema(description = "系统配置")
+public class SysProperties extends LogicBaseEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -36,8 +36,8 @@ public class SysParam extends LogicBaseEntity implements Serializable {
      * 标识
      */
     @Schema(title = "标识")
-    @NotBlank(message = "参数标识不能为空")
-    @Length(max = 32, message = "参数标识最多{max}个字符")
+    @NotBlank(message = "配置key不能为空")
+    @Length(max = 32, message = "配置key最多{max}个字符")
     private String code;
     /**
      * 描述
@@ -48,10 +48,10 @@ public class SysParam extends LogicBaseEntity implements Serializable {
     /**
      * 值
      */
-    @Schema(title = "参数值")
-    @NotBlank(message = "参数值不能为空")
-    @Length(max = 255, message = "参数值最多{max}个字符")
-    private String paramValue;
+    @Schema(title = "配置值")
+    @NotBlank(message = "配置值不能为空")
+    @Length(max = 255, message = "配置值最多{max}个字符")
+    private String textValue;
     /**
      * 值是否加密
      */

@@ -83,8 +83,8 @@ public class SysUserServiceImpl implements SysUserService {
     }
 
     @Override
-    public PageData<UserInfo> pageQuery(PageQuery<UserQuery> pageQuery) {
-        return sysUserMapper.pageQuery(pageQuery);
+    public PageData<UserInfo> queryPage(PageQuery<UserQuery> pageQuery) {
+        return sysUserMapper.queryPage(pageQuery);
     }
 
     @Override

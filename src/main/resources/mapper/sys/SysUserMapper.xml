@@ -28,6 +28,9 @@
         <if test="sex != null and sex != ''">
             AND u.sex = #{sex}
         </if>
+        <if test="excludeSelf != null and excludeSelf == true and loginUserId != null">
+            AND u.id != #{loginUserId}
+        </if>
         ORDER BY u.id DESC
     </select>
 

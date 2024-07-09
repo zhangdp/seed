@@ -2,7 +2,7 @@ package com.zhangdp.seed.mapper.sys;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.zhangdp.seed.entity.sys.SysParam;
+import com.zhangdp.seed.entity.sys.SysProperties;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -12,7 +12,7 @@ import org.apache.ibatis.annotations.Mapper;
  * @since 1.0.0
  */
 @Mapper
-public interface SysParamMapper extends BaseMapper<SysParam> {
+public interface SysPropertiesMapper extends BaseMapper<SysProperties> {
 
     /**
      * 根据code查询单条记录
@@ -20,7 +20,7 @@ public interface SysParamMapper extends BaseMapper<SysParam> {
      * @param code
      * @return
      */
-    default SysParam selectOneByCode(String code) {
-        return this.selectOne(Wrappers.lambdaQuery(SysParam.class).eq(SysParam::getCode, code));
+    default SysProperties selectOneByCode(String code) {
+        return this.selectOne(Wrappers.lambdaQuery(SysProperties.class).eq(SysProperties::getCode, code));
     }
 }

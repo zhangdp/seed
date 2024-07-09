@@ -1,4 +1,4 @@
-package com.zhangdp.seed.common.annotation;
+package com.zhangdp.seed.event.annotation;
 
 import java.lang.annotation.*;
 

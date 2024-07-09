@@ -8,11 +8,11 @@ import com.zhangdp.seed.common.constant.CommonConst;
 import com.zhangdp.seed.common.constant.TableNameConst;
 import com.zhangdp.seed.common.enums.ErrorCode;
 import com.zhangdp.seed.common.exception.BizException;
-import com.zhangdp.seed.entity.sys.SysParam;
-import com.zhangdp.seed.mapper.sys.SysParamMapper;
+import com.zhangdp.seed.entity.sys.SysProperties;
+import com.zhangdp.seed.mapper.sys.SysPropertiesMapper;
 import com.zhangdp.seed.model.params.BaseQueryParams;
 import com.zhangdp.seed.model.params.PageQuery;
-import com.zhangdp.seed.service.sys.SysParamService;
+import com.zhangdp.seed.service.sys.SysPropertiesService;
 import lombok.RequiredArgsConstructor;
 import org.dromara.hutool.core.lang.Assert;
 import org.dromara.hutool.core.text.StrUtil;
@@ -25,70 +25,70 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * 2023/4/12 系统参数service实现
+ * 2023/4/12 系统配置service实现
  *
  * @author zhangdp
  * @since 1.0.0
  */
 @Service
 @RequiredArgsConstructor
-@CacheConfig(cacheNames = TableNameConst.SYS_PARAM)
-public class SysParamServiceImpl implements SysParamService {
+@CacheConfig(cacheNames = TableNameConst.SYS_PROPERTIES)
+public class SysPropertiesServiceImpl implements SysPropertiesService {
 
-    private final SysParamMapper sysParamMapper;
+    private final SysPropertiesMapper sysPropertiesMapper;
 
     @Cacheable(key = "#code", unless = "#result == null")
     @Override
-    public SysParam getByCode(String code) {
-        return sysParamMapper.selectOneByCode(code);
+    public SysProperties getByCode(String code) {
+        return sysPropertiesMapper.selectOneByCode(code);
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean add(SysParam param) {
-        param.setCode(param.getCode().trim().toUpperCase());
-        return sysParamMapper.insert(param) > 0;
+    public boolean add(SysProperties entity) {
+        entity.setCode(entity.getCode().trim().toUpperCase());
+        return sysPropertiesMapper.insert(entity) > 0;
     }
 
     @CacheEvict(key = "#param.code", condition = "#result == true")
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean update(SysParam param) {
-        SysParam bean = this.sysParamMapper.selectById(param.getId());
+    public boolean update(SysProperties entity) {
+        SysProperties bean = this.sysPropertiesMapper.selectById(entity.getId());
         Assert.notNull(bean, () -> new BizException(ErrorCode.PARAM_NOT_FOUND));
-        SysParam update = new SysParam();
-        update.setId(param.getId());
-        update.setParamValue(param.getParamValue());
-        update.setDescription(param.getDescription());
-        update.setIsEncrypted(param.getIsEncrypted());
+        SysProperties update = new SysProperties();
+        update.setId(entity.getId());
+        update.setTextValue(entity.getTextValue());
+        update.setDescription(entity.getDescription());
+        update.setIsEncrypted(entity.getIsEncrypted());
         // 只允许修改上面几项，其余字段不允许修改
-        return sysParamMapper.updateById(update) > 0;
+        return sysPropertiesMapper.updateById(update) > 0;
     }
 
     @CacheEvict(allEntries = true, condition = "#result == true")
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean delete(Long id) {
-        SysParam param = this.sysParamMapper.selectById(id);
-        if (param == null) {
+        SysProperties entity = this.sysPropertiesMapper.selectById(id);
+        if (entity == null) {
             return true;
         }
-        Assert.isFalse(param.getIsSystem() == CommonConst.YES_TRUE, () -> new BizException(ErrorCode.SYSTEM_PARAM_CAN_NOT_DELETE));
-        return sysParamMapper.deleteById(id) > 0;
+        Assert.isFalse(entity.getIsSystem() == CommonConst.YES_TRUE, () -> new BizException(ErrorCode.SYSTEM_PARAM_CAN_NOT_DELETE));
+        return sysPropertiesMapper.deleteById(id) > 0;
     }
 
     @Override
-    public PageInfo<SysParam> pageQuery(PageQuery<BaseQueryParams> pageQuery) {
+    public PageInfo<SysProperties> pageQuery(PageQuery<BaseQueryParams> pageQuery) {
         PageHelper.startPage(pageQuery.getPage(), pageQuery.getSize(), pageQuery.getOrderBy());
-        LambdaQueryWrapper<SysParam> wrappers = Wrappers.lambdaQuery(SysParam.class).orderByDesc(SysParam::getId);
+        LambdaQueryWrapper<SysProperties> wrappers = Wrappers.lambdaQuery(SysProperties.class).orderByDesc(SysProperties::getId);
         BaseQueryParams param = pageQuery.getParams();
         if (param != null) {
             if (StrUtil.isNotBlank(param.getQuery())) {
-                wrappers.like(SysParam::getCode, param.getQuery())
-                        .or().like(SysParam::getDescription, param.getQuery());
+                wrappers.like(SysProperties::getCode, param.getQuery())
+                        .or().like(SysProperties::getDescription, param.getQuery());
             }
         }
-        List<SysParam> list = sysParamMapper.selectList(wrappers);
+        List<SysProperties> list = sysPropertiesMapper.selectList(wrappers);
         return new PageInfo<>(list);
 
     }

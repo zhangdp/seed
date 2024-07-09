@@ -49,7 +49,14 @@ public @interface OperationLog {
      *
      * @return
      */
-    String[] ignoreParams() default {};
+    String[] ignoreParamsNames() default {};
+
+    /**
+     * 忽略的参数类型
+     *
+     * @return
+     */
+    Class[] ignoreParamsClass() default {};
 
     /**
      * 如果出错是否记录
@@ -71,5 +78,12 @@ public @interface OperationLog {
      * @return
      */
     boolean logParams() default true;
+
+    /**
+     * 是否记录请求头
+     *
+     * @return
+     */
+    boolean logHeader() default true;
 
 }

@@ -1,7 +1,6 @@
-package com.zhangdp.seed.common.aspect;
+package com.zhangdp.seed.event.component;
 
-import com.zhangdp.seed.common.annotation.Event;
-import com.zhangdp.seed.common.component.EventDispatch;
+import com.zhangdp.seed.event.annotation.Event;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;

@@ -37,7 +37,7 @@ public interface TableNameConst {
     /**
      * 参数表
      */
-    String SYS_PARAM = PREFIX_SYS + SPLIT + "param";
+    String SYS_PROPERTIES = PREFIX_SYS + SPLIT + "properties";
     /**
      * 字典表
      */
@@ -46,5 +46,5 @@ public interface TableNameConst {
      * 角色表
      */
     String SYS_ROLE = PREFIX_SYS + SPLIT + "sys_role";
-    ;
+
 }

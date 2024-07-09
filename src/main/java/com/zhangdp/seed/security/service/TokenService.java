@@ -1,12 +1,11 @@
 package com.zhangdp.seed.security.service;
 
-import com.zhangdp.seed.entity.sys.SysParam;
+import com.zhangdp.seed.entity.sys.SysProperties;
 import com.zhangdp.seed.security.SecurityConst;
 import com.zhangdp.seed.security.data.TokenInfo;
-import com.zhangdp.seed.service.sys.SysParamService;
+import com.zhangdp.seed.service.sys.SysPropertiesService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hutool.core.cache.impl.TimedCache;
 import org.dromara.hutool.core.data.id.UUID;
 import org.dromara.hutool.core.lang.Assert;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,7 +23,7 @@ import org.springframework.stereotype.Component;
 public class TokenService {
 
     private final TokenStore tokenStore;
-    private final SysParamService sysParamService;
+    private final SysPropertiesService sysPropertiesService;
 
     /**
      * 创建token
@@ -85,8 +84,8 @@ public class TokenService {
      * @return
      */
     private int getTokenTtlSetting() {
-        SysParam param = sysParamService.getByCode(SecurityConst.ACCESS_TOKEN_TTL_PARAM_KEY);
-        Assert.notNull(param, "不存在配置" + SecurityConst.ACCESS_TOKEN_TTL_PARAM_KEY);
-        return Integer.parseInt(param.getParamValue());
+        SysProperties properties = sysPropertiesService.getByCode(SecurityConst.ACCESS_TOKEN_TTL_PARAM_KEY);
+        Assert.notNull(properties, "不存在配置" + SecurityConst.ACCESS_TOKEN_TTL_PARAM_KEY);
+        return Integer.parseInt(properties.getTextValue());
     }
 }

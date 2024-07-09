@@ -3,7 +3,6 @@ package com.zhangdp.seed.common.config;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
-import com.zhangdp.seed.common.constant.CommonConst;
 import com.zhangdp.seed.entity.BaseEntity;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.context.annotation.Bean;
@@ -33,7 +32,6 @@ public class MybatisPlusConfigurer {
                 LocalDateTime now = LocalDateTime.now();
                 this.strictInsertFill(metaObject, BaseEntity.CREATED_DATE, LocalDateTime.class, now);
                 this.strictInsertFill(metaObject, BaseEntity.LAST_MODIFIED_DATE, LocalDateTime.class, now);
-                this.strictInsertFill(metaObject, "status", Integer.class, CommonConst.GOOD);
             }
 
             @Override

@@ -51,4 +51,14 @@ public class UserQuery implements Serializable {
      */
     @Schema(title = "性别")
     private Character sex;
+    /**
+     * 当前登录用户id
+     */
+    @Schema(title = "当前登录用户id", hidden = true)
+    private Long loginUserId;
+    /**
+     * 是否排除自己
+     */
+    @Schema(title = "是否排除自己", description = "查询结果是否忽略自己")
+    private Boolean excludeSelf;
 }
