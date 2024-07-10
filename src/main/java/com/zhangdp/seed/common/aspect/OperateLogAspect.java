@@ -1,8 +1,7 @@
 package com.zhangdp.seed.common.aspect;
 
 import com.zhangdp.seed.common.SpringWebMvcContextHolder;
-import com.zhangdp.seed.common.annotation.OperateLog;
-import com.zhangdp.seed.common.component.SecurityHelper;
+import com.zhangdp.seed.common.annotation.OperationLog;
 import com.zhangdp.seed.common.data.OperateLogEvent;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,7 +17,8 @@ import org.dromara.hutool.core.array.ArrayUtil;
 import org.dromara.hutool.core.map.MapUtil;
 import org.dromara.hutool.core.reflect.ClassUtil;
 import org.dromara.hutool.core.text.StrUtil;
-import org.dromara.hutool.http.server.servlet.JakartaServletUtil;
+import org.dromara.hutool.http.server.servlet.ServletUtil;
+import org.springframework.boot.context.properties.bind.BindResult;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.expression.EvaluationContext;
@@ -51,7 +51,8 @@ public class OperateLogAspect {
             HttpServletRequest.class,
             HttpServletResponse.class,
             MultipartFile.class,
-            HttpSession.class
+            HttpSession.class,
+            BindResult.class
     };
     /**
      * 方法参数解析器
@@ -62,10 +63,6 @@ public class OperateLogAspect {
      */
     private final SpelExpressionParser spelExpressionParser = new SpelExpressionParser();
     /**
-     * 认证相关类
-     */
-    private final SecurityHelper securityHelper;
-    /**
      * spring事件发布器
      */
     private final ApplicationEventPublisher applicationEventPublisher;
@@ -74,12 +71,12 @@ public class OperateLogAspect {
      * 环绕拥有@OperationLog 注解的controller方法
      *
      * @param point
-     * @param operateLog
+     * @param operationLog
      * @return
      * @throws Throwable
      */
-    @Around("within(com.zhangdp.seed.controller..*) && @annotation(operateLog)")
-    public Object around(ProceedingJoinPoint point, OperateLog operateLog) throws Throwable {
+    @Around("within(com.zhangdp.seed.controller..*) && @annotation(operationLog)")
+    public Object around(ProceedingJoinPoint point, OperationLog operationLog) throws Throwable {
         HttpServletRequest request = Objects.requireNonNull(SpringWebMvcContextHolder.getRequest());
         String uri = request.getRequestURI();
         String method = point.getTarget().getClass().getName() + "." + point.getSignature().getName();
@@ -90,43 +87,43 @@ public class OperateLogAspect {
         Object result = null;
         LocalDateTime startTime = LocalDateTime.now();
         OperateLogEvent event = new OperateLogEvent(point.getTarget());
-        event.setType(operateLog.type());
-        event.setTitle(operateLog.title());
-        event.setRefModule(operateLog.refModule());
+        event.setType(operationLog.type());
+        event.setTitle(operationLog.title());
+        event.setRefModule(operationLog.refModule());
         event.setMethod(method);
         event.setStartTime(startTime);
-        event.setUserId(securityHelper.loginUserIdDefaultNull());
+        // event.setUserId(securityHelper.loginUserIdDefaultNull());
         event.setUri(request.getRequestURI());
         event.setHttpMethod(request.getMethod());
         event.setUserAgent(request.getHeader("User-Agent"));
-        event.setClientIp(JakartaServletUtil.getClientIP(request));
+        event.setClientIp(ServletUtil.getClientIP(request));
 
         try {
             // 执行原方法
             result = point.proceed();
             event.setSucceed(true);
-            if (operateLog.logResult() && result instanceof Serializable s) {
+            if (operationLog.logResult() && result instanceof Serializable s) {
                 event.setResult(s);
             }
             return result;
         } catch (Throwable t) {
             event.setSucceed(false);
-            if (operateLog.logIfError()) {
+            if (operationLog.logIfError()) {
                 event.setThrowable(t);
             }
             throw t;
         } finally {
             // 失败时只有logIfError为true才记录日志
-            if (event.isSucceed() || operateLog.logIfError()) {
+            if (event.isSucceed() || operationLog.logIfError()) {
                 LocalDateTime endTime = LocalDateTime.now();
                 event.setEndTime(endTime);
                 try {
-                    LinkedHashMap<String, Object> params = this.toParamsMap(point, operateLog);
-                    if (operateLog.logParams()) {
+                    LinkedHashMap<String, Object> params = this.toParamsMap(point, operationLog);
+                    if (operationLog.logParams()) {
                         event.setParams(params);
                     }
-                    if (StrUtil.isNotBlank(operateLog.refIdEl())) {
-                        event.setRefId(this.getRefId(operateLog.refIdEl(), params, result));
+                    if (StrUtil.isNotBlank(operationLog.refIdEl())) {
+                        event.setRefId(this.getRefId(operationLog.refIdEl(), params, result));
                     }
                     // 发出事件
                     applicationEventPublisher.publishEvent(event);
@@ -147,7 +144,7 @@ public class OperateLogAspect {
      * @param operationLog
      * @return
      */
-    private LinkedHashMap<String, Object> toParamsMap(JoinPoint point, OperateLog operationLog) {
+    private LinkedHashMap<String, Object> toParamsMap(JoinPoint point, OperationLog operationLog) {
         Object[] args = point.getArgs();
         if (args == null || args.length == 0) {
             return null;
@@ -160,7 +157,7 @@ public class OperateLogAspect {
             for (int i = 0; i < parameterNames.length; i++) {
                 String name = parameterNames[i];
                 Object obj = args[i];
-                if (ArrayUtil.contains(operationLog.ignoreParams(), name)) {
+                if (ArrayUtil.contains(operationLog.ignoreParamsNames(), name)) {
                     continue;
                 }
                 Class<?> clazz = ClassUtil.getClass(obj);

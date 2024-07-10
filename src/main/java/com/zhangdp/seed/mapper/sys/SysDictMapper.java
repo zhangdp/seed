@@ -1,6 +1,7 @@
 package com.zhangdp.seed.mapper.sys;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.zhangdp.seed.entity.sys.SysDict;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -12,4 +13,14 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface SysDictMapper extends BaseMapper<SysDict> {
+
+    /**
+     * 根据类型查询单条记录
+     *
+     * @param type
+     * @return
+     */
+    default SysDict selectOneByType(String type) {
+        return this.selectOne(Wrappers.lambdaQuery(SysDict.class).eq(SysDict::getType, type));
+    }
 }

@@ -59,13 +59,21 @@ public enum ErrorCode {
      */
     FORBIDDEN_NO_PERMISSION(10102, "无权限"),
     /**
-     * 用户不存在或者密码错误
+     * 账号不存在或者密码错误
      */
-    LOGIN_PWD_ERROR(10200, "账号不存在或者密码错误"),
+    USERNAME_NOT_FOUND_OR_BAD_CREDENTIALS(10200, "账号不存在或者密码错误"),
     /**
      * 账号已被封禁
      */
-    ACCOUNT_BANNED(10210, "账号已被封禁"),
+    ACCOUNT_LOCKED(10201, "账号已被锁定"),
+    /**
+     * 账号不可用
+     */
+    ACCOUNT_DISABLED(10202, "账号不可用"),
+    /**
+     * 登录失败
+     */
+    LOGIN_FAILURE(10203, "登录失败"),
     /**
      * 资源不存在
      */
@@ -82,6 +90,10 @@ public enum ErrorCode {
      * 参数类型不符合
      */
     PARAMETER_TYPE_ERROR(12002, "参数类型不符合"),
+    /**
+     * 缺少请求体
+     */
+    REQUEST_BODY_NOT_FOUND(12003, "缺少请求体"),
 
 
     /**
@@ -105,24 +117,44 @@ public enum ErrorCode {
      */
     RESOURCE_PARENT_NOT_EXISTS(20201, "父级资源不存在"),
     /**
-     * 系统参数不存在
+     * 参数不存在
      */
-    PARAM_NOT_FOUND(20300, "系统参数不存在"),
+    PARAM_NOT_FOUND(20300, "参数不存在"),
+    /**
+     * 系统级别的参数不允许删除
+     */
+    SYSTEM_PARAM_CAN_NOT_DELETE(20301, "系统级别的参数不允许删除"),
 
     /**
      * 3开头的错误码，错误来源是系统
      */
     SERVER_ERROR(30000, "系统错误"),
-
-
     /**
-     * 4开头的错误码，错误来源是中间件
+     * 系统错误
      */
-    SQL_ERROR(40000, "系统错误"),
+    SYSTEM_ERROR(30001, "系统错误"),
+
+    /// 4xxxx开头，中间件或者第三方导致的错误
+    /**
+     * 数据库错误
+     */
+    SQL_ERROR(40000, "数据库错误"),
+    /**
+     * redis错误
+     */
+    REDIS_ERROR(40100, "Redis错误"),
+    /**
+     * 第三方第三方接口出错
+     */
+    EXTERNAL_API_ERROR(41000, "调用第三方接口出错"),
+    /**
+     * 调用第三方SDK出错
+     */
+    EXTERNAL_SDK_ERROR(41100, "调用第三方SDK出错"),
     /**
      * 查询IP地理位置失败
      */
-    SEARCH_IP_REGION_FAILED(40100, "查询IP地理位置失败"),
+    SEARCH_IP_REGION_FAILED(41101, "查询IP地理位置失败"),
     ;
     /**
      * 状态码

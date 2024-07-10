@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.zhangdp.seed.common.constant.TableNameConst;
-import com.zhangdp.seed.entity.BaseEntity;
+import com.zhangdp.seed.entity.LogicBaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -27,7 +27,7 @@ import java.time.LocalDate;
 @ToString(callSuper = true)
 @TableName(TableNameConst.SYS_USER)
 @Schema(description = "用户")
-public class SysUser extends BaseEntity implements Serializable {
+public class SysUser extends LogicBaseEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -56,7 +56,7 @@ public class SysUser extends BaseEntity implements Serializable {
      * 生日
      */
     @Schema(title = "生日")
-    private LocalDate birth;
+    private LocalDate birthDate;
     /**
      * 邮箱
      */
@@ -72,11 +72,6 @@ public class SysUser extends BaseEntity implements Serializable {
      */
     @Schema(title = "姓名")
     private String name;
-    /**
-     * 住址
-     */
-    @Schema(title = "住址")
-    private String address;
     /**
      * 身份证号
      */

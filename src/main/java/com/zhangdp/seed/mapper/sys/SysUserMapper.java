@@ -1,9 +1,14 @@
 package com.zhangdp.seed.mapper.sys;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.zhangdp.seed.entity.sys.SysUser;
+import com.zhangdp.seed.model.PageData;
 import com.zhangdp.seed.model.dto.UserInfo;
-import com.zhangdp.seed.model.query.UserQuery;
+import com.zhangdp.seed.model.params.PageQuery;
+import com.zhangdp.seed.model.params.UserQuery;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -18,7 +23,7 @@ import java.util.List;
 public interface SysUserMapper extends BaseMapper<SysUser> {
 
     /**
-     * 查询用户列表
+     * 根据参数动态查询用户列表
      *
      * @param params
      * @return
@@ -41,4 +46,48 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
      * @return
      */
     int countByUsernameAndIdNot(String username, Long id);
+
+    /**
+     * 根据用户名查询单条记录
+     *
+     * @param username
+     * @return
+     */
+    default SysUser selectOneByUsername(String username) {
+        return this.selectOne(Wrappers.lambdaQuery(SysUser.class).eq(SysUser::getUsername, username));
+    }
+
+    /**
+     * 根据手机号查询单条记录
+     *
+     * @param mobile
+     * @return
+     */
+    default SysUser selectOneByMobile(String mobile) {
+        return this.selectOne(Wrappers.lambdaQuery(SysUser.class).eq(SysUser::getMobile, mobile));
+    }
+
+    /**
+     * 根据手机号查询单条记录
+     *
+     * @param email
+     * @return
+     */
+    default SysUser selectOneByEmail(String email) {
+        return this.selectOne(Wrappers.lambdaQuery(SysUser.class).eq(SysUser::getEmail, email));
+    }
+
+    /**
+     * 分页查询
+     *
+     * @param pageQuery
+     * @return
+     */
+    default PageData<UserInfo> queryPage(PageQuery<UserQuery> pageQuery) {
+        PageHelper.startPage(pageQuery.getPage(), pageQuery.getSize(), pageQuery.getOrderBy());
+        List<UserInfo> list = this.queryList(pageQuery.getParams());
+        PageInfo<UserInfo> pi = new PageInfo<>(list);
+        return new PageData<>(list, pi.getTotal(), pi.getPageNum(), pi.getPageSize());
+    }
+
 }

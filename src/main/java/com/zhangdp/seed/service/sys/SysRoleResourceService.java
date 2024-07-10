@@ -1,6 +1,5 @@
 package com.zhangdp.seed.service.sys;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.zhangdp.seed.entity.sys.SysRoleResource;
 
 import java.util.Collection;
@@ -12,7 +11,7 @@ import java.util.List;
  * @author zhangdp
  * @since 1.0.0
  */
-public interface SysRoleResourceService extends IService<SysRoleResource> {
+public interface SysRoleResourceService {
 
     /**
      * 根据角色id获取资源列表

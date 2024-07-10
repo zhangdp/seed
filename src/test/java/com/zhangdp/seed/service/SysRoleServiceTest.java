@@ -24,7 +24,13 @@ public class SysRoleServiceTest {
         role.setCode("ROLE_ADMIN");
         role.setName("管理员");
         role.setDescription("");
-        sysRoleService.save(role);
+        sysRoleService.add(role);
+    }
+
+    @Test
+    public void listUserRoles() {
+        Long userId = 1L;
+        System.out.println(sysRoleService.listUserRoles(userId));
     }
 
 }

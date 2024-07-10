@@ -3,15 +3,15 @@
 <mapper namespace="com.zhangdp.seed.mapper.sys.SysUserMapper">
 
     <select id="queryList" resultType="com.zhangdp.seed.model.dto.UserInfo"
-            parameterType="com.zhangdp.seed.model.query.UserQuery">
+            parameterType="com.zhangdp.seed.model.params.UserQuery">
         SELECT
-        u.*
+          u.*
         FROM
-        sys_user u
+          sys_user u
         WHERE
-        u.is_deleted = 0
+          u.is_deleted = 0
         <if test="username != null and username != ''">
-            AND u.username LIKE #{username}
+            AND u.username = #{username}
         </if>
         <if test="mobile != null and mobile != ''">
             AND u.mobile = #{mobile}
@@ -28,12 +28,15 @@
         <if test="sex != null and sex != ''">
             AND u.sex = #{sex}
         </if>
+        <if test="excludeSelf != null and excludeSelf == true and loginUserId != null">
+            AND u.id != #{loginUserId}
+        </if>
         ORDER BY u.id DESC
     </select>
 
     <select id="countByUsername" resultType="java.lang.Integer">
         SELECT COUNT(*)
-        FROM sys_user
+          FROM sys_user
         WHERE username = #{username}
     </select>
 

@@ -1,9 +1,8 @@
 package com.zhangdp.seed.service.sys;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.zhangdp.seed.common.constant.CommonConst;
+import com.zhangdp.seed.common.constant.Const;
 import com.zhangdp.seed.common.enums.ResourceType;
-import com.zhangdp.seed.common.util.TreeUtil;
+import com.zhangdp.seed.util.TreeUtils;
 import com.zhangdp.seed.entity.sys.SysResource;
 import com.zhangdp.seed.model.dto.ResourceTreeNode;
 import org.dromara.hutool.core.collection.CollUtil;
@@ -20,7 +19,7 @@ import java.util.stream.Collectors;
  * @author zhangdp
  * @since 1.0.0
  */
-public interface SysResourceService extends IService<SysResource> {
+public interface SysResourceService {
 
     /**
      * 是否存在
@@ -44,7 +43,7 @@ public interface SysResourceService extends IService<SysResource> {
      * @param resource
      * @return
      */
-    boolean insert(SysResource resource);
+    boolean add(SysResource resource);
 
     /**
      * 修改
@@ -60,6 +59,14 @@ public interface SysResourceService extends IService<SysResource> {
      * @return
      */
     List<ResourceTreeNode> listTree();
+
+    /**
+     * 删除
+     *
+     * @param id
+     * @return
+     */
+    boolean delete(Long id);
 
     /**
      * 转为树形节点
@@ -90,7 +97,7 @@ public interface SysResourceService extends IService<SysResource> {
                 })
                 .sorted(Comparator.comparingInt(ResourceTreeNode::getSorts))
                 .collect(Collectors.toList());
-        return TreeUtil.listToTree(treeList, CommonConst.ROOT_ID);
+        return TreeUtils.listToTree(treeList, Const.ROOT_ID);
     }
 
 }

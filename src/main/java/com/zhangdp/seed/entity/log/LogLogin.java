@@ -1,17 +1,15 @@
 package com.zhangdp.seed.entity.log;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.zhangdp.seed.common.constant.CommonConst;
+import com.zhangdp.seed.entity.BaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 /**
  * 2023/4/14 登录日志
@@ -21,25 +19,15 @@ import java.time.LocalDateTime;
  */
 @Data
 @Accessors(chain = true)
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @TableName("log_login")
 @Schema(description = "登录日志")
-public class LogLogin implements Serializable {
+public class LogLogin extends BaseEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 主键
-     */
-    @TableId
-    @Schema(title = "id")
-    private Long id;
-    /**
-     * 登录时间
-     */
-    @TableField(fill = FieldFill.INSERT)
-    @Schema(title = "登录时间", description = "格式：" + CommonConst.DATETIME_FORMATTER)
-    private LocalDateTime createTime;
     /**
      * 用户id
      */

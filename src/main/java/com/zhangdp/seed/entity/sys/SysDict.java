@@ -1,7 +1,7 @@
 package com.zhangdp.seed.entity.sys;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.zhangdp.seed.entity.BaseEntity;
+import com.zhangdp.seed.entity.LogicBaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -23,7 +23,7 @@ import java.io.Serializable;
 @ToString(callSuper = true)
 @TableName("sys_dict")
 @Schema(description = "字典")
-public class SysDict extends BaseEntity implements Serializable {
+public class SysDict extends LogicBaseEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

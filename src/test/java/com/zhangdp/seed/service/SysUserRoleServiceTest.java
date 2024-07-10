@@ -33,6 +33,6 @@ public class SysUserRoleServiceTest {
         SysUserRole ur = new SysUserRole();
         ur.setRoleId(role.getId());
         ur.setUserId(user.getId());
-        sysUserRoleService.save(ur);
+        sysUserRoleService.add(ur);
     }
 }

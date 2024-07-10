@@ -1,12 +1,10 @@
 package com.zhangdp.seed.service.sys;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.github.pagehelper.PageInfo;
 import com.zhangdp.seed.entity.sys.SysUser;
+import com.zhangdp.seed.model.PageData;
 import com.zhangdp.seed.model.dto.UserInfo;
-import com.zhangdp.seed.model.query.PageQuery;
-import com.zhangdp.seed.model.query.UserQuery;
-import org.dromara.hutool.crypto.digest.BCrypt;
+import com.zhangdp.seed.model.params.PageQuery;
+import com.zhangdp.seed.model.params.UserQuery;
 
 /**
  * 2023/4/3 用户service
@@ -14,7 +12,7 @@ import org.dromara.hutool.crypto.digest.BCrypt;
  * @author zhangdp
  * @since 1.0.0
  */
-public interface SysUserService extends IService<SysUser> {
+public interface SysUserService {
 
     /**
      * 根据账号查询
@@ -23,6 +21,22 @@ public interface SysUserService extends IService<SysUser> {
      * @return 用户
      */
     SysUser getByUsername(String username);
+
+    /**
+     * 根据手机号查询
+     *
+     * @param mobile
+     * @return
+     */
+    SysUser getByMobile(String mobile);
+
+    /**
+     * 根据邮箱查询
+     *
+     * @param email
+     * @return
+     */
+    SysUser getByEmail(String email);
 
     /**
      * 是否已存在账号
@@ -58,32 +72,19 @@ public interface SysUserService extends IService<SysUser> {
     boolean update(SysUser user);
 
     /**
+     * 根据id删除
+     *
+     * @param id
+     * @return
+     */
+    boolean delete(Long id);
+
+    /**
      * 分页查询
      *
      * @param pageQuery
      * @return
      */
-    PageInfo<UserInfo> pageQuery(PageQuery<UserQuery> pageQuery);
-
-    /**
-     * 加密密码
-     *
-     * @param password
-     * @return
-     */
-    default String encryptPassword(String password) {
-        return BCrypt.hashpw(password);
-    }
-
-    /**
-     * 检测明文密码是否正确
-     *
-     * @param plainPassword
-     * @param encryptedPassword
-     * @return
-     */
-    default boolean checkPassword(String plainPassword, String encryptedPassword) {
-        return BCrypt.checkpw(plainPassword, encryptedPassword);
-    }
+    PageData<UserInfo> queryPage(PageQuery<UserQuery> pageQuery);
 
 }
