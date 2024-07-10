@@ -1,10 +1,9 @@
 /*
-
  Target Server Type    : MySQL
  Target Server Version : 80035 (8.0.35)
  File Encoding         : 65001
 
- Date: 27/06/2024 11:45:05
+ Date: 09/07/2024 15:47:55
 */
 
 SET NAMES utf8mb4;
@@ -57,27 +56,29 @@ BEGIN;
 COMMIT;
 
 -- ----------------------------
--- Table structure for sys_param
+-- Table structure for sys_properties
 -- ----------------------------
-DROP TABLE IF EXISTS `sys_param`;
-CREATE TABLE `sys_param` (
+DROP TABLE IF EXISTS `sys_properties`;
+CREATE TABLE `sys_properties` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `code` varchar(32) NOT NULL COMMENT '标识',
+  `code` varchar(64) NOT NULL COMMENT '配置标识、key',
   `description` varchar(255) DEFAULT NULL COMMENT '描述',
-  `value` varchar(255) NOT NULL COMMENT '值',
-  `is_encrypted` tinyint unsigned NOT NULL DEFAULT '0' COMMENT '值是否已加密，1：是；0：否，默认',
-  `is_system` tinyint unsigned NOT NULL DEFAULT '0' COMMENT '是否系统内置，1：是；0：否，默认',
-  `created_date` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) COMMENT '创建时间',
-  `last_modified_date` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '修改时间',
-  `is_deleted` tinyint unsigned NOT NULL DEFAULT '0' COMMENT '逻辑删除，1：是；0：否，默认',
+  `text_value` varchar(255) NOT NULL COMMENT '值',
+  `is_encrypted` tinyint unsigned DEFAULT '0' COMMENT '值是否加密',
+  `is_system` tinyint unsigned NOT NULL DEFAULT '0' COMMENT '是否系统内置',
+  `created_date` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) COMMENT '添加时间',
+  `last_modified_date` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '上次修改时间',
+  `is_deleted` tinyint unsigned NOT NULL DEFAULT '0' COMMENT '逻辑删除，0：否，默认；1：是',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `sys_param_code_idx` (`code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='系统参数';
+  UNIQUE KEY `code` (`code`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='系统配置';
 
 -- ----------------------------
--- Records of sys_param
+-- Records of sys_properties
 -- ----------------------------
 BEGIN;
+INSERT INTO `sys_properties` (`id`, `code`, `description`, `text_value`, `is_encrypted`, `is_system`, `created_date`, `last_modified_date`, `is_deleted`) VALUES (1, 'ACCESS_TOKEN_TTL', '访问令牌有效期，单位：秒', '1800', 0, 1, '2024-07-09 15:26:11.566', NULL, 0);
+INSERT INTO `sys_properties` (`id`, `code`, `description`, `text_value`, `is_encrypted`, `is_system`, `created_date`, `last_modified_date`, `is_deleted`) VALUES (2, 'REFRESH_TOKEN_TTL', '刷新令牌有效期，单位：秒', '86400', 0, 1, '2024-07-09 15:26:47.675', NULL, 0);
 COMMIT;
 
 -- ----------------------------
@@ -142,7 +143,7 @@ CREATE TABLE `sys_role_resource` (
   `role_id` bigint unsigned NOT NULL COMMENT '角色id，关联sys_role.id',
   `resource_id` bigint unsigned NOT NULL COMMENT '资源id，关联sys_resource.id',
   `created_date` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) COMMENT '创建时间',
-  `last_modified_date` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(3),
+  `last_modified_date` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '最后修改时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `sys_role_resource_uidx` (`role_id`,`resource_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='角色关联资源';
@@ -185,7 +186,7 @@ CREATE TABLE `sys_user` (
 -- ----------------------------
 BEGIN;
 INSERT INTO `sys_user` (`id`, `username`, `password`, `mobile`, `gender`, `birth_date`, `email`, `avatar_url`, `name`, `citizen_id`, `dept_id`, `created_date`, `last_modified_date`, `is_deleted`, `status`) VALUES (1, 'admin', '$2a$10$wDjUgfO37shayK2QZoodL.EKj7mSyB/Mzn3G1tDif3C0kfr5bIQcC', '18900000000', 'F', '2000-01-01', 'admin@seed.com', NULL, '管理员', '123456789012345678', NULL, '2023-01-01 00:00:00.000', '2024-06-27 10:29:27.447', 0, 0);
-INSERT INTO `sys_user` (`id`, `username`, `password`, `mobile`, `gender`, `birth_date`, `email`, `avatar_url`, `name`, `citizen_id`, `dept_id`, `created_date`, `last_modified_date`, `is_deleted`, `status`) VALUES (2, 'test', '$2a$10$wDjUgfO37shayK2QZoodL.EKj7mSyB/Mzn3G1tDif3C0kfr5bIQcC', '13900000000', 'M', '2000-01-01', 'test@seed.com', NULL, '测试员', NULL, NULL, '2023-04-12 10:17:18.000', '2024-06-27 10:29:27.462', 1, 0);
+INSERT INTO `sys_user` (`id`, `username`, `password`, `mobile`, `gender`, `birth_date`, `email`, `avatar_url`, `name`, `citizen_id`, `dept_id`, `created_date`, `last_modified_date`, `is_deleted`, `status`) VALUES (2, 'test', '$2a$10$wDjUgfO37shayK2QZoodL.EKj7mSyB/Mzn3G1tDif3C0kfr5bIQcC', '13900000000', 'M', '2000-01-01', 'test@seed.com', NULL, '测试员', NULL, NULL, '2023-04-12 10:17:18.000', '2024-06-27 14:55:20.115', 0, 1);
 COMMIT;
 
 -- ----------------------------

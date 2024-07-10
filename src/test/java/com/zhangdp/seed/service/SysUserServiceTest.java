@@ -58,7 +58,7 @@ public class SysUserServiceTest {
         UserQuery query = new UserQuery();
         query.setUsername("admin");
         pq.setParams(query);
-        PageData<UserInfo> pd = sysUserService.pageQuery(pq);
+        PageData<UserInfo> pd = sysUserService.queryPage(pq);
         System.out.println(objectMapper.writeValueAsString(pd));
     }
 

@@ -1,6 +1,6 @@
 package com.zhangdp.seed.service.sys;
 
-import com.zhangdp.seed.common.constant.CommonConst;
+import com.zhangdp.seed.common.constant.Const;
 import com.zhangdp.seed.common.enums.ResourceType;
 import com.zhangdp.seed.util.TreeUtils;
 import com.zhangdp.seed.entity.sys.SysResource;
@@ -97,7 +97,7 @@ public interface SysResourceService {
                 })
                 .sorted(Comparator.comparingInt(ResourceTreeNode::getSorts))
                 .collect(Collectors.toList());
-        return TreeUtils.listToTree(treeList, CommonConst.ROOT_ID);
+        return TreeUtils.listToTree(treeList, Const.ROOT_ID);
     }
 
 }

@@ -1,6 +1,6 @@
 package com.zhangdp.seed.service;
 
-import com.zhangdp.seed.service.sys.SysPropertiesService;
+import com.zhangdp.seed.service.sys.SysConfigService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,14 +12,14 @@ import org.springframework.boot.test.context.SpringBootTest;
  * @since
  */
 @SpringBootTest
-public class SysPropertiesServiceTest {
+public class SysConfigServiceTest {
 
     @Autowired
-    private SysPropertiesService sysPropertiesService;
+    private SysConfigService sysConfigService;
 
     @Test
     public void getByCode() {
         String code = "";
-        System.out.println(sysPropertiesService.getByCode(code));
+        System.out.println(sysConfigService.getByCode(code));
     }
 }

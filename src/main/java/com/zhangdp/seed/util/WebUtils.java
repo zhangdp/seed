@@ -1,6 +1,6 @@
 package com.zhangdp.seed.util;
 
-import com.zhangdp.seed.common.constant.CommonConst;
+import com.zhangdp.seed.common.constant.Const;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -212,7 +212,7 @@ public class WebUtils {
         try {
             String disposition = "attachment";
             if (filename != null && !filename.isEmpty()) {
-                disposition += ";filename=\"" + URLEncoder.encode(filename, CommonConst.CHARSET) + "\"";
+                disposition += ";filename=\"" + URLEncoder.encode(filename, Const.CHARSET) + "\"";
             }
             response.setHeader("Content-Disposition", disposition);
             // response.setCharacterEncoding("UTF-8");

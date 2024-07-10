@@ -1,6 +1,6 @@
 package com.zhangdp.seed.security.service;
 
-import com.zhangdp.seed.common.constant.CommonConst;
+import com.zhangdp.seed.common.constant.Const;
 import com.zhangdp.seed.security.data.RolePermissionGrantedAuthority;
 import com.zhangdp.seed.security.SecurityConst;
 import com.zhangdp.seed.entity.sys.SysResource;
@@ -63,7 +63,7 @@ public class SecurityService implements UserDetailsService {
     public UserDetails toUserDetails(SysUser sysUser) {
         LoginUser user = new LoginUser();
         BeanUtils.copyProperties(sysUser, user);
-        user.setEnabled(sysUser.getStatus() == CommonConst.GOOD);
+        user.setEnabled(sysUser.getStatus() == Const.GOOD);
         List<RolePermissionGrantedAuthority> authorities = new ArrayList<>();
         user.setAuthorities(authorities);
         List<SysRole> roleList = sysRoleService.listUserRoles(user.getId());

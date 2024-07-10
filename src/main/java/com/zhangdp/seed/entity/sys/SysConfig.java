@@ -25,9 +25,9 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@TableName(TableNameConst.SYS_PROPERTIES)
+@TableName(TableNameConst.SYS_CONFIG)
 @Schema(description = "系统配置")
-public class SysProperties extends LogicBaseEntity implements Serializable {
+public class SysConfig extends LogicBaseEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -38,7 +38,7 @@ public class SysProperties extends LogicBaseEntity implements Serializable {
     @Schema(title = "标识")
     @NotBlank(message = "配置key不能为空")
     @Length(max = 32, message = "配置key最多{max}个字符")
-    private String code;
+    private String configKey;
     /**
      * 描述
      */
@@ -51,7 +51,7 @@ public class SysProperties extends LogicBaseEntity implements Serializable {
     @Schema(title = "配置值")
     @NotBlank(message = "配置值不能为空")
     @Length(max = 255, message = "配置值最多{max}个字符")
-    private String textValue;
+    private String configValue;
     /**
      * 值是否加密
      */

@@ -1,7 +1,7 @@
 package com.zhangdp.seed.entity.sys;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.zhangdp.seed.common.constant.CommonConst;
+import com.zhangdp.seed.common.constant.Const;
 import com.zhangdp.seed.common.constant.TableNameConst;
 import com.zhangdp.seed.entity.LogicBaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -55,7 +55,7 @@ public class SysResource extends LogicBaseEntity implements Serializable {
      * 父节点ID，根节点为0
      */
     @NotNull(message = "父ID不能为空")
-    @Schema(title = "父id", description = "根节点为" + CommonConst.ROOT_ID)
+    @Schema(title = "父id", description = "根节点为" + Const.ROOT_ID)
     private Long parentId;
     /**
      * 图标

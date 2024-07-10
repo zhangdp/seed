@@ -1,14 +1,14 @@
 package com.zhangdp.seed.controller.sys;
 
-import com.github.pagehelper.PageInfo;
 import com.zhangdp.seed.common.ValidGroup;
 import com.zhangdp.seed.common.annotation.OperationLog;
 import com.zhangdp.seed.common.constant.TableNameConst;
 import com.zhangdp.seed.common.enums.OperateType;
-import com.zhangdp.seed.entity.sys.SysProperties;
+import com.zhangdp.seed.entity.sys.SysConfig;
+import com.zhangdp.seed.model.PageData;
 import com.zhangdp.seed.model.params.BaseQueryParams;
 import com.zhangdp.seed.model.params.PageQuery;
-import com.zhangdp.seed.service.sys.SysPropertiesService;
+import com.zhangdp.seed.service.sys.SysConfigService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -24,11 +24,11 @@ import org.springframework.web.bind.annotation.*;
  */
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/sys/properties")
+@RequestMapping("/sys/config")
 @Tag(name = "系统配置", description = "系统配置相关接口")
-public class SysPropertiesController {
+public class SysConfigController {
 
-    private final SysPropertiesService sysPropertiesService;
+    private final SysConfigService sysConfigService;
 
     /**
      * 新增配置
@@ -38,22 +38,22 @@ public class SysPropertiesController {
      */
     @PostMapping("/add")
     @Operation(summary = "新增配置", description = "新增配置，无需传值id、createTime、updateTime")
-    @OperationLog(type = OperateType.CREATE, title = "新增配置", refModule = TableNameConst.SYS_PROPERTIES, refIdEl = "#model.id")
-    public boolean add(@RequestBody @Validated(ValidGroup.Update.class) SysProperties model) {
-        return sysPropertiesService.add(model);
+    @OperationLog(type = OperateType.CREATE, title = "新增配置", refModule = TableNameConst.SYS_CONFIG, refIdEl = "#model.id")
+    public boolean add(@RequestBody @Validated(ValidGroup.Update.class) SysConfig model) {
+        return sysConfigService.add(model);
     }
 
     /**
      * 修改配置
      *
-     * @param param
+     * @param model
      * @return
      */
     @PutMapping("/update")
     @Operation(summary = "修改配置", description = "修改配置，需传值id")
-    @OperationLog(type = OperateType.UPDATE, title = "修改配置", refModule = TableNameConst.SYS_PROPERTIES, refIdEl = "#param.id")
-    public boolean update(@RequestBody @Validated(ValidGroup.Update.class) SysProperties param) {
-        return sysPropertiesService.update(param);
+    @OperationLog(type = OperateType.UPDATE, title = "修改配置", refModule = TableNameConst.SYS_CONFIG, refIdEl = "#model.id")
+    public boolean update(@RequestBody @Validated(ValidGroup.Update.class) SysConfig model) {
+        return sysConfigService.update(model);
     }
 
     /**
@@ -64,9 +64,9 @@ public class SysPropertiesController {
      */
     @DeleteMapping("/delete/{id}")
     @Operation(summary = "删除配置", description = "根据id删除配置")
-    @OperationLog(type = OperateType.DELETE, title = "删除配置", refModule = TableNameConst.SYS_PROPERTIES, refIdEl = "#id")
+    @OperationLog(type = OperateType.DELETE, title = "删除配置", refModule = TableNameConst.SYS_CONFIG, refIdEl = "#id")
     public boolean delete(@PathVariable Long id) {
-        return sysPropertiesService.delete(id);
+        return sysConfigService.delete(id);
     }
 
     /**
@@ -77,8 +77,8 @@ public class SysPropertiesController {
      */
     @PostMapping("/page")
     @Operation(summary = "分页查询配置")
-    public PageInfo<SysProperties> pageQuery(@RequestBody @Valid PageQuery<BaseQueryParams> pageQuery) {
-        return sysPropertiesService.pageQuery(pageQuery);
+    public PageData<SysConfig> queryPage(@RequestBody @Valid PageQuery<BaseQueryParams> pageQuery) {
+        return sysConfigService.queryPage(pageQuery);
     }
 
 }

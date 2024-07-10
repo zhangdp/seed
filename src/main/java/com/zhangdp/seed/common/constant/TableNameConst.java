@@ -37,7 +37,7 @@ public interface TableNameConst {
     /**
      * 参数表
      */
-    String SYS_PROPERTIES = PREFIX_SYS + SPLIT + "properties";
+    String SYS_CONFIG = PREFIX_SYS + SPLIT + "config";
     /**
      * 字典表
      */

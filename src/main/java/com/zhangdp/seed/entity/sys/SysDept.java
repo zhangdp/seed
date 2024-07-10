@@ -1,7 +1,7 @@
 package com.zhangdp.seed.entity.sys;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.zhangdp.seed.common.constant.CommonConst;
+import com.zhangdp.seed.common.constant.Const;
 import com.zhangdp.seed.entity.LogicBaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
@@ -43,7 +43,7 @@ public class SysDept extends LogicBaseEntity implements Serializable {
     /**
      * 父级部门id
      */
-    @Schema(title = "父级部门id", description = "根部门则为" + CommonConst.ROOT_ID)
+    @Schema(title = "父级部门id", description = "根部门则为" + Const.ROOT_ID)
     @NotNull(message = "父级部门id不能为空")
     @Min(value = 0, message = "父级部门id不合法")
     private Long parentId;

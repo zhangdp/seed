@@ -10,7 +10,7 @@ import java.time.LocalTime;
  * @author zhangdp
  * @since 1.0.0
  */
-public interface CommonConst {
+public interface Const {
 
     /**
      * 是

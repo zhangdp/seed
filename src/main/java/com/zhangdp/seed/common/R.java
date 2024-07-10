@@ -1,6 +1,6 @@
 package com.zhangdp.seed.common;
 
-import com.zhangdp.seed.common.constant.CommonConst;
+import com.zhangdp.seed.common.constant.Const;
 import com.zhangdp.seed.common.enums.ErrorCode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -28,7 +28,7 @@ public class R<T> implements Serializable {
     /**
      * 状态码
      */
-    @Schema(title = "状态码", description = CommonConst.RESULT_SUCCESS + "：成功，其它失败")
+    @Schema(title = "状态码", description = Const.RESULT_SUCCESS + "：成功，其它失败")
     private final int code;
     /**
      * 描述
@@ -82,7 +82,7 @@ public class R<T> implements Serializable {
      * @return
      */
     public static R<?> success() {
-        return new R<>(CommonConst.RESULT_SUCCESS, null, null);
+        return new R<>(Const.RESULT_SUCCESS, null, null);
     }
 
     /**
@@ -94,7 +94,7 @@ public class R<T> implements Serializable {
      * @return 成功响应
      */
     public static <T> R<T> success(String message, T data) {
-        return new R<>(CommonConst.RESULT_SUCCESS, message, data);
+        return new R<>(Const.RESULT_SUCCESS, message, data);
     }
 
     /**
@@ -105,7 +105,7 @@ public class R<T> implements Serializable {
      * @return 成功响应
      */
     public static <T> R<T> success(T data) {
-        return new R<>(CommonConst.RESULT_SUCCESS, null, data);
+        return new R<>(Const.RESULT_SUCCESS, null, data);
     }
 
 }

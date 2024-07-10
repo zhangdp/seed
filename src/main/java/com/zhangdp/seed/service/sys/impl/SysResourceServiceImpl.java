@@ -1,7 +1,7 @@
 package com.zhangdp.seed.service.sys.impl;
 
 import com.zhangdp.seed.common.constant.CacheConst;
-import com.zhangdp.seed.common.constant.CommonConst;
+import com.zhangdp.seed.common.constant.Const;
 import com.zhangdp.seed.common.constant.TableNameConst;
 import com.zhangdp.seed.common.enums.ErrorCode;
 import com.zhangdp.seed.common.exception.BizException;
@@ -56,7 +56,7 @@ public class SysResourceServiceImpl implements SysResourceService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean add(SysResource resource) {
-        if (resource.getParentId() != CommonConst.ROOT_ID) {
+        if (resource.getParentId() != Const.ROOT_ID) {
             Assert.isTrue(this.isExists(resource.getParentId()), () -> new BizException(ErrorCode.RESOURCE_PARENT_NOT_EXISTS));
         }
         return sysResourceMapper.insert(resource) > 0;
@@ -65,7 +65,7 @@ public class SysResourceServiceImpl implements SysResourceService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean update(SysResource resource) {
-        if (resource.getParentId() != CommonConst.ROOT_ID) {
+        if (resource.getParentId() != Const.ROOT_ID) {
             Assert.isTrue(this.isExists(resource.getParentId()), () -> new BizException(ErrorCode.RESOURCE_PARENT_NOT_EXISTS));
         }
         return sysResourceMapper.updateById(resource) > 0;

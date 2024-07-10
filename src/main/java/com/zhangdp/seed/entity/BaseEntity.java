@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.zhangdp.seed.common.ValidGroup;
-import com.zhangdp.seed.common.constant.CommonConst;
+import com.zhangdp.seed.common.constant.Const;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -55,13 +55,13 @@ public abstract class BaseEntity implements Serializable {
      * 创建时间
      */
     @TableField(fill = FieldFill.INSERT)
-    @Schema(title = "添加时间", description = "格式：" + CommonConst.DATETIME_FORMATTER + "。保存时忽略")
+    @Schema(title = "添加时间", description = "格式：" + Const.DATETIME_FORMATTER + "。保存时忽略")
     protected LocalDateTime createdDate;
     /**
      * 修改时间
      */
     @TableField(fill = FieldFill.UPDATE)
-    @Schema(title = "修改时间", description = "格式：" + CommonConst.DATETIME_FORMATTER + "。保存时忽略")
+    @Schema(title = "修改时间", description = "格式：" + Const.DATETIME_FORMATTER + "。保存时忽略")
     protected LocalDateTime lastModifiedDate;
     /**
      * 创建用户id

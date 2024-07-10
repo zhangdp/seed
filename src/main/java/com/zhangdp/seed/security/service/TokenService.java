@@ -1,9 +1,9 @@
 package com.zhangdp.seed.security.service;
 
-import com.zhangdp.seed.entity.sys.SysProperties;
+import com.zhangdp.seed.entity.sys.SysConfig;
 import com.zhangdp.seed.security.SecurityConst;
 import com.zhangdp.seed.security.data.TokenInfo;
-import com.zhangdp.seed.service.sys.SysPropertiesService;
+import com.zhangdp.seed.service.sys.SysConfigService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hutool.core.data.id.UUID;
@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 public class TokenService {
 
     private final TokenStore tokenStore;
-    private final SysPropertiesService sysPropertiesService;
+    private final SysConfigService sysConfigService;
 
     /**
      * 创建token
@@ -31,7 +31,7 @@ public class TokenService {
      * @return
      */
     public TokenInfo createToken(UserDetails userDetails) {
-        int ttl = this.getTokenTtlSetting();
+        int ttl = this.getTokenTtlConfig();
         String accessToken = this.generateToken();
         TokenInfo tokenInfo = new TokenInfo();
         tokenInfo.setAccessToken(accessToken);
@@ -75,7 +75,7 @@ public class TokenService {
      * @param accessToken
      */
     public boolean resetTokenExpireIn(String accessToken) {
-        return tokenStore.updateAccessTokenExpiresIn(accessToken, this.getTokenTtlSetting());
+        return tokenStore.updateAccessTokenExpiresIn(accessToken, this.getTokenTtlConfig());
     }
 
     /**
@@ -83,9 +83,9 @@ public class TokenService {
      *
      * @return
      */
-    private int getTokenTtlSetting() {
-        SysProperties properties = sysPropertiesService.getByCode(SecurityConst.ACCESS_TOKEN_TTL_PARAM_KEY);
-        Assert.notNull(properties, "不存在配置" + SecurityConst.ACCESS_TOKEN_TTL_PARAM_KEY);
-        return Integer.parseInt(properties.getTextValue());
+    private int getTokenTtlConfig() {
+        SysConfig config = sysConfigService.getByKey(SecurityConst.ACCESS_TOKEN_TTL_PARAM_KEY);
+        Assert.notNull(config, "不存在配置" + SecurityConst.ACCESS_TOKEN_TTL_PARAM_KEY);
+        return Integer.parseInt(config.getConfigValue());
     }
 }

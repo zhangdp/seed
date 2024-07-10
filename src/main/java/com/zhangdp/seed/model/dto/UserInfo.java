@@ -1,7 +1,7 @@
 package com.zhangdp.seed.model.dto;
 
 import com.zhangdp.seed.common.annotation.Desensitization;
-import com.zhangdp.seed.common.constant.CommonConst;
+import com.zhangdp.seed.common.constant.Const;
 import com.zhangdp.seed.common.enums.DesensitizationType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
@@ -46,12 +46,12 @@ public class UserInfo implements Serializable, UserDetails {
     /**
      * 创建时间
      */
-    @Schema(title = "创建时间", description = "格式：" + CommonConst.DATETIME_FORMATTER)
+    @Schema(title = "创建时间", description = "格式：" + Const.DATETIME_FORMATTER)
     private LocalDateTime createdDate;
     /**
      * 修改时间
      */
-    @Schema(title = "修改时间", description = "格式：" + CommonConst.DATETIME_FORMATTER)
+    @Schema(title = "修改时间", description = "格式：" + Const.DATETIME_FORMATTER)
     private LocalDateTime modifiedDate;
     /**
      * 账号
@@ -84,7 +84,7 @@ public class UserInfo implements Serializable, UserDetails {
     /**
      * 生日
      */
-    @Schema(title = "生日", description = "格式：" + CommonConst.DATETIME_FORMATTER)
+    @Schema(title = "生日", description = "格式：" + Const.DATETIME_FORMATTER)
     @PastOrPresent(message = "生日需为过去日期")
     private LocalDate birth;
     /**
@@ -177,6 +177,6 @@ public class UserInfo implements Serializable, UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return this.status == CommonConst.GOOD;
+        return this.status == Const.GOOD;
     }
 }
