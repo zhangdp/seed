@@ -13,6 +13,8 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 /**
  * 2023/7/31 操作日志事件监听器
  *
@@ -47,19 +49,19 @@ public class OperateLogEventListener {
                 log.debug("收到OperateLogEvent: {}", event);
             }
             LogOperation lo = new LogOperation();
+            lo.setCreatedDate(LocalDateTime.now());
             lo.setTitle(event.getTitle());
-            lo.setCreatedDate(event.getStartTime());
+            lo.setOperateTime(event.getStartTime());
             lo.setUserId(event.getUserId());
             lo.setType(event.getType().type());
             lo.setUri(event.getUri());
             lo.setHttpMethod(event.getHttpMethod());
-            lo.setUserAgent(event.getUserAgent());
+            // lo.setUserAgent(event.getUserAgent());
             lo.setClientIp(event.getClientIp());
             lo.setMethod(event.getMethod());
             lo.setCostTime(TimeUtil.between(event.getStartTime(), event.getEndTime()).toMillis());
             lo.setRefModule(event.getRefModule());
             lo.setRefId(event.getRefId());
-            lo.setSucceed(event.isSucceed());
             if (event.getThrowable() != null) {
                 lo.setErrorStrace(ExceptionUtil.stacktraceToString(event.getThrowable(), 65535));
             }
@@ -67,12 +69,16 @@ public class OperateLogEventListener {
                 // lo.setResultCode(event.getResult() instanceof R<?> r ? r.getCode() : CommonConst.RESULT_SUCCESS);
                 lo.setResult(event.getResult() instanceof String s ? s : objectMapper.writeValueAsString(event.getResult()));
             }
-            if (MapUtil.isNotEmpty(event.getParams())) {
-                lo.setParams(objectMapper.writeValueAsString(event.getParams()));
+            if (MapUtil.isNotEmpty(event.getParameterMap())) {
+                lo.setParameters(objectMapper.writeValueAsString(event.getParameterMap()));
             }
+            if (MapUtil.isNotEmpty(event.getHeaderMap())) {
+                lo.setHeaders(objectMapper.writeValueAsString(event.getHeaderMap()));
+            }
+            lo.setRequestBody(event.getRequestBody());
             logOperationService.add(lo);
         } catch (Exception e) {
-            log.error("操作日志事件处理失败，event=" + event, e);
+            log.error("操作日志事件处理失败，event: {}", event, e);
         }
     }
 

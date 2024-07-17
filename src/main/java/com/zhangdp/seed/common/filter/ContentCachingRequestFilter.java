@@ -7,8 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hutool.http.server.servlet.ServletUtil;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 
@@ -21,21 +20,20 @@ import java.io.IOException;
  * @since 1.0.0
  */
 @Slf4j
-@Order(Ordered.HIGHEST_PRECEDENCE)
-@Deprecated
+@Component
 public class ContentCachingRequestFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull FilterChain filterChain) throws ServletException, IOException {
-        if (log.isTraceEnabled()) {
-            log.trace("ContentCachingRequestFilter in:{}", request.getRequestURI());
+        if (log.isDebugEnabled()) {
+            log.debug("ContentCachingRequestFilter in:{}", request.getRequestURI());
         }
+        HttpServletRequest req = request;
         // get请求没有body；不缓存文件防止过大内存溢出
         if (!"GET".equalsIgnoreCase(request.getMethod()) && !ServletUtil.isMultipart(request)) {
-            ContentCachingRequestWrapper wrapper = new ContentCachingRequestWrapper(request);
-            filterChain.doFilter(wrapper, response);
-        } else {
-            filterChain.doFilter(request, response);
+            req = new ContentCachingRequestWrapper(request);
         }
+        filterChain.doFilter(req, response);
+
     }
 }

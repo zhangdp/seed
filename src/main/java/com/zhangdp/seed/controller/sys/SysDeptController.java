@@ -1,7 +1,7 @@
 package com.zhangdp.seed.controller.sys;
 
 import com.zhangdp.seed.common.ValidGroup;
-import com.zhangdp.seed.common.annotation.OperationLog;
+import com.zhangdp.seed.common.annotation.OperateLog;
 import com.zhangdp.seed.common.enums.OperateType;
 import com.zhangdp.seed.entity.sys.SysDept;
 import com.zhangdp.seed.model.dto.DeptTreeNode;
@@ -46,7 +46,7 @@ public class SysDeptController {
      */
     @PostMapping("/add")
     @io.swagger.v3.oas.annotations.Operation(summary = "新增部门", description = "新增部门，无需传值id、createTime、updateTime")
-    @OperationLog(type = OperateType.CREATE, title = "新增部门", refModule = "sys_dept", refIdEl = "#dept.id")
+    @OperateLog(type = OperateType.CREATE, title = "新增部门", refModule = "sys_dept", refIdEl = "#dept.id")
     public boolean add(@RequestBody @Validated(ValidGroup.Update.class) SysDept dept) {
         return sysDeptService.insert(dept);
     }
@@ -59,7 +59,7 @@ public class SysDeptController {
      */
     @PutMapping("/update")
     @io.swagger.v3.oas.annotations.Operation(summary = "修改部门", description = "修改部门，需传值id")
-    @OperationLog(type = OperateType.UPDATE, title = "修改部门", refModule = "sys_dept", refIdEl = "#dept.id")
+    @OperateLog(type = OperateType.UPDATE, title = "修改部门", refModule = "sys_dept", refIdEl = "#dept.id")
     public boolean update(@RequestBody @Validated(ValidGroup.Update.class) SysDept dept) {
         return sysDeptService.update(dept);
     }
@@ -72,7 +72,7 @@ public class SysDeptController {
      */
     @DeleteMapping("/delete/{id}")
     @io.swagger.v3.oas.annotations.Operation(summary = "删除部门", description = "根据id删除部门")
-    @OperationLog(type = OperateType.DELETE, title = "删除部门", refModule = "sys_dept", refIdEl = "#id")
+    @OperateLog(type = OperateType.DELETE, title = "删除部门", refModule = "sys_dept", refIdEl = "#id")
     public boolean delete(@PathVariable Long id) {
         return sysDeptService.delete(id);
     }

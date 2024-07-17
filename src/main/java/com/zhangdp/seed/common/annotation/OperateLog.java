@@ -14,7 +14,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-public @interface OperationLog {
+public @interface OperateLog {
 
     /**
      * 操作类型
@@ -35,7 +35,7 @@ public @interface OperationLog {
      *
      * @return
      */
-    String refModule() default "";
+    String refModule();
 
     /**
      * 关联模块id，spel表达式
@@ -43,20 +43,6 @@ public @interface OperationLog {
      * @return
      */
     String refIdEl() default "";
-
-    /**
-     * 忽略的参数名称
-     *
-     * @return
-     */
-    String[] ignoreParamsNames() default {};
-
-    /**
-     * 忽略的参数类型
-     *
-     * @return
-     */
-    Class[] ignoreParamsClass() default {};
 
     /**
      * 如果出错是否记录
@@ -77,7 +63,7 @@ public @interface OperationLog {
      *
      * @return
      */
-    boolean logParams() default true;
+    boolean logParameter() default true;
 
     /**
      * 是否记录请求头
@@ -85,5 +71,12 @@ public @interface OperationLog {
      * @return
      */
     boolean logHeader() default true;
+
+    /**
+     * 是否记录请求体
+     *
+     * @return
+     */
+    boolean logRequestBody() default true;
 
 }

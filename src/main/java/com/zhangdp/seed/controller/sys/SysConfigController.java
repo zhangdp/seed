@@ -1,7 +1,7 @@
 package com.zhangdp.seed.controller.sys;
 
 import com.zhangdp.seed.common.ValidGroup;
-import com.zhangdp.seed.common.annotation.OperationLog;
+import com.zhangdp.seed.common.annotation.OperateLog;
 import com.zhangdp.seed.common.constant.TableNameConst;
 import com.zhangdp.seed.common.enums.OperateType;
 import com.zhangdp.seed.entity.sys.SysConfig;
@@ -38,7 +38,7 @@ public class SysConfigController {
      */
     @PostMapping("/add")
     @Operation(summary = "新增配置", description = "新增配置，无需传值id、createTime、updateTime")
-    @OperationLog(type = OperateType.CREATE, title = "新增配置", refModule = TableNameConst.SYS_CONFIG, refIdEl = "#model.id")
+    @OperateLog(type = OperateType.CREATE, title = "新增配置", refModule = TableNameConst.SYS_CONFIG, refIdEl = "#model.id")
     public boolean add(@RequestBody @Validated(ValidGroup.Update.class) SysConfig model) {
         return sysConfigService.add(model);
     }
@@ -51,7 +51,7 @@ public class SysConfigController {
      */
     @PutMapping("/update")
     @Operation(summary = "修改配置", description = "修改配置，需传值id")
-    @OperationLog(type = OperateType.UPDATE, title = "修改配置", refModule = TableNameConst.SYS_CONFIG, refIdEl = "#model.id")
+    @OperateLog(type = OperateType.UPDATE, title = "修改配置", refModule = TableNameConst.SYS_CONFIG, refIdEl = "#model.id")
     public boolean update(@RequestBody @Validated(ValidGroup.Update.class) SysConfig model) {
         return sysConfigService.update(model);
     }
@@ -64,7 +64,7 @@ public class SysConfigController {
      */
     @DeleteMapping("/delete/{id}")
     @Operation(summary = "删除配置", description = "根据id删除配置")
-    @OperationLog(type = OperateType.DELETE, title = "删除配置", refModule = TableNameConst.SYS_CONFIG, refIdEl = "#id")
+    @OperateLog(type = OperateType.DELETE, title = "删除配置", refModule = TableNameConst.SYS_CONFIG, refIdEl = "#id")
     public boolean delete(@PathVariable Long id) {
         return sysConfigService.delete(id);
     }

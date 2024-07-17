@@ -1,8 +1,11 @@
 package com.zhangdp.seed.entity.log;
 
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+import com.zhangdp.seed.common.ValidGroup;
+import com.zhangdp.seed.common.constant.Const;
 import com.zhangdp.seed.entity.BaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -10,24 +13,29 @@ import lombok.experimental.Accessors;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * 2023/4/17 操作日志
  *
  * @author zhangdp
- * @since
+ * @since 1.0.0
  */
 @Data
 @Accessors(chain = true)
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
-@TableName("log_operate")
+@TableName("log_operation")
 @Schema(description = "操作日志")
-public class LogOperation extends BaseEntity implements Serializable {
+public class LogOperation implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 主键
+     */
+    @TableId(type = IdType.AUTO)
+    @Schema(title = "id")
+    private Long id;
     /**
      * 操作描述
      */
@@ -60,8 +68,8 @@ public class LogOperation extends BaseEntity implements Serializable {
     /**
      * 用户浏览器标识
      */
-    @Schema(title = "用户浏览器标识")
-    private String userAgent;
+    // @Schema(title = "用户浏览器标识")
+    // private String userAgent;
     /**
      * 客户端ip
      */
@@ -72,6 +80,11 @@ public class LogOperation extends BaseEntity implements Serializable {
      */
     @Schema(title = "执行的方法")
     private String method;
+    /**
+     * 操作时间
+     */
+    @Schema(title = "操作时间")
+    private LocalDateTime operateTime;
     /**
      * 耗时
      */
@@ -95,8 +108,8 @@ public class LogOperation extends BaseEntity implements Serializable {
     /**
      * 是否成功
      */
-    @Schema(title = "是否成功")
-    private Boolean succeed;
+    // @Schema(title = "是否成功")
+    // private Boolean succeed;
     /**
      * json格式的返回值
      */
@@ -106,10 +119,26 @@ public class LogOperation extends BaseEntity implements Serializable {
      * json格式的入参
      */
     @Schema(title = "入参")
-    private String params;
+    private String parameters;
+    /**
+     * 请求体
+     */
+    @Schema(title = "请求体")
+    private String requestBody;
+    /**
+     * 请求头
+     */
+    @Schema(title = "请求头")
+    private String headers;
     /**
      * 异常堆栈
      */
     @Schema(title = "异常堆栈")
     private String errorStrace;
+    /**
+     * 添加时间
+     */
+    @TableField(fill = FieldFill.INSERT)
+    @Schema(title = "添加时间")
+    protected LocalDateTime createdDate;
 }

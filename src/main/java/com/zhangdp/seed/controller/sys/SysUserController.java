@@ -1,6 +1,6 @@
 package com.zhangdp.seed.controller.sys;
 
-import com.zhangdp.seed.common.annotation.OperationLog;
+import com.zhangdp.seed.common.annotation.OperateLog;
 import com.zhangdp.seed.common.constant.TableNameConst;
 import com.zhangdp.seed.common.enums.OperateType;
 import com.zhangdp.seed.entity.sys.SysUser;
@@ -10,13 +10,11 @@ import com.zhangdp.seed.model.params.PageQuery;
 import com.zhangdp.seed.model.params.UserQuery;
 import com.zhangdp.seed.security.data.LoginUser;
 import com.zhangdp.seed.service.sys.SysUserService;
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -42,7 +40,7 @@ public class SysUserController {
     @PostMapping("/add")
     @PreAuthorize("hasPermission('sys:user:add')")
     @Operation(summary = "新增用户", description = "新增用户，无需传值id、createTime、updateTime")
-    @OperationLog(type = OperateType.CREATE, title = "新增用户", refModule = TableNameConst.SYS_USER)
+    @OperateLog(type = OperateType.CREATE, title = "新增用户", refModule = TableNameConst.SYS_USER)
     public boolean add(@RequestBody @Valid SysUser user) {
         return sysUserService.insert(user);
     }
@@ -55,7 +53,7 @@ public class SysUserController {
      */
     @PutMapping("/update")
     @Operation(summary = "修改用户", description = "修改用户，需传值id，无需传createTime、updateTime")
-    @OperationLog(type = OperateType.UPDATE, title = "修改用户", refModule = TableNameConst.SYS_USER, refIdEl = "#user.id")
+    @OperateLog(type = OperateType.UPDATE, title = "修改用户", refModule = TableNameConst.SYS_USER, refIdEl = "#user.id")
     public boolean update(@RequestBody @Valid SysUser user) {
         return sysUserService.update(user);
     }
@@ -68,7 +66,7 @@ public class SysUserController {
      */
     @DeleteMapping("/delete/{id}")
     @Operation(summary = "删除用户", description = "根据id删除用户，如果本来就不存在则返回false")
-    @OperationLog(type = OperateType.DELETE, title = "删除用户", refModule = TableNameConst.SYS_USER, refIdEl = "#id")
+    @OperateLog(type = OperateType.DELETE, title = "删除用户", refModule = TableNameConst.SYS_USER, refIdEl = "#id")
     public boolean delete(@PathVariable Long id) {
         return sysUserService.delete(id);
     }
@@ -81,6 +79,7 @@ public class SysUserController {
      */
     @PostMapping("/page")
     @Operation(summary = "分页查询用户")
+    @OperateLog(type = OperateType.READ, title = "分页查询用户", refModule = TableNameConst.SYS_USER)
     public PageData<UserInfo> queryPage(@RequestBody @Valid PageQuery<UserQuery> pageQuery, LoginUser loginUser) {
         UserQuery params = pageQuery.getParams();
         if (params == null) {

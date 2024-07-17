@@ -22,7 +22,7 @@ public class SecurityUtils {
      */
     public static String resolveToken(HttpServletRequest request) {
         String token = request.getHeader(SecurityConst.AUTHORIZATION_HEADER);
-        if (StrUtil.isNotBlank(token)) {
+        if (StrUtil.isNotBlank(token) && StrUtil.startWithIgnoreCase(token, SecurityConst.AUTH_TYPE_BEARER)) {
             token = token.substring(SecurityConst.AUTH_TYPE_BEARER.length() + 1);
         }
         // 如果header中没有token，则从请求参数中获取

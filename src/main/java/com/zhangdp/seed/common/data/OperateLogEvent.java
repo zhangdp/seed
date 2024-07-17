@@ -11,6 +11,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * 2023/7/31 操作日志事件
@@ -50,7 +51,7 @@ public class OperateLogEvent extends ApplicationEvent {
     /**
      * 参数
      */
-    private LinkedHashMap<String, Object> params;
+    private Map<String, String[]> parameterMap;
     /**
      * 结果
      */
@@ -78,7 +79,7 @@ public class OperateLogEvent extends ApplicationEvent {
     /**
      * 浏览器标识
      */
-    private String userAgent;
+    // private String userAgent;
     /**
      * 客户端ip
      */
@@ -88,9 +89,13 @@ public class OperateLogEvent extends ApplicationEvent {
      */
     private Throwable throwable;
     /**
-     * 是否成功
+     * 请求体
      */
-    private boolean succeed;
+    private String requestBody;
+    /**
+     * 请求头
+     */
+    private Map<String, String> headerMap;
 
     public OperateLogEvent(Object source) {
         super(source);

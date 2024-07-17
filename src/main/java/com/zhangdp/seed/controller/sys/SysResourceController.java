@@ -1,7 +1,7 @@
 package com.zhangdp.seed.controller.sys;
 
 import com.zhangdp.seed.common.ValidGroup;
-import com.zhangdp.seed.common.annotation.OperationLog;
+import com.zhangdp.seed.common.annotation.OperateLog;
 import com.zhangdp.seed.common.constant.TableNameConst;
 import com.zhangdp.seed.common.enums.OperateType;
 import com.zhangdp.seed.entity.sys.SysResource;
@@ -37,7 +37,7 @@ public class SysResourceController {
      */
     @PostMapping("add")
     @Operation(summary = "新增资源", description = "新增资源，无需传值id、createTime、updateTime")
-    @OperationLog(type = OperateType.CREATE, title = "新增资源", refModule = TableNameConst.SYS_RESOURCE, refIdEl = "#resource.id")
+    @OperateLog(type = OperateType.CREATE, title = "新增资源", refModule = TableNameConst.SYS_RESOURCE, refIdEl = "#resource.id")
     public boolean add(@RequestBody @Validated SysResource resource) {
         return sysResourceService.add(resource);
     }
@@ -50,7 +50,7 @@ public class SysResourceController {
      */
     @PatchMapping("update")
     @Operation(summary = "修改资源", description = "修改资源，需传值id")
-    @OperationLog(type = OperateType.UPDATE, title = "修改资源", refModule = TableNameConst.SYS_RESOURCE, refIdEl = "#resource.id")
+    @OperateLog(type = OperateType.UPDATE, title = "修改资源", refModule = TableNameConst.SYS_RESOURCE, refIdEl = "#resource.id")
     public boolean update(@RequestBody @Validated(ValidGroup.Update.class) SysResource resource) {
         return sysResourceService.update(resource);
     }
@@ -63,7 +63,7 @@ public class SysResourceController {
      */
     @DeleteMapping("delete/{id}")
     @Operation(summary = "删除资源", description = "根据id删除资源")
-    @OperationLog(type = OperateType.DELETE, title = "删除资源", refModule = TableNameConst.SYS_RESOURCE, refIdEl = "#id")
+    @OperateLog(type = OperateType.DELETE, title = "删除资源", refModule = TableNameConst.SYS_RESOURCE, refIdEl = "#id")
     public boolean delete(@PathVariable Long id) {
         return sysResourceService.delete(id);
     }
