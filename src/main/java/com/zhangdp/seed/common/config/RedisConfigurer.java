@@ -39,6 +39,7 @@ public class RedisConfigurer {
         template.setValueSerializer(jsonRedisSerializer);
         template.setHashValueSerializer(jsonRedisSerializer);
         // template.afterPropertiesSet();
+        log.info("自定义Redis Key序列化方式：{}, Value序列化方式：{}", "RedisSerializer<String>", jsonRedisSerializer.getClass().getSimpleName());
         return template;
     }
 

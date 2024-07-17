@@ -9,6 +9,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import com.zhangdp.seed.common.constant.Const;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -31,6 +32,7 @@ import java.time.format.DateTimeFormatter;
 @Configuration
 @ConditionalOnClass(ObjectMapper.class)
 @AutoConfigureBefore(JacksonAutoConfiguration.class)
+@Slf4j
 public class JacksonConfigurer {
 
     /**
@@ -70,6 +72,7 @@ public class JacksonConfigurer {
     @Bean
     @ConditionalOnMissingBean
     public Jackson2ObjectMapperBuilderCustomizer customizer() {
+        log.info("自定义Jackson日期时间格式：LocalDate: {}, LocalTime: {}, LocalDateTime: {}", Const.DATE_FORMATTER, Const.TIME_FORMATTER, Const.DATETIME_FORMATTER);
         return builder -> builder.modules(timeModule(Const.DATE_FORMATTER, Const.TIME_FORMATTER, Const.DATETIME_FORMATTER));
     }
 
