@@ -2,6 +2,7 @@ package com.zhangdp.seed.common.component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zhangdp.seed.common.R;
+import com.zhangdp.seed.common.annotation.NoResponseAdvice;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -28,10 +29,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 public class GlobeResponseBodyAdvice implements ResponseBodyAdvice<Object> {
 
     /**
-     * 忽略转换的返回类型
-     */
-    private final static Class<?>[] IGNORE_CLASS = {R.class};
-    /**
      * jackson
      */
     private final ObjectMapper objectMapper;
@@ -45,13 +42,13 @@ public class GlobeResponseBodyAdvice implements ResponseBodyAdvice<Object> {
      */
     @Override
     public boolean supports(@NotNull MethodParameter returnType, @NotNull Class<? extends HttpMessageConverter<?>> converterType) {
-        // 忽略的类型以及子类则不处理
-        for (Class<?> clazz : IGNORE_CLASS) {
-            if (clazz.isAssignableFrom(returnType.getParameterType())) {
-                return false;
-            }
-        }
-        return true;
+        return
+                // controller类没有@NoResponseAdvice注解
+                !returnType.getDeclaringClass().isAnnotationPresent(NoResponseAdvice.class)
+                // 方法没有@NoResponseAdvice注解
+                && !returnType.hasMethodAnnotation(NoResponseAdvice.class)
+                // 不是R或者R的子类
+                && !R.class.isAssignableFrom(returnType.getParameterType());
     }
 
     /**
