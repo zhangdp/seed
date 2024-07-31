@@ -39,20 +39,15 @@ public class RedisAtomicHelper {
      * 获取下一个redis自增，并设置过期时间
      *
      * @param key
-     * @param expire
+     * @param timeout
      * @return
      */
-    public long next(String key, Duration expire) {
+    public long next(String key, Duration timeout) {
         RedisAtomicLong atomic = new RedisAtomicLong(key, redisConnectionFactory);
-        if (expire != null) {
-            atomic.expire(expire);
-            if (log.isDebugEnabled()) {
-                log.debug("{}设置过期时间{}", key, expire);
-            }
-        }
+        this.setExpire(atomic, timeout);
         long v = atomic.incrementAndGet();
         if (log.isDebugEnabled()) {
-            log.debug("{}取到下一个redis自增:{}", key, v);
+            log.debug("Redis自增-{}取到下一个redis自增:{}", key, v);
         }
         return v;
     }
@@ -73,27 +68,37 @@ public class RedisAtomicHelper {
      *
      * @param key
      * @param size
-     * @param expire
+     * @param timeout
      * @return
      */
-    public long[] nextRange(String key, int size, Duration expire) {
+    public long[] nextRange(String key, int size, Duration timeout) {
         Assert.isTrue(size > 0, "长度不能小于1");
         RedisAtomicLong atomic = new RedisAtomicLong(key, redisConnectionFactory);
-        if (expire != null) {
-            atomic.expire(expire);
-            if (log.isDebugEnabled()) {
-                log.debug("{}设置过期时间{}", key, expire);
-            }
-        }
+        this.setExpire(atomic, timeout);
         long[] arr = new long[size];
         long max = atomic.addAndGet(size);
         if (log.isDebugEnabled()) {
-            log.debug("{}自增{}后为{}", key, size, max);
+            log.debug("Redis自增-{}自增{}后为{}", key, size, max);
             for (int i = size; i > 0; i--) {
                 arr[i - 1] = max - (size - i);
             }
         }
         return arr;
+    }
+
+    /**
+     * 设置过期时间
+     *
+     * @param atomic
+     * @param timeout
+     */
+    private void setExpire(RedisAtomicLong atomic, Duration timeout) {
+        if (timeout != null) {
+            atomic.expire(timeout);
+            if (log.isDebugEnabled()) {
+                log.debug("Redis自增-{}设置过期时间{}", atomic.getKey(), timeout);
+            }
+        }
     }
 
 }
