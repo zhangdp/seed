@@ -11,6 +11,8 @@ import java.io.*;
 import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 2023/4/4 web相关工具
@@ -24,43 +26,22 @@ public class WebUtils {
     /**
      * 默认true参数列表
      */
-    private static final String[] TRUE_PARAMS = {"1", "true", "yes", "y", "ok", "on"};
+    private static final String[] TRUE_PARAMS = {"1", "true", "yes", "y", "on"};
     /**
      * 默认false的参数列表
      */
     private static final String[] FALSE_PARAMS = {"0", "false", "no", "n", "off"};
+    /**
+     * User-Agent 版本号正则
+     */
+    private static final String UA_VERSION_REGEX = "[\\/ ]([\\d\\w\\.\\-]+)";
+    /**
+     * 默认编码
+     */
+    private static final String CHARSET = "UTF-8";
 
     private WebUtils() {
 
-    }
-
-    /**
-     * 获取请求url
-     *
-     * @param request
-     * @return
-     */
-    public static String getBaseUrl(HttpServletRequest request) {
-        String url = request.getScheme() + "://" + request.getServerName();
-        int port = request.getServerPort();
-        // 80和443端口是隐藏的
-        if (port != 80 && port != 443) {
-            url += ":" + port;
-        }
-        url += request.getContextPath() + "/";
-        return url;
-    }
-
-    /**
-     * 获取完整请求url
-     *
-     * @param request
-     * @return
-     */
-    public static String getFullUrl(HttpServletRequest request) {
-        String url = request.getRequestURL().toString();
-        String queryString = request.getQueryString();
-        return url + (queryString != null ? ("?" + queryString) : "");
     }
 
     /**
@@ -111,7 +92,7 @@ public class WebUtils {
      */
     public static String appendParameter(String url, String name, Object value) {
         StringBuilder sb = new StringBuilder(url);
-        if (url.indexOf('/') > -1) {
+        if (url.indexOf('?') > -1) {
             sb.append('&');
         } else {
             sb.append('?');
@@ -186,7 +167,7 @@ public class WebUtils {
             if (httpStatus != null) {
                 response.setStatus(httpStatus);
             }
-            response.setCharacterEncoding("UTF-8");
+            response.setCharacterEncoding(CHARSET);
             response.setContentType("application/json");
             response.getWriter().write(json);
             response.flushBuffer();
@@ -212,10 +193,11 @@ public class WebUtils {
         try {
             String disposition = "attachment";
             if (filename != null && !filename.isEmpty()) {
-                disposition += ";filename=\"" + URLEncoder.encode(filename, Const.CHARSET) + "\"";
+                String encodedFilename = URLEncoder.encode(filename, CHARSET).replaceAll("\\+", "%20");
+                disposition += ";filename=" + encodedFilename + ";filename*=" + CHARSET + "''" + encodedFilename;
             }
             response.setHeader("Content-Disposition", disposition);
-            // response.setCharacterEncoding("UTF-8");
+            // response.setCharacterEncoding(CHARSET);
             response.setContentType(contentType != null && !contentType.isEmpty() ? contentType : "application/octet-stream");
             response.setContentLengthLong(fileSize);
             ServletOutputStream out = response.getOutputStream();
@@ -225,7 +207,7 @@ public class WebUtils {
             }
             response.flushBuffer();
         } catch (IOException e) {
-            log.error("response输出文件失败, filename=" + filename, e);
+            log.error("response输出文件失败, filename={}", filename, e);
         } finally {
             if (in != null) {
                 try {
@@ -259,6 +241,22 @@ public class WebUtils {
      */
     public static long responseFile(HttpServletResponse response, String path, String contentType) throws FileNotFoundException {
         return responseFile(response, new File(path), contentType);
+    }
+
+    /**
+     * 从user-agent中获取指定key版本，如Chrome/127.0.6533.73->127.0.6533.73
+     *
+     * @param userAgent
+     * @param keyRegex
+     * @return
+     */
+    public static String getUAVersion(String userAgent, String keyRegex) {
+        Pattern pattern = Pattern.compile(keyRegex + UA_VERSION_REGEX, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(userAgent);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return null;
     }
 
 }
