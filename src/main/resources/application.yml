@@ -19,8 +19,8 @@ spring:
   task:
     execution:
       pool:
-        core-size: 16
-        max-size: 32
+        core-size: 8
+        max-size: 16
         queue-capacity: 1024
   data:
     redis:
@@ -80,7 +80,7 @@ mybatis-plus:
 logging:
   level:
     root: info
-    com.zhangdp.seed: debug
+    io.github.seed: debug
 springdoc:
   api-docs:
     enabled: true
@@ -96,7 +96,7 @@ logging:
     path: logs/${spring.application.name}
   level:
     root: info
-    com.zhangdp.seed: info
+    io.github.seed: info
 
 # 生产环境
 ---
@@ -112,4 +112,4 @@ logging:
     path: logs/${spring.application.name}
   level:
     root: warn
-    com.zhangdp.seed: info
+    io.github.seed: info

@@ -8,7 +8,7 @@
         <version>3.2.7</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.zhangdp</groupId>
+    <groupId>io.github</groupId>
     <artifactId>seed</artifactId>
     <version>0.0.1</version>
     <name>seed</name>

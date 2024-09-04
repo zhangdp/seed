@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.zhangdp.seed.mapper.sys.SysUserMapper">
+<mapper namespace="io.github.seed.mapper.sys.SysUserMapper">
 
-    <select id="queryList" resultType="com.zhangdp.seed.model.dto.UserInfo"
-            parameterType="com.zhangdp.seed.model.params.UserQuery">
+    <select id="queryList" resultType="io.github.seed.model.dto.UserInfo"
+            parameterType="io.github.seed.model.params.UserQuery">
         SELECT
           u.*
         FROM
