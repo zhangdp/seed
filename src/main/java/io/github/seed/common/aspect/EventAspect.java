@@ -1,6 +1,7 @@
-package io.github.seed.event.component;
+package io.github.seed.common.aspect;
 
-import io.github.seed.event.annotation.Event;
+import io.github.seed.common.annotation.Event;
+import io.github.seed.common.component.EventDispatch;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;

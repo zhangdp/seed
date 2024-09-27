@@ -3,7 +3,7 @@ package io.github.seed.security.handler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.seed.common.R;
 import io.github.seed.security.service.TokenService;
-import io.github.seed.util.WebUtils;
+import io.github.seed.common.util.WebUtils;
 import io.github.seed.security.data.LoginResult;
 import io.github.seed.security.data.LoginUser;
 import io.github.seed.security.data.TokenInfo;

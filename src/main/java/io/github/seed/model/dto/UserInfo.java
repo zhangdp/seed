@@ -12,6 +12,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import org.dromara.hutool.core.regex.RegexPool;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.URL;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -72,6 +73,7 @@ public class UserInfo implements Serializable, UserDetails {
     /**
      * 手机号
      */
+    @Schema(title = "手机号")
     @NotBlank(message = "手机号不能为空")
     @Pattern(regexp = RegexPool.MOBILE, message = "手机号格式不正确")
     // @Desensitization(DesensitizationType.MOBILE)
@@ -85,7 +87,7 @@ public class UserInfo implements Serializable, UserDetails {
      * 生日
      */
     @Schema(title = "生日", description = "格式：" + Const.DATETIME_FORMATTER)
-    @PastOrPresent(message = "生日需为过去日期")
+    @PastOrPresent(message = "生日需为过去的日期")
     private LocalDate birth;
     /**
      * 邮箱
@@ -97,7 +99,7 @@ public class UserInfo implements Serializable, UserDetails {
      * 头像url地址
      */
     @Schema(title = "头像url地址")
-    @Email(message = "头像url地址格式不正确")
+    @URL(message = "头像url地址格式不正确")
     private String avatarUrl;
     /**
      * 姓名

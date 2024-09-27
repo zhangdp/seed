@@ -5,7 +5,7 @@ import io.github.seed.common.enums.ErrorCode;
 import java.lang.annotation.*;
 
 /**
- * 2023/8/3 如果出现异常，则包装成业务异常SeedException抛出
+ * 2023/8/3 如果出现异常，则包装成业务异常BizException抛出
  *
  * @author zhangdp
  * @since 1.0.0
@@ -14,7 +14,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-public @interface ThrowSeedException {
+public @interface ThrowBizException {
 
     /**
      * 错误码枚举

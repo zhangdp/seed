@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.9</version>
+        <version>3.2.10</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>io.github</groupId>
@@ -18,11 +18,10 @@
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <hutool.version>6.0.0-M16</hutool.version>
-        <mybatis-starter.version>3.0.3</mybatis-starter.version>
-        <mybatis-plus.version>3.5.7</mybatis-plus.version>
-        <pagehelper.version>2.0.0</pagehelper.version>
+        <!-- <mybatis-starter.version>3.0.3</mybatis-starter.version> -->
+        <mybatis-plus.version>3.5.8</mybatis-plus.version>
         <springdoc.version>2.6.0</springdoc.version>
-        <spring-boot-admin-client.version>3.2.3</spring-boot-admin-client.version>
+        <spring-boot-admin-client.version>3.3.3</spring-boot-admin-client.version>
     </properties>
 
     <dependencies>
@@ -103,11 +102,13 @@
             <artifactId>hutool-crypto</artifactId>
             <version>${hutool.version}</version>
         </dependency>
+        <!--
         <dependency>
             <groupId>org.dromara.hutool</groupId>
             <artifactId>hutool-extra</artifactId>
             <version>${hutool.version}</version>
         </dependency>
+        -->
         <dependency>
             <groupId>org.dromara.hutool</groupId>
             <artifactId>hutool-http</artifactId>
@@ -118,32 +119,18 @@
             <artifactId>hutool-json</artifactId>
             <version>${hutool.version}</version>
         </dependency>
+        <!--
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
             <version>${mybatis-starter.version}</version>
         </dependency>
-        <!-- mybatis增强 -->
+        -->
+        <!-- mybatis-plus -->
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
             <version>${mybatis-plus.version}</version>
-        </dependency>
-        <!-- mybatis 分页插件 -->
-        <dependency>
-            <groupId>com.github.pagehelper</groupId>
-            <artifactId>pagehelper-spring-boot-starter</artifactId>
-            <version>${pagehelper.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.mybatis.spring.boot</groupId>
-                    <artifactId>mybatis-spring-boot-starter</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.github.jsqlparser</groupId>
-                    <artifactId>jsqlparser</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <!-- 接口文档 -->
         <dependency>

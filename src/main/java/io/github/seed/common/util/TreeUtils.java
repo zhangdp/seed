@@ -1,4 +1,4 @@
-package io.github.seed.util;
+package io.github.seed.common.util;
 
 import io.github.seed.model.TreeNode;
 import org.dromara.hutool.core.collection.ListUtil;

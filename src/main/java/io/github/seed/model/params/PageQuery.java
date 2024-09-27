@@ -32,4 +32,10 @@ public class PageQuery<T extends Serializable> extends BasePageQuery implements 
     @Valid
     private T params;
 
+    public PageQuery(int page, int size, T params) {
+        this.page = page;
+        this.size = size;
+        this.params = params;
+    }
+
 }

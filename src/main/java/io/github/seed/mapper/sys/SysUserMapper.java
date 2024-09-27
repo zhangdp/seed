@@ -1,15 +1,19 @@
 package io.github.seed.mapper.sys;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.github.seed.common.constant.TableNameConst;
+import io.github.seed.common.util.MybatisPlusHelper;
 import io.github.seed.entity.sys.SysUser;
 import io.github.seed.model.PageData;
 import io.github.seed.model.dto.UserInfo;
 import io.github.seed.model.params.PageQuery;
 import io.github.seed.model.params.UserQuery;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -23,20 +27,13 @@ import java.util.List;
 public interface SysUserMapper extends BaseMapper<SysUser> {
 
     /**
-     * 根据参数动态查询用户列表
-     *
-     * @param params
-     * @return
-     */
-    List<UserInfo> queryList(UserQuery params);
-
-    /**
-     * 统计指定账号的用户个数（包含逻辑删除的）
+     * 统计指定账号的用户个数（包含已逻辑删除的）
      *
      * @param username
      * @return
      */
-    int countByUsername(String username);
+    @Select("SELECT COUNT(*) FROM " + TableNameConst.SYS_USER + " WHERE username = #{username}")
+    int countByUsername(@Param("username") String username);
 
     /**
      * 统计指定账号但id不为指定id的用户个数（包含逻辑删除的）
@@ -45,7 +42,16 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
      * @param id
      * @return
      */
-    int countByUsernameAndIdNot(String username, Long id);
+    @Select("SELECT COUNT(*) FROM " + TableNameConst.SYS_USER + " WHERE username = #{username} AND id != #{id}")
+    int countByUsernameAndIdNot(@Param("username") String username, @Param("id") Long id);
+
+    /**
+     * 查询列表
+     *
+     * @param query
+     * @return
+     */
+    List<UserInfo> queryList(IPage<UserInfo> page, @Param("param") UserQuery query);
 
     /**
      * 根据用户名查询单条记录
@@ -84,10 +90,10 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
      * @return
      */
     default PageData<UserInfo> queryPage(PageQuery<UserQuery> pageQuery) {
-        PageHelper.startPage(pageQuery.getPage(), pageQuery.getSize(), pageQuery.getOrderBy());
-        List<UserInfo> list = this.queryList(pageQuery.getParams());
-        PageInfo<UserInfo> pi = new PageInfo<>(list);
-        return new PageData<>(list, pi.getTotal(), pi.getPageNum(), pi.getPageSize());
+        Page<UserInfo> page = new Page<>(pageQuery.getPage(), pageQuery.getSize());
+        page.setOrders(MybatisPlusHelper.toOrderItems(pageQuery.getOrderBy(), "id"));
+        List<UserInfo> list = this.queryList(page, pageQuery.getParams());
+        return new PageData<>(list, page.getTotal(), page.getPages(), page.getSize());
     }
 
 }

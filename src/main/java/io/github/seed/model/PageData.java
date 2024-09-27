@@ -46,12 +46,12 @@ public class PageData<T> implements Serializable {
      * 当前页数
      */
     @Schema(title = "当前页数")
-    private final int page;
+    private final long page;
     /**
      * 每页条数
      */
     @Schema(title = "每页条数")
-    private final int size;
+    private final long size;
 
     /**
      * 使用默认页数、条数构造函数
@@ -71,7 +71,7 @@ public class PageData<T> implements Serializable {
      * @param page
      * @param size
      */
-    public PageData(List<T> list, long total, int page, int size) {
+    public PageData(List<T> list, long total, long page, long size) {
         if (size <= 0) {
             throw new IllegalArgumentException("\"size\" cannot be less than or equal to 0");
         }
@@ -88,8 +88,8 @@ public class PageData<T> implements Serializable {
      * @return
      */
     @Schema(title = "上一页")
-    public int getPrevPage() {
-        return page <= 1 ? 0 : page - 1;
+    public long getPrevPage() {
+        return page <= 1L ? 0L : page - 1L;
     }
 
     /**
@@ -98,9 +98,9 @@ public class PageData<T> implements Serializable {
      * @return
      */
     @Schema(title = "下一页")
-    public int getNextPage() {
-        int tp = getTotalPages();
-        return page >= tp ? 0 : page + 1;
+    public long getNextPage() {
+        long tp = getTotalPages();
+        return page >= tp ? 0L : page + 1L;
     }
 
     /**
@@ -110,7 +110,7 @@ public class PageData<T> implements Serializable {
      */
     @Schema(title = "是否为第一页")
     public boolean getIsFirstPage() {
-        return page == 1;
+        return page == 1L;
     }
 
     /**
@@ -149,11 +149,11 @@ public class PageData<T> implements Serializable {
      * @return
      */
     @Schema(title = "总页数")
-    public int getTotalPages() {
+    public long getTotalPages() {
         if (total == 0L) {
             return 0;
         }
-        return (int) (total / size) + (total % size > 0 ? 1 : 0);
+        return (int) (total / size) + (total % size > 0 ? 1L : 0L);
     }
 
 }

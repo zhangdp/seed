@@ -1,4 +1,4 @@
-package io.github.seed.event.component;
+package io.github.seed.common.component;
 
 import org.dromara.hutool.core.reflect.FieldUtil;
 

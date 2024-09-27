@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.seed.common.R;
 import io.github.seed.security.SecurityUtils;
 import io.github.seed.security.service.TokenService;
-import io.github.seed.util.WebUtils;
+import io.github.seed.common.util.WebUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

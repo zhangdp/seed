@@ -1,4 +1,4 @@
-package io.github.seed.event.annotation;
+package io.github.seed.common.annotation;
 
 import java.lang.annotation.*;
 

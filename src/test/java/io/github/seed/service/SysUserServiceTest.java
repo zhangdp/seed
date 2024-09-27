@@ -68,4 +68,9 @@ public class SysUserServiceTest {
         System.out.println(passwordEncoder.encode(password));
     }
 
+    @Test
+    public void existsUsername() {
+        System.out.println(sysUserService.existsUsername("test"));
+    }
+
 }

@@ -1,8 +1,8 @@
-package io.github.seed.util;
+package io.github.seed.common.util;
 
-import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
@@ -167,12 +167,36 @@ public class WebUtils {
             }
             response.setCharacterEncoding(CHARSET);
             response.setContentType("application/json");
-            response.getWriter().write(json);
-            response.flushBuffer();
+            PrintWriter writer = response.getWriter();
+            writer.write(json);
+            writer.flush();
             return true;
         } catch (IOException e) {
-            log.error("response输出json出错, json=" + json, e);
+            log.error("response输出json出错, json={}", json, e);
             return false;
+        }
+    }
+
+    /**
+     * 响应附件下载的头部信息
+     *
+     * @param response
+     * @param filename
+     * @param contentType
+     * @param fileSize
+     */
+    @SneakyThrows
+    public static void responseAttachmentHeader(HttpServletResponse response, String filename, String contentType, long fileSize) {
+        String disposition = "attachment";
+        if (filename != null && !filename.isEmpty()) {
+            // 对文件名进行urlEncode编码。java使用的标准略有不同，会将空格编码为+，因此需要替换成20%，详见https://www.w3.org/TR/REC-html40/interact/forms.html#h-17.13.4
+            String encodedFilename = URLEncoder.encode(filename, CHARSET).replaceAll("\\+", "%20");
+            disposition += "; filename=\"" + encodedFilename + "\"; filename*=" + CHARSET + "''" + encodedFilename;
+        }
+        response.setHeader("Content-Disposition", disposition);
+        response.setContentType(contentType == null || contentType.isEmpty() ? "application/octet-stream" : contentType);
+        if (fileSize > 0L) {
+            response.setContentLengthLong(fileSize);
         }
     }
 
@@ -187,34 +211,34 @@ public class WebUtils {
      * @return
      */
     public static long responseFile(HttpServletResponse response, InputStream in, String filename, String contentType, long fileSize) {
-        int len = -1;
+        OutputStream out = null;
         try {
-            String disposition = "attachment";
-            if (filename != null && !filename.isEmpty()) {
-                String encodedFilename = URLEncoder.encode(filename, CHARSET).replaceAll("\\+", "%20");
-                disposition += ";filename=" + encodedFilename + ";filename*=" + CHARSET + "''" + encodedFilename;
-            }
-            response.setHeader("Content-Disposition", disposition);
-            // response.setCharacterEncoding(CHARSET);
-            response.setContentType(contentType != null && !contentType.isEmpty() ? contentType : "application/octet-stream");
-            response.setContentLengthLong(fileSize);
-            ServletOutputStream out = response.getOutputStream();
+            responseAttachmentHeader(response, filename, contentType, fileSize);
+            out = response.getOutputStream();
+            int total = 0;
+            int len;
             byte[] buf = new byte[8192];
             while ((len = in.read(buf)) != -1) {
                 out.write(buf, 0, len);
+                total += len;
             }
             response.flushBuffer();
+            return total;
         } catch (IOException e) {
             log.error("response输出文件失败, filename={}", filename, e);
+            return -1;
         } finally {
-            if (in != null) {
+            if (out != null) {
                 try {
-                    in.close();
-                } catch (Exception ignored) {
+                    out.close();
+                } catch (IOException ignored) {
                 }
             }
+            try {
+                in.close();
+            } catch (IOException ignored) {
+            }
         }
-        return len;
     }
 
     /**
@@ -248,7 +272,7 @@ public class WebUtils {
      * @param keyword
      * @return
      */
-    public static String[] getUAVersion(String userAgent, String keyword) {
+    public static String[] resolveUAVersion(String userAgent, String keyword) {
         Pattern pattern = Pattern.compile(Pattern.quote(keyword) + UA_VERSION_REGEX, Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(userAgent);
         if (matcher.find()) {

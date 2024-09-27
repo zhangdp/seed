@@ -1,4 +1,4 @@
-package io.github.seed.event.component;
+package io.github.seed.common.component;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

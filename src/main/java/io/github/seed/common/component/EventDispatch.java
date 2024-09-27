@@ -1,4 +1,4 @@
-package io.github.seed.event.component;
+package io.github.seed.common.component;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

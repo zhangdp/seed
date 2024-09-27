@@ -3,8 +3,8 @@ package io.github.seed.mapper.sys;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.github.seed.common.util.MybatisPlusHelper;
 import io.github.seed.entity.sys.SysConfig;
 import io.github.seed.model.PageData;
 import io.github.seed.model.params.BaseQueryParams;
@@ -40,18 +40,19 @@ public interface SysConfigMapper extends BaseMapper<SysConfig> {
      * @return
      */
     default PageData<SysConfig> queryPage(PageQuery<BaseQueryParams> pageQuery) {
-        PageHelper.startPage(pageQuery.getPage(), pageQuery.getSize(), pageQuery.getOrderBy());
-        LambdaQueryWrapper<SysConfig> wrappers = Wrappers.lambdaQuery(SysConfig.class).orderByDesc(SysConfig::getId);
+        LambdaQueryWrapper<SysConfig> wrappers = Wrappers.lambdaQuery(SysConfig.class);
         BaseQueryParams param = pageQuery.getParams();
         if (param != null) {
             if (StrUtil.isNotBlank(param.getQuery())) {
-                wrappers.like(SysConfig::getConfigKey, param.getQuery())
+                String query = param.getQuery().trim().toUpperCase();
+                wrappers.like(SysConfig::getConfigKey, query)
                         .or()
-                        .like(SysConfig::getDescription, param.getQuery());
+                        .like(SysConfig::getDescription, query);
             }
         }
-        List<SysConfig> list = this.selectList(wrappers);
-        PageInfo<SysConfig> pi = new PageInfo<>(list);
-        return new PageData<>(list, pi.getTotal(), pi.getPageNum(), pi.getPageSize());
+        Page<SysConfig> page = new Page<>(pageQuery.getPage(), pageQuery.getSize());
+        page.setOrders(MybatisPlusHelper.toOrderItems(pageQuery.getOrderBy(), "id"));
+        List<SysConfig> list = this.selectList(page, wrappers);
+        return new PageData<>(list, page.getTotal(), page.getPages(), page.getSize());
     }
 }

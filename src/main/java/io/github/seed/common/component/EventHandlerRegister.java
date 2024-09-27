@@ -1,6 +1,6 @@
-package io.github.seed.event.component;
+package io.github.seed.common.component;
 
-import io.github.seed.event.annotation.EventHandler;
+import io.github.seed.common.annotation.EventHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.framework.AopProxyUtils;

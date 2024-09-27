@@ -3,7 +3,7 @@ package io.github.seed.service.sys.impl;
 import io.github.seed.common.constant.Const;
 import io.github.seed.common.enums.ErrorCode;
 import io.github.seed.common.exception.BizException;
-import io.github.seed.util.TreeUtils;
+import io.github.seed.common.util.TreeUtils;
 import io.github.seed.entity.BaseEntity;
 import io.github.seed.entity.sys.SysDept;
 import io.github.seed.mapper.sys.SysDeptMapper;
