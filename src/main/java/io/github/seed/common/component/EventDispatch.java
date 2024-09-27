@@ -8,7 +8,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 2023/4/12 事件调度器
@@ -30,44 +29,40 @@ public class EventDispatch {
      * 异步调度事件
      *
      * @param type
-     * @param tag
-     * @param params
      * @param delay
-     * @param tag
+     * @param context
      */
     @Async
-    public void dispatchAsync(String type, String tag, Map<String, Object> params, Object result, int delay) {
-        this.dispatch(type, tag, params, result, delay);
+    public void dispatchAsync(String type, int delay, EventContext context) {
+        this.dispatch(type, delay, context);
     }
 
     /**
      * 调度事件
      *
      * @param type
-     * @param tag
-     * @param params
      * @param delay
-     * @param tag
+     * @param context
      */
-    public void dispatch(String type, String tag, Map<String, Object> params, Object result, int delay) {
+    public void dispatch(String type, int delay, EventContext context) {
         // todo 延迟执行，暂时用线程睡眠的方式，需换为更加合理的方案
         if (delay >= 0) {
             ThreadUtil.sleep(delay);
         }
         List<IEventHandler> handlers = eventHandlerContainer.getHandlers(type);
         if (CollUtil.isEmpty(handlers)) {
-            log.warn("未知类型事件：" + type);
+            log.warn("未知类型事件：{}", type);
         } else {
             for (IEventHandler handler : handlers) {
                 try {
                     if (handler.enable()) {
-                        handler.handler(params, result, tag);
+                        handler.handler(context);
                         if (log.isDebugEnabled()) {
                             log.debug("处理事件：event={}, handler={}", type, handler.getClass().getName());
                         }
                     }
                 } catch (Exception e) {
-                    log.error(handler.getClass().getName() + "处理出错", e);
+                    log.error("{}处理出错", handler.getClass().getName(), e);
                 }
             }
         }

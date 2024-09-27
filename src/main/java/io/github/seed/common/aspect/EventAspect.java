@@ -1,6 +1,7 @@
 package io.github.seed.common.aspect;
 
 import io.github.seed.common.annotation.Event;
+import io.github.seed.common.component.EventContext;
 import io.github.seed.common.component.EventDispatch;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -82,16 +83,17 @@ public class EventAspect {
                 flag = Boolean.TRUE.equals(spelExpressionParser.parseExpression(annotation.condition()).getValue(context, Boolean.class));
             }
             if (flag) {
-                Map<String, Object> params = new LinkedHashMap<>();
+                LinkedHashMap<String, Object> params = new LinkedHashMap<>();
                 if (parameterNames != null && parameterNames.length > 0) {
                     for (int i = 0; i < parameterNames.length; i++) {
                         params.put(parameterNames[i], args[i]);
                     }
                 }
+                EventContext context = new EventContext(signature, annotation.tag(), params, result);
                 if (annotation.isAsync()) {
-                    eventDispatch.dispatchAsync(annotation.type(), annotation.tag(), params, result, annotation.delay());
+                    eventDispatch.dispatchAsync(annotation.type(), annotation.delay(), context);
                 } else {
-                    eventDispatch.dispatch(annotation.type(), annotation.tag(), params, result, annotation.delay());
+                    eventDispatch.dispatch(annotation.type(), annotation.delay(), context);
                 }
             }
         } catch (Exception e) {
