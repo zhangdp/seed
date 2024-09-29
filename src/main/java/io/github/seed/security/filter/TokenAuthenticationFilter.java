@@ -32,9 +32,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if (log.isDebugEnabled()) {
-            log.debug("TokenAuthenticationFilter: {}", request.getRequestURI());
-        }
+        log.debug("TokenAuthenticationFilter: {}", request.getRequestURI());
         String token = SecurityUtils.resolveToken(request);
         if (StrUtil.isNotBlank(token)) {
             UserDetails userDetails = tokenService.loadPrincipal(token);

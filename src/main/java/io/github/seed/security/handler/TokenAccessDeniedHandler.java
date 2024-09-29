@@ -29,9 +29,7 @@ public class TokenAccessDeniedHandler implements AccessDeniedHandler {
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
-        if (log.isDebugEnabled()) {
-            log.debug("TokenAccessDeniedHandler: {}", request.getRequestURI());
-        }
+        log.debug("TokenAccessDeniedHandler: {}", request.getRequestURI());
         // 包装成自定义异常并委托给异常处理器
         handlerExceptionResolver.resolveException(request, response, null, new ForbiddenException(ErrorCode.FORBIDDEN, accessDeniedException));
     }

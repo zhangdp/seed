@@ -45,9 +45,7 @@ public class OperateLogEventListener {
     @EventListener(OperateLogEvent.class)
     public void onEvent(OperateLogEvent event) {
         try {
-            if (log.isDebugEnabled()) {
-                log.debug("收到OperateLogEvent: {}", event);
-            }
+            log.debug("收到OperateLogEvent: {}", event);
             LogOperation lo = new LogOperation();
             lo.setCreatedDate(LocalDateTime.now());
             lo.setTitle(event.getTitle());
@@ -63,7 +61,7 @@ public class OperateLogEventListener {
             lo.setRefModule(event.getRefModule());
             lo.setRefId(event.getRefId());
             if (event.getThrowable() != null) {
-                lo.setErrorStrace(ExceptionUtil.stacktraceToString(event.getThrowable(), 65535));
+                lo.setErrorStrace(ExceptionUtil.stacktraceToString(event.getThrowable(), 1024));
             }
             if (event.getResult() != null) {
                 // lo.setResultCode(event.getResult() instanceof R<?> r ? r.getCode() : CommonConst.RESULT_SUCCESS);

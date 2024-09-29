@@ -26,7 +26,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 @RequiredArgsConstructor
 // 只包含自己写的controller，不能影响其他框架自带的controller
 @RestControllerAdvice(basePackages = "io.github.seed.controller")
-public class GlobeResponseBodyAdvice implements ResponseBodyAdvice<Object> {
+public class GlobalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
 
     /**
      * jackson

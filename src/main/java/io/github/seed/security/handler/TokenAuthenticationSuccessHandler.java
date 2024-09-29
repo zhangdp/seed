@@ -34,9 +34,7 @@ public class TokenAuthenticationSuccessHandler implements AuthenticationSuccessH
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        if (log.isDebugEnabled()) {
-            log.debug("TokenAuthenticationSuccessHandler: {}", authentication);
-        }
+        log.debug("TokenAuthenticationSuccessHandler: {}", authentication);
         LoginUser user = (LoginUser) authentication.getPrincipal();
         // 生成token信息
         TokenInfo tokenInfo = tokenService.createToken(user);

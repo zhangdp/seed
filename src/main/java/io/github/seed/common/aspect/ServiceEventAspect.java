@@ -1,8 +1,7 @@
 package io.github.seed.common.aspect;
 
-import io.github.seed.common.annotation.Event;
-import io.github.seed.common.component.EventContext;
-import io.github.seed.common.component.EventDispatch;
+import io.github.seed.common.annotation.PublishEvent;
+import io.github.seed.common.data.ServiceEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -10,6 +9,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -19,7 +19,6 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
 
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * 2023/4/12 事件aop
@@ -33,12 +32,12 @@ import java.util.Map;
 // 必须最小值+1，最小是spring aop基础必须先执行
 @Order(Ordered.HIGHEST_PRECEDENCE + 1)
 @Component
-public class EventAspect {
+public class ServiceEventAspect {
 
     /**
-     * 事件调度处理器
+     * 事件发布器
      */
-    private final EventDispatch eventDispatch;
+    private final ApplicationEventPublisher applicationEventPublisher;
     /**
      * 方法参数解析器
      */
@@ -49,8 +48,8 @@ public class EventAspect {
     private final SpelExpressionParser spelExpressionParser = new SpelExpressionParser();
 
     @Autowired
-    public EventAspect(EventDispatch eventDispatch) {
-        this.eventDispatch = eventDispatch;
+    public ServiceEventAspect(ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     /**
@@ -60,13 +59,12 @@ public class EventAspect {
      * @param annotation
      */
     @AfterReturning(value = "@annotation(annotation)", returning = "result")
-    public void afterAdvice(JoinPoint joinPoint, Event annotation, Object result) {
-        if (log.isDebugEnabled()) {
-            log.debug("EventAspect AfterReturning in: joinPoint={}, event={}", joinPoint, annotation);
-        }
+    public void afterAdvice(JoinPoint joinPoint, PublishEvent annotation, Object result) {
         boolean flag = true;
         try {
             MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+            String method = joinPoint.getTarget().getClass().getName() + "." + joinPoint.getSignature().getName();
+            log.debug("EventAspect afterReturning: method={}, annotation={}", method, annotation);
             // 获取参数列表
             String[] parameterNames = parameterNameDiscoverer.getParameterNames(signature.getMethod());
             Object[] args = joinPoint.getArgs();
@@ -89,15 +87,13 @@ public class EventAspect {
                         params.put(parameterNames[i], args[i]);
                     }
                 }
-                EventContext context = new EventContext(signature, annotation.tag(), params, result);
-                if (annotation.isAsync()) {
-                    eventDispatch.dispatchAsync(annotation.type(), annotation.delay(), context);
-                } else {
-                    eventDispatch.dispatch(annotation.type(), annotation.delay(), context);
-                }
+                // 发布事件
+                ServiceEvent event = new ServiceEvent(joinPoint, annotation.name(), annotation.tag(), params, result);
+                applicationEventPublisher.publishEvent(event);
+                log.debug("发布事件：{}", event.getName());
             }
         } catch (Exception e) {
-            log.error("EventAspect error: joinPoint=" + joinPoint + ", event=" + annotation, e);
+            log.error("EventAspect error: joinPoint={}, event={}", joinPoint, annotation, e);
         }
     }
 }

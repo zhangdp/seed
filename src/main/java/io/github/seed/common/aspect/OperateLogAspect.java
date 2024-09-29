@@ -60,9 +60,7 @@ public class OperateLogAspect {
     @Around("within(io.github.seed.controller..*) && @annotation(operateLog)")
     public Object around(ProceedingJoinPoint point, OperateLog operateLog) throws Throwable {
         String method = point.getTarget().getClass().getName() + "." + point.getSignature().getName();
-        if (log.isDebugEnabled()) {
-            log.debug("OperateLogAspect Around: {}", method);
-        }
+        log.debug("OperateLogAspect around: method={}, annotation={}", method, operateLog);
 
         Object result = null;
         boolean hasError = false;
@@ -83,7 +81,7 @@ public class OperateLogAspect {
                 LocalDateTime endTime = LocalDateTime.now();
                 try {
                     HttpServletRequest request = Objects.requireNonNull(SpringWebMvcContextHolder.getRequest());
-                    OperateLogEvent event = new OperateLogEvent(point.getTarget());
+                    OperateLogEvent event = new OperateLogEvent(point);
                     // 结果必须可序列化
                     if (operateLog.logResult() && result instanceof Serializable s) {
                         event.setResult(s);

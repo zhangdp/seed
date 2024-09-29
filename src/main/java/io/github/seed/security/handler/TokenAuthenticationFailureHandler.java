@@ -32,9 +32,7 @@ public class TokenAuthenticationFailureHandler implements AuthenticationFailureH
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-        if (log.isDebugEnabled()) {
-            log.debug("TokenAuthenticationFailureHandler:{}", request.getRequestURI());
-        }
+        log.debug("TokenAuthenticationFailureHandler:{}", request.getRequestURI());
         Exception ex;
         if (exception instanceof BadCredentialsException) {
             ex = new BizException(ErrorCode.USERNAME_NOT_FOUND_OR_BAD_CREDENTIALS, exception);

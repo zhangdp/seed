@@ -1,19 +1,23 @@
-package io.github.seed.common.component;
+package io.github.seed.common.data;
 
 import lombok.Getter;
-import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.context.ApplicationEvent;
 
 import java.util.LinkedHashMap;
 
 /**
- * 事件上下文
+ * 业务事件
  *
  * @author zhangdp
  * @since 2024/9/17
  */
 @Getter
-public class EventContext {
+public class ServiceEvent extends ApplicationEvent {
 
+    /**
+     * 事件类型
+     */
+    private final String name;
     /**
      * 附加数据
      */
@@ -26,21 +30,42 @@ public class EventContext {
      * 参数
      */
     private final LinkedHashMap<String, Object> params;
-    /**
-     * 事件产生时间
-     */
-    private final long timestamp;
-    /**
-     * 事件来源
-     */
-    private final MethodSignature source;
 
-    public EventContext(MethodSignature source, String tag, LinkedHashMap<String, Object> params, Object result) {
+    public ServiceEvent(Object source, String name, String tag, LinkedHashMap<String, Object> params, Object result) {
+        super(source);
+        this.name = name;
         this.tag = tag;
         this.params = params;
         this.result = result;
         this.source = source;
-        this.timestamp = System.currentTimeMillis();
+    }
+
+    /**
+     * 是否有参数
+     *
+     * @return
+     */
+    public boolean hasParam() {
+        return params != null && !params.isEmpty();
+    }
+
+    /**
+     * 是否存在某个名称的参数
+     *
+     * @param name
+     * @return
+     */
+    public boolean hasParam(String name) {
+        return this.hasParam() && this.params.containsKey(name);
+    }
+
+    /**
+     * 获取参数个数
+     *
+     * @return
+     */
+    public int paramCount() {
+        return this.hasParam() ? this.params.size() : 0;
     }
 
     /**
@@ -77,6 +102,5 @@ public class EventContext {
     public Object getParam(String name) {
         return params.get(name);
     }
-
 
 }

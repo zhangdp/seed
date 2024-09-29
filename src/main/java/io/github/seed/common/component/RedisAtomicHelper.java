@@ -46,9 +46,7 @@ public class RedisAtomicHelper {
         RedisAtomicLong atomic = new RedisAtomicLong(key, redisConnectionFactory);
         this.setExpire(atomic, timeout);
         long v = atomic.incrementAndGet();
-        if (log.isDebugEnabled()) {
-            log.debug("Redis自增-{}取到下一个redis自增:{}", key, v);
-        }
+        log.debug("Redis自增-{}取到下一个redis自增:{}", key, v);
         return v;
     }
 
@@ -77,11 +75,9 @@ public class RedisAtomicHelper {
         this.setExpire(atomic, timeout);
         long[] arr = new long[size];
         long max = atomic.addAndGet(size);
-        if (log.isDebugEnabled()) {
-            log.debug("Redis自增-{}自增{}后为{}", key, size, max);
-            for (int i = size; i > 0; i--) {
-                arr[i - 1] = max - (size - i);
-            }
+        log.debug("Redis自增-{}批量自增{}次后为{}", key, size, max);
+        for (int i = size; i > 0; i--) {
+            arr[i - 1] = max - (size - i);
         }
         return arr;
     }
@@ -95,9 +91,7 @@ public class RedisAtomicHelper {
     private void setExpire(RedisAtomicLong atomic, Duration timeout) {
         if (timeout != null) {
             atomic.expire(timeout);
-            if (log.isDebugEnabled()) {
-                log.debug("Redis自增-{}设置过期时间{}", atomic.getKey(), timeout);
-            }
+            log.debug("Redis自增-{}设置过期时间{}", atomic.getKey(), timeout);
         }
     }
 

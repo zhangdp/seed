@@ -38,9 +38,7 @@ public class TokenUsernamePasswordAuthenticationFilter extends AbstractAuthentic
             PasswordLoginParams params = objectMapper.readValue(in, PasswordLoginParams.class);
             String username = params.getUsername();
             String password = params.getPassword();
-            if (log.isDebugEnabled()) {
-                log.debug("TokenUsernamePasswordAuthenticationFilter：{}", username);
-            }
+            log.debug("TokenUsernamePasswordAuthenticationFilter：{}", username);
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(params.getUsername(), password);
             return this.getAuthenticationManager().authenticate(auth);
         }

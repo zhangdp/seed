@@ -27,9 +27,7 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
     @Override
     public Object resolveArgument(MethodParameter methodParameter, ModelAndViewContainer modelAndViewContainer, NativeWebRequest nativeWebRequest, WebDataBinderFactory webDataBinderFactory) throws Exception {
         LoginUser loginUser = SecurityUtils.getLoginUser();
-        if (log.isDebugEnabled()) {
-            log.debug("自动注入当前登录用户: {}", loginUser);
-        }
+        log.debug("自动注入当前登录用户: {}", loginUser);
         return loginUser;
     }
 }

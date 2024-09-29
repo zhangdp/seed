@@ -32,7 +32,7 @@ public class ThrowSeedExceptionAspect {
     public void afterThrowing(JoinPoint joinPoint, Throwable throwing, ThrowBizException throwBizException) {
         if (log.isDebugEnabled()) {
             String method = joinPoint.getTarget().getClass().getName() + "." + joinPoint.getSignature().getName();
-            log.debug("SeedExceptionAspect afterThrowing: method={}, throwing={}", method, throwing.getClass().getName());
+            log.debug("SeedExceptionAspect afterThrowing: method={}, throwing={}, annotation={}", method, throwing.getClass().getName(), throwBizException);
         }
         BizException bizException;
         if (throwing instanceof BizException se) {

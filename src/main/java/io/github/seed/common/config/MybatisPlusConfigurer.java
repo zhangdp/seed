@@ -52,7 +52,7 @@ public class MybatisPlusConfigurer {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
         // 乐观锁插件
         interceptor.addInnerInterceptor(new OptimisticLockerInnerInterceptor());
-        // 分页插件
+        // 分页插件，需保证在最后一个
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor());
         return interceptor;
     }

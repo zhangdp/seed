@@ -36,14 +36,6 @@ public class SpringContextHolder implements BeanFactoryPostProcessor, Applicatio
     }
 
     /**
-     * BeanFactoryPostProcessor, 注入Context到静态变量中.
-     */
-    @Override
-    public void postProcessBeanFactory(ConfigurableListableBeanFactory factory) throws BeansException {
-        SpringContextHolder.beanFactory = factory;
-    }
-
-    /**
      * 实现ApplicationContextAware接口, 注入Context到静态变量中.
      */
     @Override
@@ -81,9 +73,7 @@ public class SpringContextHolder implements BeanFactoryPostProcessor, Applicatio
      * 清除SpringContextHolder中的ApplicationContext为Null.
      */
     public static void clearHolder() {
-        if (log.isDebugEnabled()) {
-            log.debug("清除SpringContextHolder中的ApplicationContext:" + applicationContext);
-        }
+        log.debug("清除SpringContextHolder中的ApplicationContext: {}", applicationContext);
         applicationContext = null;
     }
 
@@ -97,6 +87,14 @@ public class SpringContextHolder implements BeanFactoryPostProcessor, Applicatio
             return;
         }
         applicationContext.publishEvent(event);
+    }
+
+    /**
+     * BeanFactoryPostProcessor, 注入Context到静态变量中.
+     */
+    @Override
+    public void postProcessBeanFactory(ConfigurableListableBeanFactory factory) throws BeansException {
+        SpringContextHolder.beanFactory = factory;
     }
 
     /**

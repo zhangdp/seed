@@ -34,9 +34,7 @@ public class TokenLogoutSuccessHandler implements LogoutSuccessHandler {
 
     @Override
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        if (log.isDebugEnabled()) {
-            log.debug("TokenLogoutSuccessHandler：{}", authentication);
-        }
+        log.debug("TokenLogoutSuccessHandler：{}", authentication);
         String token = SecurityUtils.resolveToken(request);
         if (StrUtil.isNotBlank(token)) {
             tokenService.removeToken(token);
