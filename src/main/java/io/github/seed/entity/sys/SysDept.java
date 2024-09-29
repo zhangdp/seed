@@ -2,6 +2,7 @@ package io.github.seed.entity.sys;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.github.seed.common.constant.Const;
+import io.github.seed.common.constant.TableNameConst;
 import io.github.seed.entity.LogicBaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
@@ -26,7 +27,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@TableName("sys_dept")
+@TableName(TableNameConst.SYS_DEPT)
 @Schema(description = "部门")
 public class SysDept extends LogicBaseEntity implements Serializable {
 
@@ -52,6 +53,5 @@ public class SysDept extends LogicBaseEntity implements Serializable {
      */
     @Schema(title = "排序", description = "同级排序，升序")
     private Integer sorts;
-
 
 }

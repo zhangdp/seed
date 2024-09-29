@@ -1,6 +1,7 @@
 package io.github.seed.entity.sys;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.github.seed.common.constant.TableNameConst;
 import io.github.seed.entity.LogicBaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -21,7 +22,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@TableName("sys_role")
+@TableName(TableNameConst.SYS_ROLE)
 @Schema(description = "角色")
 public class SysRole extends LogicBaseEntity implements Serializable {
 

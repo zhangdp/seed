@@ -1,6 +1,7 @@
 package io.github.seed.entity.log;
 
 import com.baomidou.mybatisplus.annotation.*;
+import io.github.seed.common.constant.TableNameConst;
 import io.github.seed.common.enums.OperateType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -18,7 +19,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @Accessors(chain = true)
-@TableName("log_operation")
+@TableName(TableNameConst.LOG_OPERATION)
 @Schema(description = "操作日志")
 public class LogOperation implements Serializable {
 
@@ -31,6 +32,12 @@ public class LogOperation implements Serializable {
     @TableId(type = IdType.AUTO)
     @Schema(title = "id")
     private Long id;
+    /**
+     * 添加时间
+     */
+    @TableField(fill = FieldFill.INSERT)
+    @Schema(title = "添加时间")
+    private LocalDateTime createdDate;
     /**
      * 操作描述
      */
@@ -54,17 +61,15 @@ public class LogOperation implements Serializable {
     @Schema(title = "请求uri路径")
     private String uri;
     /**
-     * 请求的http 方式
-     *
-     * @return
-     */
-    @Schema(title = "http方式")
-    private String httpMethod;
-    /**
      * 用户浏览器标识
      */
     // @Schema(title = "用户浏览器标识")
     // private String userAgent;
+    /**
+     * 请求的http 方式
+     */
+    @Schema(title = "http方式")
+    private String httpMethod;
     /**
      * 客户端ip
      */
@@ -91,11 +96,6 @@ public class LogOperation implements Serializable {
     @Schema(title = "关联模块类型")
     private String refModule;
     /**
-     * 关联模块id
-     */
-    @Schema(title = "关联模块id")
-    private Long refId;
-    /**
      * 返回结果标识
      */
     // @Schema(title = "返回结果状态码")
@@ -105,6 +105,11 @@ public class LogOperation implements Serializable {
      */
     // @Schema(title = "是否成功")
     // private Boolean succeed;
+    /**
+     * 关联模块id
+     */
+    @Schema(title = "关联模块id")
+    private Long refId;
     /**
      * json格式的返回值
      */
@@ -130,10 +135,4 @@ public class LogOperation implements Serializable {
      */
     @Schema(title = "异常堆栈")
     private String errorStrace;
-    /**
-     * 添加时间
-     */
-    @TableField(fill = FieldFill.INSERT)
-    @Schema(title = "添加时间")
-    protected LocalDateTime createdDate;
 }

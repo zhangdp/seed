@@ -1,15 +1,15 @@
 package io.github.seed.entity.log;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import io.github.seed.entity.BaseEntity;
+import com.baomidou.mybatisplus.annotation.*;
+import io.github.seed.common.constant.Const;
+import io.github.seed.common.constant.TableNameConst;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * 2023/4/14 登录日志
@@ -19,15 +19,25 @@ import java.io.Serializable;
  */
 @Data
 @Accessors(chain = true)
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
-@TableName("log_login")
+@TableName(TableNameConst.LOG_LOGIN)
 @Schema(description = "登录日志")
-public class LogLogin extends BaseEntity implements Serializable {
+public class LogLogin implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 主键
+     */
+    @TableId(type = IdType.AUTO)
+    @Schema(title = "id", description = "修改时需传")
+    private Long id;
+    /**
+     * 创建时间
+     */
+    @TableField(fill = FieldFill.INSERT)
+    @Schema(title = "添加时间", description = "格式：" + Const.DATETIME_FORMATTER + "。保存时忽略")
+    private LocalDateTime createdDate;
     /**
      * 用户id
      */

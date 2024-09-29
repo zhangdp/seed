@@ -41,10 +41,30 @@ public interface TableNameConst {
     /**
      * 字典表
      */
+    String SYS_DICT = PREFIX_SYS + SPLIT + "dict";
+    /**
+     * 字典数据表
+     */
     String SYS_DICT_DATA = PREFIX_SYS + SPLIT + "dict_data";
     /**
      * 角色表
      */
-    String SYS_ROLE = PREFIX_SYS + SPLIT + "sys_role";
+    String SYS_ROLE = PREFIX_SYS + SPLIT + "role";
+    /**
+     * 角色-资源关联表
+     */
+    String SYS_ROLE_RESOURCE = PREFIX_SYS + SPLIT + "role_resource";
+    /**
+     * 用户-角色关联表
+     */
+    String SYS_USER_ROLE = PREFIX_SYS + SPLIT + "user_role";
 
+    /**
+     * 登录日志表
+     */
+    String LOG_LOGIN = PREFIX_LOG + SPLIT + "login";
+    /**
+     * 操作日志表
+     */
+    String LOG_OPERATION = PREFIX_LOG + SPLIT + "operation";
 }

@@ -1,6 +1,7 @@
 package io.github.seed.entity.sys;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.github.seed.common.constant.TableNameConst;
 import io.github.seed.entity.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -20,7 +21,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@TableName("sys_user_role")
+@TableName(TableNameConst.SYS_USER_ROLE)
 public class SysUserRole extends BaseEntity implements Serializable {
 
     @Serial
