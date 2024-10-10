@@ -1,6 +1,9 @@
 package io.github.seed.common.config;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.github.seed.common.constant.Const;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -9,6 +12,9 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
+
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 
 /**
  * 2023/4/7 redis配置
@@ -56,6 +62,8 @@ public class RedisConfigurer {
             config.registerModule(JacksonConfigurer.timeModule(Const.DATE_FORMATTER, Const.TIME_FORMATTER, Const.DATETIME_FORMATTER));
             // 配置忽略未知字段
             config.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            // 配置时间格式化
+            // config.setDateFormat(new SimpleDateFormat(Const.DATETIME_FORMATTER));
         });
         return jsonRedisSerializer;
     }

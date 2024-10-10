@@ -1,7 +1,8 @@
 package io.github.seed.common.component;
 
-import io.github.seed.security.SecurityUtils;
-import io.github.seed.security.data.LoginUser;
+import io.github.seed.common.exception.UnauthorizedException;
+import io.github.seed.common.security.SecurityUtils;
+import io.github.seed.common.security.data.LoginUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -27,6 +28,9 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
     @Override
     public Object resolveArgument(MethodParameter methodParameter, ModelAndViewContainer modelAndViewContainer, NativeWebRequest nativeWebRequest, WebDataBinderFactory webDataBinderFactory) throws Exception {
         LoginUser loginUser = SecurityUtils.getLoginUser();
+        if (loginUser == null) {
+            throw new UnauthorizedException("无认证信息");
+        }
         log.debug("自动注入当前登录用户: {}", loginUser);
         return loginUser;
     }

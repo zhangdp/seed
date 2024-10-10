@@ -2,8 +2,8 @@ package io.github.seed.common.component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.seed.common.data.OperateLogEvent;
-import io.github.seed.entity.log.LogOperation;
-import io.github.seed.service.log.LogOperationService;
+import io.github.seed.entity.log.OperationLog;
+import io.github.seed.service.log.OperationLogService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hutool.core.date.TimeUtil;
@@ -29,7 +29,7 @@ public class OperateLogEventListener {
     /**
      * 操作日志service
      */
-    private final LogOperationService logOperationService;
+    private final OperationLogService operationLogService;
     /**
      * jackson json工具类
      */
@@ -46,7 +46,7 @@ public class OperateLogEventListener {
     public void onEvent(OperateLogEvent event) {
         try {
             log.debug("收到OperateLogEvent: {}", event);
-            LogOperation lo = new LogOperation();
+            OperationLog lo = new OperationLog();
             lo.setCreatedDate(LocalDateTime.now());
             lo.setTitle(event.getTitle());
             lo.setOperateTime(event.getStartTime());
@@ -74,7 +74,7 @@ public class OperateLogEventListener {
                 lo.setHeaders(objectMapper.writeValueAsString(event.getHeaderMap()));
             }
             lo.setRequestBody(event.getRequestBody());
-            logOperationService.add(lo);
+            operationLogService.add(lo);
         } catch (Exception e) {
             log.error("操作日志事件处理失败，event: {}", event, e);
         }

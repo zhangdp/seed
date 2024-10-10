@@ -18,9 +18,9 @@ public interface TableNameConst {
      */
     String PREFIX_SYS = "sys";
     /**
-     * 前缀-log日志表
+     * 后缀-log日志表
      */
-    String PREFIX_LOG = "log";
+    String SUFFIX_LOG = "log";
 
     /**
      * 用户表
@@ -62,9 +62,9 @@ public interface TableNameConst {
     /**
      * 登录日志表
      */
-    String LOG_LOGIN = PREFIX_LOG + SPLIT + "login";
+    String LOGIN_LOG = "login" + SPLIT + SUFFIX_LOG;
     /**
      * 操作日志表
      */
-    String LOG_OPERATION = PREFIX_LOG + SPLIT + "operation";
+    String LOG_OPERATION = "operation" + SPLIT + SUFFIX_LOG;
 }
