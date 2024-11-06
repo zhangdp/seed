@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.10</version>
+        <version>3.2.11</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>io.github</groupId>
@@ -17,12 +17,31 @@
     <properties>
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <hutool.version>6.0.0-M16</hutool.version>
+        <hutool.version>6.0.0-M17</hutool.version>
         <!-- <mybatis-starter.version>3.0.3</mybatis-starter.version> -->
-        <mybatis-plus.version>3.5.8</mybatis-plus.version>
+        <mybatis-plus.version>3.5.9</mybatis-plus.version>
         <springdoc.version>2.6.0</springdoc.version>
-        <spring-boot-admin-client.version>3.3.3</spring-boot-admin-client.version>
+        <spring-boot-admin-client.version>3.3.5</spring-boot-admin-client.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-bom</artifactId>
+                <version>${mybatis-plus.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.dromara.hutool</groupId>
+                <artifactId>hutool-bom</artifactId>
+                <version>${hutool.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -95,29 +114,24 @@
         <dependency>
             <groupId>org.dromara.hutool</groupId>
             <artifactId>hutool-core</artifactId>
-            <version>${hutool.version}</version>
         </dependency>
         <dependency>
             <groupId>org.dromara.hutool</groupId>
             <artifactId>hutool-crypto</artifactId>
-            <version>${hutool.version}</version>
         </dependency>
         <!--
         <dependency>
             <groupId>org.dromara.hutool</groupId>
             <artifactId>hutool-extra</artifactId>
-            <version>${hutool.version}</version>
         </dependency>
         -->
         <dependency>
             <groupId>org.dromara.hutool</groupId>
             <artifactId>hutool-http</artifactId>
-            <version>${hutool.version}</version>
         </dependency>
         <dependency>
             <groupId>org.dromara.hutool</groupId>
             <artifactId>hutool-json</artifactId>
-            <version>${hutool.version}</version>
         </dependency>
         <!--
         <dependency>
@@ -130,7 +144,10 @@
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
-            <version>${mybatis-plus.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-jsqlparser</artifactId>
         </dependency>
         <!-- 接口文档 -->
         <dependency>

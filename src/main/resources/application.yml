@@ -1,5 +1,12 @@
 server:
   port: ${SERVER_PORT:8080}
+  tomcat:
+    threads:
+      min-spare: 16
+      max: ${TOMCAT_MAX_THREADS:400}
+    accept-count: ${TOMCAT_ACCEPT_COUNT:200}
+    max-connections: ${TOMCAT_MAX_CONNECTIONS:10000}
+    max-keep-alive-requests: 200
 spring:
   profiles:
     active: ${SPRING_PROFILE:dev}
@@ -28,7 +35,7 @@ spring:
       host: ${REDIS_HOST:191.168.10.71}
       port: ${REDIS_PORT:6379}
       password: ${REDIS_PASSWORD:Itsm@2022}
-      connect-timeout: 5s
+      connect-timeout: 10s
       lettuce:
         pool:
           max-active: ${REDIS_MAX_ACTIVE:16}
@@ -60,6 +67,7 @@ spring:
       minimum-idle: 4
       keepalive-time: 600000
       max-lifetime: 7200000
+      connection-timeout: 10000
 management:
   endpoint:
     health:
