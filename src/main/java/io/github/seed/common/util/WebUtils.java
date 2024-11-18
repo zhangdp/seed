@@ -142,7 +142,7 @@ public class WebUtils {
     }
 
     /**
-     * 输出json
+     * 响应json
      *
      * @param response
      * @param json
@@ -153,7 +153,7 @@ public class WebUtils {
     }
 
     /**
-     * 输出json
+     * 响应json
      *
      * @param response
      * @param httpStatus
@@ -172,7 +172,7 @@ public class WebUtils {
             writer.flush();
             return true;
         } catch (IOException e) {
-            log.error("response输出json出错, json={}", json, e);
+            log.error("response响应json出错, json={}", json, e);
             return false;
         }
     }
@@ -181,16 +181,52 @@ public class WebUtils {
      * 响应附件下载的头部信息
      *
      * @param response
-     * @param filename
-     * @param contentType
+     * @param fileName
      * @param fileSize
      */
+    public static void responseDispositionHeader(HttpServletResponse response, String fileName, long fileSize) {
+        responseDispositionHeader(response, fileName, null, fileSize, false);
+    }
+
+    /**
+     * 响应附件下载的头部信息
+     *
+     * @param response
+     * @param fileName
+     * @param fileSize
+     * @param contentType
+     */
+    public static void responseDispositionHeader(HttpServletResponse response, String fileName, long fileSize, String contentType) {
+        responseDispositionHeader(response, fileName, contentType, fileSize, false);
+    }
+
+    /**
+     * 响应附件下载的头部信息
+     *
+     * @param response
+     * @param fileName
+     * @param fileSize
+     * @param isInline
+     */
+    public static void responseDispositionHeader(HttpServletResponse response, String fileName, long fileSize, boolean isInline) {
+        responseDispositionHeader(response, fileName, null, fileSize, isInline);
+    }
+
+    /**
+     * 响应附件下载的头部信息
+     *
+     * @param response
+     * @param fileName
+     * @param contentType
+     * @param fileSize
+     * @param isInline
+     */
     @SneakyThrows
-    public static void responseAttachmentHeader(HttpServletResponse response, String filename, String contentType, long fileSize) {
-        String disposition = "attachment";
-        if (filename != null && !filename.isEmpty()) {
+    public static void responseDispositionHeader(HttpServletResponse response, String fileName, String contentType, long fileSize, boolean isInline) {
+        String disposition = isInline ? "inline" : "attachment";
+        if (fileName != null && !fileName.isEmpty()) {
             // 对文件名进行urlEncode编码。java使用的标准略有不同，会将空格编码为+，因此需要替换成20%，详见https://www.w3.org/TR/REC-html40/interact/forms.html#h-17.13.4
-            String encodedFilename = URLEncoder.encode(filename, CHARSET).replaceAll("\\+", "%20");
+            String encodedFilename = URLEncoder.encode(fileName, CHARSET).replaceAll("\\+", "%20");
             disposition += "; filename=\"" + encodedFilename + "\"; filename*=" + CHARSET + "''" + encodedFilename;
         }
         response.setHeader("Content-Disposition", disposition);
@@ -201,19 +237,163 @@ public class WebUtils {
     }
 
     /**
-     * 输出文件流。会自动关闭输入流
+     * 响应文件
+     *
+     * @param response
+     * @param file
+     * @return
+     * @throws FileNotFoundException
+     */
+    public static long responseFile(HttpServletResponse response, File file) throws FileNotFoundException {
+        return responseFile(response, file, null, false);
+    }
+
+    /**
+     * 响应文件
+     *
+     * @param response
+     * @param file
+     * @param isInline
+     * @return
+     * @throws FileNotFoundException
+     */
+    public static long responseFile(HttpServletResponse response, File file, boolean isInline) throws FileNotFoundException {
+        return responseFile(response, file, null, isInline);
+    }
+
+    /**
+     * 响应文件
+     *
+     * @param response
+     * @param file
+     * @param contentType
+     * @return
+     * @throws FileNotFoundException
+     */
+    public static long responseFile(HttpServletResponse response, File file, String contentType) throws FileNotFoundException {
+        return responseFile(response, file, contentType, false);
+    }
+
+    /**
+     * 响应文件
+     *
+     * @param response
+     * @param file
+     * @param contentType
+     * @param isInline
+     * @return
+     */
+    public static long responseFile(HttpServletResponse response, File file, String contentType, boolean isInline) throws FileNotFoundException {
+        return responseFile(response, new FileInputStream(file), file.getName(), file.length(), contentType, isInline);
+    }
+
+    /**
+     * 响应文件
+     *
+     * @param response
+     * @param path
+     * @return
+     * @throws FileNotFoundException
+     */
+    public static long responseFile(HttpServletResponse response, String path) throws FileNotFoundException {
+        return responseFile(response, path, null, false);
+    }
+
+    /**
+     * 响应文件
+     *
+     * @param response
+     * @param path
+     * @param contentType
+     * @return
+     * @throws FileNotFoundException
+     */
+    public static long responseFile(HttpServletResponse response, String path, String contentType) throws FileNotFoundException {
+        return responseFile(response, path, contentType, false);
+    }
+
+    /**
+     * 响应文件
+     *
+     * @param response
+     * @param path
+     * @param isInline
+     * @return
+     * @throws FileNotFoundException
+     */
+    public static long responseFile(HttpServletResponse response, String path, boolean isInline) throws FileNotFoundException {
+        return responseFile(response, path, null, isInline);
+    }
+
+    /**
+     * 响应文件
+     *
+     * @param response
+     * @param path
+     * @param contentType
+     * @param isInline
+     * @return
+     */
+    public static long responseFile(HttpServletResponse response, String path, String contentType, boolean isInline) throws FileNotFoundException {
+        return responseFile(response, new File(path), contentType, isInline);
+    }
+
+    /**
+     * 响应文件流
      *
      * @param response
      * @param in
-     * @param filename
-     * @param contentType
+     * @param fileName
      * @param fileSize
      * @return
      */
-    public static long responseFile(HttpServletResponse response, InputStream in, String filename, String contentType, long fileSize) {
+    public static long responseFile(HttpServletResponse response, InputStream in, String fileName, long fileSize) {
+        return responseFile(response, in, fileName, fileSize, null, false);
+    }
+
+    /**
+     * 响应文件流。会自动关闭输入流
+     *
+     * @param response
+     * @param in
+     * @param fileName
+     * @param fileSize
+     * @param isInline
+     * @return
+     */
+    public static long responseFile(HttpServletResponse response, InputStream in, String fileName, long fileSize, boolean isInline) {
+        return responseFile(response, in, fileName, fileSize, null, isInline);
+    }
+
+    /**
+     * 响应文件流。会自动关闭输入流
+     *
+     * @param response
+     * @param in
+     * @param fileName
+     * @param fileSize
+     * @param contentType
+     * @return
+     */
+    public static long responseFile(HttpServletResponse response, InputStream in, String fileName, long fileSize, String contentType) {
+        return responseFile(response, in, fileName, fileSize, contentType, false);
+    }
+
+    /**
+     * 响应文件流。会自动关闭输入流
+     *
+     * @param response
+     * @param in
+     * @param fileName
+     * @param fileSize
+     * @param contentType
+     * @param isInline
+     * @return
+     */
+    public static long responseFile(HttpServletResponse response, InputStream in, String fileName, long fileSize, String contentType, boolean isInline) {
         OutputStream out = null;
         try {
-            responseAttachmentHeader(response, filename, contentType, fileSize);
+            responseDispositionHeader(response, fileName, contentType, fileSize, isInline);
             out = response.getOutputStream();
             int total = 0;
             int len;
@@ -225,7 +405,7 @@ public class WebUtils {
             response.flushBuffer();
             return total;
         } catch (IOException e) {
-            log.error("response输出文件失败, filename={}", filename, e);
+            log.error("response响应文件失败, fileName={}", fileName, e);
             return -1;
         } finally {
             if (out != null) {
@@ -239,30 +419,6 @@ public class WebUtils {
             } catch (IOException ignored) {
             }
         }
-    }
-
-    /**
-     * 输出文件
-     *
-     * @param response
-     * @param file
-     * @param contentType
-     * @return
-     */
-    public static long responseFile(HttpServletResponse response, File file, String contentType) throws FileNotFoundException {
-        return responseFile(response, new FileInputStream(file), file.getName(), contentType, file.length());
-    }
-
-    /**
-     * 输出文件
-     *
-     * @param response
-     * @param path
-     * @param contentType
-     * @return
-     */
-    public static long responseFile(HttpServletResponse response, String path, String contentType) throws FileNotFoundException {
-        return responseFile(response, new File(path), contentType);
     }
 
     /**

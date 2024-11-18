@@ -58,6 +58,10 @@ public interface TableNameConst {
      * 用户-角色关联表
      */
     String SYS_USER_ROLE = PREFIX_SYS + SPLIT + "user_role";
+    /**
+     * 文件信息
+     */
+    String SYS_FILE_INFO = PREFIX_SYS + SPLIT + "file_info";
 
     /**
      * 登录日志表
@@ -67,4 +71,5 @@ public interface TableNameConst {
      * 操作日志表
      */
     String LOG_OPERATION = "operation" + SPLIT + SUFFIX_LOG;
+
 }
