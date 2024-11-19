@@ -6,14 +6,22 @@ import io.github.seed.common.exception.BizException;
 import io.github.seed.common.exception.NotFoundException;
 import io.minio.*;
 import io.minio.errors.ErrorResponseException;
+import io.minio.messages.DeleteError;
+import io.minio.messages.DeleteObject;
+import io.minio.messages.Item;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.hutool.core.collection.CollUtil;
 import org.dromara.hutool.core.io.IoUtil;
+import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.beans.factory.InitializingBean;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 2024/11/14 minio访问器
@@ -37,7 +45,7 @@ public class MinioTemplate implements FileTemplate, InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         this.client = MinioClient.builder().endpoint(this.endpoint).credentials(this.accessKey, this.secretKey).build();
-        this.client.setTimeout(Const.CONNECT_TIMEOUT, Const.READ_TIMEOUT * 3, Const.READ_TIMEOUT * 3);
+        this.client.setTimeout(Const.CONNECT_TIMEOUT, Const.READ_TIMEOUT * 4, Const.READ_TIMEOUT * 4);
         log.info("创建MinioClient: {}, endpoint={}, bucket={}", this.client, this.endpoint, this.bucket);
     }
 
@@ -47,29 +55,76 @@ public class MinioTemplate implements FileTemplate, InitializingBean {
     }
 
     @Override
+    @SneakyThrows
     public boolean isEmptyDirectory(String path) {
-        // todo
-        return false;
+        // 列出子文件时路径不能以/开头，且必须以/结尾
+        String dir = StrUtil.stripAll(path, "/") + "/";
+        try {
+            Iterable<Result<Item>> results = this.client.listObjects(
+                    ListObjectsArgs.builder()
+                            .bucket(this.bucket)
+                            .prefix(dir)
+                            .recursive(false)
+                            .build()
+            );
+            // 检查是否有对象存在
+            for (Result<Item> result : results) {
+                Item item = result.get();
+                // 排除自己还有则非空
+                if (!item.isDir() || !item.objectName().equals(dir)) {
+                    return false;
+                }
+            }
+        } catch (Exception e) {
+            this.resolveException("判断 " + path + " 是否是非空文件夹", e);
+            return true;
+        }
+        return true;
     }
 
     @Override
     public boolean isDirectory(String path) {
-        // todo
+        // minio没有直接的api判断是否文件夹，因此只能列出自己的方式
+        // 不能以/开头不然结果会为空，不能以/结尾不然列出的是子文件而不是自己
+        String prefix = StrUtil.stripAll(path, "/");
+        try {
+            Iterable<Result<Item>> results = this.client.listObjects(
+                    ListObjectsArgs.builder()
+                            .bucket(this.bucket)
+                            .prefix(prefix)
+                            .recursive(false)
+                            .build()
+            );
+            // 检查是否有对象存在
+            String dir = prefix + "/";
+            for (Result<Item> result : results) {
+                Item item = result.get();
+                if (item.isDir() && item.objectName().equals(dir)) {
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+            this.resolveException("判断 " + path + " 是否是文件夹", e);
+            return false;
+        }
         return false;
     }
 
     @Override
     public boolean mkdir(String path) {
-        // minio没有单独创建文件夹的api，路径后面是/就是创建文件夹
+        throw new UnsupportedOperationException("MinIO不支持创建文件夹");
+        /*
         if (!path.endsWith("/")) {
-            path += "/";
+            path = path + "/";
         }
-        try {
-            return this.client.putObject(PutObjectArgs.builder().bucket(this.bucket).object(path).build()) != null;
+        String content = "";
+        try (InputStream in = new ByteArrayInputStream(content.getBytes())) {
+            return this.client.putObject(PutObjectArgs.builder().bucket(this.bucket).object(path).stream(in, in.available(), -1).build()) != null;
         } catch (Exception e) {
             this.resolveException("创建文件夹 " + path, e);
             return false;
         }
+        */
     }
 
     @Override
@@ -95,19 +150,42 @@ public class MinioTemplate implements FileTemplate, InitializingBean {
 
     @Override
     public boolean delete(String path) {
-        return this.delete(path, true);
-    }
-
-    @Override
-    public boolean delete(String path, boolean isRecursive) {
-        if (!isRecursive && this.isEmptyDirectory(path)) {
-            throw new IllegalArgumentException("文件夹 ' " + path + " ' 不为空，无法删除");
-        }
         try {
             this.client.removeObject(RemoveObjectArgs.builder().bucket(this.bucket).object(path).build());
             return true;
         } catch (Exception e) {
-            this.resolveException("删除 " + path, e);
+            this.resolveException("删除文件 " + path, e);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean delete(String path, boolean isRecursive) {
+        try {
+            List<DeleteObject> list = new ArrayList<>();
+            String dir = StrUtil.stripAll(path, "/") + "/";
+            Iterable<Result<Item>> it = this.client.listObjects(ListObjectsArgs.builder().bucket(this.bucket).prefix(dir).recursive(true).build());
+            for (Result<Item> itemResult : it) {
+                list.add(new DeleteObject(itemResult.get().objectName()));
+            }
+
+            if (CollUtil.isNotEmpty(list)) {
+                if (!isRecursive) {
+                    throw new IllegalArgumentException("文件夹 " + path + " 不为空，无法删除");
+                }
+                Iterable<Result<DeleteError>> res = this.client.removeObjects(RemoveObjectsArgs.builder().bucket(this.bucket).objects(list).build());
+                for (Result<DeleteError> re : res) {
+                    DeleteError de = re.get();
+                    System.out.println(de.objectName() + ":" + de.message());
+                }
+            }
+
+            this.client.removeObject(RemoveObjectArgs.builder().bucket(this.bucket).object(path).build());
+            return true;
+        } catch (IllegalArgumentException e) {
+            throw e;
+        } catch (Exception e) {
+            this.resolveException("删除文件 " + path, e);
             return false;
         }
     }
@@ -117,8 +195,7 @@ public class MinioTemplate implements FileTemplate, InitializingBean {
         try {
             return this.upload(new FileInputStream(file), path);
         } catch (FileNotFoundException e) {
-            this.resolveException("上传文件到 " + path, e);
-            return false;
+            throw new IllegalArgumentException("不存在文件 " + file.getAbsolutePath(), e);
         }
     }
 
@@ -200,8 +277,7 @@ public class MinioTemplate implements FileTemplate, InitializingBean {
         try {
             return this.download(path, new FileOutputStream(file));
         } catch (FileNotFoundException e) {
-            this.resolveException("下载文件 " + path, e);
-            return -1;
+            throw new IllegalArgumentException("不存在文件 " + file.getAbsolutePath(), e);
         }
     }
 
@@ -232,18 +308,14 @@ public class MinioTemplate implements FileTemplate, InitializingBean {
      * @param e
      */
     private void resolveException(String operation, Exception e) {
+        log.error(operation, e);
         if (e instanceof ErrorResponseException ex) {
             String code = ex.errorResponse().code();
-            if ("NoSuchKey".equals(code) || "NoSuchBucket".equals(code) || "NoSuchVersion".equals(code)) {
-                throw new NotFoundException(ErrorCode.MINIO_NOT_FOUND_ERROR.code(), operation + "失败：服务器不存在此文件", e);
-            } else {
-                throw new BizException(ErrorCode.MINIO_ERROR.code(), operation + "失败：请稍后再试", e);
+            if ("NoSuchKey".equals(code)) {
+                throw new NotFoundException(ErrorCode.MINIO_NOT_FOUND_ERROR, e);
             }
-        } else if (e instanceof FileNotFoundException) {
-            throw new BizException(ErrorCode.MINIO_ERROR.code(), operation + "失败：要上传的文件为空", e);
-        } else {
-            throw new BizException(ErrorCode.MINIO_ERROR.code(), operation + "失败，请稍后再试", e);
         }
+        throw new BizException(ErrorCode.MINIO_ERROR, e);
     }
 
 }

@@ -97,7 +97,7 @@ public interface Const {
     /**
      * 连接超时
      */
-    int CONNECT_TIMEOUT = 10000;
+    int CONNECT_TIMEOUT = 15000;
 
     /**
      * 读取超时

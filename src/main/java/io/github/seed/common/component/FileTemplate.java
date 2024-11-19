@@ -63,7 +63,7 @@ public interface FileTemplate {
     boolean move(String oldPath, String newPath);
 
     /**
-     * 删除文件/文件夹，默认递归删除
+     * 删除文件/文件夹，默认不递归删除即用于删除文件或者空文件夹
      *
      * @param path
      * @return

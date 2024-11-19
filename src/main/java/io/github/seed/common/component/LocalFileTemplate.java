@@ -69,7 +69,7 @@ public class LocalFileTemplate implements FileTemplate {
 
     @Override
     public boolean delete(String path) {
-        return this.delete(path, true);
+        return this.delete(path, false);
     }
 
     @Override
