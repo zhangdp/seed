@@ -41,22 +41,6 @@ public class DesensitizationJacksonAnnotationIntrospector extends JacksonAnnotat
         }
     }
 
-    /**
-     * 初始化
-     */
-    public void init() {
-        for (SensitiveType type : SensitiveType.values()) {
-            if (type != SensitiveType.CUSTOMER) {
-                serializerCache.put(type, new JsonSerializer<>() {
-                    @Override
-                    public void serialize(String value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-                        gen.writeString(type.getDesensitizer().apply(value));
-                    }
-                });
-            }
-        }
-    }
-
     @Override
     public Object findSerializer(Annotated a) {
         if (a.getRawType().equals(String.class)) {
@@ -64,14 +48,14 @@ public class DesensitizationJacksonAnnotationIntrospector extends JacksonAnnotat
             Desensitization desensitization = a.getAnnotation(Desensitization.class);
             if (desensitization != null) {
                 SensitiveType type = desensitization.value();
-                if (type != SensitiveType.CUSTOMER) {
+                if (type == SensitiveType.CUSTOMER) {
+                    log.debug("字段{}使用自定义脱敏序列化，脱敏起始位置: {}，脱敏截止位置: {}，遮罩字符: {}", a.getName(), desensitization.start(), desensitization.end(), desensitization.mask());
+                    return new DesensitizationJacksonSerializer(desensitization.start(), desensitization.end(), desensitization.mask());
+                } else {
                     JsonSerializer<String> serializer = serializerCache.get(type);
                     Assert.notNull(serializer, "No JsonSerializer for " + type);
                     log.debug("字段{}使用脱敏序列化，脱敏类型: {}，脱敏序列化器：{}", a.getName(), type, serializer);
                     return serializer;
-                } else {
-                    log.debug("字段{}使用自定义脱敏序列化，脱敏起始位置: {}，脱敏截止位置: {}，遮罩字符: {}", a.getName(), desensitization.start(), desensitization.end(), desensitization.mask());
-                    return new DesensitizationJacksonSerializer(desensitization.start(), desensitization.end(), desensitization.mask());
                 }
             }
         }
