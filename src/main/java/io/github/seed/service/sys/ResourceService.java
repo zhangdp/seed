@@ -92,7 +92,7 @@ public interface ResourceService {
                     n.setPath(bean.getPath());
                     n.setDescription(bean.getDescription());
                     // 菜单不是叶子节点
-                    n.setIsLeaf(bean.getType() != ResourceType.MENU.type());
+                    n.setIsLeaf(ResourceType.MENU.type().equals(bean.getType()));
                     return n;
                 })
                 .sorted(Comparator.comparingInt(ResourceTreeNode::getSorts))

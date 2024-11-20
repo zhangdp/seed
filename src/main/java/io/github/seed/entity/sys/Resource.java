@@ -34,11 +34,11 @@ public class Resource extends LogicBaseEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 资源类型 （1菜单 2按钮）
+     * 资源类型 （menu：菜单；button：按钮）
      */
     @NotNull(message = "类型不能为空")
-    @Schema(title = "资源类型", description = "1：菜单；2：按钮")
-    private Integer type;
+    @Schema(title = "资源类型", description = "menu：菜单；button：按钮")
+    private String type;
     /**
      * 名称
      */
