@@ -23,6 +23,7 @@
         <springdoc.version>2.6.0</springdoc.version>
         <spring-boot-admin-client.version>3.3.5</spring-boot-admin-client.version>
         <minio.version>8.5.13</minio.version>
+        <spring-ai.version>1.0.3</spring-ai.version>
     </properties>
 
     <dependencyManagement>
@@ -168,7 +169,25 @@
             <artifactId>minio</artifactId>
             <version>${minio.version}</version>
         </dependency>
-
+        <!--
+        <dependency>
+            <groupId>io.springboot.ai</groupId>
+            <artifactId>spring-ai-core</artifactId>
+            <version>${spring-ai.version}</version>
+        </dependency>
+        -->
+        <dependency>
+            <groupId>io.springboot.ai</groupId>
+            <artifactId>spring-ai-ollama-spring-boot-starter</artifactId>
+            <version>${spring-ai.version}</version>
+        </dependency>
+        <!--
+        <dependency>
+            <groupId>io.springboot.ai</groupId>
+            <artifactId>spring-ai-ollama-spring-boot-starter</artifactId>
+            <version>${spring-ai.version}</version>
+        </dependency>
+        -->
 
     </dependencies>
 

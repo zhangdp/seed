@@ -68,6 +68,13 @@ spring:
       keepalive-time: 180000
       max-lifetime: 7200000
       connection-timeout: 10000
+  ai:
+    ollama:
+      base-url: ${OLLAMA_URL:http://localhost:11434}
+      chat:
+        enabled: true
+        options:
+          model: ${OLLAMA_CHAT_MODEL:qwen2.5:3b}
 management:
   endpoint:
     health:
