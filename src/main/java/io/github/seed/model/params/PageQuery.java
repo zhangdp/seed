@@ -19,7 +19,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@Schema(description = "分页查询入参")
+@Schema(title = "分页查询入参")
 public class PageQuery<T extends Serializable> extends BasePageQuery implements Serializable {
 
     @Serial

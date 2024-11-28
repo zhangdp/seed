@@ -19,7 +19,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "key-value对象")
+@Schema(title = "key-value对象")
 public class KevValue<T> implements Serializable {
 
     @Serial

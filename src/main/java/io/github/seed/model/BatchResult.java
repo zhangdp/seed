@@ -2,6 +2,7 @@ package io.github.seed.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -18,7 +19,8 @@ import java.util.List;
  * @since 1.0.0
  */
 @Data
-@Schema(description = "批量处理结果")
+@Accessors(chain = true)
+@Schema(title = "批量处理结果")
 public class BatchResult implements Serializable {
 
     @Serial

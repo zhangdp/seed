@@ -17,7 +17,7 @@ import java.util.List;
  */
 @Data
 @Accessors(chain = true)
-@Schema(description = "分页数据")
+@Schema(title = "分页数据")
 public class PageData<T> implements Serializable {
 
     @Serial

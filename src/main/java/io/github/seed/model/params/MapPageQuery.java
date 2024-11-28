@@ -20,7 +20,7 @@ import java.util.Map;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@Schema(description = "map作为参数的分页查询对象")
+@Schema(title = "map作为参数的分页查询对象")
 @Deprecated
 public class MapPageQuery extends BasePageQuery implements Serializable {
 

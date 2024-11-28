@@ -26,7 +26,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @TableName(TableNameConst.SYS_CONFIG)
-@Schema(description = "系统配置")
+@Schema(title = "系统配置")
 public class Config extends LogicBaseEntity implements Serializable {
 
     @Serial

@@ -16,7 +16,7 @@ import java.io.Serializable;
  */
 @Data
 @Accessors(chain = true)
-@Schema(description = "登录结果")
+@Schema(title = "登录结果")
 public class LoginResult implements Serializable {
 
     @Serial

@@ -28,7 +28,7 @@ import java.time.LocalDate;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @TableName(TableNameConst.SYS_USER)
-@Schema(description = "用户")
+@Schema(title = "用户")
 public class User extends LogicBaseEntity implements Serializable {
 
     @Serial

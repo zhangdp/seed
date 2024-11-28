@@ -23,7 +23,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @TableName(TableNameConst.SYS_DICT_DATA)
-@Schema(description = "字典数据")
+@Schema(title = "字典数据")
 public class DictData extends LogicBaseEntity implements Serializable {
 
     @Serial

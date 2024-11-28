@@ -23,7 +23,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @TableName(TableNameConst.SYS_ROLE)
-@Schema(description = "角色")
+@Schema(title = "角色")
 public class Role extends LogicBaseEntity implements Serializable {
 
     @Serial

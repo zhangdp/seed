@@ -27,7 +27,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @TableName(TableNameConst.SYS_RESOURCE)
-@Schema(description = "资源")
+@Schema(title = "资源")
 public class Resource extends LogicBaseEntity implements Serializable {
 
     @Serial

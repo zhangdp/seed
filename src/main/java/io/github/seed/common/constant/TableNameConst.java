@@ -71,5 +71,8 @@ public interface TableNameConst {
      * 操作日志表
      */
     String LOG_OPERATION = "operation" + SPLIT + SUFFIX_LOG;
-
+    /**
+     * ai聊天日志表
+     */
+    String AI_CHAT_LOG = "ai_chat" + SPLIT + SUFFIX_LOG;
 }

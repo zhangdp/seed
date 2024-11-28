@@ -28,7 +28,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @TableName(TableNameConst.SYS_DEPT)
-@Schema(description = "部门")
+@Schema(title = "部门")
 public class Dept extends LogicBaseEntity implements Serializable {
 
     @Serial

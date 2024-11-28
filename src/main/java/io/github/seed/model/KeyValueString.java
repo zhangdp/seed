@@ -20,7 +20,7 @@ import java.io.Serializable;
 @ToString(callSuper = true)
 @Accessors(chain = true)
 @NoArgsConstructor
-@Schema(description = "key-value(String类型)对象")
+@Schema(title = "key-value(String类型)对象")
 public class KeyValueString extends KevValue<String> implements Serializable {
 
     public KeyValueString(String key, String value) {

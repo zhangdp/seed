@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 @Data
 @Accessors(chain = true)
 @TableName(TableNameConst.LOG_OPERATION)
-@Schema(description = "操作日志")
+@Schema(title = "操作日志")
 public class OperationLog implements Serializable {
 
     @Serial
@@ -30,7 +30,7 @@ public class OperationLog implements Serializable {
     /**
      * 主键
      */
-    @TableId(type = IdType.AUTO)
+    @TableId
     @Schema(title = "id")
     private Long id;
     /**
