@@ -94,4 +94,18 @@ public interface Const {
      */
     String CHARSET = "UTF-8";
 
+    /**
+     * 连接超时
+     */
+    int CONNECT_TIMEOUT = 15000;
+
+    /**
+     * 读取超时
+     */
+    int READ_TIMEOUT = 30000;
+
+    /**
+     * 缓冲区大小
+     */
+    int BUFFER_SIZE = 8192;
 }

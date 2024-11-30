@@ -50,7 +50,7 @@ public class UserQuery implements Serializable {
      * 状态
      */
     @Schema(title = "性别")
-    private Character sex;
+    private Character gender;
     /**
      * 当前登录用户id
      */

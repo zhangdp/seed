@@ -125,16 +125,13 @@ public enum ErrorCode {
      */
     SYSTEM_PARAM_CAN_NOT_DELETE(20301, "系统级别的参数不允许删除"),
 
-    /**
-     * 3开头的错误码，错误来源是系统
-     */
-    SERVER_ERROR(30000, "系统错误"),
+    /// 3xxxx开头，错误来源是系统
     /**
      * 系统错误
      */
-    SYSTEM_ERROR(30001, "系统错误"),
+    SERVER_ERROR(30000, "系统错误"),
 
-    /// 4xxxx开头，中间件或者第三方导致的错误
+    /// 4xxxx开头，中间件的错误
     /**
      * 数据库错误
      */
@@ -143,19 +140,30 @@ public enum ErrorCode {
      * redis错误
      */
     REDIS_ERROR(40100, "Redis错误"),
+
+    /**
+     * MinIO错误
+     */
+    MINIO_ERROR(40200, "MinIO错误"),
+    /**
+     * MinIO不存在资源
+     */
+    MINIO_NOT_FOUND_ERROR(40201, "MinIO不存在资源"),
+
+    /// 5xxxx，错误来源是第三方接口或sdk
     /**
      * 第三方第三方接口出错
      */
-    EXTERNAL_API_ERROR(41000, "调用第三方接口出错"),
+    EXTERNAL_API_ERROR(5000, "调用第三方接口出错"),
     /**
      * 调用第三方SDK出错
      */
-    EXTERNAL_SDK_ERROR(41100, "调用第三方SDK出错"),
+    EXTERNAL_SDK_ERROR(50100, "调用第三方SDK出错"),
     /**
      * 查询IP地理位置失败
      */
-    SEARCH_IP_REGION_FAILED(41101, "查询IP地理位置失败"),
-    ;
+    SEARCH_IP_REGION_FAILED(41101, "查询IP地理位置失败");
+
     /**
      * 状态码
      */

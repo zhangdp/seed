@@ -3,6 +3,7 @@ package io.github.seed.common.config;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import io.github.seed.entity.BaseEntity;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.context.annotation.Bean;
@@ -49,8 +50,11 @@ public class MybatisPlusConfigurer {
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor() {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
-        // 乐观锁拦截器
+        // 乐观锁插件
         interceptor.addInnerInterceptor(new OptimisticLockerInnerInterceptor());
+        // 分页插件，需保证在最后一个
+        interceptor.addInnerInterceptor(new PaginationInnerInterceptor());
         return interceptor;
     }
+
 }

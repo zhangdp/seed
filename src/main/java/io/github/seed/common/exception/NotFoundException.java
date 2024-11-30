@@ -15,6 +15,22 @@ public class NotFoundException extends BizException {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    public NotFoundException() {
+        super(ErrorCode.NOT_FOUND);
+    }
+
+    public NotFoundException(Throwable cause) {
+        super(ErrorCode.NOT_FOUND, cause);
+    }
+
+    public NotFoundException(String message) {
+        super(ErrorCode.NOT_FOUND.code(), message);
+    }
+
+    public NotFoundException(String message, Throwable cause) {
+        super(ErrorCode.NOT_FOUND.code(), message, cause);
+    }
+
     public NotFoundException(int code, String message) {
         super(code, message);
     }

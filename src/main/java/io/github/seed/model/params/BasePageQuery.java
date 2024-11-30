@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -18,9 +19,10 @@ import java.io.Serializable;
  * @since 1.0.0
  */
 @Data
+@Accessors(chain = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "分页查询入参")
+@Schema(title = "分页查询入参")
 public class BasePageQuery implements Serializable {
 
     @Serial
@@ -41,7 +43,6 @@ public class BasePageQuery implements Serializable {
     protected Integer size = Const.PAGE_SIZE;
     /**
      * 排序
-     * todo 可能会有sql注入风险
      */
     @Schema(title = "排序", example = "create_time asc, id asc")
     protected String orderBy;

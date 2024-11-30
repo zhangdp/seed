@@ -40,7 +40,7 @@ public abstract class BaseEntity implements Serializable {
     /**
      * 主键
      */
-    @TableId(type = IdType.AUTO)
+    @TableId
     @Schema(title = "id", description = "修改时需传")
     @NotNull(message = "id不能为空", groups = ValidGroup.Update.class)
     protected Long id;

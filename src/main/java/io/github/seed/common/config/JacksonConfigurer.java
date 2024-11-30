@@ -8,6 +8,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
+import io.github.seed.common.component.DesensitizationJacksonAnnotationIntrospector;
 import io.github.seed.common.constant.Const;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -71,9 +72,13 @@ public class JacksonConfigurer {
      */
     @Bean
     @ConditionalOnMissingBean
-    public Jackson2ObjectMapperBuilderCustomizer customizer() {
-        log.info("自定义Jackson日期时间格式：LocalDate: {}, LocalTime: {}, LocalDateTime: {}", Const.DATE_FORMATTER, Const.TIME_FORMATTER, Const.DATETIME_FORMATTER);
-        return builder -> builder.modules(timeModule(Const.DATE_FORMATTER, Const.TIME_FORMATTER, Const.DATETIME_FORMATTER));
+    public Jackson2ObjectMapperBuilderCustomizer jackson2ObjectMapperBuilderCustomizer() {
+        return builder -> {
+            log.info("自定义Jackson日期时间格式：LocalDate: {}, LocalTime: {}, LocalDateTime: {}", Const.DATE_FORMATTER, Const.TIME_FORMATTER, Const.DATETIME_FORMATTER);
+            builder.modules(timeModule(Const.DATE_FORMATTER, Const.TIME_FORMATTER, Const.DATETIME_FORMATTER));
+            log.info("添加Jackson自定义脱敏注解处理器");
+            builder.annotationIntrospector(new DesensitizationJacksonAnnotationIntrospector());
+        };
     }
 
 }

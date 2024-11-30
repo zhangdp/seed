@@ -56,6 +56,8 @@ public class RedisConfigurer {
             config.registerModule(JacksonConfigurer.timeModule(Const.DATE_FORMATTER, Const.TIME_FORMATTER, Const.DATETIME_FORMATTER));
             // 配置忽略未知字段
             config.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            // 配置时间格式化
+            // config.setDateFormat(new SimpleDateFormat(Const.DATETIME_FORMATTER));
         });
         return jsonRedisSerializer;
     }

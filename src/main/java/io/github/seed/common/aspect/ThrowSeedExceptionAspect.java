@@ -1,6 +1,6 @@
 package io.github.seed.common.aspect;
 
-import io.github.seed.common.annotation.ThrowSeedException;
+import io.github.seed.common.annotation.ThrowBizException;
 import io.github.seed.common.enums.ErrorCode;
 import io.github.seed.common.exception.BizException;
 import lombok.extern.slf4j.Slf4j;
@@ -26,20 +26,20 @@ public class ThrowSeedExceptionAspect {
      *
      * @param joinPoint
      * @param throwing
-     * @param throwSeedException
+     * @param throwBizException
      */
-    @AfterThrowing(throwing = "throwing", value = "@annotation(throwSeedException)")
-    public void afterThrowing(JoinPoint joinPoint, Throwable throwing, ThrowSeedException throwSeedException) {
+    @AfterThrowing(throwing = "throwing", value = "@annotation(throwBizException)")
+    public void afterThrowing(JoinPoint joinPoint, Throwable throwing, ThrowBizException throwBizException) {
         if (log.isDebugEnabled()) {
             String method = joinPoint.getTarget().getClass().getName() + "." + joinPoint.getSignature().getName();
-            log.debug("SeedExceptionAspect afterThrowing: method={}, throwing={}", method, throwing.getClass().getName());
+            log.debug("SeedExceptionAspect afterThrowing: method={}, throwing={}, annotation={}", method, throwing.getClass().getName(), throwBizException);
         }
         BizException bizException;
         if (throwing instanceof BizException se) {
             bizException = se;
         } else {
-            ErrorCode errorCode = throwSeedException.value();
-            bizException = new BizException(errorCode.code(), StrUtil.defaultIfEmpty(throwSeedException.message(), errorCode.message()), throwing);
+            ErrorCode errorCode = throwBizException.value();
+            bizException = new BizException(errorCode.code(), StrUtil.defaultIfEmpty(throwBizException.message(), errorCode.message()), throwing);
         }
         throw bizException;
     }

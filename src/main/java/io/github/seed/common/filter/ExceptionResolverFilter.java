@@ -30,9 +30,7 @@ public class ExceptionResolverFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if (log.isDebugEnabled()) {
-            log.debug("ExceptionResolverFilter: {}", request.getRequestURI());
-        }
+        log.debug("ExceptionResolverFilter: {}", request.getRequestURI());
         try {
             filterChain.doFilter(request, response);
         } catch (Exception e) {

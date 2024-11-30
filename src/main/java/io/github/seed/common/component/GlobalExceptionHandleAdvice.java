@@ -69,8 +69,8 @@ public class GlobalExceptionHandleAdvice {
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public R<?> illegalArgumentException(IllegalArgumentException e, HttpServletRequest request) {
-        log.warn("非法异常：uri={}}", request.getRequestURI(), e);
-        return new R<>(ErrorCode.SYSTEM_ERROR.code(), ErrorCode.SYSTEM_ERROR.message() + ": " + e.getMessage());
+        log.warn("非法异常：uri={}", request.getRequestURI(), e);
+        return new R<>(ErrorCode.SERVER_ERROR.code(), ErrorCode.SERVER_ERROR.message() + ": " + e.getMessage());
     }
 
     /**

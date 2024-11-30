@@ -15,6 +15,22 @@ public class ForbiddenException extends BizException {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    public ForbiddenException() {
+        super(ErrorCode.FORBIDDEN);
+    }
+
+    public ForbiddenException(Throwable cause) {
+        super(ErrorCode.FORBIDDEN, cause);
+    }
+
+    public ForbiddenException(String message) {
+        super(ErrorCode.FORBIDDEN.code(), message);
+    }
+
+    public ForbiddenException(String message, Throwable cause) {
+        super(ErrorCode.FORBIDDEN.code(), message, cause);
+    }
+
     public ForbiddenException(int code, String message) {
         super(code, message);
     }

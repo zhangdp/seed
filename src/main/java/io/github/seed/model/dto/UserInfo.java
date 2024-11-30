@@ -2,7 +2,7 @@ package io.github.seed.model.dto;
 
 import io.github.seed.common.annotation.Desensitization;
 import io.github.seed.common.constant.Const;
-import io.github.seed.common.enums.DesensitizationType;
+import io.github.seed.common.enums.SensitiveType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -12,6 +12,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import org.dromara.hutool.core.regex.RegexPool;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.URL;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -67,14 +68,15 @@ public class UserInfo implements Serializable, UserDetails {
     @Schema(title = "密码")
     @NotBlank(message = "密码不能为空")
     @Length(min = 8, max = 32, message = "密码最少8位、最多32位字符")
-    @Desensitization(DesensitizationType.PASSWORD)
+    @Desensitization(SensitiveType.PASSWORD)
     private String password;
     /**
      * 手机号
      */
+    @Schema(title = "手机号")
     @NotBlank(message = "手机号不能为空")
     @Pattern(regexp = RegexPool.MOBILE, message = "手机号格式不正确")
-    // @Desensitization(DesensitizationType.MOBILE)
+    @Desensitization(SensitiveType.MOBILE)
     private String mobile;
     /**
      * 性别，F：女，M：男，null：未知
@@ -85,19 +87,20 @@ public class UserInfo implements Serializable, UserDetails {
      * 生日
      */
     @Schema(title = "生日", description = "格式：" + Const.DATETIME_FORMATTER)
-    @PastOrPresent(message = "生日需为过去日期")
+    @PastOrPresent(message = "生日需为过去的日期")
     private LocalDate birth;
     /**
      * 邮箱
      */
     @Schema(title = "邮箱")
     @Email(message = "邮箱格式不正确")
+    @Desensitization(SensitiveType.EMAIL)
     private String email;
     /**
      * 头像url地址
      */
     @Schema(title = "头像url地址")
-    @Email(message = "头像url地址格式不正确")
+    @URL(message = "头像url地址格式不正确")
     private String avatarUrl;
     /**
      * 姓名
@@ -116,7 +119,7 @@ public class UserInfo implements Serializable, UserDetails {
      */
     @Schema(title = "身份证号")
     @Pattern(regexp = RegexPool.CITIZEN_ID, message = "身份证号码不正确")
-    // @Desensitization(DesensitizationType.CITIZEN_ID)
+    @Desensitization(SensitiveType.CITIZEN_ID)
     private String citizenId;
     /**
      * 部门id

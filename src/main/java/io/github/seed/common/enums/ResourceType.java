@@ -11,19 +11,19 @@ public enum ResourceType {
     /**
      * 菜单
      */
-    MENU(1),
+    MENU("menu"),
     /**
      * 按钮
      */
-    BUTTON(2);
+    BUTTON("button");
 
-    private final int type;
+    private final String type;
 
-    ResourceType(int type) {
+    ResourceType(String type) {
         this.type = type;
     }
 
-    public int type() {
+    public String type() {
         return this.type;
     }
 }

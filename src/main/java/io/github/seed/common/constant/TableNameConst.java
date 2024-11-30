@@ -18,9 +18,9 @@ public interface TableNameConst {
      */
     String PREFIX_SYS = "sys";
     /**
-     * 前缀-log日志表
+     * 后缀-log日志表
      */
-    String PREFIX_LOG = "log";
+    String SUFFIX_LOG = "log";
 
     /**
      * 用户表
@@ -41,10 +41,38 @@ public interface TableNameConst {
     /**
      * 字典表
      */
+    String SYS_DICT = PREFIX_SYS + SPLIT + "dict";
+    /**
+     * 字典数据表
+     */
     String SYS_DICT_DATA = PREFIX_SYS + SPLIT + "dict_data";
     /**
      * 角色表
      */
-    String SYS_ROLE = PREFIX_SYS + SPLIT + "sys_role";
+    String SYS_ROLE = PREFIX_SYS + SPLIT + "role";
+    /**
+     * 角色-资源关联表
+     */
+    String SYS_ROLE_RESOURCE = PREFIX_SYS + SPLIT + "role_resource";
+    /**
+     * 用户-角色关联表
+     */
+    String SYS_USER_ROLE = PREFIX_SYS + SPLIT + "user_role";
+    /**
+     * 文件信息
+     */
+    String SYS_FILE_INFO = PREFIX_SYS + SPLIT + "file_info";
 
+    /**
+     * 登录日志表
+     */
+    String LOGIN_LOG = "login" + SPLIT + SUFFIX_LOG;
+    /**
+     * 操作日志表
+     */
+    String LOG_OPERATION = "operation" + SPLIT + SUFFIX_LOG;
+    /**
+     * ai聊天日志表
+     */
+    String AI_CHAT_LOG = "ai_chat" + SPLIT + SUFFIX_LOG;
 }

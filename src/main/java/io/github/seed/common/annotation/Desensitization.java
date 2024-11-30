@@ -1,9 +1,6 @@
 package io.github.seed.common.annotation;
 
-import com.fasterxml.jackson.annotation.JacksonAnnotationsInside;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import io.github.seed.common.component.DesensitizationSerializer;
-import io.github.seed.common.enums.DesensitizationType;
+import io.github.seed.common.enums.SensitiveType;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -18,8 +15,8 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-@JacksonAnnotationsInside
-@JsonSerialize(using = DesensitizationSerializer.class)
+// @JacksonAnnotationsInside
+// @JsonSerialize(using = DesensitizationSerializer.class)
 public @interface Desensitization {
 
     /**
@@ -27,24 +24,26 @@ public @interface Desensitization {
      *
      * @return
      */
-    DesensitizationType value();
+    SensitiveType value() default SensitiveType.CUSTOMER;
 
     /**
-     * 脱敏开始位置（包含）
+     * 脱敏开始位置（包含），只有CUSTOMER类型生效
      *
      * @return
      */
     int start() default -1;
 
     /**
-     * 脱敏结束位置（不包含）
+     * 脱敏结束位置（不包含），只有CUSTOMER类型生效
      *
      * @return
      */
     int end() default -1;
+
     /**
-     * 替换字符
+     * 遮罩字符，默认*，只有CUSTOMER类型生效
+     *
      * @return
      */
-    // char mask() default '*';
+    char mask() default '*';
 }

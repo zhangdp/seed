@@ -19,7 +19,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@Schema(description = "分页查询入参")
+@Schema(title = "分页查询入参")
 public class PageQuery<T extends Serializable> extends BasePageQuery implements Serializable {
 
     @Serial
@@ -31,5 +31,11 @@ public class PageQuery<T extends Serializable> extends BasePageQuery implements 
     @Schema(title = "查询参数")
     @Valid
     private T params;
+
+    public PageQuery(int page, int size, T params) {
+        this.page = page;
+        this.size = size;
+        this.params = params;
+    }
 
 }
