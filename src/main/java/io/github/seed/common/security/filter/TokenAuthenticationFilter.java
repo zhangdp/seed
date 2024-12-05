@@ -20,7 +20,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 /**
- * spring security解析jwt token过滤器
+ * spring security解析token过滤器
  *
  * @author zhangdp
  * @since 2024/1/5
