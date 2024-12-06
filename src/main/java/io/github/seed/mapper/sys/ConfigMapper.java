@@ -55,4 +55,13 @@ public interface ConfigMapper extends BaseMapper<Config> {
         List<Config> list = this.selectList(page, wrappers);
         return new PageData<>(list, page.getTotal(), page.getPages(), page.getSize());
     }
+
+    /**
+     * 查询列表
+     *
+     * @return
+     */
+    default List<Config> selectList() {
+        return this.selectList(Wrappers.lambdaQuery(Config.class).orderByAsc(Config::getId));
+    }
 }

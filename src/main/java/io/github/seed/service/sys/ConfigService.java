@@ -5,6 +5,8 @@ import io.github.seed.model.PageData;
 import io.github.seed.model.params.BaseQueryParams;
 import io.github.seed.model.params.PageQuery;
 
+import java.util.List;
+
 /**
  * 2023/4/12 系统参数service
  *
@@ -20,23 +22,6 @@ public interface ConfigService {
      * @return
      */
     Config getByKey(String key);
-
-    /**
-     * 根据key获取值
-     *
-     * @param key
-     * @return
-     */
-    String getValue(String key);
-
-    /**
-     * 根据key获取值，如果不存在则使用传入的默认值
-     *
-     * @param key
-     * @param defaultValue
-     * @return
-     */
-    String getValue(String key, String defaultValue);
 
     /**
      * 新增
@@ -60,7 +45,7 @@ public interface ConfigService {
      * @param id
      * @return
      */
-    boolean delete(Long id);
+    Config delete(Long id);
 
     /**
      * 分页查询
@@ -69,4 +54,24 @@ public interface ConfigService {
      * @return
      */
     PageData<Config> queryPage(PageQuery<BaseQueryParams> pageQuery);
+
+    /**
+     * 获取所有列表
+     *
+     * @return
+     */
+    List<Config> listAll();
+
+    /**
+     * 清理某个key的缓存
+     *
+     * @param key
+     */
+    void clearCache(String key);
+
+    /**
+     * 清理全部缓存
+     */
+    void clearAllCache();
+
 }

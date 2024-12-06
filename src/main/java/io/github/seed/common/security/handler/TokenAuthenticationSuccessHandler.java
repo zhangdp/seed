@@ -2,11 +2,12 @@ package io.github.seed.common.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.seed.common.R;
+import io.github.seed.common.security.data.RefreshToken;
 import io.github.seed.common.security.service.TokenService;
 import io.github.seed.common.util.WebUtils;
 import io.github.seed.common.security.data.LoginResult;
 import io.github.seed.common.security.data.LoginUser;
-import io.github.seed.common.security.data.TokenInfo;
+import io.github.seed.common.security.data.AccessToken;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -37,11 +38,14 @@ public class TokenAuthenticationSuccessHandler implements AuthenticationSuccessH
         log.debug("TokenAuthenticationSuccessHandler: {}", authentication);
         LoginUser user = (LoginUser) authentication.getPrincipal();
         // 生成token信息
-        TokenInfo tokenInfo = tokenService.createToken(user);
+        AccessToken accessToken = tokenService.createToken(user);
         LoginResult loginResult = new LoginResult();
-        loginResult.setAccessToken(tokenInfo.getAccessToken());
-        loginResult.setRefreshToken(tokenInfo.getRefreshToken());
-        loginResult.setExpiresIn(tokenInfo.getAccessTokenExpiresIn());
+        loginResult.setAccessToken(accessToken.getToken());
+        RefreshToken refreshToken = accessToken.getRefreshToken();
+        if (refreshToken != null) {
+            loginResult.setRefreshToken(refreshToken.getToken());
+        }
+        loginResult.setExpiresIn(accessToken.getExpiresIn());
         loginResult.setUserId(user.getId());
         loginResult.setUsername(user.getUsername());
         loginResult.setName(user.getName());

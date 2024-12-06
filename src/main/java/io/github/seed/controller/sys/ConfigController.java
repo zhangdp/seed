@@ -16,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * 2023/6/21 系统配置controller
  *
@@ -66,7 +68,7 @@ public class ConfigController {
     @Operation(summary = "删除配置", description = "根据id删除配置")
     @LogOperation(type = OperateType.DELETE, title = "删除配置", refModule = TableNameConst.SYS_CONFIG, refIdEl = "#id")
     public boolean delete(@PathVariable Long id) {
-        return configService.delete(id);
+        return configService.delete(id) != null;
     }
 
     /**
@@ -79,6 +81,17 @@ public class ConfigController {
     @Operation(summary = "分页查询配置")
     public PageData<Config> queryPage(@RequestBody @Valid PageQuery<BaseQueryParams> pageQuery) {
         return configService.queryPage(pageQuery);
+    }
+
+    /**
+     * 获取所有配置列表
+     *
+     * @return
+     */
+    @PostMapping("/list")
+    @Operation(summary = "获取所有配置列表")
+    public List<Config> list() {
+        return configService.listAll();
     }
 
 }

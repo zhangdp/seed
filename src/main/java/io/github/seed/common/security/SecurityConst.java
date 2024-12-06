@@ -56,12 +56,48 @@ public interface SecurityConst {
      * redis key 分隔符
      */
     String REDIS_SPLIT = "::";
+
     /**
-     * redis 访问令牌key前缀
+     * 是否自动刷新访问令牌过期时间
      */
-    String REDIS_ACCESS_TOKEN_PREFIX = REDIS_PREFIX + REDIS_SPLIT + "access";
+    boolean IS_AUTO_RENEW = true;
+    /**
+     * 是否启动刷新token
+     */
+    boolean ENABLE_REFRESH_TOKEN = true;
+
     /**
      * 访问令牌过期时间配置key
      */
-    String ACCESS_TOKEN_TTL_PARAM_KEY = "ACCESS_TOKEN_TTL";
+    String ACCESS_TOKEN_TTL_CONFIG_KEY = "ACCESS_TOKEN_TTL";
+    /**
+     * 刷新令牌过期时间配置key
+     */
+    String REFRESH_TOKEN_TTL_CONFIG_KEY = "REFRESH_TOKEN_TTL";
+    /**
+     * 是否自动刷新令牌过期时间配置key
+     */
+    String IS_AUTO_RENEW_CONFIG_KEY = "IS_AUTO_RENEW";
+    /**
+     * 是否启动刷新令牌配置key
+     */
+    String ENABLE_REFRESH_TOKEN_CONFIG_KEY = "ENABLE_REFRESH_TOKEN";
+
+    /**
+     * redis 访问令牌key前缀
+     */
+    String REDIS_ACCESS_TOKEN_PREFIX = REDIS_PREFIX + REDIS_SPLIT + "access_token";
+    /**
+     * redis 用户-访问令牌key前缀
+     */
+    String REDIS_USER_TO_ACCESS_PREFIX = REDIS_PREFIX + REDIS_SPLIT + "user_to_access";
+    /**
+     * redis 刷新令牌key前缀
+     */
+    String REDIS_REFRESH_TOKEN_PREFIX = REDIS_PREFIX + REDIS_SPLIT + "refresh_token";
+    /**
+     * redis 访问令牌-刷新令牌key前缀
+     */
+    String REDIS_ACCESS_TO_REFRESH_PREFIX = REDIS_PREFIX + REDIS_SPLIT + "access_to_refresh";
+
 }
