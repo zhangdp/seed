@@ -35,10 +35,12 @@ public class LoginResult implements Serializable {
     /**
      * 刷新令牌
      */
+    @Schema(title = "刷新令牌")
     private String refreshToken;
     /**
-     * 剩余访问令牌有效期，单位：秒
+     * 访问令牌剩余有效期，单位：秒
      */
+    @Schema(title = "访问令牌剩余有效期", description = "单位：秒")
     private Integer expiresIn;
     /**
      * 用户id
@@ -58,6 +60,6 @@ public class LoginResult implements Serializable {
     /**
      * 名称
      */
-    @Schema(title = "名称")
+    @Schema(title = "用户名称")
     private String name;
 }
