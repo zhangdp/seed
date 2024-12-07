@@ -7,32 +7,37 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * 2024/6/28 令牌信息
+ * 2024/12/6 刷新令牌
  *
  * @author zhangdp
  * @since 1.0.0
  */
 @Data
 @Accessors(chain = true)
-public class TokenInfo implements Serializable {
+public class RefreshToken implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     /**
+     * 刷新令牌
+     */
+    private String token;
+    /**
      * 访问令牌
      */
     private String accessToken;
     /**
-     * 刷新令牌
+     * 剩余有效时间（秒）
      */
-    private String refreshToken;
+    private int expiresIn;
     /**
-     * 访问令牌剩余有效时间（秒）
+     * 签发时间
      */
-    private Integer accessTokenExpiresIn;
+    private long issuedAt;
     /**
-     * 刷新令牌剩余有效时间（秒）
+     * 用户
      */
-    private Integer refreshTokenExpiresIn;
+    private String username;
+
 }

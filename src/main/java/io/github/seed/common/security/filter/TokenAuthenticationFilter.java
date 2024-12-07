@@ -20,7 +20,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 /**
- * spring security解析jwt token过滤器
+ * spring security解析token过滤器
  *
  * @author zhangdp
  * @since 2024/1/5
@@ -38,7 +38,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         log.debug("TokenAuthenticationFilter: {}", request.getRequestURI());
         String token = SecurityUtils.resolveToken(request);
         if (StrUtil.isNotBlank(token)) {
-            UserDetails userDetails = tokenService.loadPrincipal(token);
+            UserDetails userDetails = tokenService.loadUserDetails(token);
             if (userDetails != null) {
                 Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 SecurityContext context = SecurityContextHolder.getContext();
@@ -46,7 +46,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                 // 保存context用于sse等异步
                 repository.saveContext(context, request, response);
                 // 重置token过期时间
-                tokenService.resetTokenExpireIn(token);
+                tokenService.resetTokenExpireIfNecessary(token, userDetails);
             }
         }
         filterChain.doFilter(request, response);
