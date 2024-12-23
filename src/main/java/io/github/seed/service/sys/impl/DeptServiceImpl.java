@@ -40,8 +40,8 @@ public class DeptServiceImpl implements DeptService {
         }
         List<DeptTreeNode> treeList = list.stream().map(d -> {
             DeptTreeNode tn = new DeptTreeNode();
-            tn.setId(d.getId());
-            tn.setParentId(d.getParentId());
+            tn.setValue(d.getId());
+            tn.setParent(d.getParentId());
             tn.setLabel(d.getName());
             tn.setSorts(d.getSorts());
             return tn;

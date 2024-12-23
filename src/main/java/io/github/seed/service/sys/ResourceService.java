@@ -81,8 +81,9 @@ public interface ResourceService {
         List<ResourceTreeNode> treeList = coll.stream()
                 .map(bean -> {
                     ResourceTreeNode n = new ResourceTreeNode();
-                    n.setId(bean.getId());
-                    n.setParentId(bean.getParentId());
+                    n.setValue(bean.getId());
+                    n.setParent(bean.getParentId());
+                    n.setDescription(bean.getDescription());
                     n.setLabel(bean.getName());
                     n.setSorts(bean.getSorts());
                     n.setPermission(bean.getPermission());

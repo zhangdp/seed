@@ -30,7 +30,7 @@ public class TreeUtils {
         if (list == null || list.isEmpty()) {
             return Collections.emptyList();
         }
-        Map<K, List<T>> map = list.stream().collect(Collectors.groupingBy(TreeNode::getParentId));
+        Map<K, List<T>> map = list.stream().collect(Collectors.groupingBy(TreeNode::getParent));
         return findChildren(map, rootId);
     }
 
@@ -48,9 +48,9 @@ public class TreeUtils {
         if (list != null && !list.isEmpty()) {
             // 循环递归寻找孩子节点
             for (T node : list) {
-                List<T> tmp = findChildren(map, node.getId());
+                List<T> tmp = findChildren(map, node.getValue());
                 int size = tmp.size();
-                // T不匹配TreeNode<K>，无法直接set列表，只能一个个添加
+                // T不匹配TreeNode<K>，无法直接批量设置列表，只能一个个添加
                 List<TreeNode<K>> children = new ArrayList<>(size);
                 node.setChildren(children);
                 if (size > 0) {
