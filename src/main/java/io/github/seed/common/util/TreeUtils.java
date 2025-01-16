@@ -21,17 +21,17 @@ public class TreeUtils {
      * 列表转树形结构
      *
      * @param list   列表
-     * @param rootId 根id
+     * @param root   根
      * @param <T>    节点类型，需继承TreeNode
      * @param <K>    根id类型
      * @return
      */
-    public static <T extends TreeNode<K>, K> List<T> listToTree(List<T> list, K rootId) {
+    public static <T extends TreeNode<K>, K> List<T> listToTree(List<T> list, K root) {
         if (list == null || list.isEmpty()) {
             return Collections.emptyList();
         }
         Map<K, List<T>> map = list.stream().collect(Collectors.groupingBy(TreeNode::getParent));
-        return findChildren(map, rootId);
+        return findChildren(map, root);
     }
 
     /**

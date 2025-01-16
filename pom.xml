@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.6</version>
+        <version>3.3.7</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>io.github</groupId>
@@ -17,9 +17,9 @@
     <properties>
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <hutool.version>6.0.0-M18</hutool.version>
+        <hutool.version>6.0.0-M19</hutool.version>
         <!-- <mybatis-starter.version>3.0.3</mybatis-starter.version> -->
-        <mybatis-plus.version>3.5.9</mybatis-plus.version>
+        <mybatis-plus.version>3.5.10.1</mybatis-plus.version>
         <springdoc.version>2.6.0</springdoc.version>
         <spring-boot-admin-client.version>3.3.6</spring-boot-admin-client.version>
         <minio.version>8.5.14</minio.version>
@@ -130,10 +130,12 @@
             <groupId>org.dromara.hutool</groupId>
             <artifactId>hutool-http</artifactId>
         </dependency>
+        <!--
         <dependency>
             <groupId>org.dromara.hutool</groupId>
             <artifactId>hutool-json</artifactId>
         </dependency>
+        -->
         <!--
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>

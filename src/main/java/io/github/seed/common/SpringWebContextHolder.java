@@ -11,7 +11,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  * @author zhangdp
  * @since 1.0.0
  */
-public class SpringWebMvcContextHolder {
+public class SpringWebContextHolder {
 
     /**
      * 获取http request

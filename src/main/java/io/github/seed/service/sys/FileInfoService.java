@@ -1,6 +1,7 @@
 package io.github.seed.service.sys;
 
 import io.github.seed.entity.sys.FileInfo;
+import org.dromara.hutool.core.data.id.IdUtil;
 
 /**
  * 2024/11/8 文件信息service
@@ -27,9 +28,12 @@ public interface FileInfoService {
     FileInfo getByFileId(String fileId);
 
     /**
-     * 生成id
+     * 生成文件id
      *
      * @return
      */
-    String generateId();
+    default String generateId() {
+        // 雪花id
+        return IdUtil.getSnowflakeNextIdStr();
+    }
 }

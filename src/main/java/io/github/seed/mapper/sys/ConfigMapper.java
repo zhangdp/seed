@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import io.github.seed.common.util.MybatisPlusHelper;
+import io.github.seed.common.component.MybatisPlusHelper;
 import io.github.seed.entity.sys.Config;
 import io.github.seed.model.PageData;
 import io.github.seed.model.params.BaseQueryParams;

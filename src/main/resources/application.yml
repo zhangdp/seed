@@ -20,8 +20,8 @@ spring:
   jackson:
     deserialization:
       fail-on-unknown-properties: false
-    serialization:
-      write-dates-as-timestamps: true
+    # serialization:
+      # write-dates-as-timestamps: true
     date-format: yyyy-MM-dd HH:mm:ss
   task:
     execution:

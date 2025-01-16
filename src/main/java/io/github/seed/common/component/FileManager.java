@@ -14,9 +14,9 @@ import lombok.SneakyThrows;
 import org.dromara.hutool.core.bean.BeanUtil;
 import org.dromara.hutool.core.io.IoUtil;
 import org.dromara.hutool.core.net.url.UrlEncoder;
-import org.dromara.hutool.core.text.StrUtil;
 import org.dromara.hutool.crypto.SecureUtil;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
@@ -46,6 +46,7 @@ public class FileManager {
      * @return
      */
     @SneakyThrows
+    @Transactional(rollbackFor = Exception.class)
     public FileInfoDto doUpload(MultipartFile file, Long uploadUserId) {
         LocalDateTime now = LocalDateTime.now();
         long ttl = fileProperties.getExpires().toMillis();
@@ -72,7 +73,7 @@ public class FileManager {
         entity.setExpireTime(expireTime);
         fileInfoService.add(entity);
 
-        // 保存
+        // 保存文件
         fileTemplate.upload(file.getInputStream(), remotePath);
 
         FileInfoDto dto = new FileInfoDto();
@@ -143,7 +144,7 @@ public class FileManager {
      * @return
      */
     public String getFilenameExtension(String fileName, boolean includeDot) {
-        int index = fileName.lastIndexOf(".");
+        int index = fileName.lastIndexOf('.');
         // 没有后缀时返回空字符串，如果第一个字符是.不是表示后缀而是表示隐藏文件如.gitignore文件是隐藏文件且后缀是空
         if (index <= 0) {
             return "";

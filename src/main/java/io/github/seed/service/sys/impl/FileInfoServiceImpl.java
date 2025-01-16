@@ -6,7 +6,6 @@ import io.github.seed.entity.sys.FileInfo;
 import io.github.seed.mapper.sys.FileInfoMapper;
 import io.github.seed.service.sys.FileInfoService;
 import lombok.RequiredArgsConstructor;
-import org.dromara.hutool.core.data.id.IdUtil;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -28,14 +27,9 @@ public class FileInfoServiceImpl implements FileInfoService {
     private final FileInfoMapper fileInfoMapper;
 
     @Override
-    public String generateId() {
-        return IdUtil.getSnowflakeNextIdStr();
-    }
-
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean add(FileInfo fileInfo) {
-        if (fileInfo.getFileId() == null) {
+        if (fileInfo.getFileId() == null || fileInfo.getFileId().isEmpty()) {
             fileInfo.setFileId(this.generateId());
         }
         if (fileInfo.getUploadTime() == null) {

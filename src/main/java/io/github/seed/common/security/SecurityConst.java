@@ -41,6 +41,10 @@ public interface SecurityConst {
      */
     String LOGOUT_URL = AUTH_URL + "/logout";
     /**
+     * 刷新token url
+     */
+    String REFRESH_TOKEN_URL = "/refresh";
+    /**
      * 访问令牌有效期
      */
     int ACCESS_TOKEN_TTL = 30 * 60;

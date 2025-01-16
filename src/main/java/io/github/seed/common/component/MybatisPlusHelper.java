@@ -1,7 +1,6 @@
-package io.github.seed.common.util;
+package io.github.seed.common.component;
 
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
-import org.dromara.hutool.core.text.StrUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,24 +32,24 @@ public class MybatisPlusHelper {
      * @return
      */
     public static List<OrderItem> toOrderItems(String orderBy, String defaultOrderBy) {
-        String ob = StrUtil.isBlank(orderBy) ? defaultOrderBy : orderBy;
-        if (StrUtil.isBlank(ob)) {
+        String ob = orderBy == null || (orderBy = orderBy.trim()).isEmpty() ? defaultOrderBy : orderBy;
+        if (ob == null || (ob = ob.trim()).isEmpty()) {
             return Collections.emptyList();
         }
-        String[] orders = ob.split(",");
+        String[] orders = ob.replaceAll("\\s+", " ").split(",");
         List<OrderItem> orderItems = new ArrayList<>(orders.length);
         for (String order : orders) {
-            if (StrUtil.isBlank(order)) {
+            if (order == null || (order = order.trim()).isEmpty()) {
                 continue;
             }
-            String[] arr = order.trim().split(" ");
+            String[] arr = order.split(" ");
             String column = arr[0].trim();
             if (column.isEmpty()) {
                 continue;
             }
             OrderItem item = new OrderItem();
             item.setColumn(column);
-            if (arr.length > 1 && StrUtil.containsIgnoreCase(arr[1], "desc")) {
+            if (arr.length > 1 && arr[1].toUpperCase().contains("DESC")) {
                 item.setAsc(false);
             }
             orderItems.add(item);

@@ -26,29 +26,32 @@ import java.util.Map;
 public class SpringContextHolder implements BeanFactoryPostProcessor, ApplicationContextAware, DisposableBean {
 
     private static ConfigurableListableBeanFactory beanFactory;
-    private static ApplicationContext applicationContext = null;
+    private static ApplicationContext applicationContext;
 
     /**
-     * 取得存储在静态变量中的ApplicationContext.
+     * 获取上下文ApplicationContext.
+     *
+     * @return
      */
     public static ApplicationContext getApplicationContext() {
         return applicationContext;
     }
 
     /**
-     * 实现ApplicationContextAware接口, 注入Context到静态变量中.
+     * 获取bean工厂
+     *
+     * @return
      */
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) {
-        SpringContextHolder.applicationContext = applicationContext;
-    }
-
     public static ListableBeanFactory getBeanFactory() {
         return null == beanFactory ? applicationContext : beanFactory;
     }
 
     /**
-     * 从静态变量applicationContext中取得Bean, 自动转型为所赋值对象的类型.
+     * 从applicationContext中取得指定类型的Bean
+     *
+     * @param name
+     * @param <T>
+     * @return
      */
     @SuppressWarnings("unchecked")
     public static <T> T getBean(String name) {
@@ -56,14 +59,14 @@ public class SpringContextHolder implements BeanFactoryPostProcessor, Applicatio
     }
 
     /**
-     * 从静态变量applicationContext中取得Bean, Map<Bean名称，实现类></>
+     * 根据类型获取多个Bean, Map<Bean名称，实现类></>
      */
     public static <T> Map<String, T> getBeansOfType(Class<T> type) {
         return getBeanFactory().getBeansOfType(type);
     }
 
     /**
-     * 从静态变量applicationContext中取得Bean, 自动转型为所赋值对象的类型.
+     * 根据类型获取单个Bean
      */
     public static <T> T getBean(Class<T> requiredType) {
         return getBeanFactory().getBean(requiredType);
@@ -90,7 +93,17 @@ public class SpringContextHolder implements BeanFactoryPostProcessor, Applicatio
     }
 
     /**
-     * BeanFactoryPostProcessor, 注入Context到静态变量中.
+     * 实现ApplicationContextAware接口, 注入Context到静态变量中.
+     *
+     * @param applicationContext
+     */
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        SpringContextHolder.applicationContext = applicationContext;
+    }
+
+    /**
+     * 实现BeanFactoryPostProcessor接口, 注入Context到静态变量中.
      */
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory factory) throws BeansException {

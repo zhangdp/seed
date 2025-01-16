@@ -1,6 +1,6 @@
 package io.github.seed.common.aspect;
 
-import io.github.seed.common.SpringWebMvcContextHolder;
+import io.github.seed.common.SpringWebContextHolder;
 import io.github.seed.common.annotation.LogOperation;
 import io.github.seed.common.data.OperateLogEvent;
 import io.github.seed.common.security.SecurityUtils;
@@ -80,7 +80,7 @@ public class LogOperateAspect {
             if (!hasError || logOperation.logIfError()) {
                 LocalDateTime endTime = LocalDateTime.now();
                 try {
-                    HttpServletRequest request = Objects.requireNonNull(SpringWebMvcContextHolder.getRequest());
+                    HttpServletRequest request = Objects.requireNonNull(SpringWebContextHolder.getRequest());
                     OperateLogEvent event = new OperateLogEvent(point);
                     // 结果必须可序列化
                     if (logOperation.logResult() && result instanceof Serializable s) {

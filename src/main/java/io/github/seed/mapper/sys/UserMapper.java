@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.github.seed.common.constant.TableNameConst;
-import io.github.seed.common.util.MybatisPlusHelper;
+import io.github.seed.common.component.MybatisPlusHelper;
 import io.github.seed.entity.sys.User;
 import io.github.seed.model.PageData;
 import io.github.seed.model.dto.UserInfo;

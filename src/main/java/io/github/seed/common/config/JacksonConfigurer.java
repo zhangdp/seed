@@ -1,6 +1,5 @@
 package io.github.seed.common.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -12,8 +11,6 @@ import io.github.seed.common.component.DesensitizationJacksonAnnotationIntrospec
 import io.github.seed.common.constant.Const;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -31,39 +28,37 @@ import java.time.format.DateTimeFormatter;
  * @since 1.0.0
  */
 @Configuration
-@ConditionalOnClass(ObjectMapper.class)
 @AutoConfigureBefore(JacksonAutoConfiguration.class)
 @Slf4j
 public class JacksonConfigurer {
 
     /**
-     * 时间格式化组件
+     * jackson jdk8时间格式化模块
      *
-     * @param dateFormatter
-     * @param timeFormatter
-     * @param dateTimeFormatter
      * @return
      */
-    public static JavaTimeModule timeModule(String dateFormatter, String timeFormatter, String dateTimeFormatter) {
+    @Bean
+    public JavaTimeModule javaTimeModule() {
         JavaTimeModule timeModule = new JavaTimeModule();
         // ======================= 时间序列化规则 ==============================
         timeModule.addSerializer(LocalDateTime.class,
-                new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(dateTimeFormatter)));
+                new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(Const.DATETIME_FORMATTER)));
         timeModule.addSerializer(LocalDate.class,
-                new LocalDateSerializer(DateTimeFormatter.ofPattern(dateFormatter)));
+                new LocalDateSerializer(DateTimeFormatter.ofPattern(Const.DATE_FORMATTER)));
         timeModule.addSerializer(LocalTime.class,
-                new LocalTimeSerializer(DateTimeFormatter.ofPattern(timeFormatter)));
+                new LocalTimeSerializer(DateTimeFormatter.ofPattern(Const.TIME_FORMATTER)));
 
         // ======================= 时间反序列化规则 ==============================
         timeModule.addDeserializer(LocalDateTime.class,
-                new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(dateTimeFormatter)));
+                new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(Const.DATETIME_FORMATTER)));
         timeModule.addDeserializer(LocalDate.class,
-                new LocalDateDeserializer(DateTimeFormatter.ofPattern(dateFormatter)));
+                new LocalDateDeserializer(DateTimeFormatter.ofPattern(Const.DATE_FORMATTER)));
         timeModule.addDeserializer(LocalTime.class,
-                new LocalTimeDeserializer(DateTimeFormatter.ofPattern(timeFormatter)));
+                new LocalTimeDeserializer(DateTimeFormatter.ofPattern(Const.TIME_FORMATTER)));
 
         return timeModule;
     }
+
 
     /**
      * 注册生效时间格式化组件
@@ -71,12 +66,11 @@ public class JacksonConfigurer {
      * @return
      */
     @Bean
-    @ConditionalOnMissingBean
-    public Jackson2ObjectMapperBuilderCustomizer jackson2ObjectMapperBuilderCustomizer() {
+    public Jackson2ObjectMapperBuilderCustomizer jackson2ObjectMapperBuilderCustomizer(JavaTimeModule javaTimeModule) {
         return builder -> {
-            log.info("自定义Jackson日期时间格式：LocalDate: {}, LocalTime: {}, LocalDateTime: {}", Const.DATE_FORMATTER, Const.TIME_FORMATTER, Const.DATETIME_FORMATTER);
-            builder.modules(timeModule(Const.DATE_FORMATTER, Const.TIME_FORMATTER, Const.DATETIME_FORMATTER));
-            log.info("添加Jackson自定义脱敏注解处理器");
+            // 自定义Jackson日期时间格式
+            builder.modules(javaTimeModule);
+            // 添加Jackson自定义脱敏注解处理器
             builder.annotationIntrospector(new DesensitizationJacksonAnnotationIntrospector());
         };
     }

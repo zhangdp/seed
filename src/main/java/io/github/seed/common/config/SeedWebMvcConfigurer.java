@@ -2,7 +2,6 @@ package io.github.seed.common.config;
 
 import io.github.seed.common.component.LoginUserArgumentResolver;
 import io.github.seed.common.constant.Const;
-import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
@@ -34,7 +33,7 @@ public class SeedWebMvcConfigurer implements WebMvcConfigurer {
      * @param registry
      */
     @Override
-    public void addFormatters(@NotNull FormatterRegistry registry) {
+    public void addFormatters(FormatterRegistry registry) {
         DateTimeFormatterRegistrar registrar = new DateTimeFormatterRegistrar();
         registrar.setTimeFormatter(DateTimeFormatter.ofPattern(Const.TIME_FORMATTER));
         registrar.setDateFormatter(DateTimeFormatter.ofPattern(Const.DATE_FORMATTER));
