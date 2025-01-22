@@ -1,4 +1,4 @@
-package io.github.seed.common;
+package io.github.seed.common.data;
 
 /**
  * 校验类型分组

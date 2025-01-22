@@ -1,6 +1,6 @@
 package io.github.seed.common.component;
 
-import io.github.seed.common.R;
+import io.github.seed.common.data.R;
 import io.github.seed.common.enums.ErrorCode;
 import io.github.seed.common.exception.BizException;
 import io.github.seed.common.exception.ForbiddenException;

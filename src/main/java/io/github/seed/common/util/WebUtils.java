@@ -169,11 +169,15 @@ public class WebUtils {
             response.setContentType("application/json");
             PrintWriter writer = response.getWriter();
             writer.write(json);
-            writer.flush();
             return true;
         } catch (IOException e) {
             log.error("response响应json出错, json={}", json, e);
             return false;
+        } finally {
+            try {
+                response.flushBuffer();
+            } catch (IOException ignored) {
+            }
         }
     }
 
@@ -391,10 +395,9 @@ public class WebUtils {
      * @return
      */
     public static long responseFile(HttpServletResponse response, InputStream in, String fileName, long fileSize, String contentType, boolean isInline) {
-        OutputStream out = null;
         try {
             responseDispositionHeader(response, fileName, contentType, fileSize, isInline);
-            out = response.getOutputStream();
+            OutputStream out = response.getOutputStream();
             int total = 0;
             int len;
             byte[] buf = new byte[8192];
@@ -402,17 +405,14 @@ public class WebUtils {
                 out.write(buf, 0, len);
                 total += len;
             }
-            response.flushBuffer();
             return total;
         } catch (IOException e) {
             log.error("response响应文件失败, fileName={}", fileName, e);
             return -1;
         } finally {
-            if (out != null) {
-                try {
-                    out.close();
-                } catch (IOException ignored) {
-                }
+            try {
+                response.flushBuffer();
+            } catch (IOException ignored) {
             }
             try {
                 in.close();

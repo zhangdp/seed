@@ -4,9 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.seed.entity.sys.Config;
 import io.github.seed.service.sys.ConfigService;
+import lombok.RequiredArgsConstructor;
 import org.dromara.hutool.core.cache.impl.TimedCache;
 import org.dromara.hutool.core.lang.Assert;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
  * @since 1.0.0
  */
 @Component
+@RequiredArgsConstructor
 public class CacheableConfigHelper {
 
     private static final long TIMEOUT = 60000L;
@@ -24,12 +25,6 @@ public class CacheableConfigHelper {
 
     private final ConfigService configService;
     private final ObjectMapper objectMapper;
-
-    @Autowired
-    public CacheableConfigHelper(ConfigService configService, ObjectMapper objectMapper) {
-        this.configService = configService;
-        this.objectMapper = objectMapper;
-    }
 
     /**
      * 获取配置，会先从本地内存中缓存获取（缓存过期时间默认10秒）

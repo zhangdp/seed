@@ -17,7 +17,7 @@ public class ServiceEvent extends ApplicationEvent {
     /**
      * 事件类型
      */
-    private final String name;
+    private final String type;
     /**
      * 附加数据
      */
@@ -31,9 +31,9 @@ public class ServiceEvent extends ApplicationEvent {
      */
     private final LinkedHashMap<String, Object> params;
 
-    public ServiceEvent(Object source, String name, String tag, LinkedHashMap<String, Object> params, Object result) {
+    public ServiceEvent(Object source, String type, String tag, LinkedHashMap<String, Object> params, Object result) {
         super(source);
-        this.name = name;
+        this.type = type;
         this.tag = tag;
         this.params = params;
         this.result = result;

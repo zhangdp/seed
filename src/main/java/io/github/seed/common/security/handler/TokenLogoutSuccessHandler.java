@@ -1,7 +1,7 @@
 package io.github.seed.common.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.seed.common.R;
+import io.github.seed.common.data.R;
 import io.github.seed.common.security.SecurityUtils;
 import io.github.seed.common.security.service.TokenService;
 import io.github.seed.common.util.WebUtils;

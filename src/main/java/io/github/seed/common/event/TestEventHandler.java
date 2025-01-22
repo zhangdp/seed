@@ -1,6 +1,6 @@
 package io.github.seed.common.event;
 
-import io.github.seed.common.constant.EventNameConst;
+import io.github.seed.common.constant.EventConst;
 import io.github.seed.common.data.ServiceEvent;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -24,11 +24,11 @@ public class TestEventHandler {
      * @param event
      */
     @Async
-    @EventListener(condition = "#event.name == '" + EventNameConst.TEST + "'")
+    @EventListener(condition = "#event.type == '" + EventConst.TEST + "'")
     @SneakyThrows
     public void test(ServiceEvent event) {
         log.debug("测试事件处理: {}", event);
-        System.out.println(event.getName());
+        System.out.println(event.getType());
         System.out.println(event.getTag());
         System.out.println(event.getParams());
         System.out.println(event.getResult());

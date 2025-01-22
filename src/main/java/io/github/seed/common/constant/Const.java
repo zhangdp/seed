@@ -108,4 +108,9 @@ public interface Const {
      * 缓冲区大小
      */
     int BUFFER_SIZE = 8192;
+
+    /**
+     * el表达式返回结果变量名
+     */
+    String EL_RESULT = "result";
 }

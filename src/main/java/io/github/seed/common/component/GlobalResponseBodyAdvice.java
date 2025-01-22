@@ -1,7 +1,7 @@
 package io.github.seed.common.component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.seed.common.R;
+import io.github.seed.common.data.R;
 import io.github.seed.common.annotation.NoResponseAdvice;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;

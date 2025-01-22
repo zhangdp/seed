@@ -1,4 +1,4 @@
-package io.github.seed.common;
+package io.github.seed.common.util;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.context.request.RequestAttributes;

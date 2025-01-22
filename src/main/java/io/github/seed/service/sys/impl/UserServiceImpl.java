@@ -1,7 +1,7 @@
 package io.github.seed.service.sys.impl;
 
 import io.github.seed.common.annotation.PublishEvent;
-import io.github.seed.common.constant.EventNameConst;
+import io.github.seed.common.constant.EventConst;
 import io.github.seed.common.constant.TableNameConst;
 import io.github.seed.common.enums.ErrorCode;
 import io.github.seed.common.exception.BizException;
@@ -65,7 +65,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @PublishEvent(name = EventNameConst.ADD_USER)
+    @PublishEvent(value = EventConst.ADD_USER, condition = "#result == true")
     public boolean insert(User user) {
         Assert.isFalse(this.existsUsername(user.getUsername()), () -> new BizException(ErrorCode.USERNAME_REPEAT.code(), "账号" + user.getUsername() + "已存在"));
         if (user.getDeptId() != null) {
@@ -79,7 +79,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @PublishEvent(name = EventNameConst.UPDATE_USER, condition = "#result == true")
+    @PublishEvent(value = EventConst.UPDATE_USER, condition = "#result == true")
     public boolean update(User user) {
         Assert.isFalse(this.existsUsernameAndIdNot(user.getUsername(), user.getId()), () -> new BizException(ErrorCode.USERNAME_REPEAT.code(), "账号" + user.getUsername() + "已存在"));
         if (user.getDeptId() != null) {

@@ -19,7 +19,7 @@ public @interface PublishEvent {
      *
      * @return
      */
-    String name();
+    String value();
 
     /**
      * 是否执行条件，空表示无需判断即执行，spel表达式

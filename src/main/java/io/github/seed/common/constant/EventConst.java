@@ -6,7 +6,7 @@ package io.github.seed.common.constant;
  * @author zhangdp
  * @since 1.0.0
  */
-public interface EventNameConst {
+public interface EventConst {
 
     /**
      * 新增用户

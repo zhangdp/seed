@@ -1,6 +1,8 @@
 package io.github.seed.common.aspect;
 
-import io.github.seed.common.SpringWebContextHolder;
+import io.github.seed.common.constant.Const;
+import io.github.seed.common.util.SpELUtils;
+import io.github.seed.common.util.SpringWebContextHolder;
 import io.github.seed.common.annotation.LogOperation;
 import io.github.seed.common.data.OperateLogEvent;
 import io.github.seed.common.security.SecurityUtils;
@@ -16,9 +18,6 @@ import org.dromara.hutool.core.text.StrUtil;
 import org.dromara.hutool.http.server.servlet.ServletUtil;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.DefaultParameterNameDiscoverer;
-import org.springframework.expression.EvaluationContext;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
-import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 
 import java.io.Serializable;
@@ -40,10 +39,6 @@ public class LogOperateAspect {
      * 方法参数解析器
      */
     private final DefaultParameterNameDiscoverer parameterNameDiscoverer = new DefaultParameterNameDiscoverer();
-    /**
-     * spel表达式解析器
-     */
-    private final SpelExpressionParser spelExpressionParser = new SpelExpressionParser();
     /**
      * spring事件发布器
      */
@@ -118,7 +113,7 @@ public class LogOperateAspect {
                         event.setUserId(loginUser.getId());
                     }
                     if (StrUtil.isNotBlank(logOperation.refIdEl())) {
-                        EvaluationContext context = new StandardEvaluationContext();
+                        Map<String, Object> context = new LinkedHashMap<>();
                         Object[] args = point.getArgs();
                         MethodSignature signature = (MethodSignature) point.getSignature();
                         // 获取参数列表
@@ -127,11 +122,11 @@ public class LogOperateAspect {
                             for (int i = 0; i < argNames.length; i++) {
                                 String name = argNames[i];
                                 Object obj = args[i];
-                                context.setVariable(name, obj);
+                                context.put(name, obj);
                             }
                         }
-                        context.setVariable("result", result);
-                        Long refId = spelExpressionParser.parseExpression(logOperation.refIdEl()).getValue(context, Long.class);
+                        context.put(Const.EL_RESULT, result);
+                        Long refId = SpELUtils.parseExpression(logOperation.refIdEl(), context, Long.class);
                         event.setRefId(refId);
                     }
                     // 发出事件

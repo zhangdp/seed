@@ -1,6 +1,6 @@
 package io.github.seed.controller.sys;
 
-import io.github.seed.common.ValidGroup;
+import io.github.seed.common.data.ValidGroup;
 import io.github.seed.common.annotation.LogOperation;
 import io.github.seed.common.enums.OperateType;
 import io.github.seed.entity.sys.Dept;

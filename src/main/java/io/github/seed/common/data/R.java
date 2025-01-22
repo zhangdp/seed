@@ -1,4 +1,4 @@
-package io.github.seed.common;
+package io.github.seed.common.data;
 
 import io.github.seed.common.constant.Const;
 import io.github.seed.common.enums.ErrorCode;

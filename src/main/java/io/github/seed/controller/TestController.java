@@ -2,7 +2,7 @@ package io.github.seed.controller;
 
 import io.github.seed.common.annotation.LogOperation;
 import io.github.seed.common.annotation.PublishEvent;
-import io.github.seed.common.constant.EventNameConst;
+import io.github.seed.common.constant.EventConst;
 import io.github.seed.common.enums.OperateType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,7 +26,7 @@ public class TestController {
 
     @RequestMapping("/helloWorld")
     @LogOperation(type = OperateType.READ, title = "测试", refModule = "test", refIdEl = "#id")
-    @PublishEvent(name = EventNameConst.TEST)
+    @PublishEvent(EventConst.TEST)
     public Map<String, Object> helloWorld(String name, Long id, String[] args) {
         Map<String, Object> map = new HashMap<>();
         map.put("args", args);

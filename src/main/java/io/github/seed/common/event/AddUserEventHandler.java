@@ -1,6 +1,6 @@
 package io.github.seed.common.event;
 
-import io.github.seed.common.constant.EventNameConst;
+import io.github.seed.common.constant.EventConst;
 import io.github.seed.common.data.ServiceEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
@@ -23,7 +23,7 @@ public class AddUserEventHandler {
      * @param event
      */
     @Async
-    @EventListener(condition = "#event.name == '" + EventNameConst.ADD_USER + "'")
+    @EventListener(condition = "#event.type == '" + EventConst.ADD_USER + "'")
     public void addUserEvent(ServiceEvent event) {
         log.debug("Add user event: {}", event);
     }

@@ -1,10 +1,9 @@
 package io.github.seed.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import io.github.seed.common.ValidGroup;
+import io.github.seed.common.data.ValidGroup;
 import io.github.seed.common.constant.Const;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
