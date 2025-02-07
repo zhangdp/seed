@@ -60,8 +60,8 @@ public class SecurityConfigurer {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // 禁用httpBasic
                 .httpBasic(AbstractHttpConfigurer::disable)
-                // 默认账号密码登录
-                // .formLogin(AbstractHttpConfigurer::disable)
+                // 默认表单登录
+                .formLogin(AbstractHttpConfigurer::disable)
                 // 登出
                 .logout(c -> c.logoutUrl(SecurityConst.LOGOUT_URL).logoutSuccessHandler(tokenLogoutSuccessHandler))
                 .authorizeHttpRequests(req -> req

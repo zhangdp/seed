@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.7</version>
+        <version>3.3.8</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>io.github</groupId>
@@ -21,7 +21,7 @@
         <!-- <mybatis-starter.version>3.0.3</mybatis-starter.version> -->
         <mybatis-plus.version>3.5.10.1</mybatis-plus.version>
         <springdoc.version>2.6.0</springdoc.version>
-        <spring-boot-admin-client.version>3.3.6</spring-boot-admin-client.version>
+        <spring-boot-admin-client.version>3.4.1</spring-boot-admin-client.version>
         <minio.version>8.5.14</minio.version>
     </properties>
 

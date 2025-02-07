@@ -1,7 +1,6 @@
 package io.github.seed.common.util;
 
 import io.github.seed.model.TreeNode;
-import org.dromara.hutool.core.collection.ListUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,26 +36,21 @@ public class TreeUtils {
     /**
      * 递归查找孩子节点
      *
-     * @param map
-     * @param rootId
+     * @param parentMap
+     * @param parent
      * @param <T>
      * @param <K>
      * @return
      */
-    private static <T extends TreeNode<K>, K> List<T> findChildren(Map<K, List<T>> map, K rootId) {
-        List<T> list = map.getOrDefault(rootId, ListUtil.empty());
-        if (list != null && !list.isEmpty()) {
-            // 循环递归寻找孩子节点
-            for (T node : list) {
-                List<T> tmp = findChildren(map, node.getValue());
-                int size = tmp.size();
-                // T不匹配TreeNode<K>，无法直接批量设置列表，只能一个个添加
-                List<TreeNode<K>> children = new ArrayList<>(size);
-                node.setChildren(children);
-                if (size > 0) {
-                    children.addAll(tmp);
-                }
-            }
+    private static <T extends TreeNode<K>, K> List<T> findChildren(Map<K, List<T>> parentMap, K parent) {
+        List<T> list = parentMap.get(parent);
+        if (list == null || list.isEmpty()) {
+            return Collections.emptyList();
+        }
+        // 循环递归寻找孩子节点
+        for (T node : list) {
+            List<T> tmp = findChildren(parentMap, node.getValue());
+            node.setChildren(new ArrayList<>(tmp));
         }
         return list;
     }
