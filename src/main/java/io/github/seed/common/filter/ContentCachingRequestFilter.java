@@ -28,7 +28,7 @@ public class ContentCachingRequestFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull FilterChain filterChain) throws ServletException, IOException {
-        log.debug("ContentCachingRequestFilter in:{}", request.getRequestURI());
+        log.trace("ContentCachingRequestFilter in:{}", request.getRequestURI());
         HttpServletRequest req = request;
         // 不缓存上传文件请求防止过大内存溢出
         if (!ServletUtil.isMultipart(request) && req.getContentLengthLong() <= MAX_LENGTH) {

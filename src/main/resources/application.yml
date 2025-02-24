@@ -88,9 +88,6 @@ logging:
   level:
     root: info
     io.github.seed: debug
-springdoc:
-  api-docs:
-    enabled: true
 seed:
   file-storage:
     root-path: /upload
@@ -124,6 +121,8 @@ spring:
       on-profile: prod
 springdoc:
   api-docs:
+    enabled: false
+  swagger-ui:
     enabled: false
 logging:
   file:

@@ -437,4 +437,41 @@ public class WebUtils {
         return new String[]{null, null};
     }
 
+
+    /**
+     * 输出EventStream data类型数据
+     *
+     * @param response
+     * @param strData
+     */
+    public static void responseEventStreamData(HttpServletResponse response, String strData) {
+        responseEventStream(response, "data", strData);
+    }
+
+    /**
+     * 输出EventStream数据
+     *
+     * @param response
+     * @param type
+     * @param strData
+     */
+    @SneakyThrows
+    public static void responseEventStream(HttpServletResponse response, String type, String strData) {
+        PrintWriter writer = response.getWriter();
+        writer.write(type + ":" + strData + "\n\n");
+        writer.flush();
+    }
+
+    /**
+     * 设置EventStream头
+     *
+     * @param response
+     */
+    public static void setEventStreamHeader(HttpServletResponse response) {
+        response.setContentType("text/event-stream");
+        response.setHeader("Cache-Control", "no-cache");
+        response.setHeader("Connection", "keep-alive");
+        response.setCharacterEncoding(CHARSET);
+    }
+
 }

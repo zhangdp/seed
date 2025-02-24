@@ -35,7 +35,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        log.debug("TokenAuthenticationFilter: {}", request.getRequestURI());
+        log.trace("TokenAuthenticationFilter: {}", request.getRequestURI());
         String token = SecurityUtils.resolveToken(request);
         if (StrUtil.isNotBlank(token)) {
             UserDetails userDetails = tokenService.loadUserDetails(token);

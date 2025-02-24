@@ -88,9 +88,9 @@ public class ServiceEventAspect {
                     }
                 }
                 // 发布事件
-                ServiceEvent event = new ServiceEvent(joinPoint, annotation.name(), annotation.tag(), params, result);
+                ServiceEvent event = new ServiceEvent(joinPoint, annotation.value(), annotation.tag(), params, result);
                 applicationEventPublisher.publishEvent(event);
-                log.debug("发布事件：{}", event.getName());
+                log.debug("发布事件：{}", event);
             }
         } catch (Exception e) {
             log.error("EventAspect error: joinPoint={}, event={}", joinPoint, annotation, e);
