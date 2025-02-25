@@ -395,10 +395,10 @@ public class WebUtils {
      * @return
      */
     public static long responseFile(HttpServletResponse response, InputStream in, String fileName, long fileSize, String contentType, boolean isInline) {
-        try {
+        try (in) {
             responseDispositionHeader(response, fileName, contentType, fileSize, isInline);
             OutputStream out = response.getOutputStream();
-            int total = 0;
+            long total = 0;
             int len;
             byte[] buf = new byte[8192];
             while ((len = in.read(buf)) != -1) {
@@ -412,10 +412,6 @@ public class WebUtils {
         } finally {
             try {
                 response.flushBuffer();
-            } catch (IOException ignored) {
-            }
-            try {
-                in.close();
             } catch (IOException ignored) {
             }
         }
