@@ -398,14 +398,7 @@ public class WebUtils {
         try (in) {
             responseDispositionHeader(response, fileName, contentType, fileSize, isInline);
             OutputStream out = response.getOutputStream();
-            long total = 0;
-            int len;
-            byte[] buf = new byte[8192];
-            while ((len = in.read(buf)) != -1) {
-                out.write(buf, 0, len);
-                total += len;
-            }
-            return total;
+            return in.transferTo(out);
         } catch (IOException e) {
             log.error("response响应文件失败, fileName={}", fileName, e);
             return -1;
