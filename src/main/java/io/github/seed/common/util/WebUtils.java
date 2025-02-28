@@ -6,6 +6,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -114,18 +115,34 @@ public class WebUtils {
             return "";
         }
         StringBuilder sb = new StringBuilder();
+        char lastChar = 0;
         for (Object o : seg) {
             if (o == null) {
                 continue;
             }
-            String s = o.toString().trim();
-            if (s.isEmpty()) {
+            String str = o.toString().trim();
+            if (str.isEmpty()) {
                 continue;
             }
-            sb.append('/');
-            sb.append(s);
+            // 每段之间添加/
+            if (!sb.isEmpty() && lastChar != '/') {
+                lastChar = '/';
+                sb.append(lastChar);
+            }
+            for (int i = 0; i < str.length(); i++) {
+                char c = str.charAt(i);
+                if (c == '\\') {
+                    c = '/';
+                }
+                // 如果已经有/了就跳过保证只有单个/
+                if (c == '/' && lastChar == '/') {
+                    continue;
+                }
+                lastChar = c;
+                sb.append(lastChar);
+            }
         }
-        return sb.toString().replaceAll("/{2,}", "/");
+        return sb.toString();
     }
 
     /**
@@ -169,15 +186,12 @@ public class WebUtils {
             response.setContentType("application/json");
             PrintWriter writer = response.getWriter();
             writer.write(json);
+            writer.flush();
             return true;
         } catch (IOException e) {
             log.error("response响应json出错, json={}", json, e);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return false;
-        } finally {
-            try {
-                response.flushBuffer();
-            } catch (IOException ignored) {
-            }
         }
     }
 
@@ -225,12 +239,10 @@ public class WebUtils {
      * @param fileSize
      * @param isInline
      */
-    @SneakyThrows
     public static void responseDispositionHeader(HttpServletResponse response, String fileName, String contentType, long fileSize, boolean isInline) {
         String disposition = isInline ? "inline" : "attachment";
         if (fileName != null && !fileName.isEmpty()) {
-            // 对文件名进行urlEncode编码。java使用的标准略有不同，会将空格编码为+，因此需要替换成20%，详见https://www.w3.org/TR/REC-html40/interact/forms.html#h-17.13.4
-            String encodedFilename = URLEncoder.encode(fileName, CHARSET).replaceAll("\\+", "%20");
+            String encodedFilename = urlEncode(fileName);
             disposition += "; filename=\"" + encodedFilename + "\"; filename*=" + CHARSET + "''" + encodedFilename;
         }
         response.setHeader("Content-Disposition", disposition);
@@ -398,15 +410,13 @@ public class WebUtils {
         try (in) {
             responseDispositionHeader(response, fileName, contentType, fileSize, isInline);
             OutputStream out = response.getOutputStream();
-            return in.transferTo(out);
+            long size = in.transferTo(out);
+            out.flush();
+            return size;
         } catch (IOException e) {
             log.error("response响应文件失败, fileName={}", fileName, e);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return -1;
-        } finally {
-            try {
-                response.flushBuffer();
-            } catch (IOException ignored) {
-            }
         }
     }
 
@@ -461,6 +471,63 @@ public class WebUtils {
         response.setHeader("Cache-Control", "no-cache");
         response.setHeader("Connection", "keep-alive");
         response.setCharacterEncoding(CHARSET);
+    }
+
+    /**
+     * url encode
+     *
+     * @param str
+     * @return
+     */
+    public static String urlEncode(String str) {
+        if (str == null || str.isEmpty()) {
+            return str;
+        }
+        try {
+            // java使用基于 application/x-www-form-urlencoded 编码规则，会将空格编码为+，因此需要替换成20%，详见https://www.w3.org/TR/REC-html40/interact/forms.html#h-17.13.4
+            return URLEncoder.encode(str, CHARSET).replace("+", "%20");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * url decode
+     *
+     * @param str
+     * @return
+     */
+    public static String urlDecode(String str) {
+        if (str == null || str.isEmpty()) {
+            return str;
+        }
+        try {
+            return URLDecoder.decode(str, CHARSET);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * url encode
+     * 会保留url中的结构字符：`:`, `/`, `?`, `&`, `#`
+     *
+     * @param str
+     * @return
+     */
+    public static String urlEncodeComponent(String str) {
+        String encoded = urlEncode(str);
+        if (encoded == null || encoded.isEmpty()) {
+            return encoded;
+        }
+        // 还原 `:`, `/`, `?`, `&`, `#`
+        encoded = encoded.replace("%3A", ":")
+                .replace("%2F", "/")
+                .replace("%3F", "?")
+                .replace("%26", "&")
+                .replace("%3D", "=")
+                .replace("%23", "#");
+        return encoded;
     }
 
 }
