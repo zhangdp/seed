@@ -91,15 +91,17 @@ public class WebUtils {
      */
     public static String appendParameter(String url, String name, Object value) {
         StringBuilder sb = new StringBuilder(url);
-        if (url.indexOf('?') > -1) {
-            sb.append('&');
-        } else {
+        if (url.contains("?")) {
+            if (!url.endsWith("&")) {
+                sb.append('&');
+            }
+        } else if (!url.endsWith("?")) {
             sb.append('?');
         }
-        sb.append(name);
+        sb.append(name.trim());
         sb.append('=');
         if (value != null) {
-            sb.append(value);
+            sb.append(urlEncode(value.toString()));
         }
         return sb.toString();
     }
@@ -150,7 +152,6 @@ public class WebUtils {
      *
      * @param session
      */
-    @Deprecated
     public static void clearSession(HttpSession session) {
         Enumeration<String> names = session.getAttributeNames();
         while (names.hasMoreElements()) {
