@@ -8,6 +8,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import io.github.seed.common.component.DesensitizationJacksonAnnotationIntrospector;
+import io.github.seed.common.component.StringTrimDeserializer;
 import io.github.seed.common.constant.Const;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -69,9 +70,11 @@ public class JacksonConfigurer {
     public Jackson2ObjectMapperBuilderCustomizer jackson2ObjectMapperBuilderCustomizer(JavaTimeModule javaTimeModule) {
         return builder -> {
             // 自定义Jackson日期时间格式
-            builder.modules(javaTimeModule);
-            // 添加Jackson自定义脱敏注解处理器
+            builder.modulesToInstall(javaTimeModule);
+            // 添加脱敏拦截器
             builder.annotationIntrospector(new DesensitizationJacksonAnnotationIntrospector());
+            // String类型反序列时自动trim
+            builder.deserializers(new StringTrimDeserializer());
         };
     }
 

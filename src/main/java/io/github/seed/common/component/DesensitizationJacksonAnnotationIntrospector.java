@@ -11,17 +11,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.dromara.hutool.core.lang.Assert;
 
 import java.io.IOException;
+import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 2024/10/10 脱敏注解动态使用序列化器脱敏
+ * 2024/10/10 是否使用脱敏序列化拦截器
  *
  * @author zhangdp
  * @since 1.0.0
  */
 @Slf4j
 public class DesensitizationJacksonAnnotationIntrospector extends JacksonAnnotationIntrospector {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     /**
      * 缓存每种类型的脱敏序列化器

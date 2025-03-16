@@ -131,7 +131,7 @@ public class GlobalExceptionHandleAdvice {
     }
 
     /**
-     * 缺少请求体异常
+     * 读取请求体异常
      *
      * @param e
      * @param request
@@ -140,8 +140,8 @@ public class GlobalExceptionHandleAdvice {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public R<?> httpMessageNotReadableException(HttpMessageNotReadableException e, HttpServletRequest request) {
-        log.warn("缺少请求体异常：uri={}, error={}", request.getRequestURI(), e.getMessage());
-        return new R<>(ErrorCode.REQUEST_BODY_NOT_FOUND);
+        log.warn("读取请求体失败异常：uri={}, error={}", request.getRequestURI(), e.getMessage());
+        return new R<>(ErrorCode.READ_REQUEST_BODY_FOUND);
     }
 
     /**
