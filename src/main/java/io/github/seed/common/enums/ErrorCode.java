@@ -59,6 +59,11 @@ public enum ErrorCode {
      */
     FORBIDDEN_NO_PERMISSION(10102, "无权限"),
     /**
+     * 权限不足-IP不允许访问
+     */
+    IP_NOT_ALLOW(10103, "IP不允许访问"),
+
+    /**
      * 账号不存在或者密码错误
      */
     USERNAME_NOT_FOUND_OR_BAD_CREDENTIALS(10200, "账号不存在或者密码错误"),

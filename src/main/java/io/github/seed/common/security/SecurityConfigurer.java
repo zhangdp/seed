@@ -66,7 +66,7 @@ public class SecurityConfigurer {
                 .logout(c -> c.logoutUrl(SecurityConst.LOGOUT_URL).logoutSuccessHandler(tokenLogoutSuccessHandler))
                 .authorizeHttpRequests(req -> req
                         // 放行url
-                        .requestMatchers("/test/**", "/swagger-ui/**", "/v3/**").permitAll()
+                        .requestMatchers("/test/**", "/swagger-ui/**", "/v3/**", "/actuator/**").permitAll()
                         // OPTIONS请求放行
                         .requestMatchers(HttpMethod.OPTIONS).permitAll()
                         // 其余url都必须认证

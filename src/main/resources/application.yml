@@ -3,10 +3,10 @@ server:
   tomcat:
     threads:
       min-spare: 20
-      max: ${TOMCAT_MAX_THREADS:400}
+      max: ${TOMCAT_MAX_THREADS:200}
     accept-count: ${TOMCAT_ACCEPT_COUNT:200}
-    max-connections: ${TOMCAT_MAX_CONNECTIONS:10000}
-    max-keep-alive-requests: ${TOMCAT_MAX_KEEP_ALIVE:200}
+    max-connections: ${TOMCAT_MAX_CONNECTIONS:8192}
+    max-keep-alive-requests: ${TOMCAT_MAX_KEEP_ALIVE_REQUESTS:200}
 spring:
   profiles:
     active: ${SPRING_PROFILE:dev}
@@ -106,6 +106,9 @@ spring:
   config:
     activate:
       on-profile: test
+  application:
+    admin:
+      enabled: true
 logging:
   file:
     path: logs/${spring.application.name}
@@ -119,6 +122,9 @@ spring:
   config:
     activate:
       on-profile: prod
+  application:
+    admin:
+      enabled: true
 springdoc:
   api-docs:
     enabled: false
@@ -128,5 +134,5 @@ logging:
   file:
     path: logs/${spring.application.name}
   level:
-    root: warn
+    root: info
     io.github.seed: info

@@ -52,4 +52,6 @@ public class SeedWebMvcConfigurer implements WebMvcConfigurer {
         resolvers.add(new LoginUserArgumentResolver());
     }
 
+    
+
 }
