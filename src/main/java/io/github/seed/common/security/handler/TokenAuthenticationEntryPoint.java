@@ -29,7 +29,7 @@ public class TokenAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        log.debug("TokenAuthenticationEntryPoint: {}", request.getRequestURI());
+        log.trace("TokenAuthenticationEntryPoint: {}", request.getRequestURI());
         // 转为自定义异常，并委托给异常处理器
         handlerExceptionResolver.resolveException(request, response, null, new UnauthorizedException(ErrorCode.UNAUTHORIZED, authException));
     }

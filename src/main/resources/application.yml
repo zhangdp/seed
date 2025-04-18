@@ -75,7 +75,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: "*"
+        include: health,info
 mybatis-plus:
   global-config:
     banner: false
@@ -106,9 +106,6 @@ spring:
   config:
     activate:
       on-profile: test
-  application:
-    admin:
-      enabled: true
 logging:
   file:
     path: logs/${spring.application.name}
@@ -122,9 +119,6 @@ spring:
   config:
     activate:
       on-profile: prod
-  application:
-    admin:
-      enabled: true
 springdoc:
   api-docs:
     enabled: false
