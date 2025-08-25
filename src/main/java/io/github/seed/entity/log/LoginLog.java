@@ -6,6 +6,8 @@ import io.github.seed.common.constant.TableNameConst;
 import io.github.seed.entity.BaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import java.io.Serial;
@@ -20,6 +22,8 @@ import java.time.LocalDateTime;
  */
 @Data
 @Accessors(chain = true)
+@EqualsAndHashCode(callSuper = false)
+@ToString(callSuper = false)
 @TableName(TableNameConst.LOGIN_LOG)
 @Schema(title = "登录日志")
 public class LoginLog extends BaseEntity implements Serializable {

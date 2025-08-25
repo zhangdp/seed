@@ -1,5 +1,6 @@
 package io.github.seed.common.security.filter;
 
+import cn.hutool.v7.core.text.StrUtil;
 import io.github.seed.common.security.SecurityUtils;
 import io.github.seed.common.security.service.TokenService;
 import jakarta.servlet.FilterChain;
@@ -8,7 +9,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;

@@ -1,5 +1,6 @@
 package io.github.seed.service.sys.impl;
 
+import cn.hutool.v7.core.collection.CollUtil;
 import io.github.seed.common.constant.CacheConst;
 import io.github.seed.common.constant.TableNameConst;
 import io.github.seed.entity.sys.Role;
@@ -8,7 +9,6 @@ import io.github.seed.mapper.sys.RoleMapper;
 import io.github.seed.service.sys.RoleService;
 import io.github.seed.service.sys.UserRoleService;
 import lombok.RequiredArgsConstructor;
-import org.dromara.hutool.core.collection.CollUtil;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;

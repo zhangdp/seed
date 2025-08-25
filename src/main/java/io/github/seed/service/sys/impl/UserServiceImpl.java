@@ -1,5 +1,7 @@
 package io.github.seed.service.sys.impl;
 
+import cn.hutool.v7.core.lang.Assert;
+import cn.hutool.v7.core.text.StrUtil;
 import io.github.seed.common.annotation.PublishEvent;
 import io.github.seed.common.constant.EventConst;
 import io.github.seed.common.constant.TableNameConst;
@@ -14,8 +16,6 @@ import io.github.seed.model.params.UserQuery;
 import io.github.seed.service.sys.DeptService;
 import io.github.seed.service.sys.UserService;
 import lombok.RequiredArgsConstructor;
-import org.dromara.hutool.core.lang.Assert;
-import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;

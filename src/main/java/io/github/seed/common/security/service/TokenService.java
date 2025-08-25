@@ -7,11 +7,11 @@ import io.github.seed.common.security.data.RefreshToken;
 import io.github.seed.common.util.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hutool.core.data.id.UUID;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
+import java.util.UUID;
 
 /**
  * 2024/6/27 token服务

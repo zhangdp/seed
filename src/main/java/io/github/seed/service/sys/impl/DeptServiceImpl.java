@@ -1,5 +1,7 @@
 package io.github.seed.service.sys.impl;
 
+import cn.hutool.v7.core.bean.BeanUtil;
+import cn.hutool.v7.core.lang.Assert;
 import io.github.seed.common.constant.Const;
 import io.github.seed.common.enums.ErrorCode;
 import io.github.seed.common.exception.BizException;
@@ -10,8 +12,6 @@ import io.github.seed.mapper.sys.DeptMapper;
 import io.github.seed.model.dto.DeptTreeNode;
 import io.github.seed.service.sys.DeptService;
 import lombok.RequiredArgsConstructor;
-import org.dromara.hutool.core.bean.BeanUtil;
-import org.dromara.hutool.core.lang.Assert;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

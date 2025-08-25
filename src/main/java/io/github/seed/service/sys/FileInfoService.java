@@ -1,7 +1,7 @@
 package io.github.seed.service.sys;
 
+import cn.hutool.v7.core.data.id.IdUtil;
 import io.github.seed.entity.sys.FileInfo;
-import org.dromara.hutool.core.data.id.IdUtil;
 
 /**
  * 2024/11/8 文件信息service

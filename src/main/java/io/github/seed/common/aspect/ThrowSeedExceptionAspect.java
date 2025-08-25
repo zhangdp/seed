@@ -1,5 +1,6 @@
 package io.github.seed.common.aspect;
 
+import cn.hutool.v7.core.text.StrUtil;
 import io.github.seed.common.annotation.ThrowBizException;
 import io.github.seed.common.enums.ErrorCode;
 import io.github.seed.common.exception.BizException;
@@ -7,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
-import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.stereotype.Component;
 
 /**

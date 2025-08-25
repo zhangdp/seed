@@ -1,7 +1,8 @@
 package io.github.seed.common.config;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import io.github.seed.common.util.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.cache.CacheProperties;
@@ -31,15 +32,17 @@ public class RedisConfigurer {
      * @return
      */
     @Bean
-    public GenericJackson2JsonRedisSerializer genericJackson2JsonRedisSerializer(JavaTimeModule javaTimeModule) {
+    public GenericJackson2JsonRedisSerializer genericJackson2JsonRedisSerializer() {
         GenericJackson2JsonRedisSerializer jsonRedisSerializer = new GenericJackson2JsonRedisSerializer();
         jsonRedisSerializer.configure(config -> {
             // 配置jdk8时间格式化
-            config.registerModule(javaTimeModule);
+            config.registerModule(JsonUtils.TIME_MODULE);
             // 配置忽略未知字段
             config.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             // 配置时间格式化
             // config.setDateFormat(new SimpleDateFormat(Const.DATETIME_FORMATTER));
+            // 日期输出为时间戳
+            config.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
         });
         return jsonRedisSerializer;
     }

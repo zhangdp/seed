@@ -1,5 +1,6 @@
 package io.github.seed.common.component;
 
+import cn.hutool.v7.core.lang.Assert;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -8,7 +9,6 @@ import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
 import io.github.seed.common.annotation.Desensitization;
 import io.github.seed.common.enums.SensitiveType;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hutool.core.lang.Assert;
 
 import java.io.IOException;
 import java.io.Serial;

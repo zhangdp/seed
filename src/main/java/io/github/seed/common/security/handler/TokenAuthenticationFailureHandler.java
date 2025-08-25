@@ -2,6 +2,8 @@ package io.github.seed.common.security.handler;
 
 import io.github.seed.common.enums.ErrorCode;
 import io.github.seed.common.exception.BizException;
+import io.github.seed.common.exception.ForbiddenException;
+import io.github.seed.common.exception.UnauthorizedException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -32,17 +34,16 @@ public class TokenAuthenticationFailureHandler implements AuthenticationFailureH
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-        log.debug("TokenAuthenticationFailureHandler:{}", request.getRequestURI());
+        log.trace("TokenAuthenticationFailureHandler:{}", request.getRequestURI());
         Exception ex;
         if (exception instanceof BadCredentialsException) {
-            ex = new BizException(ErrorCode.USERNAME_NOT_FOUND_OR_BAD_CREDENTIALS, exception);
+            ex = new UnauthorizedException(ErrorCode.USERNAME_NOT_FOUND_OR_BAD_CREDENTIALS, exception);
         } else if (exception instanceof DisabledException) {
-            ex = new BizException(ErrorCode.ACCOUNT_DISABLED, exception);
+            ex = new UnauthorizedException(ErrorCode.ACCOUNT_DISABLED, exception);
         } else if (exception instanceof LockedException) {
-            ex = new BizException(ErrorCode.ACCOUNT_LOCKED, exception);
+            ex = new UnauthorizedException(ErrorCode.ACCOUNT_LOCKED, exception);
         } else {
-            // ex = new BizException(ErrorCode.LOGIN_FAILURE, exception);
-            ex = exception;
+            ex = new UnauthorizedException(ErrorCode.LOGIN_FAILURE, exception);
         }
         // 转为自定义异常，并委托给异常处理器
         handlerExceptionResolver.resolveException(request, response, null, ex);

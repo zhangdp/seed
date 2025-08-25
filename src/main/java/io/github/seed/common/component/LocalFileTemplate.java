@@ -1,11 +1,11 @@
 package io.github.seed.common.component;
 
+import cn.hutool.v7.core.io.IoUtil;
+import cn.hutool.v7.core.io.file.FileUtil;
+import cn.hutool.v7.core.text.StrUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hutool.core.io.IoUtil;
-import org.dromara.hutool.core.io.file.FileUtil;
-import org.dromara.hutool.core.text.StrUtil;
 
 import java.io.File;
 import java.io.InputStream;

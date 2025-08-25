@@ -1,16 +1,15 @@
 package io.github.seed.common.security.handler;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.seed.common.data.R;
+import cn.hutool.v7.core.text.StrUtil;
 import io.github.seed.common.security.SecurityUtils;
 import io.github.seed.common.security.service.TokenService;
+import io.github.seed.common.util.JsonUtils;
 import io.github.seed.common.util.WebUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
@@ -29,7 +28,6 @@ import java.io.IOException;
 @Component
 public class TokenLogoutSuccessHandler implements LogoutSuccessHandler {
 
-    private final ObjectMapper objectMapper;
     private final TokenService tokenService;
 
     @Override
@@ -41,7 +39,7 @@ public class TokenLogoutSuccessHandler implements LogoutSuccessHandler {
         }
         // 清除SecurityContextHolder上下文
         SecurityContextHolder.clearContext();
-        WebUtils.responseJson(response, objectMapper.writeValueAsString(R.success()));
+        WebUtils.responseJson(response, JsonUtils.EMPTY);
     }
 
 }

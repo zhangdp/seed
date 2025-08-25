@@ -3,6 +3,7 @@ package io.github.seed.common.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -12,7 +13,6 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import lombok.Getter;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -25,6 +25,15 @@ import java.time.format.DateTimeFormatter;
  * @since 1.0.0
  */
 public class JsonUtils {
+
+    /**
+     * 空json
+     */
+    public static final String EMPTY = "{}";
+    /**
+     * 时间格式模块
+     */
+    public static final JavaTimeModule TIME_MODULE;
 
     /**
      * 日期格式化
@@ -49,31 +58,33 @@ public class JsonUtils {
     private static final ObjectMapper objectMapper;
 
     static {
-        objectMapper = new ObjectMapper();
-
-        // 设置Date格式
-        objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
-        // 反序列化时未知字段报错：false
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        // objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
-
-        JavaTimeModule timeModule = new JavaTimeModule();
+        TIME_MODULE = new JavaTimeModule();
         // ======================= 时间序列化规则 ==============================
-        timeModule.addSerializer(LocalDateTime.class,
+        TIME_MODULE.addSerializer(LocalDateTime.class,
                 new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(DATETIME_FORMATTER)));
-        timeModule.addSerializer(LocalDate.class,
+        TIME_MODULE.addSerializer(LocalDate.class,
                 new LocalDateSerializer(DateTimeFormatter.ofPattern(DATE_FORMATTER)));
-        timeModule.addSerializer(LocalTime.class,
+        TIME_MODULE.addSerializer(LocalTime.class,
                 new LocalTimeSerializer(DateTimeFormatter.ofPattern(TIME_FORMATTER)));
 
         // ======================= 时间反序列化规则 ==============================
-        timeModule.addDeserializer(LocalDateTime.class,
-                new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(DATE_FORMATTER)));
-        timeModule.addDeserializer(LocalDate.class,
+        TIME_MODULE.addDeserializer(LocalDateTime.class,
+                new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(DATETIME_FORMATTER)));
+        TIME_MODULE.addDeserializer(LocalDate.class,
                 new LocalDateDeserializer(DateTimeFormatter.ofPattern(DATE_FORMATTER)));
-        timeModule.addDeserializer(LocalTime.class,
+        TIME_MODULE.addDeserializer(LocalTime.class,
                 new LocalTimeDeserializer(DateTimeFormatter.ofPattern(TIME_FORMATTER)));
-        objectMapper.registerModule(timeModule);
+
+        objectMapper = new ObjectMapper();
+
+        // 设置Date格式
+        // objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+        // 日期输出为时间戳
+        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
+        // 反序列化时未知字段报错：false
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        objectMapper.registerModule(TIME_MODULE);
     }
 
     /**
@@ -124,7 +135,7 @@ public class JsonUtils {
             Object jsonObject = objectMapper.readTree(json);
             return isPretty ? objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonObject) : objectMapper.writeValueAsString(jsonObject);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("Error formatting JSON string", e);
+            throw new IllegalArgumentException("格式化JSON字符串失败", e);
         }
     }
 

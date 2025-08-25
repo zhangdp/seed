@@ -1,11 +1,11 @@
 package io.github.seed.service.sys;
 
+import cn.hutool.v7.core.collection.CollUtil;
 import io.github.seed.common.constant.Const;
 import io.github.seed.common.enums.ResourceType;
 import io.github.seed.common.util.TreeUtils;
 import io.github.seed.entity.sys.Resource;
 import io.github.seed.model.dto.ResourceTreeNode;
-import org.dromara.hutool.core.collection.CollUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;

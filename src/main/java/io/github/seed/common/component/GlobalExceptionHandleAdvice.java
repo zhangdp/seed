@@ -1,5 +1,6 @@
 package io.github.seed.common.component;
 
+import cn.hutool.v7.core.text.StrUtil;
 import io.github.seed.common.data.R;
 import io.github.seed.common.enums.ErrorCode;
 import io.github.seed.common.exception.BizException;
@@ -43,6 +44,7 @@ public class GlobalExceptionHandleAdvice {
 
     /**
      * 全局异常
+     * <br>输出http状态码：500
      *
      * @param e
      * @param request
@@ -61,20 +63,22 @@ public class GlobalExceptionHandleAdvice {
 
     /**
      * 非法异常，正常是断言产生的
+     * <br>输出http状态码：400
      *
      * @param e
      * @param request
      * @return
      */
     @ExceptionHandler(IllegalArgumentException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public R<?> illegalArgumentException(IllegalArgumentException e, HttpServletRequest request) {
         log.warn("非法异常：uri={}", request.getRequestURI(), e);
-        return new R<>(ErrorCode.SERVER_ERROR.code(), ErrorCode.SERVER_ERROR.message() + ": " + e.getMessage());
+        return new R<>(ErrorCode.BAD_REQUEST.code(), StrUtil.defaultIfEmpty(e.getMessage(), ErrorCode.BAD_REQUEST.message()));
     }
 
     /**
      * 数据库异常
+     * <br>输出http状态码：500
      *
      * @param e
      * @param request
@@ -90,6 +94,7 @@ public class GlobalExceptionHandleAdvice {
 
     /**
      * 请求路径不存在异常
+     * <br>输出http状态码：404
      *
      * @param e
      * @param request
@@ -104,6 +109,7 @@ public class GlobalExceptionHandleAdvice {
 
     /**
      * 请求http method不对
+     * <br>输出http状态码：405
      *
      * @param e
      * @param request
@@ -118,6 +124,7 @@ public class GlobalExceptionHandleAdvice {
 
     /**
      * servlet异常，httpMethod不对，contentType不对等
+     * <br>输出http状态码：400
      *
      * @param e
      * @param request
@@ -132,6 +139,7 @@ public class GlobalExceptionHandleAdvice {
 
     /**
      * 读取请求体异常
+     * <br>输出http状态码：400
      *
      * @param e
      * @param request
@@ -146,6 +154,7 @@ public class GlobalExceptionHandleAdvice {
 
     /**
      * 参数校验异常
+     * <br>输出http状态码：400
      *
      * @param e
      * @param request
@@ -175,6 +184,7 @@ public class GlobalExceptionHandleAdvice {
 
     /**
      * 参数校验异常
+     * <br>输出http状态码：400
      *
      * @param e
      * @param request
@@ -194,6 +204,7 @@ public class GlobalExceptionHandleAdvice {
 
     /**
      * 参数类型转换错误
+     * <br>输出http状态码：400
      *
      * @param e
      * @param request
@@ -211,6 +222,7 @@ public class GlobalExceptionHandleAdvice {
 
     /**
      * 缺少参数异常
+     * <br>输出http状态码：400
      *
      * @param e
      * @param request
@@ -228,6 +240,7 @@ public class GlobalExceptionHandleAdvice {
 
     /**
      * 资源不存在异常
+     * <br>输出http状态码：404
      *
      * @param e
      * @param request
@@ -242,6 +255,7 @@ public class GlobalExceptionHandleAdvice {
 
     /**
      * 权限不足异常
+     * <br>输出http状态码：403
      *
      * @param e
      * @param request
@@ -256,6 +270,7 @@ public class GlobalExceptionHandleAdvice {
 
     /**
      * 未登录异常
+     * <br>输出http状态码：401
      *
      * @param e
      * @param request
@@ -270,13 +285,14 @@ public class GlobalExceptionHandleAdvice {
 
     /**
      * 自定义异常即业务异常
+     * <br>输出http状态码：409
      *
      * @param e
      * @param request
      * @return
      */
     @ExceptionHandler(BizException.class)
-    // @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.CONFLICT)
     public R<?> bizException(BizException e, HttpServletRequest request) {
         log.warn("自定义业务异常：uri={}, code={}, message={}", request.getRequestURI(), e.getCode(), e.getMessage());
         return new R<>(e.getCode(), e.getMessage());

@@ -1,5 +1,6 @@
 package io.github.seed.mapper.log;
 
+import cn.hutool.v7.core.text.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -10,7 +11,6 @@ import io.github.seed.model.PageData;
 import io.github.seed.model.params.LoginLogQuery;
 import io.github.seed.model.params.PageQuery;
 import org.apache.ibatis.annotations.Mapper;
-import org.dromara.hutool.core.text.StrUtil;
 
 import java.util.List;
 

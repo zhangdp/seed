@@ -1,10 +1,10 @@
 package io.github.seed.common.component;
 
+import cn.hutool.v7.core.text.StrUtil;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hutool.core.text.StrUtil;
 
 import java.io.IOException;
 

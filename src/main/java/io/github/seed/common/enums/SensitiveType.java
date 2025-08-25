@@ -1,6 +1,6 @@
 package io.github.seed.common.enums;
 
-import org.dromara.hutool.core.data.MaskingUtil;
+import cn.hutool.v7.core.data.masking.MaskingUtil;
 
 import java.util.function.Function;
 

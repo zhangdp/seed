@@ -1,5 +1,6 @@
 package io.github.seed.service.sys.impl;
 
+import cn.hutool.v7.core.lang.Assert;
 import io.github.seed.common.constant.Const;
 import io.github.seed.common.constant.TableNameConst;
 import io.github.seed.common.enums.ErrorCode;
@@ -12,7 +13,6 @@ import io.github.seed.model.params.PageQuery;
 import io.github.seed.service.sys.ConfigService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hutool.core.lang.Assert;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;

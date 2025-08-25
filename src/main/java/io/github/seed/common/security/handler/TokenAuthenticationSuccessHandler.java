@@ -1,7 +1,6 @@
 package io.github.seed.common.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.seed.common.data.R;
 import io.github.seed.common.security.data.RefreshToken;
 import io.github.seed.common.security.service.TokenService;
 import io.github.seed.common.util.WebUtils;
@@ -60,7 +59,8 @@ public class TokenAuthenticationSuccessHandler implements AuthenticationSuccessH
      * @throws IOException
      */
     private void response(HttpServletResponse response, LoginResult loginResult) throws IOException {
-        R<LoginResult> r = R.success(loginResult);
-        WebUtils.responseJson(response, objectMapper.writeValueAsString(r));
+        // R<LoginResult> r = R.success(loginResult);
+        // WebUtils.responseJson(response, objectMapper.writeValueAsString(r));
+        WebUtils.responseJson(response, objectMapper.writeValueAsString(loginResult));
     }
 }

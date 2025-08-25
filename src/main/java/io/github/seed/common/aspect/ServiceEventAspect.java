@@ -1,5 +1,6 @@
 package io.github.seed.common.aspect;
 
+import cn.hutool.v7.core.text.StrUtil;
 import io.github.seed.common.annotation.PublishEvent;
 import io.github.seed.common.data.ServiceEvent;
 import lombok.extern.slf4j.Slf4j;
@@ -7,7 +8,6 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.DefaultParameterNameDiscoverer;

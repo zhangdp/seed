@@ -1,5 +1,6 @@
 package io.github.seed.model.dto;
 
+import cn.hutool.v7.core.regex.RegexPool;
 import io.github.seed.common.annotation.Desensitization;
 import io.github.seed.common.constant.Const;
 import io.github.seed.common.enums.SensitiveType;
@@ -10,7 +11,6 @@ import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.dromara.hutool.core.regex.RegexPool;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.URL;
 import org.springframework.security.core.GrantedAuthority;

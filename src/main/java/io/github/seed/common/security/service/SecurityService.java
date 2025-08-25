@@ -1,6 +1,11 @@
 package io.github.seed.common.security.service;
 
+import cn.hutool.v7.core.collection.CollUtil;
+import cn.hutool.v7.core.lang.Assert;
+import cn.hutool.v7.core.lang.Validator;
+import cn.hutool.v7.core.text.StrUtil;
 import io.github.seed.common.constant.Const;
+import io.github.seed.common.security.data.LoginResult;
 import io.github.seed.common.security.data.RolePermissionGrantedAuthority;
 import io.github.seed.common.security.SecurityConst;
 import io.github.seed.entity.sys.Resource;
@@ -12,10 +17,6 @@ import io.github.seed.service.sys.RoleService;
 import io.github.seed.service.sys.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hutool.core.collection.CollUtil;
-import org.dromara.hutool.core.lang.Assert;
-import org.dromara.hutool.core.lang.Validator;
-import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -93,4 +94,40 @@ public class SecurityService implements UserDetailsService {
         return user;
     }
 
+    /**
+     * 执行登录
+     *
+     * @return
+     */
+    public LoginResult doLogin() {
+        return null;
+    }
+
+    /**
+     * 执行注销
+     *
+     * @return
+     */
+    public boolean doLogout() {
+        return false;
+    }
+
+    /**
+     * 检测token
+     *
+     * @return
+     */
+    public boolean checkToken() {
+        return false;
+    }
+
+    /**
+     * 刷新token
+     *
+     * @param refreshToken
+     * @return
+     */
+    public LoginResult refreshToken(String refreshToken) {
+        return null;
+    }
 }
