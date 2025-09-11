@@ -1,12 +1,14 @@
 package io.github.seed.mapper.sys;
 
+import cn.hutool.v7.core.text.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.github.seed.common.constant.TableNameConst;
 import io.github.seed.common.component.MybatisPlusHelper;
 import io.github.seed.entity.sys.User;
+import io.github.seed.mapper.LambdaWrappersHelper;
 import io.github.seed.model.PageData;
 import io.github.seed.model.dto.UserInfo;
 import io.github.seed.model.params.PageQuery;
@@ -24,7 +26,7 @@ import java.util.List;
  * @since 1.0.0
  */
 @Mapper
-public interface UserMapper extends BaseMapper<User> {
+public interface UserMapper extends BaseMapper<User>, LambdaWrappersHelper<User> {
 
     /**
      * 统计指定账号的用户个数（包含已逻辑删除的）
@@ -51,7 +53,17 @@ public interface UserMapper extends BaseMapper<User> {
      * @param query
      * @return
      */
-    List<UserInfo> queryList(IPage<UserInfo> page, @Param("param") UserQuery query);
+    default List<UserInfo> queryList(IPage<UserInfo> page, @Param("param") UserQuery query) {
+        LambdaQueryWrapper<User> wrapper = lambdaQueryWrapper()
+                .eq(StrUtil.isNotBlank(query.getUsername()), User::getUsername, query.getUsername())
+                .eq(query.getStatus() != null, User::getStatus, query.getStatus())
+                .eq(query.getGender() != null, User::getGender, query.getGender())
+                .eq(StrUtil.isNotBlank(query.getMobile()), User::getMobile, query.getMobile())
+                .eq(query.getDeptId() != null, User::getDeptId, query.getDeptId())
+                .like(StrUtil.isNotBlank(query.getNameLike()), User::getName, query.getNameLike())
+                .ne(query.getExcludeSelf() && query.getLoginUserId() != null, User::getId, query.getLoginUserId());
+        return this.selectList(page, wrapper);
+    }
 
     /**
      * 根据用户名查询单条记录
@@ -60,7 +72,7 @@ public interface UserMapper extends BaseMapper<User> {
      * @return
      */
     default User selectOneByUsername(String username) {
-        return this.selectOne(Wrappers.lambdaQuery(User.class).eq(User::getUsername, username));
+        return this.selectOne(lambdaQueryWrapper().eq(User::getUsername, username));
     }
 
     /**
@@ -70,7 +82,7 @@ public interface UserMapper extends BaseMapper<User> {
      * @return
      */
     default User selectOneByMobile(String mobile) {
-        return this.selectOne(Wrappers.lambdaQuery(User.class).eq(User::getMobile, mobile));
+        return this.selectOne(lambdaQueryWrapper().eq(User::getMobile, mobile));
     }
 
     /**
@@ -80,7 +92,7 @@ public interface UserMapper extends BaseMapper<User> {
      * @return
      */
     default User selectOneByEmail(String email) {
-        return this.selectOne(Wrappers.lambdaQuery(User.class).eq(User::getEmail, email));
+        return this.selectOne(lambdaQueryWrapper().eq(User::getEmail, email));
     }
 
     /**

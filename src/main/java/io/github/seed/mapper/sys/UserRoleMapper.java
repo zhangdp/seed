@@ -25,4 +25,15 @@ public interface UserRoleMapper extends BaseMapper<UserRole> {
     default List<UserRole> selectListByUserId(Long userId) {
         return this.selectList(Wrappers.lambdaQuery(UserRole.class).eq(UserRole::getUserId, userId));
     }
+
+    /**
+     * 是否存在
+     *
+     * @param userId
+     * @param roleId
+     * @return
+     */
+    default boolean existsByUserIdAndRoleId(Long userId, Long roleId) {
+        return this.exists(Wrappers.lambdaQuery(UserRole.class).eq(UserRole::getUserId, userId).eq(UserRole::getRoleId, roleId));
+    }
 }

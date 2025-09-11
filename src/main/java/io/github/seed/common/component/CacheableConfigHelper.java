@@ -19,7 +19,10 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class CacheableConfigHelper {
 
-    private static final long TIMEOUT = 60000L;
+    /**
+     * 默认过期时间
+     */
+    private static final long TIMEOUT = 30000L;
 
     private final TimedCache<String, Config> localCache = new TimedCache<>(TIMEOUT);
 
@@ -27,7 +30,7 @@ public class CacheableConfigHelper {
     private final ObjectMapper objectMapper;
 
     /**
-     * 获取配置，会先从本地内存中缓存获取（缓存过期时间默认10秒）
+     * 获取配置，会先从本地内存中缓存获取
      *
      * @param key
      * @return
@@ -36,7 +39,9 @@ public class CacheableConfigHelper {
         Config config = localCache.get(key, false);
         if (config == null) {
             config = configService.getByKey(key);
-            localCache.put(key, config);
+            if (config != null) {
+                localCache.put(key, config);
+            }
         }
         return config;
     }
@@ -48,7 +53,7 @@ public class CacheableConfigHelper {
      * @return
      */
     public String getConfigValue(String key) {
-        Config config = localCache.get(key, false);
+        Config config = this.getConfig(key);
         if (config == null) {
             return null;
         }
@@ -263,18 +268,18 @@ public class CacheableConfigHelper {
      *
      * @param key
      */
-    public void clearCache(String key) {
+    public void removeCache(String key) {
         localCache.remove(key);
-        this.configService.clearCache(key);
+        // this.configService.clearCache(key);
     }
 
     /**
      * 清空全部缓存
      *
      */
-    public void clearAllCache() {
+    public void clearCache() {
         localCache.clear();
-        this.configService.clearAllCache();
+        // this.configService.clearAllCache();
     }
 
 }

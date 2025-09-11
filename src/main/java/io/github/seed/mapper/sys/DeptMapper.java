@@ -3,6 +3,7 @@ package io.github.seed.mapper.sys;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import io.github.seed.entity.sys.Dept;
+import io.github.seed.mapper.LambdaWrappersHelper;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.List;
  * @since 1.0.0
  */
 @Mapper
-public interface DeptMapper extends BaseMapper<Dept> {
+public interface DeptMapper extends BaseMapper<Dept>, LambdaWrappersHelper<Dept> {
 
     /**
      * 查询全部
@@ -32,6 +33,6 @@ public interface DeptMapper extends BaseMapper<Dept> {
      * @return
      */
     default boolean existsById(Long id) {
-        return this.exists(Wrappers.lambdaQuery(Dept.class).eq(Dept::getId, id));
+        return this.exists(lambdaQueryWrapper().eq(Dept::getId, id));
     }
 }

@@ -2,6 +2,7 @@ package io.github.seed.service.sys;
 
 import io.github.seed.entity.sys.User;
 import io.github.seed.model.PageData;
+import io.github.seed.model.dto.AddUserDto;
 import io.github.seed.model.dto.UserInfo;
 import io.github.seed.model.params.PageQuery;
 import io.github.seed.model.params.UserQuery;
@@ -61,7 +62,7 @@ public interface UserService {
      * @param user
      * @return
      */
-    boolean insert(User user);
+    boolean add(AddUserDto user);
 
     /**
      * 修改用户信息
@@ -69,7 +70,7 @@ public interface UserService {
      * @param user
      * @return
      */
-    boolean update(User user);
+    boolean update(AddUserDto user);
 
     /**
      * 根据id删除

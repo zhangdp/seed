@@ -53,4 +53,9 @@ public class RoleServiceImpl implements RoleService {
     public boolean add(Role entity) {
         return roleMapper.insert(entity) > 0;
     }
+
+    @Override
+    public boolean exists(Long roleId) {
+        return roleMapper.exists(roleId);
+    }
 }

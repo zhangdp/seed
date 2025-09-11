@@ -1,8 +1,8 @@
 package io.github.seed.mapper.sys;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import io.github.seed.entity.sys.Dict;
+import io.github.seed.mapper.LambdaWrappersHelper;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -12,7 +12,7 @@ import org.apache.ibatis.annotations.Mapper;
  * @since 1.0.0
  */
 @Mapper
-public interface DictMapper extends BaseMapper<Dict> {
+public interface DictMapper extends BaseMapper<Dict>, LambdaWrappersHelper<Dict> {
 
     /**
      * 根据类型查询单条记录
@@ -21,6 +21,6 @@ public interface DictMapper extends BaseMapper<Dict> {
      * @return
      */
     default Dict selectOneByType(String type) {
-        return this.selectOne(Wrappers.lambdaQuery(Dict.class).eq(Dict::getType, type));
+        return this.selectOne(lambdaQueryWrapper().eq(Dict::getType, type));
     }
 }

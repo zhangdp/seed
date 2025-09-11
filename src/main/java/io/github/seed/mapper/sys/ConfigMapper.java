@@ -3,10 +3,10 @@ package io.github.seed.mapper.sys;
 import cn.hutool.v7.core.text.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.github.seed.common.component.MybatisPlusHelper;
 import io.github.seed.entity.sys.Config;
+import io.github.seed.mapper.LambdaWrappersHelper;
 import io.github.seed.model.PageData;
 import io.github.seed.model.params.BaseQueryParams;
 import io.github.seed.model.params.PageQuery;
@@ -21,7 +21,7 @@ import java.util.List;
  * @since 1.0.0
  */
 @Mapper
-public interface ConfigMapper extends BaseMapper<Config> {
+public interface ConfigMapper extends BaseMapper<Config>, LambdaWrappersHelper<Config> {
 
     /**
      * 根据key查询单条记录
@@ -30,7 +30,7 @@ public interface ConfigMapper extends BaseMapper<Config> {
      * @return
      */
     default Config selectOneByConfigKey(String configKey) {
-        return this.selectOne(Wrappers.lambdaQuery(Config.class).eq(Config::getConfigKey, configKey));
+        return this.selectOne(lambdaQueryWrapper().eq(Config::getConfigKey, configKey));
     }
 
     /**
@@ -40,7 +40,7 @@ public interface ConfigMapper extends BaseMapper<Config> {
      * @return
      */
     default PageData<Config> queryPage(PageQuery<BaseQueryParams> pageQuery) {
-        LambdaQueryWrapper<Config> wrappers = Wrappers.lambdaQuery(Config.class);
+        LambdaQueryWrapper<Config> wrappers = lambdaQueryWrapper();
         BaseQueryParams param = pageQuery.getParams();
         if (param != null) {
             if (StrUtil.isNotBlank(param.getQuery())) {
@@ -62,6 +62,6 @@ public interface ConfigMapper extends BaseMapper<Config> {
      * @return
      */
     default List<Config> selectList() {
-        return this.selectList(Wrappers.lambdaQuery(Config.class).orderByAsc(Config::getId));
+        return this.selectList(lambdaQueryWrapper().orderByAsc(Config::getId));
     }
 }

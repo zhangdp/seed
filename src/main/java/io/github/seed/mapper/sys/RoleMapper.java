@@ -1,9 +1,8 @@
 package io.github.seed.mapper.sys;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import io.github.seed.entity.sys.Role;
+import io.github.seed.mapper.LambdaWrappersHelper;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.Collection;
@@ -16,7 +15,7 @@ import java.util.List;
  * @since 1.0.0
  */
 @Mapper
-public interface RoleMapper extends BaseMapper<Role> {
+public interface RoleMapper extends BaseMapper<Role>, LambdaWrappersHelper<Role> {
 
     /**
      * 根据批量角色id来in查询列表
@@ -25,8 +24,7 @@ public interface RoleMapper extends BaseMapper<Role> {
      * @return
      */
     default List<Role> selectListByRoleIdIn(Collection<Long> roleIds) {
-        return this.selectList(lambdaQuery()
-                .in(Role::getId, roleIds));
+        return this.selectList(lambdaQueryWrapper().in(Role::getId, roleIds));
     }
 
     /**
@@ -36,15 +34,16 @@ public interface RoleMapper extends BaseMapper<Role> {
      * @return
      */
     default Role selectOneByCode(String code) {
-        return this.selectOne(lambdaQuery().eq(Role::getCode, code));
+        return this.selectOne(lambdaQueryWrapper().eq(Role::getCode, code));
     }
 
     /**
-     * 获取MP LambdaQueryWrapper
+     * 根据角色id查询是否存在
      *
+     * @param roleId
      * @return
      */
-    default LambdaQueryWrapper<Role> lambdaQuery() {
-        return Wrappers.lambdaQuery(Role.class);
+    default boolean exists(Long roleId) {
+        return this.exists(lambdaQueryWrapper().eq(Role::getId, roleId));
     }
 }

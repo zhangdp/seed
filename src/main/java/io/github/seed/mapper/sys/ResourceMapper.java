@@ -1,9 +1,9 @@
 package io.github.seed.mapper.sys;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import io.github.seed.entity.sys.Resource;
+import io.github.seed.mapper.LambdaWrappersHelper;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.Collection;
@@ -16,7 +16,7 @@ import java.util.List;
  * @since 1.0.0
  */
 @Mapper
-public interface ResourceMapper extends BaseMapper<Resource> {
+public interface ResourceMapper extends BaseMapper<Resource>, LambdaWrappersHelper<Resource> {
 
     /**
      * 根据id判断是否存在
@@ -25,7 +25,7 @@ public interface ResourceMapper extends BaseMapper<Resource> {
      * @return
      */
     default boolean existsById(Long id) {
-        return this.exists(this.lambdaQuery().eq(Resource::getId, id));
+        return this.exists(lambdaQueryWrapper().eq(Resource::getId, id));
     }
 
     /**
@@ -35,7 +35,7 @@ public interface ResourceMapper extends BaseMapper<Resource> {
      * @return
      */
     default List<Resource> selectListByIdIn(Collection<Long> ids) {
-        return this.selectList(this.lambdaQuery()
+        return this.selectList(lambdaQueryWrapper()
                 .in(Resource::getId, ids)
                 .orderByAsc(Resource::getParentId)
                 .orderByAsc(Resource::getSorts));
@@ -50,13 +50,5 @@ public interface ResourceMapper extends BaseMapper<Resource> {
         return this.selectList(Wrappers.emptyWrapper());
     }
 
-    /**
-     * 返回MP LambdaQueryWrapper
-     *
-     * @return
-     */
-    default LambdaQueryWrapper<Resource> lambdaQuery() {
-        return Wrappers.lambdaQuery(Resource.class);
-    }
 
 }

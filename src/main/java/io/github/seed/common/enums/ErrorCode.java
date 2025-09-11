@@ -122,13 +122,17 @@ public enum ErrorCode {
      */
     RESOURCE_PARENT_NOT_EXISTS(20201, "父级资源不存在"),
     /**
+     * 角色不存在
+     */
+    ROLE_NOT_EXISTS(20300, "角色不存在"),
+    /**
      * 参数不存在
      */
-    PARAM_NOT_FOUND(20300, "参数不存在"),
+    PARAM_NOT_FOUND(20400, "参数不存在"),
     /**
      * 系统级别的参数不允许删除
      */
-    SYSTEM_PARAM_CAN_NOT_DELETE(20301, "系统级别的参数不允许删除"),
+    SYSTEM_PARAM_CAN_NOT_DELETE(20401, "系统级别的参数不允许删除"),
 
     /// 3xxxx开头，错误来源是系统
     /**

@@ -35,4 +35,12 @@ public interface RoleService {
      * @return
      */
     boolean add(Role entity);
+
+    /**
+     * 是否存在
+     *
+     * @param roleId
+     * @return
+     */
+    boolean exists(Long roleId);
 }

@@ -3,8 +3,8 @@ package io.github.seed.controller.sys;
 import io.github.seed.common.annotation.LogOperation;
 import io.github.seed.common.constant.TableNameConst;
 import io.github.seed.common.enums.OperateType;
-import io.github.seed.entity.sys.User;
 import io.github.seed.model.PageData;
+import io.github.seed.model.dto.AddUserDto;
 import io.github.seed.model.dto.UserInfo;
 import io.github.seed.model.params.PageQuery;
 import io.github.seed.model.params.UserQuery;
@@ -41,8 +41,8 @@ public class UserController {
     @PreAuthorize("hasPermission('sys:user:add')")
     @Operation(summary = "新增用户", description = "新增用户，无需传值id、createTime、updateTime")
     @LogOperation(type = OperateType.CREATE, title = "新增用户", refModule = TableNameConst.SYS_USER)
-    public boolean add(@RequestBody @Valid User user) {
-        return userService.insert(user);
+    public boolean add(@RequestBody @Valid AddUserDto user) {
+        return userService.add(user);
     }
 
     /**
@@ -54,7 +54,7 @@ public class UserController {
     @PutMapping("/update")
     @Operation(summary = "修改用户", description = "修改用户，需传值id，无需传createTime、updateTime")
     @LogOperation(type = OperateType.UPDATE, title = "修改用户", refModule = TableNameConst.SYS_USER, refIdEl = "#user.id")
-    public boolean update(@RequestBody @Valid User user) {
+    public boolean update(@RequestBody @Valid AddUserDto user) {
         return userService.update(user);
     }
 

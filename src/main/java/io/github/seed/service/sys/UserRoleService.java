@@ -2,6 +2,7 @@ package io.github.seed.service.sys;
 
 import io.github.seed.entity.sys.UserRole;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -27,4 +28,30 @@ public interface UserRoleService {
      * @return
      */
     boolean add(UserRole entity);
+
+    /**
+     * 如果不存在则新增
+     *
+     * @param userId
+     * @param roleId
+     * @return
+     */
+    boolean addIfAbsent(Long userId, Long roleId);
+
+    /**
+     * 是否存在
+     *
+     * @param userId
+     * @param roleId
+     * @return
+     */
+    boolean exists(Long userId, Long roleId);
+
+    /**
+     * 批量添加
+     *
+     * @param entities
+     * @return
+     */
+    boolean addBatch(Collection<UserRole> entities);
 }

@@ -113,4 +113,9 @@ public interface Const {
      * el表达式返回结果变量名
      */
     String EL_RESULT = "result";
+
+    /**
+     * 数据库批量执行时每批个数
+     */
+    int DB_BATCH_SIZE = 100;
 }
