@@ -1,5 +1,6 @@
 package io.github.seed.mapper.sys;
 
+import cn.hutool.v7.core.collection.CollUtil;
 import cn.hutool.v7.core.text.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -16,7 +17,9 @@ import io.github.seed.model.params.UserQuery;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.springframework.beans.BeanUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -53,7 +56,7 @@ public interface UserMapper extends BaseMapper<User>, LambdaWrappersHelper<User>
      * @param query
      * @return
      */
-    default List<UserInfo> queryList(IPage<UserInfo> page, @Param("param") UserQuery query) {
+    default List<User> queryList(IPage<User> page, @Param("param") UserQuery query) {
         LambdaQueryWrapper<User> wrapper = lambdaQueryWrapper()
                 .eq(StrUtil.isNotBlank(query.getUsername()), User::getUsername, query.getUsername())
                 .eq(query.getStatus() != null, User::getStatus, query.getStatus())
@@ -102,10 +105,19 @@ public interface UserMapper extends BaseMapper<User>, LambdaWrappersHelper<User>
      * @return
      */
     default PageData<UserInfo> selectPage(PageQuery<UserQuery> pageQuery) {
-        Page<UserInfo> page = new Page<>(pageQuery.getPage(), pageQuery.getSize());
+        Page<User> page = new Page<>(pageQuery.getPage(), pageQuery.getSize());
         page.setOrders(MybatisPlusHelper.toOrderItems(pageQuery.getOrderBy(), "id"));
-        List<UserInfo> list = this.queryList(page, pageQuery.getParams());
-        return new PageData<>(list, page.getTotal(), page.getPages(), page.getSize());
+        List<User> list = this.queryList(page, pageQuery.getParams());
+        List<UserInfo> infos = new ArrayList<>();
+        if (CollUtil.isNotEmpty(list)) {
+            for (User user : list) {
+                UserInfo ui = new UserInfo();
+                BeanUtils.copyProperties(user, ui);
+                // 设置部门、角色、权限等
+                infos.add(ui);
+            }
+        }
+        return new PageData<>(infos, page.getTotal(), page.getPages(), page.getSize());
     }
 
 }

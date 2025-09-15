@@ -1,10 +1,9 @@
 package io.github.seed.common.security.service;
 
-import io.github.seed.common.component.CacheableConfigHelper;
 import io.github.seed.common.security.SecurityConst;
 import io.github.seed.common.security.data.AccessToken;
 import io.github.seed.common.security.data.RefreshToken;
-import io.github.seed.common.util.WebUtils;
+import io.github.seed.service.sys.ConfigService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,7 +24,7 @@ import java.util.UUID;
 public class TokenService {
 
     private final TokenStore tokenStore;
-    private final CacheableConfigHelper cacheableConfigHelper;
+    private final ConfigService configService;
 
     /**
      * 创建token
@@ -202,8 +201,7 @@ public class TokenService {
      * @return
      */
     private boolean isAutoRenewConfig() {
-        String v = cacheableConfigHelper.getConfigValue(SecurityConst.IS_AUTO_RENEW_CONFIG_KEY);
-        return v == null || v.isEmpty() ? SecurityConst.IS_AUTO_RENEW : WebUtils.isParamTrue(v);
+        return configService.getConfigBoolValue(SecurityConst.IS_AUTO_RENEW_CONFIG_KEY, SecurityConst.IS_AUTO_RENEW);
     }
 
     /**
@@ -212,8 +210,7 @@ public class TokenService {
      * @return
      */
     private boolean getEnableRefreshToken() {
-        String v = cacheableConfigHelper.getConfigValue(SecurityConst.ENABLE_REFRESH_TOKEN_CONFIG_KEY);
-        return v == null || v.isEmpty() ? SecurityConst.ENABLE_REFRESH_TOKEN : WebUtils.isParamTrue(v);
+        return configService.getConfigBoolValue(SecurityConst.ENABLE_REFRESH_TOKEN_CONFIG_KEY, SecurityConst.ENABLE_REFRESH_TOKEN);
     }
 
     /**
@@ -222,7 +219,7 @@ public class TokenService {
      * @return
      */
     private int getAccessTokenTtlConfig() {
-        return cacheableConfigHelper.getConfigIntValue(SecurityConst.ACCESS_TOKEN_TTL_CONFIG_KEY, SecurityConst.ACCESS_TOKEN_TTL);
+        return configService.getConfigIntValue(SecurityConst.ACCESS_TOKEN_TTL_CONFIG_KEY, SecurityConst.ACCESS_TOKEN_TTL);
     }
 
     /**
@@ -231,7 +228,7 @@ public class TokenService {
      * @return
      */
     private int getRefreshTokenTtlConfig() {
-        return cacheableConfigHelper.getConfigIntValue(SecurityConst.REFRESH_TOKEN_TTL_CONFIG_KEY, SecurityConst.REFRESH_TOKEN_TTL);
+        return configService.getConfigIntValue(SecurityConst.REFRESH_TOKEN_TTL_CONFIG_KEY, SecurityConst.REFRESH_TOKEN_TTL);
     }
 
 }

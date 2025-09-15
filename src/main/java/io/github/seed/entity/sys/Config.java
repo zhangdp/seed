@@ -56,12 +56,12 @@ public class Config extends LogicBaseEntity implements Serializable {
      * 值是否加密
      */
     @Schema(title = "值是否加密", description = "1：是；0：否。默认0")
-    @Range(min = 0, max = 1, message = "是否加密只能为{min}-{max}")
+    @Range(min = 0, max = 1, message = "是否加密只能为{min}或者{max}")
     private Integer isEncrypted;
     /**
      * 是否系统内置
      */
-    @Schema(title = "是否系统内置", description = "系统内置的不允许页面修改。1：是；0：否。默认0")
-    @Range(min = 0, max = 1, message = "是否系统内置只能为{min}-{max}")
+    @Schema(title = "是否系统内置", description = "系统内置的不允许删除。1：是；0：否。默认0")
+    @Range(min = 0, max = 1, message = "是否系统内置只能为{min}或者{max}")
     private Integer isSystem;
 }

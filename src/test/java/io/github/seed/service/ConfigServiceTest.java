@@ -26,9 +26,15 @@ public class ConfigServiceTest {
     private ObjectMapper objectMapper;
 
     @Test
-    public void getByCode() {
-        String key = "";
+    public void getByKey() {
+        String key = "ACCESS_TOKEN_TTL";
         System.out.println(configService.getByKey(key));
+    }
+
+    @Test
+    public void getConfigValue() {
+        String key = "ACCESS_TOKEN_TTL";
+        System.out.println(configService.getConfigValue(key));
     }
 
     @Test
