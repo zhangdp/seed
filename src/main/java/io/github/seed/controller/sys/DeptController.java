@@ -49,7 +49,7 @@ public class DeptController {
     @Operation(summary = "新增部门", description = "新增部门，无需传值id、createTime、updateTime")
     @LogOperation(type = OperateType.CREATE, title = "新增部门", refModule = "sys_dept", refIdEl = "#dept.id")
     public boolean add(@RequestBody @Validated(ValidGroup.Update.class) Dept dept) {
-        return deptService.insert(dept);
+        return deptService.add(dept);
     }
 
     /**

@@ -34,7 +34,7 @@ public interface DeptService {
      * @param dept
      * @return
      */
-    boolean insert(Dept dept);
+    boolean add(Dept dept);
 
     /**
      * 修改部门

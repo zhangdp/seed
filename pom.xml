@@ -20,7 +20,6 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <hutool.version>7.0.0-M1</hutool.version>
-        <!-- <mybatis-starter.version>3.0.3</mybatis-starter.version> -->
         <mybatis-flex.version>1.11.1</mybatis-flex.version>
         <springdoc.version>2.8.13</springdoc.version>
         <minio.version>8.5.17</minio.version>
@@ -93,12 +92,6 @@
             <artifactId>commons-pool2</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
         <!-- java工具大全 https://www.hutool.cn/ -->
         <!--
         <dependency>
@@ -131,18 +124,16 @@
             <artifactId>hutool-json</artifactId>
         </dependency>
         -->
-        <!--
-        <dependency>
-            <groupId>org.mybatis.spring.boot</groupId>
-            <artifactId>mybatis-spring-boot-starter</artifactId>
-            <version>${mybatis-starter.version}</version>
-        </dependency>
-        -->
         <!-- https://mvnrepository.com/artifact/com.mybatis-flex/mybatis-flex-spring-boot3-starter -->
         <dependency>
             <groupId>com.mybatis-flex</groupId>
             <artifactId>mybatis-flex-spring-boot3-starter</artifactId>
             <version>${mybatis-flex.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <!-- 接口文档 -->
         <dependency>

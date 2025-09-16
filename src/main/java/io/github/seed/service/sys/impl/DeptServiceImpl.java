@@ -56,7 +56,7 @@ public class DeptServiceImpl implements DeptService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean insert(Dept dept) {
+    public boolean add(Dept dept) {
         if (!dept.getParentId().equals(Const.ROOT_ID)) {
             Assert.isTrue(this.exists(dept.getParentId()), () -> new BizException(ErrorCode.DEPT_PARENT_NOT_EXISTS.code(), "父部门（id=" + dept.getParentId() + "）已不存在"));
         }
