@@ -1,6 +1,6 @@
 package io.github.seed.entity.sys;
 
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.mybatisflex.annotation.Table;
 import io.github.seed.common.constant.TableNameConst;
 import io.github.seed.entity.LogicBaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,9 +22,9 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@TableName(TableNameConst.SYS_ROLE)
+@Table(TableNameConst.SYS_ROLE)
 @Schema(title = "角色")
-public class Role extends LogicBaseEntity implements Serializable {
+public class Role extends LogicBaseEntity<Long> implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

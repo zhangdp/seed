@@ -58,6 +58,8 @@ public class UserServiceTest {
         pq.setSize(10);
         UserQuery query = new UserQuery();
         query.setUsername("admin");
+        query.setLoginUserId(1L);
+        query.setExcludeSelf(true);
         pq.setParams(query);
         PageData<UserInfo> pd = userService.queryPage(pq);
         System.out.println(objectMapper.writeValueAsString(pd));
@@ -72,6 +74,11 @@ public class UserServiceTest {
     @Test
     public void existsUsername() {
         System.out.println(userService.existsUsername("test"));
+    }
+
+    @Test
+    public void existsUsernameAndIdNot() {
+        System.out.println(userService.existsUsernameAndIdNot("test", 1L));
     }
 
 }

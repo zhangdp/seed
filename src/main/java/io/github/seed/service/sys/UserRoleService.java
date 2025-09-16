@@ -53,5 +53,5 @@ public interface UserRoleService {
      * @param entities
      * @return
      */
-    boolean addBatch(Collection<UserRole> entities);
+    int addBatch(Collection<UserRole> entities);
 }

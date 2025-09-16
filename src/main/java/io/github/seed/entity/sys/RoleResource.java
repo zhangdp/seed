@@ -1,6 +1,6 @@
 package io.github.seed.entity.sys;
 
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.mybatisflex.annotation.Table;
 import io.github.seed.common.constant.TableNameConst;
 import io.github.seed.entity.BaseEntity;
 import lombok.Data;
@@ -21,8 +21,8 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@TableName(TableNameConst.SYS_ROLE_RESOURCE)
-public class RoleResource extends BaseEntity implements Serializable {
+@Table(TableNameConst.SYS_ROLE_RESOURCE)
+public class RoleResource extends BaseEntity<Long> implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

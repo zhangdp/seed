@@ -1,6 +1,6 @@
 package io.github.seed.entity.sys;
 
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.mybatisflex.annotation.Table;
 import io.github.seed.common.constant.TableNameConst;
 import io.github.seed.entity.LogicBaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -23,9 +23,9 @@ import java.time.LocalDateTime;
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@TableName(TableNameConst.SYS_FILE_INFO)
+@Table(TableNameConst.SYS_FILE_INFO)
 @Schema(description = "文件信息")
-public class FileInfo extends LogicBaseEntity implements Serializable {
+public class FileInfo extends LogicBaseEntity<Long> implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

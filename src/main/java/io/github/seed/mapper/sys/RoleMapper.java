@@ -1,8 +1,8 @@
 package io.github.seed.mapper.sys;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.mybatisflex.core.BaseMapper;
+import com.mybatisflex.core.query.QueryWrapper;
 import io.github.seed.entity.sys.Role;
-import io.github.seed.mapper.LambdaWrappersHelper;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.Collection;
@@ -15,7 +15,7 @@ import java.util.List;
  * @since 1.0.0
  */
 @Mapper
-public interface RoleMapper extends BaseMapper<Role>, LambdaWrappersHelper<Role> {
+public interface RoleMapper extends BaseMapper<Role> {
 
     /**
      * 根据批量角色id来in查询列表
@@ -24,7 +24,7 @@ public interface RoleMapper extends BaseMapper<Role>, LambdaWrappersHelper<Role>
      * @return
      */
     default List<Role> selectListByRoleIdIn(Collection<Long> roleIds) {
-        return this.selectList(lambdaQueryWrapper().in(Role::getId, roleIds));
+        return this.selectListByQuery(QueryWrapper.create().in(Role::getId, roleIds));
     }
 
     /**
@@ -34,7 +34,7 @@ public interface RoleMapper extends BaseMapper<Role>, LambdaWrappersHelper<Role>
      * @return
      */
     default Role selectOneByCode(String code) {
-        return this.selectOne(lambdaQueryWrapper().eq(Role::getCode, code));
+        return this.selectOneByQuery(QueryWrapper.create().eq(Role::getCode, code));
     }
 
     /**
@@ -44,6 +44,7 @@ public interface RoleMapper extends BaseMapper<Role>, LambdaWrappersHelper<Role>
      * @return
      */
     default boolean exists(Long roleId) {
-        return this.exists(lambdaQueryWrapper().eq(Role::getId, roleId));
+        return this.selectCountByQuery(QueryWrapper.create().eq(Role::getId, roleId)) > 0;
     }
+
 }

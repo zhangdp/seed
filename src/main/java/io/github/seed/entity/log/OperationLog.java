@@ -1,11 +1,15 @@
 package io.github.seed.entity.log;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.mybatisflex.annotation.Id;
+import com.mybatisflex.annotation.Table;
 import io.github.seed.common.constant.Const;
 import io.github.seed.common.constant.TableNameConst;
 import io.github.seed.common.enums.OperateType;
+import io.github.seed.entity.BaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import java.io.Serial;
@@ -20,25 +24,15 @@ import java.time.LocalDateTime;
  */
 @Data
 @Accessors(chain = true)
-@TableName(TableNameConst.LOG_OPERATION)
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+@Table(TableNameConst.LOG_OPERATION)
 @Schema(title = "操作日志")
-public class OperationLog implements Serializable {
+public class OperationLog extends BaseEntity<Long> implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 主键
-     */
-    @TableId
-    @Schema(title = "id")
-    private Long id;
-    /**
-     * 创建时间
-     */
-    @TableField(fill = FieldFill.INSERT)
-    @Schema(title = "添加时间", description = "格式：" + Const.DATETIME_FORMATTER + "。保存时忽略")
-    private LocalDateTime createdDate;
     /**
      * 操作描述
      */

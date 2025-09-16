@@ -1,8 +1,8 @@
 package io.github.seed.mapper.sys;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.mybatisflex.core.BaseMapper;
+import com.mybatisflex.core.query.QueryWrapper;
 import io.github.seed.entity.sys.FileInfo;
-import io.github.seed.mapper.LambdaWrappersHelper;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -12,7 +12,7 @@ import org.apache.ibatis.annotations.Mapper;
  * @since 1.0.0
  */
 @Mapper
-public interface FileInfoMapper extends BaseMapper<FileInfo>, LambdaWrappersHelper<FileInfo> {
+public interface FileInfoMapper extends BaseMapper<FileInfo> {
 
     /**
      * 根据文件id查询
@@ -21,6 +21,6 @@ public interface FileInfoMapper extends BaseMapper<FileInfo>, LambdaWrappersHelp
      * @return
      */
     default FileInfo selectByFileId(String fileId) {
-        return this.selectOne(lambdaQueryWrapper().eq(FileInfo::getFileId, fileId));
+        return this.selectOneByQuery(QueryWrapper.create().eq(FileInfo::getFileId, fileId));
     }
 }

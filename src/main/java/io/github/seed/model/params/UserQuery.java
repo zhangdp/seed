@@ -60,5 +60,5 @@ public class UserQuery implements Serializable {
      * 是否排除自己
      */
     @Schema(title = "是否排除自己", description = "查询结果是否忽略自己")
-    private Boolean excludeSelf;
+    private boolean excludeSelf = false;
 }

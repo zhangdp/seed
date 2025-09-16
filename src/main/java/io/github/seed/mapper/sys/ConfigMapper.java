@@ -1,18 +1,15 @@
 package io.github.seed.mapper.sys;
 
-import cn.hutool.v7.core.text.StrUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import io.github.seed.common.component.MybatisPlusHelper;
+import com.mybatisflex.core.BaseMapper;
+import com.mybatisflex.core.paginate.Page;
+import com.mybatisflex.core.query.QueryWrapper;
+import io.github.seed.entity.log.OperationLog;
 import io.github.seed.entity.sys.Config;
-import io.github.seed.mapper.LambdaWrappersHelper;
 import io.github.seed.model.PageData;
 import io.github.seed.model.params.BaseQueryParams;
+import io.github.seed.model.params.OperationLogQuery;
 import io.github.seed.model.params.PageQuery;
 import org.apache.ibatis.annotations.Mapper;
-
-import java.util.List;
 
 /**
  * 2023/4/12 系统配置mapper
@@ -21,7 +18,7 @@ import java.util.List;
  * @since 1.0.0
  */
 @Mapper
-public interface ConfigMapper extends BaseMapper<Config>, LambdaWrappersHelper<Config> {
+public interface ConfigMapper extends BaseMapper<Config> {
 
     /**
      * 根据key查询单条记录
@@ -30,7 +27,7 @@ public interface ConfigMapper extends BaseMapper<Config>, LambdaWrappersHelper<C
      * @return
      */
     default Config selectOneByConfigKey(String configKey) {
-        return this.selectOne(lambdaQueryWrapper().eq(Config::getConfigKey, configKey));
+        return this.selectOneByQuery(QueryWrapper.create().select().eq(Config::getConfigKey, configKey));
     }
 
     /**
@@ -40,28 +37,13 @@ public interface ConfigMapper extends BaseMapper<Config>, LambdaWrappersHelper<C
      * @return
      */
     default PageData<Config> queryPage(PageQuery<BaseQueryParams> pageQuery) {
-        LambdaQueryWrapper<Config> wrappers = lambdaQueryWrapper();
-        BaseQueryParams param = pageQuery.getParams();
-        if (param != null) {
-            if (StrUtil.isNotBlank(param.getQuery())) {
-                String query = param.getQuery().trim().toUpperCase();
-                wrappers.like(Config::getConfigKey, query)
-                        .or()
-                        .like(Config::getDescription, query);
-            }
+        BaseQueryParams params = pageQuery.getParams();
+        QueryWrapper wrapper = QueryWrapper.create().orderBy(pageQuery.getOrderBy());
+        if (params != null) {
+            wrapper.like(Config::getConfigKey, params.getQuery());
         }
-        Page<Config> page = new Page<>(pageQuery.getPage(), pageQuery.getSize());
-        page.setOrders(MybatisPlusHelper.toOrderItems(pageQuery.getOrderBy(), "id"));
-        List<Config> list = this.selectList(page, wrappers);
-        return new PageData<>(list, page.getTotal(), page.getPages(), page.getSize());
+        Page<Config> page = this.paginate(pageQuery.getPage(), pageQuery.getSize(), pageQuery.getTotal(), wrapper);
+        return new PageData<>(page.getRecords(), page.getTotalRow(), page.getPageNumber(), page.getPageSize());
     }
 
-    /**
-     * 查询列表
-     *
-     * @return
-     */
-    default List<Config> selectList() {
-        return this.selectList(lambdaQueryWrapper().orderByAsc(Config::getId));
-    }
 }

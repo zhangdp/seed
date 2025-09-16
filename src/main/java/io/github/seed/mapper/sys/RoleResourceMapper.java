@@ -1,8 +1,8 @@
 package io.github.seed.mapper.sys;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.mybatisflex.core.BaseMapper;
+import com.mybatisflex.core.query.QueryWrapper;
 import io.github.seed.entity.sys.RoleResource;
-import io.github.seed.mapper.LambdaWrappersHelper;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.Collection;
@@ -15,7 +15,7 @@ import java.util.List;
  * @since 1.0.0
  */
 @Mapper
-public interface RoleResourceMapper extends BaseMapper<RoleResource>, LambdaWrappersHelper<RoleResource> {
+public interface RoleResourceMapper extends BaseMapper<RoleResource> {
 
     /**
      * 根据角色id查询列表
@@ -24,7 +24,7 @@ public interface RoleResourceMapper extends BaseMapper<RoleResource>, LambdaWrap
      * @return
      */
     default List<RoleResource> selectListByRoleId(Long roleId) {
-        return this.selectList(lambdaQueryWrapper().eq(RoleResource::getRoleId, roleId));
+        return this.selectListByQuery(QueryWrapper.create().eq(RoleResource::getRoleId, roleId));
     }
 
     /**
@@ -34,7 +34,7 @@ public interface RoleResourceMapper extends BaseMapper<RoleResource>, LambdaWrap
      * @return
      */
     default List<RoleResource> selectListByRoleIdIn(Collection<Long> roleIds) {
-        return this.selectList(lambdaQueryWrapper().in(RoleResource::getRoleId, roleIds));
+        return this.selectListByQuery(QueryWrapper.create().in(RoleResource::getRoleId, roleIds));
     }
 
 }

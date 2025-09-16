@@ -1,6 +1,6 @@
 package io.github.seed.entity.log;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.mybatisflex.annotation.Table;
 import io.github.seed.common.constant.Const;
 import io.github.seed.common.constant.TableNameConst;
 import io.github.seed.entity.BaseEntity;
@@ -22,11 +22,11 @@ import java.time.LocalDateTime;
  */
 @Data
 @Accessors(chain = true)
-@EqualsAndHashCode(callSuper = false)
-@ToString(callSuper = false)
-@TableName(TableNameConst.LOGIN_LOG)
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+@Table(TableNameConst.LOGIN_LOG)
 @Schema(title = "登录日志")
-public class LoginLog extends BaseEntity implements Serializable {
+public class LoginLog extends BaseEntity<Long> implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

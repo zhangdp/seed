@@ -1,6 +1,6 @@
 package io.github.seed.entity.sys;
 
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.mybatisflex.annotation.Table;
 import io.github.seed.common.constant.TableNameConst;
 import io.github.seed.entity.LogicBaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -25,9 +25,9 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@TableName(TableNameConst.SYS_CONFIG)
+@Table(TableNameConst.SYS_CONFIG)
 @Schema(title = "系统配置")
-public class Config extends LogicBaseEntity implements Serializable {
+public class Config extends LogicBaseEntity<Long> implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

@@ -72,7 +72,7 @@ public class DeptServiceImpl implements DeptService {
         if (bean.getParentId() != null && !bean.getParentId().equals(Const.ROOT_ID)) {
             Assert.isTrue(this.exists(dept.getId()), () -> new BizException(ErrorCode.DEPT_PARENT_NOT_EXISTS.code(), "父部门（id=" + dept.getParentId() + "）已不存在"));
         }
-        return deptMapper.updateById(bean) > 0;
+        return deptMapper.update(bean) > 0;
     }
 
     @Override

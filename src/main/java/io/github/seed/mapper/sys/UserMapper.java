@@ -1,25 +1,16 @@
 package io.github.seed.mapper.sys;
 
-import cn.hutool.v7.core.collection.CollUtil;
-import cn.hutool.v7.core.text.StrUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import io.github.seed.common.constant.TableNameConst;
-import io.github.seed.common.component.MybatisPlusHelper;
+import com.mybatisflex.core.BaseMapper;
+import com.mybatisflex.core.logicdelete.LogicDeleteManager;
+import com.mybatisflex.core.paginate.Page;
+import com.mybatisflex.core.query.QueryWrapper;
 import io.github.seed.entity.sys.User;
-import io.github.seed.mapper.LambdaWrappersHelper;
 import io.github.seed.model.PageData;
 import io.github.seed.model.dto.UserInfo;
 import io.github.seed.model.params.PageQuery;
 import io.github.seed.model.params.UserQuery;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import org.springframework.beans.BeanUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,16 +20,18 @@ import java.util.List;
  * @since 1.0.0
  */
 @Mapper
-public interface UserMapper extends BaseMapper<User>, LambdaWrappersHelper<User> {
+public interface UserMapper extends BaseMapper<User> {
 
     /**
-     * 统计指定账号的用户个数（包含已逻辑删除的）
+     * 是否存在指定账号（包含已逻辑删除的）
      *
      * @param username
      * @return
      */
-    @Select("SELECT COUNT(*) FROM " + TableNameConst.SYS_USER + " WHERE username = #{username}")
-    int countByUsername(@Param("username") String username);
+    default boolean existsByUsername(String username) {
+        return LogicDeleteManager.execWithoutLogicDelete(() -> this.selectCountByQuery(QueryWrapper.create()
+                .eq(User::getUsername, username)) > 0);
+    }
 
     /**
      * 统计指定账号但id不为指定id的用户个数（包含逻辑删除的）
@@ -47,8 +40,10 @@ public interface UserMapper extends BaseMapper<User>, LambdaWrappersHelper<User>
      * @param id
      * @return
      */
-    @Select("SELECT COUNT(*) FROM " + TableNameConst.SYS_USER + " WHERE username = #{username} AND id != #{id}")
-    int countByUsernameAndIdNot(@Param("username") String username, @Param("id") Long id);
+    default boolean existsByUsernameAndIdNot(String username, Long id) {
+        return LogicDeleteManager.execWithoutLogicDelete(() -> this.selectCountByQuery(QueryWrapper.create()
+                .eq(User::getUsername, username).ne(User::getId, id)) > 0);
+    }
 
     /**
      * 查询列表
@@ -56,16 +51,16 @@ public interface UserMapper extends BaseMapper<User>, LambdaWrappersHelper<User>
      * @param query
      * @return
      */
-    default List<User> queryList(IPage<User> page, @Param("param") UserQuery query) {
-        LambdaQueryWrapper<User> wrapper = lambdaQueryWrapper()
-                .eq(StrUtil.isNotBlank(query.getUsername()), User::getUsername, query.getUsername())
-                .eq(query.getStatus() != null, User::getStatus, query.getStatus())
-                .eq(query.getGender() != null, User::getGender, query.getGender())
-                .eq(StrUtil.isNotBlank(query.getMobile()), User::getMobile, query.getMobile())
-                .eq(query.getDeptId() != null, User::getDeptId, query.getDeptId())
-                .like(StrUtil.isNotBlank(query.getNameLike()), User::getName, query.getNameLike())
-                .ne(query.getExcludeSelf() && query.getLoginUserId() != null, User::getId, query.getLoginUserId());
-        return this.selectList(page, wrapper);
+    default List<User> queryList(UserQuery query) {
+        return this.selectListByQuery(QueryWrapper.create()
+                .eq(User::getUsername, query.getUsername())
+                .eq(User::getDeptId, query.getDeptId())
+                .eq(User::getStatus, query.getStatus())
+                .eq(User::getMobile, query.getMobile())
+                .eq(User::getGender, query.getGender())
+                .like(User::getName, query.getNameLike())
+                .ne(User::getId, query.getLoginUserId(), query.isExcludeSelf())
+        );
     }
 
     /**
@@ -75,7 +70,7 @@ public interface UserMapper extends BaseMapper<User>, LambdaWrappersHelper<User>
      * @return
      */
     default User selectOneByUsername(String username) {
-        return this.selectOne(lambdaQueryWrapper().eq(User::getUsername, username));
+        return this.selectOneByQuery(QueryWrapper.create().eq(User::getUsername, username));
     }
 
     /**
@@ -85,7 +80,7 @@ public interface UserMapper extends BaseMapper<User>, LambdaWrappersHelper<User>
      * @return
      */
     default User selectOneByMobile(String mobile) {
-        return this.selectOne(lambdaQueryWrapper().eq(User::getMobile, mobile));
+        return this.selectOneByQuery(QueryWrapper.create().eq(User::getMobile, mobile));
     }
 
     /**
@@ -95,7 +90,7 @@ public interface UserMapper extends BaseMapper<User>, LambdaWrappersHelper<User>
      * @return
      */
     default User selectOneByEmail(String email) {
-        return this.selectOne(lambdaQueryWrapper().eq(User::getEmail, email));
+        return this.selectOneByQuery(QueryWrapper.create().eq(User::getEmail, email));
     }
 
     /**
@@ -105,19 +100,19 @@ public interface UserMapper extends BaseMapper<User>, LambdaWrappersHelper<User>
      * @return
      */
     default PageData<UserInfo> selectPage(PageQuery<UserQuery> pageQuery) {
-        Page<User> page = new Page<>(pageQuery.getPage(), pageQuery.getSize());
-        page.setOrders(MybatisPlusHelper.toOrderItems(pageQuery.getOrderBy(), "id"));
-        List<User> list = this.queryList(page, pageQuery.getParams());
-        List<UserInfo> infos = new ArrayList<>();
-        if (CollUtil.isNotEmpty(list)) {
-            for (User user : list) {
-                UserInfo ui = new UserInfo();
-                BeanUtils.copyProperties(user, ui);
-                // 设置部门、角色、权限等
-                infos.add(ui);
-            }
+        UserQuery query = pageQuery.getParams();
+        QueryWrapper wrapper = QueryWrapper.create().orderBy(pageQuery.getOrderBy());
+        if (query != null) {
+            wrapper.eq(User::getUsername, query.getUsername())
+                    .eq(User::getDeptId, query.getDeptId())
+                    .eq(User::getStatus, query.getStatus())
+                    .eq(User::getMobile, query.getMobile())
+                    .eq(User::getGender, query.getGender())
+                    .like(User::getName, query.getNameLike())
+                    .ne(User::getId, query.getLoginUserId(), query.isExcludeSelf() && query.getLoginUserId() != null);
         }
-        return new PageData<>(infos, page.getTotal(), page.getPages(), page.getSize());
+        Page<UserInfo> page = this.paginateAs(pageQuery.getPage(), pageQuery.getSize(), pageQuery.getTotal(), wrapper, UserInfo.class);
+        return new PageData<>(page.getRecords(), page.getTotalRow(), page.getPageNumber(), page.getPageSize());
     }
 
 }

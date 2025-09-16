@@ -53,8 +53,7 @@ public class UserRoleServiceImpl implements UserRoleService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean addBatch(Collection<UserRole> entities) {
-        userRoleMapper.insert(entities, Const.DB_BATCH_SIZE);
-        return true;
+    public int addBatch(Collection<UserRole> entities) {
+        return userRoleMapper.insertBatch(entities, Const.DB_BATCH_SIZE);
     }
 }

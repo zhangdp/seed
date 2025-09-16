@@ -68,7 +68,7 @@ public class ResourceServiceImpl implements ResourceService {
         if (resource.getParentId() != Const.ROOT_ID) {
             Assert.isTrue(this.isExists(resource.getParentId()), () -> new BizException(ErrorCode.RESOURCE_PARENT_NOT_EXISTS));
         }
-        return resourceMapper.updateById(resource) > 0;
+        return resourceMapper.update(resource) > 0;
     }
 
     @Override

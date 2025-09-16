@@ -1,12 +1,14 @@
 package io.github.seed.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.seed.common.constant.Const;
 import io.github.seed.entity.sys.Config;
 import io.github.seed.model.PageData;
 import io.github.seed.model.params.BaseQueryParams;
 import io.github.seed.model.params.PageQuery;
 import io.github.seed.service.sys.ConfigService;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  * @author zhangdp
  * @since
  */
+@Slf4j
 @SpringBootTest
 public class ConfigServiceTest {
 
@@ -24,6 +27,19 @@ public class ConfigServiceTest {
     private ConfigService configService;
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Test
+    public void add() {
+        Config config = new Config();
+        config.setConfigKey("DEFAULT_ROLE_ID");
+        config.setDescription("每个用户默认拥有的角色id");
+        config.setConfigValue("1");
+        config.setIsEncrypted(Const.NO_FALSE);
+        config.setIsSystem(Const.YES_TRUE);
+        boolean ret = configService.add(config);
+        log.debug("新增配置：{}, result:{}", config, ret);
+
+    }
 
     @Test
     public void getByKey() {

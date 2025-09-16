@@ -1,12 +1,9 @@
 package io.github.seed.mapper.sys;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.mybatisflex.core.BaseMapper;
+import com.mybatisflex.core.query.QueryWrapper;
 import io.github.seed.entity.sys.Dept;
-import io.github.seed.mapper.LambdaWrappersHelper;
 import org.apache.ibatis.annotations.Mapper;
-
-import java.util.List;
 
 /**
  * 2023/4/3 部门mapper
@@ -15,16 +12,7 @@ import java.util.List;
  * @since 1.0.0
  */
 @Mapper
-public interface DeptMapper extends BaseMapper<Dept>, LambdaWrappersHelper<Dept> {
-
-    /**
-     * 查询全部
-     *
-     * @return
-     */
-    default List<Dept> selectAll() {
-        return this.selectList(Wrappers.emptyWrapper());
-    }
+public interface DeptMapper extends BaseMapper<Dept> {
 
     /**
      * 根据id判断是否存在
@@ -33,6 +21,6 @@ public interface DeptMapper extends BaseMapper<Dept>, LambdaWrappersHelper<Dept>
      * @return
      */
     default boolean existsById(Long id) {
-        return this.exists(lambdaQueryWrapper().eq(Dept::getId, id));
+        return this.selectCountByQuery(QueryWrapper.create().eq(Dept::getId, id)) > 0;
     }
 }

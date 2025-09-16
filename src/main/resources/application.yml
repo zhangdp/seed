@@ -76,14 +76,14 @@ management:
     web:
       exposure:
         include: health,info
-mybatis-plus:
+mybatis-flex:
   global-config:
-    banner: false
-    db-config:
-      id-type: auto
-      logic-delete-field: is_deleted
-      logic-delete-value: 1
-      logic-not-delete-value: 0
+    print-banner: false
+    key-config:
+      key-type: auto
+    logic-delete-column: is_deleted
+    normal-value-of-logic-delete: 0
+    deleted-value-of-logic-delete: 1
 logging:
   level:
     root: info

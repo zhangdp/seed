@@ -1,6 +1,6 @@
 package io.github.seed.entity.sys;
 
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.mybatisflex.annotation.Table;
 import io.github.seed.common.constant.Const;
 import io.github.seed.common.constant.TableNameConst;
 import io.github.seed.entity.LogicBaseEntity;
@@ -27,9 +27,9 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@TableName(TableNameConst.SYS_DEPT)
+@Table(TableNameConst.SYS_DEPT)
 @Schema(title = "部门")
-public class Dept extends LogicBaseEntity implements Serializable {
+public class Dept extends LogicBaseEntity<Long> implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

@@ -1,7 +1,7 @@
 package io.github.seed.entity;
 
-import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.mybatisflex.annotation.Column;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -9,6 +9,7 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import java.io.Serial;
+import java.io.Serializable;
 
 /**
  * 2023/4/3 带有逻辑删除字段的entity基类
@@ -20,7 +21,7 @@ import java.io.Serial;
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public abstract class LogicBaseEntity extends BaseEntity {
+public abstract class LogicBaseEntity<T extends Serializable> extends BaseEntity<T> {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -28,7 +29,7 @@ public abstract class LogicBaseEntity extends BaseEntity {
     /**
      * 逻辑删除，0：否，默认；1：已删除
      */
-    @TableLogic
+    @Column(isLogicDelete = true)
     @Schema(title = "逻辑删除", description = "0：否，默认；1：已删除", hidden = true)
     @JsonIgnore
     protected Integer isDeleted;

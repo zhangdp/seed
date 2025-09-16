@@ -21,9 +21,9 @@ public class RoleServiceTest {
     @Test
     public void addRole() {
         Role role = new Role();
-        role.setCode("ROLE_ADMIN");
-        role.setName("管理员");
-        role.setDescription("");
+        role.setCode("ROLE_USER");
+        role.setName("普通用户");
+        role.setDescription(null);
         roleService.add(role);
     }
 
@@ -31,6 +31,12 @@ public class RoleServiceTest {
     public void listUserRoles() {
         Long userId = 1L;
         System.out.println(roleService.listUserRoles(userId));
+    }
+
+    @Test
+    public void exists() {
+        Long id = 1L;
+        System.out.println(roleService.exists(id));
     }
 
 }

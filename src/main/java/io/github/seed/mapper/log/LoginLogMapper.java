@@ -1,18 +1,13 @@
 package io.github.seed.mapper.log;
 
-import cn.hutool.v7.core.text.StrUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import io.github.seed.common.component.MybatisPlusHelper;
+import com.mybatisflex.core.BaseMapper;
+import com.mybatisflex.core.paginate.Page;
+import com.mybatisflex.core.query.QueryWrapper;
 import io.github.seed.entity.log.LoginLog;
 import io.github.seed.model.PageData;
 import io.github.seed.model.params.LoginLogQuery;
 import io.github.seed.model.params.PageQuery;
 import org.apache.ibatis.annotations.Mapper;
-
-import java.util.List;
 
 /**
  * 2023/4/17 登录日志mapper
@@ -30,26 +25,16 @@ public interface LoginLogMapper extends BaseMapper<LoginLog> {
      * @return
      */
     default PageData<LoginLog> selectPage(PageQuery<LoginLogQuery> pageQuery) {
-        Page<LoginLog> page = new Page<>(pageQuery.getPage(), pageQuery.getSize());
-        page.setOrders(MybatisPlusHelper.toOrderItems(pageQuery.getOrderBy(), "operation_time DESC"));
-        LambdaQueryWrapper<LoginLog> wrapper = Wrappers.lambdaQuery(LoginLog.class);
         LoginLogQuery params = pageQuery.getParams();
+        QueryWrapper wrapper = QueryWrapper.create().orderBy(pageQuery.getOrderBy());
         if (params != null) {
-            if (params.getUserId() != null) {
-                wrapper.eq(LoginLog::getUserId, params.getUserId());
-            }
-            if (StrUtil.isNotBlank(params.getStartTime())) {
-                wrapper.ge(LoginLog::getLoginTime, params.getStartTime());
-            }
-            if (StrUtil.isNotBlank(params.getEndTime())) {
-                wrapper.lt(LoginLog::getLoginTime, params.getEndTime());
-            }
-            if (StrUtil.isNotBlank(params.getLoginType())) {
-                wrapper.likeLeft(LoginLog::getLoginType, params.getLoginType());
-            }
+            wrapper.eq(LoginLog::getUserId, params.getUserId())
+                    .eq(LoginLog::getLoginType, params.getLoginType())
+                    .lt(LoginLog::getLoginTime, params.getEndTime())
+                    .gt(LoginLog::getLoginTime, params.getStartTime());
         }
-        List<LoginLog> list = this.selectList(page, wrapper);
-        return new PageData<>(list, page.getTotal(), page.getPages(), page.getSize());
+        Page<LoginLog> page = this.paginate(pageQuery.getPage(), pageQuery.getSize(), pageQuery.getTotal(), wrapper);
+        return new PageData<>(page.getRecords(), page.getTotalRow(), page.getPageNumber(), page.getPageSize());
     }
 
 }

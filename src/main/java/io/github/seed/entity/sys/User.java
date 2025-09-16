@@ -1,8 +1,6 @@
 package io.github.seed.entity.sys;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.mybatisflex.annotation.Table;
 import io.github.seed.common.annotation.Desensitization;
 import io.github.seed.common.constant.TableNameConst;
 import io.github.seed.common.enums.SensitiveType;
@@ -27,9 +25,9 @@ import java.time.LocalDate;
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@TableName(TableNameConst.SYS_USER)
+@Table(TableNameConst.SYS_USER)
 @Schema(title = "用户")
-public class User extends LogicBaseEntity implements Serializable {
+public class User extends LogicBaseEntity<Long> implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -93,7 +91,6 @@ public class User extends LogicBaseEntity implements Serializable {
      * 状态，0：正常，其它异常
      */
     @Schema(title = "状态", description = "0：正常；其它：锁定或者异常")
-    @TableField(fill = FieldFill.INSERT)
     private Integer status;
 
 }

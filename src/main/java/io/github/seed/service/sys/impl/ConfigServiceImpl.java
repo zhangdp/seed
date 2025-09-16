@@ -58,7 +58,7 @@ public class ConfigServiceImpl implements ConfigService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean update(Config entity) {
-        Config bean = this.configMapper.selectById(entity.getId());
+        Config bean = this.configMapper.selectOneById(entity.getId());
         Assert.notNull(bean, () -> new BizException(ErrorCode.PARAM_NOT_FOUND));
         Config update = new Config();
         update.setId(entity.getId());
@@ -66,14 +66,14 @@ public class ConfigServiceImpl implements ConfigService {
         update.setDescription(entity.getDescription());
         update.setIsEncrypted(entity.getIsEncrypted());
         // 只允许修改上面几项，其余字段不允许修改
-        return configMapper.updateById(update) > 0;
+        return configMapper.update(update) > 0;
     }
 
     @CacheEvict(key = "#result.configKey", condition = "#result != null")
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Config delete(Long id) {
-        Config entity = this.configMapper.selectById(id);
+        Config entity = this.configMapper.selectOneById(id);
         if (entity == null) {
             return null;
         }
@@ -90,7 +90,7 @@ public class ConfigServiceImpl implements ConfigService {
 
     @Override
     public List<Config> listAll() {
-        return this.configMapper.selectList();
+        return this.configMapper.selectAll();
     }
 
     @Override

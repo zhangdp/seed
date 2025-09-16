@@ -1,7 +1,7 @@
 package io.github.seed.mapper.sys;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.mybatisflex.core.BaseMapper;
+import com.mybatisflex.core.query.QueryWrapper;
 import io.github.seed.entity.sys.UserRole;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -23,7 +23,7 @@ public interface UserRoleMapper extends BaseMapper<UserRole> {
      * @return
      */
     default List<UserRole> selectListByUserId(Long userId) {
-        return this.selectList(Wrappers.lambdaQuery(UserRole.class).eq(UserRole::getUserId, userId));
+        return this.selectListByQuery(QueryWrapper.create().eq(UserRole::getUserId, userId));
     }
 
     /**
@@ -34,6 +34,6 @@ public interface UserRoleMapper extends BaseMapper<UserRole> {
      * @return
      */
     default boolean existsByUserIdAndRoleId(Long userId, Long roleId) {
-        return this.exists(Wrappers.lambdaQuery(UserRole.class).eq(UserRole::getUserId, userId).eq(UserRole::getRoleId, roleId));
+        return this.selectCountByQuery(QueryWrapper.create().eq(UserRole::getUserId, userId).eq(UserRole::getRoleId, roleId)) > 0;
     }
 }

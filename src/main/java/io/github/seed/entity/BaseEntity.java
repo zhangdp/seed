@@ -1,8 +1,7 @@
 package io.github.seed.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
+import com.mybatisflex.annotation.Id;
+import com.mybatisflex.annotation.KeyType;
 import io.github.seed.common.data.ValidGroup;
 import io.github.seed.common.constant.Const;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,7 +21,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @Accessors(chain = true)
-public abstract class BaseEntity implements Serializable {
+public abstract class BaseEntity<T extends Serializable> implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -39,10 +38,10 @@ public abstract class BaseEntity implements Serializable {
     /**
      * 主键
      */
-    @TableId
+    @Id
     @Schema(title = "id", description = "修改时需传")
     @NotNull(message = "id不能为空", groups = ValidGroup.Update.class)
-    protected Long id;
+    protected T id;
     /**
      * 逻辑删除，0：否，默认；1：已删除
      */
@@ -53,13 +52,11 @@ public abstract class BaseEntity implements Serializable {
     /**
      * 创建时间
      */
-    @TableField(fill = FieldFill.INSERT)
     @Schema(title = "添加时间", description = "格式：" + Const.DATETIME_FORMATTER + "。保存时忽略")
     protected LocalDateTime createdDate;
     /**
      * 修改时间
      */
-    @TableField(fill = FieldFill.UPDATE)
     @Schema(title = "修改时间", description = "格式：" + Const.DATETIME_FORMATTER + "。保存时忽略")
     protected LocalDateTime lastModifiedDate;
     /**

@@ -1,18 +1,15 @@
 package io.github.seed.mapper.log;
 
-import cn.hutool.v7.core.text.StrUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import io.github.seed.common.component.MybatisPlusHelper;
+import com.mybatisflex.core.BaseMapper;
+import com.mybatisflex.core.paginate.Page;
+import com.mybatisflex.core.query.QueryWrapper;
+import io.github.seed.entity.log.LoginLog;
 import io.github.seed.entity.log.OperationLog;
 import io.github.seed.model.PageData;
+import io.github.seed.model.params.LoginLogQuery;
 import io.github.seed.model.params.OperationLogQuery;
 import io.github.seed.model.params.PageQuery;
 import org.apache.ibatis.annotations.Mapper;
-
-import java.util.List;
 
 /**
  * 2023/4/17 操作日志mapper
@@ -29,35 +26,17 @@ public interface OperationLogMapper extends BaseMapper<OperationLog> {
      * @param pageQuery
      * @return
      */
-    default PageData<OperationLog>  selectPage(PageQuery<OperationLogQuery> pageQuery) {
-        Page<OperationLog> page = new Page<>(pageQuery.getPage(), pageQuery.getSize());
-        page.setOrders(MybatisPlusHelper.toOrderItems(pageQuery.getOrderBy(), "operation_time DESC"));
-        LambdaQueryWrapper<OperationLog> wrapper = Wrappers.lambdaQuery(OperationLog.class);
+    default PageData<OperationLog> selectPage(PageQuery<OperationLogQuery> pageQuery) {
         OperationLogQuery params = pageQuery.getParams();
+        QueryWrapper wrapper = QueryWrapper.create().orderBy(pageQuery.getOrderBy());
         if (params != null) {
-            if (params.getUserId() != null) {
-                wrapper.eq(OperationLog::getUserId, params.getUserId());
-            }
-            if (StrUtil.isNotBlank(params.getStartTime())) {
-                wrapper.ge(OperationLog::getOperateTime, params.getStartTime());
-            }
-            if (StrUtil.isNotBlank(params.getEndTime())) {
-                wrapper.lt(OperationLog::getOperateTime, params.getEndTime());
-            }
-            if (StrUtil.isNotBlank(params.getUri())) {
-                wrapper.likeLeft(OperationLog::getUri, params.getUri());
-            }
-            if (StrUtil.isNotBlank(params.getRefModule())) {
-                wrapper.eq(OperationLog::getRefModule, params.getRefModule().toLowerCase());
-            }
-            if (StrUtil.isNotBlank(params.getType())) {
-                wrapper.eq(OperationLog::getType, params.getType().toUpperCase());
-            }
-            if (StrUtil.isNotBlank(params.getQuery())) {
-                wrapper.eq(OperationLog::getTitle, params.getQuery());
-            }
+            wrapper.eq(OperationLog::getUserId, params.getUserId())
+                    .eq(OperationLog::getRefModule, params.getRefModule())
+                    .eq(OperationLog::getType, params.getType())
+                    .lt(OperationLog::getOperateTime, params.getEndTime())
+                    .gt(OperationLog::getOperateTime, params.getStartTime());
         }
-        List<OperationLog> list = this.selectList(page, wrapper);
-        return new PageData<>(list, page.getTotal(), page.getPages(), page.getSize());
+        Page<OperationLog> page = this.paginate(pageQuery.getPage(), pageQuery.getSize(), pageQuery.getTotal(), wrapper);
+        return new PageData<>(page.getRecords(), page.getTotalRow(), page.getPageNumber(), page.getPageSize());
     }
 }

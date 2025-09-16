@@ -65,14 +65,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean existsUsername(String username) {
-        // return this.baseMapper.exists(this.lambdaQuery().getWrapper().eq(SysUser::getUsername, username));
-        return userMapper.countByUsername(username) > 0;
+        return userMapper.existsByUsername(username);
     }
 
     @Override
     public boolean existsUsernameAndIdNot(String username, Long id) {
-        // return this.baseMapper.exists(this.lambdaQuery().getWrapper().eq(SysUser::getUsername, username).ne(SysUser::getId, id));
-        return userMapper.countByUsernameAndIdNot(username, id) > 0;
+        return userMapper.existsByUsernameAndIdNot(username, id);
     }
 
     @Override
@@ -111,7 +109,7 @@ public class UserServiceImpl implements UserService {
         if (StrUtil.isNotBlank(user.getPassword())) {
             user.setPassword(user.getPassword());
         }
-        return userMapper.updateById(user) > 0;
+        return userMapper.update(user) > 0;
     }
 
     @Override
