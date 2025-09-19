@@ -3,7 +3,10 @@ package io.github.seed.common.data;
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 
+import java.io.Serial;
+import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.Set;
 
 /**
  * 业务事件
@@ -13,6 +16,9 @@ import java.util.LinkedHashMap;
  */
 @Getter
 public class ServiceEvent extends ApplicationEvent {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     /**
      * 事件类型
@@ -75,7 +81,18 @@ public class ServiceEvent extends ApplicationEvent {
      * @return
      */
     public Object getParam(int index) {
-        return params.sequencedValues().toArray()[index];
+        int i = 0;
+        Collection<Object> values = params.values();
+        if (index < 0 || index >= params.size()) {
+            throw new IndexOutOfBoundsException("Index out of bounds");
+        }
+        for (Object v : values) {
+            if (i == index) {
+                return v;
+            }
+            i++;
+        }
+        return null;
     }
 
     /**
@@ -85,7 +102,7 @@ public class ServiceEvent extends ApplicationEvent {
      * @return
      */
     public Object getFirstParam(Class<?> clazz) {
-        for (Object value : params.sequencedValues()) {
+        for (Object value : params.values()) {
             if (clazz.isInstance(value)) {
                 return value;
             }
