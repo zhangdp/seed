@@ -50,6 +50,11 @@ public class DictData extends LogicBaseEntity<Long> implements Serializable {
     @Schema(title = "描述")
     private String description;
     /**
+     * 扩展数据
+     */
+    @Schema(title = "扩展数据")
+    private String metaData;
+    /**
      * 排序（升序）
      */
     @Schema(title = "排序", description = "同级排序，升序")

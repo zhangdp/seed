@@ -35,6 +35,11 @@ public class Dict extends LogicBaseEntity<Long> implements Serializable {
     @Schema(title = "字典类型")
     private String type;
     /**
+     * 字典名称
+     */
+    @Schema(title = "字典名称")
+    private String name;
+    /**
      * 描述
      */
     @Schema(title = "描述")
