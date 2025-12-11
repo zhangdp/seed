@@ -1,15 +1,15 @@
 server:
-  port: ${SERVER_PORT:8080}
+  port: 8080
   tomcat:
     threads:
       min-spare: 20
-      max: ${TOMCAT_MAX_THREADS:200}
-    accept-count: ${TOMCAT_ACCEPT_COUNT:200}
-    max-connections: ${TOMCAT_MAX_CONNECTIONS:8192}
-    max-keep-alive-requests: ${TOMCAT_MAX_KEEP_ALIVE_REQUESTS:200}
+      max: 200
+    accept-count: 200
+    max-connections: 8192
+    max-keep-alive-requests: 200
 spring:
   profiles:
-    active: ${SPRING_PROFILE:dev}
+    active: dev
   application:
     name: @artifactId@
   servlet:
@@ -31,15 +31,15 @@ spring:
         queue-capacity: 1024
   data:
     redis:
-      database: ${REDIS_DATABASE:15}
-      host: ${REDIS_HOST:191.168.10.71}
-      port: ${REDIS_PORT:6379}
-      password: ${REDIS_PASSWORD:Itsm@2022}
+      database: 15
+      host: 191.168.10.70
+      port: 6379
+      password: Itsm_2025
       connect-timeout: 10s
       lettuce:
         pool:
-          max-active: ${REDIS_MAX_ACTIVE:20}
-          max-idle: ${spring.data.redis.lettuce.pool.max-active}
+          max-active: 32
+          max-idle: 16
           min-idle: 4
       repositories:
         enabled: false
@@ -48,26 +48,19 @@ spring:
     redis:
       time-to-live: 1h
       key-prefix: "cache::"
-  boot:
-    admin:
-      client:
-        enabled: false
-        url: ${ADMIN_URL:http://127.0.0.1:18080}
-        instance:
-          metadata:
-            user.name: ${ADMIN_USER:seed}
-            user.password: ${ADMIN_PASSWORD:123456}
   datasource:
-    driver-class-name: ${MYSQL_DRIVER_CLASS:com.mysql.cj.jdbc.Driver}
-    url: jdbc:${MYSQL_PROTOCOL:mysql}://${MYSQL_HOST:191.168.10.71}:${MYSQL_PORT:3306}/${MYSQL_DB:seed}${MYSQL_PARAM:?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai}
-    username: ${MYSQL_USER:seed}
-    password: ${MYSQL_PASSWORD:Seed@2022}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://191.168.10.71:3306/seed?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    username: seed
+    password: Seed@2022
     hikari:
-      maximum-pool-size: ${DB_MAX_POOL_SIZE:20}
-      minimum-idle: 4
-      keepalive-time: 180000
+      maximum-pool-size: 20
+      minimum-idle: 5
+      keepalive-time: 300000
+      idle-timeout: 1800000
       max-lifetime: 7200000
       connection-timeout: 10000
+      validation-timeout: 3000
 management:
   endpoint:
     health:
@@ -86,19 +79,18 @@ mybatis-flex:
     deleted-value-of-logic-delete: 1
 logging:
   level:
-    root: info
-    io.github.seed: debug
+    root: debug
 seed:
   file-storage:
     root-path: /upload
-    type: ${FILE_STORAGE_TYPE:minio}
+    type: minio
     local:
-      upload-dir: ${FILE_UPLOAD_DIR:/Users/peng/tmp/seed}
+      upload-dir: /Users/peng/tmp/seed
     minio:
-      endpoint: ${MINIO_ENDPOINT:http://191.168.10.71:9000}
-      access-key: ${MINIO_ACCESS_KEY:rgfj2o2KCq8IQ58THGps}
-      secret-key: ${MINIO_SECRET_KEY:w1uZCAmYvFdnTEdlg0h6tkDbyiEQsXCmjJh90d07}
-      bucket-name: ${MINIO_BUCKET_NAME:seed}
+      endpoint: http://191.168.10.70:9000
+      access-key: rgfj2o2KCq8IQ58THGps
+      secret-key: w1uZCAmYvFdnTEdlg0h6tkDbyiEQsXCmjJh90d07
+      bucket-name: seed
 
 # 测试环境
 ---
@@ -111,7 +103,7 @@ logging:
     path: logs/${spring.application.name}
   level:
     root: info
-    io.github.seed: info
+    io.github.seed: debug
 
 # 生产环境
 ---
@@ -129,4 +121,3 @@ logging:
     path: logs/${spring.application.name}
   level:
     root: info
-    io.github.seed: info

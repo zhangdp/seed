@@ -2,7 +2,9 @@ FROM eclipse-temurin:21
 WORKDIR /app
 EXPOSE 8080
 ARG app_name=seed
-ENV TZ=Asia/Shanghai APP_NAME=${APP_NAME} JVM_XMX=2048m JVM_OPT_EXT=""
-WORKDIR /app
+ENV TZ=Asia/Shanghai \
+    APP_NAME=${app_name} \
+    SPRING_PROFILES_ACTIVE=prod \
+    JAVA_OPTS="-server -Xms2g -Xmx2g -XX:MaxMetaspaceSize=512m"
 COPY target/*.jar ${APP_NAME}.jar
-CMD java -jar -Xms${JVM_XMX} -Xmx${JVM_XMX} -XX:MetaspaceSize=192m -XX:MaxMetaspaceSize=384m -XX:+UseG1GC -XX:G1NewSizePercent=30 -XX:+AlwaysPreTouch ${JVM_OPT_EXT} ${APP_NAME}.jar
+CMD ["sh", "-c", "java $JAVA_OPTS -jar ${APP_NAME}.jar"]
