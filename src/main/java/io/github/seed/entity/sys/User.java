@@ -4,7 +4,7 @@ import com.mybatisflex.annotation.Table;
 import io.github.seed.common.annotation.Desensitization;
 import io.github.seed.common.constant.TableNameConst;
 import io.github.seed.common.enums.SensitiveType;
-import io.github.seed.entity.LogicBaseEntity;
+import io.github.seed.entity.BaseLogicEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -27,7 +27,7 @@ import java.time.LocalDate;
 @ToString(callSuper = true)
 @Table(TableNameConst.SYS_USER)
 @Schema(title = "用户")
-public class User extends LogicBaseEntity<Long> implements Serializable {
+public class User extends BaseLogicEntity<Long> implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

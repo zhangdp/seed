@@ -2,7 +2,7 @@ package io.github.seed.entity.sys;
 
 import com.mybatisflex.annotation.Table;
 import io.github.seed.common.constant.TableNameConst;
-import io.github.seed.entity.LogicBaseEntity;
+import io.github.seed.entity.BaseLogicEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -24,7 +24,7 @@ import java.io.Serializable;
 @ToString(callSuper = true)
 @Table(TableNameConst.SYS_ROLE)
 @Schema(title = "角色")
-public class Role extends LogicBaseEntity<Long> implements Serializable {
+public class Role extends BaseLogicEntity<Long> implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

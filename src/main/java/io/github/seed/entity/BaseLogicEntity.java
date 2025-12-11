@@ -12,7 +12,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * 2023/4/3 带有逻辑删除字段的entity基类
+ * 2023/4/3 带有逻辑删除字段的实体基类
  *
  * @author zhangdp
  * @since 1.0.0
@@ -21,7 +21,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public abstract class LogicBaseEntity<T extends Serializable> extends BaseEntity<T> {
+public abstract class BaseLogicEntity<T extends Serializable> extends BaseEntity<T> implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -32,6 +32,6 @@ public abstract class LogicBaseEntity<T extends Serializable> extends BaseEntity
     @Column(isLogicDelete = true)
     @Schema(title = "逻辑删除", description = "0：否，默认；1：已删除", hidden = true)
     @JsonIgnore
-    protected Integer isDeleted;
+    protected Integer deleted;
 
 }

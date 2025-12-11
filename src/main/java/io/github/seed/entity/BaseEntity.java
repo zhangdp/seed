@@ -1,7 +1,6 @@
 package io.github.seed.entity;
 
 import com.mybatisflex.annotation.Id;
-import com.mybatisflex.annotation.KeyType;
 import io.github.seed.common.data.ValidGroup;
 import io.github.seed.common.constant.Const;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -9,12 +8,11 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * 2023/4/3 entity基类
+ * 2023/4/3 实体基类
  *
  * @author zhangdp
  * @since 1.0.0
@@ -23,50 +21,21 @@ import java.time.LocalDateTime;
 @Accessors(chain = true)
 public abstract class BaseEntity<T extends Serializable> implements Serializable {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * 创建时间字段名称
-     */
-    public static final String CREATED_DATE = "createdDate";
-    /**
-     * 最后修改时间字段名称
-     */
-    public static final String LAST_MODIFIED_DATE = "lastModifiedDate";
-
     /**
      * 主键
      */
     @Id
     @Schema(title = "id", description = "修改时需传")
-    @NotNull(message = "id不能为空", groups = ValidGroup.Update.class)
+    @NotNull(message = "ID不能为空", groups = ValidGroup.Update.class)
     protected T id;
-    /**
-     * 逻辑删除，0：否，默认；1：已删除
-     */
-    // @TableLogic
-    // @Schema(title = "逻辑删除", description = "0：否，默认；1：已删除", hidden = true)
-    // @JsonIgnore
-    // protected Integer isDeleted;
     /**
      * 创建时间
      */
     @Schema(title = "添加时间", description = "格式：" + Const.DATETIME_FORMATTER + "。保存时忽略")
-    protected LocalDateTime createdDate;
+    protected LocalDateTime createdAt;
     /**
      * 修改时间
      */
     @Schema(title = "修改时间", description = "格式：" + Const.DATETIME_FORMATTER + "。保存时忽略")
-    protected LocalDateTime lastModifiedDate;
-    /**
-     * 创建用户id
-     */
-    // @Schema(title = "创建人")
-    // protected Long createdBy;
-    /**
-     * 修改用户id
-     */
-    // @Schema(title = "修改人")
-    // protected Long modifiedBy;
+    protected LocalDateTime updatedAt;
 }

@@ -74,7 +74,7 @@ mybatis-flex:
     print-banner: false
     key-config:
       key-type: auto
-    logic-delete-column: is_deleted
+    logic-delete-column: deleted
     normal-value-of-logic-delete: 0
     deleted-value-of-logic-delete: 1
 logging:

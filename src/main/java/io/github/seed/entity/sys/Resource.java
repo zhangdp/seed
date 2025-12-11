@@ -3,7 +3,7 @@ package io.github.seed.entity.sys;
 import com.mybatisflex.annotation.Table;
 import io.github.seed.common.constant.Const;
 import io.github.seed.common.constant.TableNameConst;
-import io.github.seed.entity.LogicBaseEntity;
+import io.github.seed.entity.BaseLogicEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -28,7 +28,7 @@ import java.io.Serializable;
 @ToString(callSuper = true)
 @Table(TableNameConst.SYS_RESOURCE)
 @Schema(title = "资源")
-public class Resource extends LogicBaseEntity<Long> implements Serializable {
+public class Resource extends BaseLogicEntity<Long> implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
