@@ -79,7 +79,8 @@ mybatis-flex:
     deleted-value-of-logic-delete: 1
 logging:
   level:
-    root: debug
+    root: info
+    io.github.seed: debug
 seed:
   file-storage:
     root-path: /upload
@@ -121,3 +122,4 @@ logging:
     path: logs/${spring.application.name}
   level:
     root: info
+    io.github.seed: info

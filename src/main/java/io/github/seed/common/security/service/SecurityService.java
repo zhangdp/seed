@@ -1,5 +1,6 @@
 package io.github.seed.common.security.service;
 
+import cn.hutool.v7.core.bean.BeanUtil;
 import cn.hutool.v7.core.collection.CollUtil;
 import cn.hutool.v7.core.lang.Assert;
 import cn.hutool.v7.core.lang.Validator;
@@ -63,7 +64,7 @@ public class SecurityService implements UserDetailsService {
      */
     public UserDetails toUserDetails(User sysUser) {
         LoginUser user = new LoginUser();
-        BeanUtils.copyProperties(sysUser, user);
+        BeanUtil.copyProperties(sysUser, user);
         user.setEnabled(sysUser.getStatus() == Const.GOOD);
         List<RolePermissionGrantedAuthority> authorities = new ArrayList<>();
         user.setAuthorities(authorities);

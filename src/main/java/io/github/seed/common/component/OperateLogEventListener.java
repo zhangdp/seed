@@ -9,10 +9,9 @@ import io.github.seed.entity.log.OperationLog;
 import io.github.seed.service.log.OperationLogService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.event.TransactionPhase;
-import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.time.LocalDateTime;
 
@@ -42,8 +41,8 @@ public class OperateLogEventListener {
      * @param event
      */
     @Async
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, classes = OperateLogEvent.class) // 不起作用
-    // @EventListener(OperateLogEvent.class)
+    // @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, classes = OperateLogEvent.class) // 不起作用
+    @EventListener(OperateLogEvent.class)
     public void onEvent(OperateLogEvent event) {
         try {
             log.debug("收到OperateLogEvent: {}", event);

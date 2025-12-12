@@ -2,11 +2,16 @@ package io.github.seed.common.config;
 
 import io.github.seed.common.component.LoginUserArgumentResolver;
 import io.github.seed.common.constant.Const;
+import io.github.seed.common.filter.ContentCachingRequestFilter;
+import io.github.seed.common.filter.ExceptionResolverFilter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.format.datetime.standard.DateTimeFormatterRegistrar;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.time.format.DateTimeFormatter;
@@ -52,6 +57,38 @@ public class SeedWebMvcConfigurer implements WebMvcConfigurer {
         resolvers.add(new LoginUserArgumentResolver());
     }
 
-    
+    /**
+     * 缓存request的body内容过滤器
+     *
+     * @return
+     */
+    @Bean
+    public FilterRegistrationBean<ContentCachingRequestFilter> contentCachingRequestFilterBean() {
+        ContentCachingRequestFilter filter = new ContentCachingRequestFilter();
+        FilterRegistrationBean<ContentCachingRequestFilter> registration = new FilterRegistrationBean<>();
+        registration.setFilter(filter);
+        registration.setOrder(filter.getOrder());
+        registration.addUrlPatterns("/*");
+        registration.setName("contentCachingRequestFilter");
+        log.info("添加缓存Request body过滤器：{}", registration);
+        return registration;
+    }
+
+    /**
+     * 全局异常处理过滤器
+     *
+     * @return
+     */
+    @Bean
+    public FilterRegistrationBean<ExceptionResolverFilter> exceptionResolverFilterBean(HandlerExceptionResolver handlerExceptionResolver) {
+        ExceptionResolverFilter filter = new ExceptionResolverFilter(handlerExceptionResolver);
+        FilterRegistrationBean<ExceptionResolverFilter> registration = new FilterRegistrationBean<>();
+        registration.setFilter(filter);
+        registration.setOrder(filter.getOrder());
+        registration.addUrlPatterns("/*");
+        registration.setName("exceptionResolverFilter");
+        log.info("添加全局异常处理过滤器：{}", registration);
+        return registration;
+    }
 
 }

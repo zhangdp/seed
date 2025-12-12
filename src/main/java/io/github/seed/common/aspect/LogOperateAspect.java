@@ -131,6 +131,7 @@ public class LogOperateAspect {
                     }
                     // 发出事件
                     applicationEventPublisher.publishEvent(event);
+                    log.debug("发出操作日志事件：{}", event);
                 } catch (Exception e) {
                     log.warn("发出操作日志事件出错", e);
                 }
