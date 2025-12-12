@@ -64,4 +64,12 @@ public class LoginUser implements Serializable, UserDetails {
      */
     private boolean enabled = true;
 
+    /**
+     * 简易字符串
+     *
+     * @return
+     */
+    public String simpleString() {
+        return "[" + this.id + "]" + this.username;
+    }
 }

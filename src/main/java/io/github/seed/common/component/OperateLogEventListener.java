@@ -9,7 +9,6 @@ import io.github.seed.entity.log.OperationLog;
 import io.github.seed.service.log.OperationLogService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
@@ -49,7 +48,7 @@ public class OperateLogEventListener {
         try {
             log.debug("收到OperateLogEvent: {}", event);
             OperationLog lo = new OperationLog();
-            lo.setCreatedDate(LocalDateTime.now());
+            lo.setCreatedAt(LocalDateTime.now());
             lo.setTitle(event.getTitle());
             lo.setOperateTime(event.getStartTime());
             lo.setUserId(event.getUserId());

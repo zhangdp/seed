@@ -68,7 +68,7 @@ public class DeptServiceImpl implements DeptService {
     public boolean update(Dept dept) {
         Assert.isFalse(this.exists(dept.getId()), () -> new BizException(ErrorCode.DEPT_NOT_EXISTS.code(), "部门（id=" + dept.getId() + "）已不存在"));
         Dept bean = new Dept();
-        BeanUtil.copyProperties(dept, bean, BaseEntity.CREATED_DATE, BaseEntity.LAST_MODIFIED_DATE);
+        BeanUtil.copyProperties(dept, bean);
         if (bean.getParentId() != null && !bean.getParentId().equals(Const.ROOT_ID)) {
             Assert.isTrue(this.exists(dept.getId()), () -> new BizException(ErrorCode.DEPT_PARENT_NOT_EXISTS.code(), "父部门（id=" + dept.getParentId() + "）已不存在"));
         }

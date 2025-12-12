@@ -79,7 +79,7 @@ public class ConfigServiceImpl implements ConfigService {
         }
         Assert.isFalse(entity.getIsSystem() == Const.YES_TRUE, () -> new BizException(ErrorCode.SYSTEM_PARAM_CAN_NOT_DELETE));
         configMapper.deleteById(id);
-        entity.setIsDeleted(Const.YES_TRUE);
+        entity.setDeleted(Const.YES_TRUE);
         return entity;
     }
 
