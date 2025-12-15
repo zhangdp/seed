@@ -1,6 +1,5 @@
 package io.github.seed.common.security.service;
 
-import cn.hutool.v7.core.bean.BeanUtil;
 import cn.hutool.v7.core.collection.CollUtil;
 import cn.hutool.v7.core.lang.Assert;
 import cn.hutool.v7.core.lang.Validator;
@@ -18,7 +17,6 @@ import io.github.seed.service.sys.RoleService;
 import io.github.seed.service.sys.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -59,40 +57,50 @@ public class SecurityService implements UserDetailsService {
     /**
      * 转为UserDetails
      *
-     * @param sysUser
+     * @param user
      * @return
      */
-    public UserDetails toUserDetails(User sysUser) {
-        LoginUser user = new LoginUser();
-        BeanUtil.copyProperties(sysUser, user);
-        user.setEnabled(sysUser.getStatus() == Const.GOOD);
+    public UserDetails toUserDetails(User user) {
+        LoginUser userDetails = new LoginUser();
+        userDetails.setId(user.getId());
+        userDetails.setUsername(user.getUsername());
+        userDetails.setPassword(user.getPassword());
+        userDetails.setMobile(user.getMobile());
+        userDetails.setName(user.getName());
+        userDetails.setEnabled(user.getStatus() == Const.GOOD);
+        userDetails.setAccountNonExpired(true);
+        userDetails.setAccountNonLocked(true);
+        userDetails.setCredentialsNonExpired(true);
         List<RolePermissionGrantedAuthority> authorities = new ArrayList<>();
-        user.setAuthorities(authorities);
-        List<Role> roleList = roleService.listUserRoles(user.getId());
-        Set<String> permissionCache = new HashSet<>();
+        userDetails.setAuthorities(authorities);
+
+        // 获取角色
+        List<Role> roleList = roleService.listUserRoles(userDetails.getId());
         if (CollUtil.isNotEmpty(roleList)) {
+            List<Long> roleIds = new ArrayList<>(roleList.size());
             for (Role role : roleList) {
+                roleIds.add(role.getId());
                 String roleCode = role.getCode().trim().toUpperCase();
                 if (!roleCode.startsWith(SecurityConst.ROLE_PREFIX)) {
                     roleCode = SecurityConst.ROLE_PREFIX + roleCode;
                 }
                 authorities.add(new RolePermissionGrantedAuthority(roleCode,
                         RolePermissionGrantedAuthority.AuthorityType.ROLE, role.getId()));
-                List<Resource> resources = resourceService.listRoleResources(role.getId());
+
+                // 获取权限
+                List<Resource> resources = resourceService.listRoleResources(roleIds);
                 if (CollUtil.isNotEmpty(resources)) {
                     for (Resource resource : resources) {
                         if (StrUtil.isNotBlank(resource.getPermission())) {
                             String permissionCode = resource.getPermission().trim().toUpperCase();
-                            if (permissionCache.add(permissionCode)) {
-                                authorities.add(new RolePermissionGrantedAuthority(permissionCode,
-                                        RolePermissionGrantedAuthority.AuthorityType.PERMISSION, resource.getId()));
-                            }
+                            authorities.add(new RolePermissionGrantedAuthority(permissionCode,
+                                    RolePermissionGrantedAuthority.AuthorityType.PERMISSION, resource.getId()));
                         }
                     }
                 }
             }
         }
-        return user;
+        return userDetails;
     }
 
     /**
@@ -101,6 +109,7 @@ public class SecurityService implements UserDetailsService {
      * @return
      */
     public LoginResult doLogin() {
+        // todo
         return null;
     }
 
@@ -110,6 +119,7 @@ public class SecurityService implements UserDetailsService {
      * @return
      */
     public boolean doLogout() {
+        // todo
         return false;
     }
 
@@ -119,6 +129,7 @@ public class SecurityService implements UserDetailsService {
      * @return
      */
     public boolean checkToken() {
+        // todo
         return false;
     }
 
@@ -129,6 +140,7 @@ public class SecurityService implements UserDetailsService {
      * @return
      */
     public LoginResult refreshToken(String refreshToken) {
+        // todo
         return null;
     }
 }

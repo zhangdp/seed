@@ -32,15 +32,18 @@ public class RoleServiceImpl implements RoleService {
     private final UserRoleService userRoleService;
     private final RoleMapper roleMapper;
 
-    @Cacheable(key = "'" + CACHE_USER_ROLES + "' + #userId")
+    // @Cacheable(key = "'" + CACHE_USER_ROLES + "' + #userId")
     @Override
     public List<Role> listUserRoles(Long userId) {
+        /*
         List<UserRole> pks = userRoleService.listByUserId(userId);
         if (CollUtil.isEmpty(pks)) {
             return null;
         }
         List<Long> roleIds = pks.stream().map(UserRole::getRoleId).distinct().toList();
         return roleMapper.selectListByRoleIdIn(roleIds);
+        */
+        return roleMapper.selectListByUserId(userId);
     }
 
     @Override

@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
+
 /**
  * 2023/4/12
  *
@@ -19,8 +21,8 @@ public class ResourceServiceTest {
 
     @Test
     public void listRoleResources() {
-        Long roleId = 1L;
-        System.out.println(resourceService.listRoleResources(roleId));
+        List<Long> roleIds = List.of(1L, 2L, 3L);
+        System.out.println(resourceService.listRoleResources(roleIds));
     }
 
 }

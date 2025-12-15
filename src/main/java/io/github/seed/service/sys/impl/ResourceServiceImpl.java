@@ -1,6 +1,5 @@
 package io.github.seed.service.sys.impl;
 
-import cn.hutool.v7.core.collection.CollUtil;
 import cn.hutool.v7.core.lang.Assert;
 import io.github.seed.common.constant.CacheConst;
 import io.github.seed.common.constant.Const;
@@ -8,18 +7,16 @@ import io.github.seed.common.constant.TableNameConst;
 import io.github.seed.common.enums.ErrorCode;
 import io.github.seed.common.exception.BizException;
 import io.github.seed.entity.sys.Resource;
-import io.github.seed.entity.sys.RoleResource;
 import io.github.seed.mapper.sys.ResourceMapper;
 import io.github.seed.model.dto.ResourceTreeNode;
 import io.github.seed.service.sys.ResourceService;
-import io.github.seed.service.sys.RoleResourceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -35,7 +32,6 @@ public class ResourceServiceImpl implements ResourceService {
 
     private static final String CACHE_ROLE_RESOURCES = "role_resources" + CacheConst.SPLIT;
 
-    private final RoleResourceService roleResourceService;
     private final ResourceMapper resourceMapper;
 
     @Override
@@ -46,11 +42,7 @@ public class ResourceServiceImpl implements ResourceService {
     @Cacheable(key = "'" + CACHE_ROLE_RESOURCES + "' + #roleId")
     @Override
     public List<Resource> listRoleResources(Long roleId) {
-        List<RoleResource> pks = roleResourceService.listByRoleId(roleId);
-        if (CollUtil.isEmpty(pks)) {
-            return Collections.emptyList();
-        }
-        return resourceMapper.selectListByIdIn(pks.stream().map(RoleResource::getResourceId).distinct().toList());
+        return this.resourceMapper.selectListByRoleId(roleId);
     }
 
     @Override
@@ -82,4 +74,8 @@ public class ResourceServiceImpl implements ResourceService {
         return this.toTree(resourceMapper.selectAll());
     }
 
+    @Override
+    public List<Resource> listRoleResources(Collection<Long> roleIds) {
+        return this.resourceMapper.selectListByRoleIdIn(roleIds);
+    }
 }

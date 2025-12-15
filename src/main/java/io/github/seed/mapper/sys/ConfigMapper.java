@@ -3,11 +3,9 @@ package io.github.seed.mapper.sys;
 import com.mybatisflex.core.BaseMapper;
 import com.mybatisflex.core.paginate.Page;
 import com.mybatisflex.core.query.QueryWrapper;
-import io.github.seed.entity.log.OperationLog;
 import io.github.seed.entity.sys.Config;
 import io.github.seed.model.PageData;
 import io.github.seed.model.params.BaseQueryParams;
-import io.github.seed.model.params.OperationLogQuery;
 import io.github.seed.model.params.PageQuery;
 import org.apache.ibatis.annotations.Mapper;
 

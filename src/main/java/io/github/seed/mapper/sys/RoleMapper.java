@@ -3,6 +3,7 @@ package io.github.seed.mapper.sys;
 import com.mybatisflex.core.BaseMapper;
 import com.mybatisflex.core.query.QueryWrapper;
 import io.github.seed.entity.sys.Role;
+import io.github.seed.entity.sys.UserRole;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.Collection;
@@ -45,6 +46,17 @@ public interface RoleMapper extends BaseMapper<Role> {
      */
     default boolean exists(Long roleId) {
         return this.selectCountByQuery(QueryWrapper.create().eq(Role::getId, roleId)) > 0;
+    }
+
+    /**
+     * 获取用户具有的角色列表
+     *
+     * @param userId
+     * @return
+     */
+    default List<Role> selectListByUserId(Long userId) {
+        QueryWrapper subQuery = QueryWrapper.create().select(UserRole::getRoleId).from(UserRole.class).eq(UserRole::getUserId, userId);
+        return this.selectListByQuery(QueryWrapper.create().in(Role::getId, subQuery));
     }
 
 }

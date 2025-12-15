@@ -69,6 +69,14 @@ public interface ResourceService {
     boolean delete(Long id);
 
     /**
+     * 根据角色id列表批量in查询
+     *
+     * @param roleIds
+     * @return
+     */
+    List<Resource> listRoleResources(Collection<Long> roleIds);
+
+    /**
      * 转为树形节点
      *
      * @param coll
