@@ -4,6 +4,7 @@ import cn.hutool.v7.core.collection.CollUtil;
 import cn.hutool.v7.core.lang.Assert;
 import cn.hutool.v7.core.lang.Validator;
 import cn.hutool.v7.core.text.StrUtil;
+import cn.hutool.v7.core.util.RandomUtil;
 import io.github.seed.common.constant.Const;
 import io.github.seed.common.security.data.LoginResult;
 import io.github.seed.common.security.data.RolePermissionGrantedAuthority;
@@ -142,5 +143,17 @@ public class SecurityService implements UserDetailsService {
     public LoginResult refreshToken(String refreshToken) {
         // todo
         return null;
+    }
+
+    /**
+     * 生成并发送登录的短信验证码
+     *
+     * @param mobile
+     * @return
+     */
+    public boolean loginSms(String mobile) {
+        String code = RandomUtil.randomNumbers(6);
+        // todo
+        return false;
     }
 }

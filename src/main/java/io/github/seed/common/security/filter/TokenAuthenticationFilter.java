@@ -14,7 +14,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -31,7 +30,7 @@ import java.io.IOException;
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     private final TokenService tokenService;
-    private final RequestAttributeSecurityContextRepository repository = new RequestAttributeSecurityContextRepository();
+    // private final RequestAttributeSecurityContextRepository repository = new RequestAttributeSecurityContextRepository();
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -44,7 +43,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContext context = SecurityContextHolder.getContext();
                 context.setAuthentication(authentication);
                 // 保存context用于sse等异步
-                repository.saveContext(context, request, response);
+                // repository.saveContext(context, request, response);
                 // 重置token过期时间
                 tokenService.resetTokenExpireIfNecessary(token, userDetails);
             }
