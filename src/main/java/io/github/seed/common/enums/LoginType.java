@@ -15,7 +15,11 @@ public enum LoginType {
     /**
      * 短信验证码
      */
-    SMS("sms");
+    SMS("sms"),
+    /**
+     * 单点
+     */
+    SSO("sso");
 
     private final String type;
 

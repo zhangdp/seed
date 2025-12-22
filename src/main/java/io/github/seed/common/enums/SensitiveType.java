@@ -1,6 +1,7 @@
 package io.github.seed.common.enums;
 
 import cn.hutool.v7.core.data.masking.MaskingUtil;
+import cn.hutool.v7.core.text.StrUtil;
 
 import java.util.function.Function;
 
@@ -65,7 +66,11 @@ public enum SensitiveType {
     /**
      * 只保留第一个字符
      */
-    ONLY_FIRST(MaskingUtil::firstMask);
+    ONLY_FIRST(MaskingUtil::firstMask),
+    /**
+     * 认证头
+     */
+    AUTHORIZATION(str -> MaskingUtil.idCardNum(str, 11, 4));
 
     /**
      * 脱敏实现

@@ -1,29 +1,22 @@
 package io.github.seed.common.security.service;
 
-import cn.hutool.v7.core.collection.CollUtil;
-import cn.hutool.v7.core.lang.Assert;
-import cn.hutool.v7.core.lang.Validator;
-import cn.hutool.v7.core.text.StrUtil;
 import cn.hutool.v7.core.util.RandomUtil;
-import io.github.seed.common.constant.Const;
 import io.github.seed.common.security.data.LoginResult;
-import io.github.seed.common.security.data.RolePermissionGrantedAuthority;
-import io.github.seed.common.security.SecurityConst;
-import io.github.seed.entity.sys.Resource;
-import io.github.seed.entity.sys.Role;
-import io.github.seed.entity.sys.User;
-import io.github.seed.common.security.data.LoginUser;
-import io.github.seed.service.sys.ResourceService;
-import io.github.seed.service.sys.RoleService;
-import io.github.seed.service.sys.UserService;
+import io.github.seed.common.security.data.SmsAuthenticationToken;
+import io.github.seed.model.params.LoginParams;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Component;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
-import java.util.*;
+import java.io.IOException;
 
 /**
  * 2024/6/27 认证服务类
@@ -31,86 +24,40 @@ import java.util.*;
  * @author zhangdp
  * @since 1.0.0
  */
-@Component
 @RequiredArgsConstructor
 @Slf4j
-public class SecurityService implements UserDetailsService {
+public class SecurityService {
 
-    private final UserService userService;
-    private final RoleService roleService;
-    private final ResourceService resourceService;
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = null;
-        if (Validator.isMobile(username)) {
-            user = userService.getByMobile(username);
-        } else if (Validator.isEmail(username)) {
-            user = userService.getByEmail(username);
-        }
-        if (user == null) {
-            user = userService.getByUsername(username);
-        }
-        Assert.notNull(user, () -> new UsernameNotFoundException("不存在账号：" + username));
-        return this.toUserDetails(user);
-    }
-
-    /**
-     * 转为UserDetails
-     *
-     * @param user
-     * @return
-     */
-    public UserDetails toUserDetails(User user) {
-        LoginUser userDetails = new LoginUser();
-        userDetails.setId(user.getId());
-        userDetails.setUsername(user.getUsername());
-        userDetails.setPassword(user.getPassword());
-        userDetails.setMobile(user.getMobile());
-        userDetails.setName(user.getName());
-        userDetails.setEnabled(user.getStatus() == Const.GOOD);
-        userDetails.setAccountNonExpired(true);
-        userDetails.setAccountNonLocked(true);
-        userDetails.setCredentialsNonExpired(true);
-        List<RolePermissionGrantedAuthority> authorities = new ArrayList<>();
-        userDetails.setAuthorities(authorities);
-
-        // 获取角色
-        List<Role> roleList = roleService.listUserRoles(userDetails.getId());
-        if (CollUtil.isNotEmpty(roleList)) {
-            List<Long> roleIds = new ArrayList<>(roleList.size());
-            for (Role role : roleList) {
-                roleIds.add(role.getId());
-                String roleCode = role.getCode().trim().toUpperCase();
-                if (!roleCode.startsWith(SecurityConst.ROLE_PREFIX)) {
-                    roleCode = SecurityConst.ROLE_PREFIX + roleCode;
-                }
-                authorities.add(new RolePermissionGrantedAuthority(roleCode,
-                        RolePermissionGrantedAuthority.AuthorityType.ROLE, role.getId()));
-
-                // 获取权限
-                List<Resource> resources = resourceService.listRoleResources(roleIds);
-                if (CollUtil.isNotEmpty(resources)) {
-                    for (Resource resource : resources) {
-                        if (StrUtil.isNotBlank(resource.getPermission())) {
-                            String permissionCode = resource.getPermission().trim().toUpperCase();
-                            authorities.add(new RolePermissionGrantedAuthority(permissionCode,
-                                    RolePermissionGrantedAuthority.AuthorityType.PERMISSION, resource.getId()));
-                        }
-                    }
-                }
-            }
-        }
-        return userDetails;
-    }
+    private final AuthenticationManager authenticationManager;
+    private final AuthenticationSuccessHandler authenticationSuccessHandler;
+    private final AuthenticationFailureHandler authenticationFailureHandler;
 
     /**
      * 执行登录
      *
+     * @param loginParams
+     * @param request
+     * @param response
      * @return
      */
-    public LoginResult doLogin() {
-        // todo
+    public LoginResult doLogin(LoginParams loginParams, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Authentication authentication = switch (loginParams.getLoginType()) {
+            case PASSWORD -> new UsernamePasswordAuthenticationToken(loginParams.getUsername(), loginParams.getPassword());
+            case SMS -> new SmsAuthenticationToken(loginParams.getUsername(), loginParams.getCode());
+            default -> throw new IllegalArgumentException("不支持的登录方式：" + loginParams.getLoginType());
+        };
+
+        try {
+            // 提交到spring security进行认证
+            Authentication authResult = authenticationManager.authenticate(authentication);
+            // 认证成功处理器
+            authenticationSuccessHandler.onAuthenticationSuccess(request, response, authResult);
+        } catch (AuthenticationException e) {
+            // 认证失败处理器
+            authenticationFailureHandler.onAuthenticationFailure(request, response, e);
+        }
+
+        // 此处直接返回null，在登录成功处理器统一处理统一返回
         return null;
     }
 

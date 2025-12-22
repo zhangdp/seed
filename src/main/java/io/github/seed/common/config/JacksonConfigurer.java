@@ -1,6 +1,7 @@
 package io.github.seed.common.config;
 
 import io.github.seed.common.component.DesensitizationJacksonAnnotationIntrospector;
+import io.github.seed.common.component.SafeLongSerializer;
 import io.github.seed.common.component.StringTrimDeserializer;
 import io.github.seed.common.util.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +36,10 @@ public class JacksonConfigurer {
             builder.annotationIntrospector(new DesensitizationJacksonAnnotationIntrospector());
             // String类型反序列时自动trim
             builder.deserializers(new StringTrimDeserializer());
+            // 超过js最大数值范围的long转为字符串
+            SafeLongSerializer safeLongSerializer = new SafeLongSerializer();
+            builder.serializerByType(Long.TYPE, safeLongSerializer);
+            builder.serializerByType(Long.class, safeLongSerializer);
         };
     }
 

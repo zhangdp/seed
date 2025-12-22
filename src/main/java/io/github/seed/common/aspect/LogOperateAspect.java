@@ -18,7 +18,6 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.DefaultParameterNameDiscoverer;
-import org.springframework.web.util.ContentCachingRequestWrapper;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -93,8 +92,8 @@ public class LogOperateAspect {
                     event.setHttpMethod(request.getMethod());
                     // event.setUserAgent(request.getHeader("User-Agent"));
                     event.setClientIp(ServletUtil.getClientIP(request));
-                    if (logOperation.logRequestBody() && request instanceof ContentCachingRequestWrapper requestWrapper) {
-                        event.setRequestBody(requestWrapper.getContentAsString());
+                    if (logOperation.logRequestBody()) {
+                        event.setRequestBody(ServletUtil.getBody(request));
                     }
                     if (logOperation.logParameter()) {
                         event.setParameterMap(request.getParameterMap());
@@ -104,7 +103,8 @@ public class LogOperateAspect {
                         Enumeration<String> headerNames = request.getHeaderNames();
                         while (headerNames.hasMoreElements()) {
                             String name = headerNames.nextElement();
-                            headers.put(name, request.getHeader(name));
+                            String value = request.getHeader(name);
+                            headers.put(name, value);
                         }
                         event.setHeaderMap(headers);
                     }

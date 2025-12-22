@@ -2,12 +2,18 @@ package io.github.seed.controller;
 
 import io.github.seed.common.security.data.LoginResult;
 import io.github.seed.common.security.service.SecurityService;
+import io.github.seed.model.params.LoginParams;
+import io.github.seed.model.params.PasswordLoginParams;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 /**
  * 2023/4/3 认证接口
@@ -26,11 +32,13 @@ public class AuthController {
     /**
      * 登录
      *
+     * @param loginParams
      * @return
      */
     @PostMapping("/login")
-    public LoginResult login() {
-        return securityService.doLogin();
+    @Operation(summary = "登录")
+    public LoginResult passwordLogin(@RequestBody @Valid LoginParams loginParams, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        return securityService.doLogin(loginParams, request, response);
     }
 
     /**

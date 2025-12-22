@@ -98,7 +98,7 @@ public enum ErrorCode {
     /**
      * 读取请求体失败
      */
-    READ_REQUEST_BODY_FOUND(12003, "读取请求体失败"),
+    REQUEST_BODY_NOT_FOUND(12003, "缺少请求体"),
 
 
     /**

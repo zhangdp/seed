@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
@@ -20,7 +19,6 @@ import java.io.IOException;
  * @author zhangdp
  * @since 1.0.0
  */
-@Component
 @RequiredArgsConstructor
 @Slf4j
 public class TokenAccessDeniedHandler implements AccessDeniedHandler {

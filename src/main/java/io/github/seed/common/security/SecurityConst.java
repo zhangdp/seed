@@ -64,7 +64,7 @@ public interface SecurityConst {
     /**
      * 是否自动刷新访问令牌过期时间
      */
-    boolean IS_AUTO_RENEW = true;
+    boolean IS_AUTO_RENEW = false;
     /**
      * 是否启动刷新token
      */

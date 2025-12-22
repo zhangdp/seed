@@ -14,6 +14,7 @@ import java.io.Serializable;
  * @author zhangdp
  * @since 2024/6/26
  */
+@Deprecated
 @Data
 @Accessors(chain = true)
 @Schema(title = "密码登录")

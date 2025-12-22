@@ -42,7 +42,7 @@ public class TestController {
     @Data
     public static class TestData {
         @NotNull
-        private Long id;
+        private long id;
         @NotBlank
         private String name;
         @NoJsonTrim

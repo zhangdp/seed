@@ -1,8 +1,6 @@
 package io.github.seed.common.security.handler;
 
 import io.github.seed.common.enums.ErrorCode;
-import io.github.seed.common.exception.BizException;
-import io.github.seed.common.exception.ForbiddenException;
 import io.github.seed.common.exception.UnauthorizedException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,7 +12,6 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
@@ -27,7 +24,6 @@ import java.io.IOException;
  */
 @Slf4j
 @RequiredArgsConstructor
-@Component
 public class TokenAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
     private final HandlerExceptionResolver handlerExceptionResolver;

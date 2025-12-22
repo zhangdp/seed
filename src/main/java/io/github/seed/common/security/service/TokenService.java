@@ -7,7 +7,6 @@ import io.github.seed.service.sys.ConfigService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.util.UUID;
@@ -19,7 +18,6 @@ import java.util.UUID;
  * @since 1.0.0
  */
 @Slf4j
-@Component
 @RequiredArgsConstructor
 public class TokenService {
 

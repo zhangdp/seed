@@ -1,5 +1,6 @@
 package io.github.seed.common.filter;
 
+import io.github.seed.common.component.CachedBodyHttpServletRequestWrapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,8 +26,8 @@ public class ContentCachingRequestFilter extends OncePerRequestFilter implements
 
     // 排除的路径url
     private static final Set<String> EXCLUDE_PATHS = Set.of("/actuator/**", "/swagger-ui/**", "/v3/api-docs");
-    // 最大允许缓存的大小1MB
-    private static final long MAX_LENGTH = 1024L * 1024L;
+    // 最大允许缓存的大小8MB
+    private static final long MAX_LENGTH = 8 * 1024L * 1024L;
 
     // 路径匹配器
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
@@ -62,13 +63,13 @@ public class ContentCachingRequestFilter extends OncePerRequestFilter implements
             filterChain.doFilter(request, response);
             return;
         }
-        // 使用ContentCachingRequestWrapper缓存request body
-        filterChain.doFilter(new ContentCachingRequestWrapper(request), response);
+        // 包装request缓存body
+        filterChain.doFilter(new CachedBodyHttpServletRequestWrapper(request), response);
     }
 
     @Override
     public int getOrder() {
-        // 最高执行顺序，只比全局异常处理小1
-        return Ordered.HIGHEST_PRECEDENCE + 1;
+        // 高执行顺序，只比CharacterEncodingFilter小
+        return Ordered.HIGHEST_PRECEDENCE + 2;
     }
 }

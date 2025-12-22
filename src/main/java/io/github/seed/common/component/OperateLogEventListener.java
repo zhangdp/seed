@@ -5,6 +5,8 @@ import cn.hutool.v7.core.exception.ExceptionUtil;
 import cn.hutool.v7.core.map.MapUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.seed.common.data.OperateLogEvent;
+import io.github.seed.common.enums.SensitiveType;
+import io.github.seed.common.security.SecurityConst;
 import io.github.seed.entity.log.OperationLog;
 import io.github.seed.service.log.OperationLogService;
 import lombok.RequiredArgsConstructor;
@@ -71,6 +73,13 @@ public class OperateLogEventListener {
                 lo.setParameters(objectMapper.writeValueAsString(event.getParameterMap()));
             }
             if (MapUtil.isNotEmpty(event.getHeaderMap())) {
+                String authKey = SecurityConst.AUTHORIZATION_HEADER.toLowerCase();
+                String authValue = event.getHeaderMap().get(authKey);
+                // 认证头token脱敏
+                if (authValue != null && authValue.length() >= 16) {
+                    authValue = SensitiveType.AUTHORIZATION.getDesensitizer().apply(authValue);
+                    event.getHeaderMap().put(authKey, authValue);
+                }
                 lo.setHeaders(objectMapper.writeValueAsString(event.getHeaderMap()));
             }
             lo.setRequestBody(event.getRequestBody());

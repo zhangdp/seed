@@ -18,7 +18,6 @@ import java.util.concurrent.TimeUnit;
  * @author zhangdp
  * @since 1.0.0
  */
-@Component
 @Slf4j
 @RequiredArgsConstructor
 public class RedisTokenStore implements TokenStore {

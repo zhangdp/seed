@@ -2,20 +2,19 @@ package io.github.seed.common.security.data;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.experimental.Accessors;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.io.Serial;
 
 /**
- * 角色、权限
+ * 自定义的spring security授权对象，可区分角色、权限并可包含id方便需要的时候取用
  *
  * @author zhangdp
  * @since 2024/6/26
  */
 @Data
-@Accessors(chain = true)
 @NoArgsConstructor
 @AllArgsConstructor
 public class RolePermissionGrantedAuthority implements GrantedAuthority {

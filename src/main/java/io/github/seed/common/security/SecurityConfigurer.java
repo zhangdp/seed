@@ -1,18 +1,24 @@
 package io.github.seed.common.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.seed.common.security.handler.*;
-import io.github.seed.common.security.service.TokenService;
 import io.github.seed.common.security.filter.TokenAuthenticationFilter;
-import io.github.seed.common.security.filter.TokenUsernamePasswordAuthenticationFilter;
+import io.github.seed.common.security.filter.TokenAuthenticationProcessingFilter;
+import io.github.seed.common.security.handler.*;
+import io.github.seed.common.security.service.*;
+import io.github.seed.service.sys.ConfigService;
+import io.github.seed.service.sys.ResourceService;
+import io.github.seed.service.sys.RoleService;
+import io.github.seed.service.sys.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -21,8 +27,14 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 /**
  * 2023/8/15 spring security 配置
@@ -36,14 +48,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfigurer {
 
-    private final ObjectMapper objectMapper;
-    private final TokenAuthenticationSuccessHandler tokenAuthenticationSuccessHandler;
-    private final TokenLogoutSuccessHandler tokenLogoutSuccessHandler;
-    private final TokenAuthenticationFailureHandler tokenAuthenticationFailureHandler;
-    private final TokenAccessDeniedHandler tokenAccessDeniedHandler;
-    private final TokenAuthenticationEntryPoint tokenAuthenticationEntryPoint;
-    private final TokenService tokenService;
-
     /**
      * springsecurity配置
      *
@@ -52,7 +56,10 @@ public class SecurityConfigurer {
      * @throws Exception
      */
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, AuthenticationManager authenticationManager,
+                                                   AuthenticationSuccessHandler authenticationSuccessHandler, AuthenticationFailureHandler authenticationFailureHandler,
+                                                   LogoutSuccessHandler logoutSuccessHandler, AccessDeniedHandler accessDeniedHandler,
+                                                   AuthenticationEntryPoint authenticationEntryPoint, TokenService tokenService, ObjectMapper objectMapper) throws Exception {
         httpSecurity
                 // 禁用csrf
                 .csrf(AbstractHttpConfigurer::disable)
@@ -63,10 +70,11 @@ public class SecurityConfigurer {
                 // 默认表单登录
                 .formLogin(AbstractHttpConfigurer::disable)
                 // 登出
-                .logout(c -> c.logoutUrl(SecurityConst.LOGOUT_URL).logoutSuccessHandler(tokenLogoutSuccessHandler))
+                .logout(c -> c.logoutUrl(SecurityConst.LOGOUT_URL).logoutSuccessHandler(logoutSuccessHandler))
                 .authorizeHttpRequests(req -> req
                         // 放行url
-                        .requestMatchers("/test/**", "/swagger-ui/**", "/v3/**", "/actuator/**").permitAll()
+                        .requestMatchers("/test/**", "/swagger-ui/**", "/v3/**", "/actuator/**",
+                                SecurityConst.LOGIN_URL, SecurityConst.LOGOUT_URL).permitAll()
                         // OPTIONS请求放行
                         .requestMatchers(HttpMethod.OPTIONS).permitAll()
                         // 其余url都必须认证
@@ -74,14 +82,15 @@ public class SecurityConfigurer {
                 )
                 .exceptionHandling(eh -> eh
                         // 无权限访问处理器
-                        .accessDeniedHandler(tokenAccessDeniedHandler)
+                        .accessDeniedHandler(accessDeniedHandler)
                         // 未登录处理器
-                        .authenticationEntryPoint(tokenAuthenticationEntryPoint)
+                        .authenticationEntryPoint(authenticationEntryPoint)
                 )
+                // 登录认证处理过滤器
+                .addFilterBefore(this.tokenAuthenticationProcessingFilter(authenticationManager, authenticationSuccessHandler,
+                        authenticationFailureHandler, objectMapper), UsernamePasswordAuthenticationFilter.class)
                 // 解析token过滤器
-                .addFilterBefore(this.tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
-                // 自定义账号密码登录过滤器
-                .addFilterBefore(this.tokenUsernamePasswordAuthenticationFilter(httpSecurity.getSharedObject(AuthenticationManager.class)), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(this.tokenAuthenticationFilter(tokenService), TokenAuthenticationProcessingFilter.class);
         return httpSecurity.build();
     }
 
@@ -93,6 +102,98 @@ public class SecurityConfigurer {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    /**
+     * token持久化
+     *
+     * @param restTemplate
+     * @return
+     */
+    @Bean
+    public TokenStore tokenStore(RedisTemplate<String, Object> restTemplate) {
+        return new RedisTokenStore(restTemplate);
+    }
+
+    /**
+     * token服务
+     *
+     * @param tokenStore
+     * @param configService
+     * @return
+     */
+    @Bean
+    public TokenService tokenService(TokenStore tokenStore, ConfigService configService) {
+        return new TokenService(tokenStore, configService);
+    }
+
+    /**
+     * spring security 用户服务
+     *
+     * @param userService
+     * @param roleService
+     * @param resourceService
+     * @return
+     */
+    @Bean
+    public UserDetailsService userDetailsService(UserService userService, RoleService roleService, ResourceService resourceService) {
+        return new DaoUserDetailsService(userService, roleService, resourceService);
+    }
+
+    /**
+     * 校验token过滤器
+     *
+     * @param tokenService
+     * @return
+     */
+    // @Bean
+    public TokenAuthenticationFilter tokenAuthenticationFilter(TokenService tokenService) {
+        return new TokenAuthenticationFilter(tokenService);
+    }
+
+    /**
+     * 登录成功处理器
+     *
+     * @param objectMapper
+     * @param tokenService
+     * @return
+     */
+    @Bean
+    public AuthenticationSuccessHandler authenticationSuccessHandler(ObjectMapper objectMapper, TokenService tokenService) {
+        return new TokenAuthenticationSuccessHandler(objectMapper, tokenService);
+    }
+
+    /**
+     * 访问拒绝处理器
+     *
+     * @param handlerExceptionResolver
+     * @return
+     */
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler(HandlerExceptionResolver handlerExceptionResolver) {
+        return new TokenAccessDeniedHandler(handlerExceptionResolver);
+    }
+
+    /**
+     * 认证失败处理器
+     *
+     * @param handlerExceptionResolver
+     * @return
+     */
+    @Bean
+    public AuthenticationEntryPoint authenticationEntryPoint(HandlerExceptionResolver handlerExceptionResolver) {
+        return new TokenAuthenticationEntryPoint(handlerExceptionResolver);
+    }
+
+    /**
+     * 登录失败处理器
+     *
+     * @param handlerExceptionResolver
+     * @return
+     */
+    @Bean
+    public AuthenticationFailureHandler authenticationFailureHandler(HandlerExceptionResolver handlerExceptionResolver) {
+        return new TokenAuthenticationFailureHandler(handlerExceptionResolver);
     }
 
     /**
@@ -110,40 +211,75 @@ public class SecurityConfigurer {
     }
 
     /**
-     * 基于用户名和密码或使用用户名和密码进行身份验证
+     * 注销成功处理器
      *
-     * @param provider
+     * @param tokenService
      * @return
      */
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationProvider provider) {
-        return new ProviderManager(provider);
+    public LogoutSuccessHandler logoutSuccessHandler(TokenService tokenService) {
+        return new TokenLogoutSuccessHandler(tokenService);
+    }
+
+    /**
+     * 短信验证码登录
+     *
+     * @param userDetailsService
+     * @return
+     */
+    @Bean
+    public SmsAuthenticationProvider smsAuthenticationProvider(UserDetailsService userDetailsService) {
+        return new SmsAuthenticationProvider(userDetailsService);
+    }
+
+    /**
+     * 认证管理器
+     *
+     * @param http
+     * @param smsProvider
+     * @return
+     * @throws Exception
+     */
+    @Bean
+    public AuthenticationManager authenticationManager(HttpSecurity http, SmsAuthenticationProvider smsProvider) throws Exception {
+        AuthenticationManagerBuilder builder =
+                http.getSharedObject(AuthenticationManagerBuilder.class);
+        // 添加自定义的短信登录
+        builder.authenticationProvider(smsProvider);
+        return builder.build();
     }
 
     /**
      * 自定义token登录
      *
      * @param authenticationManager
+     * @param authenticationSuccessHandler
+     * @param authenticationFailureHandler
+     * @param objectMapper
      * @return
      */
-    @Bean
-    public TokenUsernamePasswordAuthenticationFilter tokenUsernamePasswordAuthenticationFilter(AuthenticationManager authenticationManager) {
-        TokenUsernamePasswordAuthenticationFilter filter = new TokenUsernamePasswordAuthenticationFilter(objectMapper);
+    // @Bean
+    public TokenAuthenticationProcessingFilter tokenAuthenticationProcessingFilter(AuthenticationManager authenticationManager, AuthenticationSuccessHandler authenticationSuccessHandler, AuthenticationFailureHandler authenticationFailureHandler, ObjectMapper objectMapper) {
+        TokenAuthenticationProcessingFilter filter = new TokenAuthenticationProcessingFilter(objectMapper);
         filter.setAuthenticationManager(authenticationManager);
         //认证成功处理器
-        filter.setAuthenticationSuccessHandler(tokenAuthenticationSuccessHandler);
+        filter.setAuthenticationSuccessHandler(authenticationSuccessHandler);
         //认证失败处理器
-        filter.setAuthenticationFailureHandler(tokenAuthenticationFailureHandler);
+        filter.setAuthenticationFailureHandler(authenticationFailureHandler);
         return filter;
     }
 
     /**
-     * 校验token过滤器
+     * 认证服务
      *
+     * @param authenticationManager
+     * @param authenticationSuccessHandler
+     * @param authenticationFailureHandler
      * @return
      */
-    public TokenAuthenticationFilter tokenAuthenticationFilter() {
-        return new TokenAuthenticationFilter(tokenService);
+    @Bean
+    public SecurityService securityService(AuthenticationManager authenticationManager, AuthenticationSuccessHandler authenticationSuccessHandler, AuthenticationFailureHandler authenticationFailureHandler) {
+        return new SecurityService(authenticationManager, authenticationSuccessHandler, authenticationFailureHandler);
     }
 
 }
