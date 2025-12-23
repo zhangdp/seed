@@ -2,7 +2,7 @@ package io.github.seed.common.config;
 
 import io.github.seed.common.component.LoginUserArgumentResolver;
 import io.github.seed.common.constant.Const;
-import io.github.seed.common.filter.ContentCachingRequestFilter;
+import io.github.seed.common.filter.BodyCachingRequestFilter;
 import io.github.seed.common.filter.ExceptionResolverFilter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -63,9 +63,9 @@ public class SeedWebMvcConfigurer implements WebMvcConfigurer {
      * @return
      */
     @Bean
-    public FilterRegistrationBean<ContentCachingRequestFilter> contentCachingRequestFilterBean() {
-        ContentCachingRequestFilter filter = new ContentCachingRequestFilter();
-        FilterRegistrationBean<ContentCachingRequestFilter> registration = new FilterRegistrationBean<>();
+    public FilterRegistrationBean<BodyCachingRequestFilter> contentCachingRequestFilterBean() {
+        BodyCachingRequestFilter filter = new BodyCachingRequestFilter();
+        FilterRegistrationBean<BodyCachingRequestFilter> registration = new FilterRegistrationBean<>();
         registration.setFilter(filter);
         registration.setOrder(filter.getOrder());
         registration.addUrlPatterns("/*");

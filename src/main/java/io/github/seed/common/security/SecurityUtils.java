@@ -27,14 +27,14 @@ public class SecurityUtils {
      */
     public static String resolveToken(HttpServletRequest request) {
         String token = request.getHeader(SecurityConst.AUTHORIZATION_HEADER);
-        if (StrUtil.isNotBlank(token) && StrUtil.startWithIgnoreCase(token, SecurityConst.AUTH_TYPE_BEARER)) {
+        if (token != null && !(token = token.trim()).isEmpty() && StrUtil.startWithIgnoreCase(token, SecurityConst.AUTH_TYPE_BEARER)) {
             token = token.substring(SecurityConst.AUTH_TYPE_BEARER.length() + 1);
         }
         // 如果header中没有token，则从请求参数中获取
-        if (StrUtil.isBlank(token)) {
+        if (token == null || (token = token.trim()).isEmpty()) {
             token = request.getParameter(SecurityConst.AUTHORIZATION_PARAMETER);
         }
-        return token;
+        return token == null ? null : token.trim();
     }
 
     /**

@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -37,8 +38,20 @@ public class AuthController {
      */
     @PostMapping("/login")
     @Operation(summary = "登录")
-    public LoginResult passwordLogin(@RequestBody @Valid LoginParams loginParams, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public LoginResult login(@RequestBody @Valid LoginParams loginParams, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         return securityService.doLogin(loginParams, request, response);
+    }
+
+    /**
+     * 注销
+     *
+     * @param request
+     */
+    @DeleteMapping("/logout")
+    @Operation(summary = "注销")
+    // @ResponseStatus(HttpStatus.NO_CONTENT)
+    public boolean logout(HttpServletRequest request) {
+        return securityService.doLogout(request);
     }
 
     /**

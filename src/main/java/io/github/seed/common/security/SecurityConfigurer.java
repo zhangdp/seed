@@ -57,8 +57,8 @@ public class SecurityConfigurer {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, TokenResolveAuthenticationFilter tokenResolveAuthenticationFilter,
                                                    // TokenAuthenticationProcessingFilter tokenAuthenticationProcessingFilter,
-                                                   LogoutSuccessHandler logoutSuccessHandler, AccessDeniedHandler accessDeniedHandler,
-                                                   AuthenticationEntryPoint authenticationEntryPoint) throws Exception {
+                                                   // LogoutSuccessHandler logoutSuccessHandler,
+                                                   AccessDeniedHandler accessDeniedHandler, AuthenticationEntryPoint authenticationEntryPoint) throws Exception {
         httpSecurity
                 // 禁用csrf
                 .csrf(AbstractHttpConfigurer::disable)
@@ -69,11 +69,10 @@ public class SecurityConfigurer {
                 // 默认表单登录
                 .formLogin(AbstractHttpConfigurer::disable)
                 // 登出
-                .logout(c -> c.logoutUrl(SecurityConst.LOGOUT_URL).logoutSuccessHandler(logoutSuccessHandler))
+                // .logout(c -> c.logoutUrl(SecurityConst.LOGOUT_URL).logoutSuccessHandler(logoutSuccessHandler))
                 .authorizeHttpRequests(req -> req
                         // 放行url
-                        .requestMatchers("/test/**", "/swagger-ui/**", "/v3/**", "/actuator/**",
-                                SecurityConst.LOGIN_URL, SecurityConst.LOGOUT_URL).permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/**", "/actuator/**", SecurityConst.LOGIN_URL, SecurityConst.LOGOUT_URL).permitAll()
                         // OPTIONS请求放行
                         .requestMatchers(HttpMethod.OPTIONS).permitAll()
                         // 其余url都必须认证
@@ -214,7 +213,7 @@ public class SecurityConfigurer {
      * @param tokenService
      * @return
      */
-    @Bean
+    // @Bean
     public LogoutSuccessHandler logoutSuccessHandler(TokenService tokenService) {
         return new TokenLogoutSuccessHandler(tokenService);
     }
@@ -276,8 +275,8 @@ public class SecurityConfigurer {
      * @return
      */
     @Bean
-    public SecurityService securityService(AuthenticationManager authenticationManager, AuthenticationSuccessHandler authenticationSuccessHandler, AuthenticationFailureHandler authenticationFailureHandler) {
-        return new SecurityService(authenticationManager, authenticationSuccessHandler, authenticationFailureHandler);
+    public SecurityService securityService(AuthenticationManager authenticationManager, AuthenticationSuccessHandler authenticationSuccessHandler, AuthenticationFailureHandler authenticationFailureHandler, TokenService tokenService) {
+        return new SecurityService(authenticationManager, authenticationSuccessHandler, authenticationFailureHandler, tokenService);
     }
 
 }

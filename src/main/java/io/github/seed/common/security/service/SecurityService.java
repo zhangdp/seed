@@ -1,6 +1,8 @@
 package io.github.seed.common.security.service;
 
 import cn.hutool.v7.core.util.RandomUtil;
+import io.github.seed.common.security.SecurityUtils;
+import io.github.seed.common.security.data.AccessToken;
 import io.github.seed.common.security.data.LoginResult;
 import io.github.seed.common.security.data.SmsAuthenticationToken;
 import io.github.seed.model.params.LoginParams;
@@ -9,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.security.SecurityUtil;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -31,6 +34,7 @@ public class SecurityService {
     private final AuthenticationManager authenticationManager;
     private final AuthenticationSuccessHandler authenticationSuccessHandler;
     private final AuthenticationFailureHandler authenticationFailureHandler;
+    private final TokenService tokenService;
 
     /**
      * 执行登录
@@ -66,9 +70,22 @@ public class SecurityService {
      *
      * @return
      */
-    public boolean doLogout() {
-        // todo
-        return false;
+    public boolean doLogout(HttpServletRequest request) {
+        String token = SecurityUtils.resolveToken(request);
+        if (token == null || token.isEmpty()) {
+            return false;
+        }
+        return this.doLogout(token);
+    }
+
+    /**
+     * 执行注销
+     *
+     * @param token
+     * @return
+     */
+    public boolean doLogout(String token) {
+        return tokenService.removeToken(token);
     }
 
     /**
