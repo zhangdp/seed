@@ -23,7 +23,7 @@ public class SmsAuthenticationProvider implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         SmsAuthenticationToken smsAuthenticationToken = (SmsAuthenticationToken) authentication;
-        String mobile = smsAuthenticationToken.getMobile();
+        String mobile = (String) smsAuthenticationToken.getPrincipal();
         String code = smsAuthenticationToken.getCode();
         if (code == null || (code = code.trim()).isEmpty()) {
             throw new BadCredentialsException("短信验证码错误");

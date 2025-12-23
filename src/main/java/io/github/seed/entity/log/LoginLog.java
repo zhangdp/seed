@@ -45,7 +45,7 @@ public class LoginLog extends BaseEntity<Long> implements Serializable {
      * 用户标识、如账号、手机号、邮箱等
      */
     @Schema(title = "用户标识", description = "用户标识、如账号、手机号、邮箱等")
-    private String userCode;
+    private String username;
     /**
      * 登录类型
      */

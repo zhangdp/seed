@@ -27,7 +27,7 @@ import java.io.IOException;
 @Slf4j
 // @Component
 @RequiredArgsConstructor
-public class TokenAuthenticationFilter extends OncePerRequestFilter {
+public class TokenResolveAuthenticationFilter extends OncePerRequestFilter {
 
     private final TokenService tokenService;
     // private final RequestAttributeSecurityContextRepository repository = new RequestAttributeSecurityContextRepository();
@@ -45,7 +45,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                 // 保存context用于sse等异步
                 // repository.saveContext(context, request, response);
                 // 重置token过期时间
-                tokenService.resetTokenExpireIfNecessary(token, userDetails);
+                // tokenService.resetTokenExpireIfNecessary(token, userDetails);
             }
         }
         filterChain.doFilter(request, response);

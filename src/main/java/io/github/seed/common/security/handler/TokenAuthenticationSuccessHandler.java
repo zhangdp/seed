@@ -1,6 +1,9 @@
 package io.github.seed.common.security.handler;
 
+import cn.hutool.v7.http.server.servlet.ServletUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.seed.common.constant.Const;
+import io.github.seed.common.data.LoginLogEvent;
 import io.github.seed.common.security.data.RefreshToken;
 import io.github.seed.common.security.service.TokenService;
 import io.github.seed.common.util.WebUtils;
@@ -16,6 +19,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 /**
  * 2023/9/1 spring security登录成功处理器
@@ -46,7 +50,21 @@ public class TokenAuthenticationSuccessHandler implements AuthenticationSuccessH
         loginResult.setUserId(user.getId());
         loginResult.setUsername(user.getUsername());
         loginResult.setName(user.getName());
+        // response登录结果
         this.response(response, loginResult);
+        // 发出登录日志事件
+        this.publishLoginEvent(request, authentication);
+    }
+
+    private void publishLoginEvent(HttpServletRequest request, Authentication authentication) {
+        LoginLogEvent event = new LoginLogEvent(this);
+        // event.setLoginType();
+        // event.setUsername();
+        event.setLoginTime(LocalDateTime.now());
+        event.setLoginUser((LoginUser) authentication.getPrincipal());
+        event.setClientIp(ServletUtil.getClientIP(request));
+        event.setUserAgent(request.getHeader("User-Agent"));
+        event.setResultCode(Const.RESULT_SUCCESS);
     }
 
     /**

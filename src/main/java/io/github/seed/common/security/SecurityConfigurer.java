@@ -1,7 +1,7 @@
 package io.github.seed.common.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.seed.common.security.filter.TokenAuthenticationFilter;
+import io.github.seed.common.security.filter.TokenResolveAuthenticationFilter;
 import io.github.seed.common.security.filter.TokenAuthenticationProcessingFilter;
 import io.github.seed.common.security.handler.*;
 import io.github.seed.common.security.service.*;
@@ -55,7 +55,7 @@ public class SecurityConfigurer {
      * @throws Exception
      */
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, TokenAuthenticationFilter tokenAuthenticationFilter,
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, TokenResolveAuthenticationFilter tokenResolveAuthenticationFilter,
                                                    // TokenAuthenticationProcessingFilter tokenAuthenticationProcessingFilter,
                                                    LogoutSuccessHandler logoutSuccessHandler, AccessDeniedHandler accessDeniedHandler,
                                                    AuthenticationEntryPoint authenticationEntryPoint) throws Exception {
@@ -88,7 +88,7 @@ public class SecurityConfigurer {
                 // 登录认证处理过滤器
                 // .addFilterBefore(tokenAuthenticationProcessingFilter, UsernamePasswordAuthenticationFilter.class)
                 // 解析token过滤器
-                .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(tokenResolveAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
     }
 
@@ -145,8 +145,8 @@ public class SecurityConfigurer {
      * @return
      */
     @Bean
-    public TokenAuthenticationFilter tokenAuthenticationFilter(TokenService tokenService) {
-        return new TokenAuthenticationFilter(tokenService);
+    public TokenResolveAuthenticationFilter tokenAuthenticationFilter(TokenService tokenService) {
+        return new TokenResolveAuthenticationFilter(tokenService);
     }
 
     /**
