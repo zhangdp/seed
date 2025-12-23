@@ -57,7 +57,7 @@ public class SecurityService {
             authenticationFailureHandler.onAuthenticationFailure(request, response, e);
         }
 
-        // 此处直接返回null，在登录成功处理器统一处理统一返回
+        // 此处直接返回null，在登录成功处理器统一处理统一response
         return null;
     }
 
@@ -103,4 +103,5 @@ public class SecurityService {
         // todo
         return false;
     }
+
 }

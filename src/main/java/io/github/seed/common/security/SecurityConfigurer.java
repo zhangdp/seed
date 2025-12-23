@@ -18,7 +18,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -56,10 +55,10 @@ public class SecurityConfigurer {
      * @throws Exception
      */
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, AuthenticationManager authenticationManager,
-                                                   AuthenticationSuccessHandler authenticationSuccessHandler, AuthenticationFailureHandler authenticationFailureHandler,
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, TokenAuthenticationFilter tokenAuthenticationFilter,
+                                                   // TokenAuthenticationProcessingFilter tokenAuthenticationProcessingFilter,
                                                    LogoutSuccessHandler logoutSuccessHandler, AccessDeniedHandler accessDeniedHandler,
-                                                   AuthenticationEntryPoint authenticationEntryPoint, TokenService tokenService, ObjectMapper objectMapper) throws Exception {
+                                                   AuthenticationEntryPoint authenticationEntryPoint) throws Exception {
         httpSecurity
                 // 禁用csrf
                 .csrf(AbstractHttpConfigurer::disable)
@@ -87,10 +86,9 @@ public class SecurityConfigurer {
                         .authenticationEntryPoint(authenticationEntryPoint)
                 )
                 // 登录认证处理过滤器
-                .addFilterBefore(this.tokenAuthenticationProcessingFilter(authenticationManager, authenticationSuccessHandler,
-                        authenticationFailureHandler, objectMapper), UsernamePasswordAuthenticationFilter.class)
+                // .addFilterBefore(tokenAuthenticationProcessingFilter, UsernamePasswordAuthenticationFilter.class)
                 // 解析token过滤器
-                .addFilterBefore(this.tokenAuthenticationFilter(tokenService), TokenAuthenticationProcessingFilter.class);
+                .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
     }
 
@@ -146,7 +144,7 @@ public class SecurityConfigurer {
      * @param tokenService
      * @return
      */
-    // @Bean
+    @Bean
     public TokenAuthenticationFilter tokenAuthenticationFilter(TokenService tokenService) {
         return new TokenAuthenticationFilter(tokenService);
     }
@@ -236,16 +234,16 @@ public class SecurityConfigurer {
      * 认证管理器
      *
      * @param http
-     * @param smsProvider
+     * @param smsAuthenticationProvider
      * @return
      * @throws Exception
      */
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http, SmsAuthenticationProvider smsProvider) throws Exception {
+    public AuthenticationManager authenticationManager(HttpSecurity http, SmsAuthenticationProvider smsAuthenticationProvider) throws Exception {
         AuthenticationManagerBuilder builder =
                 http.getSharedObject(AuthenticationManagerBuilder.class);
         // 添加自定义的短信登录
-        builder.authenticationProvider(smsProvider);
+        builder.authenticationProvider(smsAuthenticationProvider);
         return builder.build();
     }
 

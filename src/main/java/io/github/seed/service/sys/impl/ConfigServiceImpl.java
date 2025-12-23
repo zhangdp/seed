@@ -41,7 +41,7 @@ public class ConfigServiceImpl implements ConfigService {
     private final ConfigMapper configMapper;
     private final ObjectMapper objectMapper;
 
-    @Cacheable(key = "#key", unless = "#result == null")
+    @Cacheable(key = "#key")
     @Override
     public Config getByKey(String key) {
         return configMapper.selectOneByConfigKey(key);
