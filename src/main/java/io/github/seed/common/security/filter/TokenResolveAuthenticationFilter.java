@@ -1,7 +1,11 @@
 package io.github.seed.common.security.filter;
 
 import cn.hutool.v7.core.text.StrUtil;
+import cn.hutool.v7.core.text.dfa.SensitiveUtil;
+import io.github.seed.common.enums.SensitiveType;
+import io.github.seed.common.security.SecurityConst;
 import io.github.seed.common.security.SecurityUtils;
+import io.github.seed.common.security.data.AccessToken;
 import io.github.seed.common.security.service.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -14,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.PatternMatchUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -30,22 +35,25 @@ import java.io.IOException;
 public class TokenResolveAuthenticationFilter extends OncePerRequestFilter {
 
     private final TokenService tokenService;
-    // private final RequestAttributeSecurityContextRepository repository = new RequestAttributeSecurityContextRepository();
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        log.trace("TokenAuthenticationFilter: {}", request.getRequestURI());
-        String token = SecurityUtils.resolveToken(request);
-        if (StrUtil.isNotBlank(token)) {
-            UserDetails userDetails = tokenService.loadUserDetails(token);
-            if (userDetails != null) {
-                Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                SecurityContext context = SecurityContextHolder.getContext();
-                context.setAuthentication(authentication);
-                // 保存context用于sse等异步
-                // repository.saveContext(context, request, response);
-                // 重置token过期时间
-                // tokenService.resetTokenExpireIfNecessary(token, userDetails);
+        String uri = request.getRequestURI();
+        // 跳过放行的url
+        if (!PatternMatchUtils.simpleMatch(SecurityConst.PERMIT_URLS, uri)) {
+            String token = SecurityUtils.resolveToken(request);
+            log.debug("TokenAuthenticationFilter: {}, token: {}", uri, SensitiveType.TOKEN.getDesensitizer().apply(token));
+            if (StrUtil.isNotBlank(token)) {
+                AccessToken accessToken = tokenService.loadAccessToken(token);
+                if (accessToken != null) {
+                    UserDetails userDetails = accessToken.getUserDetails();
+                    Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    SecurityContext context = SecurityContextHolder.getContext();
+                    context.setAuthentication(authentication);
+                    request.setAttribute(SecurityConst.REQUEST_ATTR_ACCESS_TOKEN, accessToken);
+                    // 重置token过期时间
+                    // tokenService.resetTokenExpireIfNecessary(token, userDetails);
+                }
             }
         }
         filterChain.doFilter(request, response);

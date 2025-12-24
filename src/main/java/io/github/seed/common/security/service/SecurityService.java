@@ -2,20 +2,19 @@ package io.github.seed.common.security.service;
 
 import cn.hutool.v7.core.util.RandomUtil;
 import io.github.seed.common.security.SecurityUtils;
-import io.github.seed.common.security.data.AccessToken;
-import io.github.seed.common.security.data.LoginResult;
-import io.github.seed.common.security.data.SmsAuthenticationToken;
+import io.github.seed.common.security.data.*;
+import io.github.seed.common.util.SpringWebContextHolder;
 import io.github.seed.model.params.LoginParams;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.security.SecurityUtil;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
@@ -37,20 +36,63 @@ public class SecurityService {
     private final TokenService tokenService;
 
     /**
-     * 执行登录
+     * 登录
+     *
+     * @param loginParams
+     * @return
+     * @throws ServletException
+     * @throws IOException
+     */
+    public LoginResult login(LoginParams loginParams) throws ServletException, IOException {
+        HttpServletRequest request = SpringWebContextHolder.getRequest();
+        HttpServletResponse response = SpringWebContextHolder.getResponse();
+        return this.login(loginParams, request, response);
+    }
+
+    /**
+     * 登录
      *
      * @param loginParams
      * @param request
      * @param response
      * @return
+     * @throws ServletException
+     * @throws IOException
      */
-    public LoginResult doLogin(LoginParams loginParams, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public LoginResult login(LoginParams loginParams, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Authentication authentication = switch (loginParams.getLoginType()) {
             case PASSWORD -> new UsernamePasswordAuthenticationToken(loginParams.getUsername(), loginParams.getPassword());
             case SMS -> new SmsAuthenticationToken(loginParams.getUsername(), loginParams.getCode());
             default -> throw new IllegalArgumentException("不支持的登录方式：" + loginParams.getLoginType());
         };
+        return this.doLogin(authentication, request, response);
+    }
 
+    /**
+     * 执行登录
+     *
+     * @param authentication
+     * @return
+     * @throws ServletException
+     * @throws IOException
+     */
+    public LoginResult doLogin(Authentication authentication) throws ServletException, IOException {
+        HttpServletRequest request = SpringWebContextHolder.getRequest();
+        HttpServletResponse response = SpringWebContextHolder.getResponse();
+        return this.doLogin(authentication, request, response);
+    }
+
+    /**
+     * 执行登录
+     *
+     * @param authentication
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     * @throws IOException
+     */
+    public LoginResult doLogin(Authentication authentication, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
             // 提交到spring security进行认证
             Authentication authResult = authenticationManager.authenticate(authentication);
@@ -70,12 +112,12 @@ public class SecurityService {
      *
      * @return
      */
-    public boolean doLogout(HttpServletRequest request) {
+    public boolean logout(HttpServletRequest request) {
         String token = SecurityUtils.resolveToken(request);
         if (token == null || token.isEmpty()) {
             return false;
         }
-        return this.doLogout(token);
+        return this.logout(token);
     }
 
     /**
@@ -84,7 +126,7 @@ public class SecurityService {
      * @param token
      * @return
      */
-    public boolean doLogout(String token) {
+    public boolean logout(String token) {
         return tokenService.removeToken(token);
     }
 
@@ -94,19 +136,38 @@ public class SecurityService {
      * @return
      */
     public boolean checkToken() {
-        // todo
-        return false;
+        // filter已经读取了token，此处只需要验证是否有认证通过即可
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return auth != null && auth.isAuthenticated();
     }
 
     /**
-     * 刷新token
+     * 续签
      *
      * @param refreshToken
      * @return
+     * @throws ServletException
+     * @throws IOException
      */
-    public LoginResult refreshToken(String refreshToken) {
-        // todo
-        return null;
+    public LoginResult refreshToken(String refreshToken) throws ServletException, IOException {
+        HttpServletRequest request = SpringWebContextHolder.getRequest();
+        HttpServletResponse response = SpringWebContextHolder.getResponse();
+        return this.refreshToken(refreshToken, request, response);
+    }
+
+    /**
+     * 续签
+     *
+     * @param refreshToken
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     * @throws IOException
+     */
+    public LoginResult refreshToken(String refreshToken, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Authentication authentication = new RefreshAuthenticationToken(refreshToken);
+        return this.doLogin(authentication, request, response);
     }
 
     /**

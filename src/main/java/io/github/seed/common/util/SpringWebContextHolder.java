@@ -20,8 +20,8 @@ public class SpringWebContextHolder {
      * @return
      */
     public static HttpServletRequest getRequest() {
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        return attributes != null ? attributes.getRequest() : null;
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+        return attributes.getRequest();
     }
 
     /**
@@ -30,7 +30,7 @@ public class SpringWebContextHolder {
      * @return
      */
     public static HttpServletResponse getResponse() {
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        return attributes != null ? attributes.getResponse() : null;
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+        return attributes.getResponse();
     }
 }

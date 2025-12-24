@@ -1,5 +1,7 @@
 package io.github.seed.common.security;
 
+import org.springframework.http.HttpMethod;
+
 /**
  * 2023/4/4 认证相关常量
  *
@@ -43,7 +45,7 @@ public interface SecurityConst {
     /**
      * 刷新token url
      */
-    String REFRESH_TOKEN_URL = "/refresh";
+    String REFRESH_TOKEN_URL = AUTH_URL + "/token/refresh";
     /**
      * 访问令牌有效期
      */
@@ -104,4 +106,13 @@ public interface SecurityConst {
      */
     String REDIS_ACCESS_TO_REFRESH_PREFIX = REDIS_PREFIX + REDIS_SPLIT + "access_to_refresh";
 
+    /**
+     * request attr 访问令牌
+     */
+    String REQUEST_ATTR_ACCESS_TOKEN = "security_access_token";
+
+    /**
+     * 放行url，即不需要验证是否登录的url
+     */
+    String[] PERMIT_URLS = new String[]{"/swagger-ui/**", "/v3/**", "/actuator/**", SecurityConst.LOGIN_URL, SecurityConst.LOGOUT_URL, SecurityConst.REFRESH_TOKEN_URL};
 }

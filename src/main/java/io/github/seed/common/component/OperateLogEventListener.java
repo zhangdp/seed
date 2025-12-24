@@ -76,7 +76,7 @@ public class OperateLogEventListener {
                 String authKey = SecurityConst.AUTHORIZATION_HEADER.toLowerCase();
                 String authValue = event.getHeaderMap().get(authKey);
                 // 认证头token脱敏
-                if (authValue != null && authValue.length() >= 16) {
+                if (authValue != null && authValue.length() >= 20) {
                     authValue = SensitiveType.AUTHORIZATION.getDesensitizer().apply(authValue);
                     event.getHeaderMap().put(authKey, authValue);
                 }

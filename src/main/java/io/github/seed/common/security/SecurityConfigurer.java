@@ -72,7 +72,7 @@ public class SecurityConfigurer {
                 // .logout(c -> c.logoutUrl(SecurityConst.LOGOUT_URL).logoutSuccessHandler(logoutSuccessHandler))
                 .authorizeHttpRequests(req -> req
                         // 放行url
-                        .requestMatchers("/swagger-ui/**", "/v3/**", "/actuator/**", SecurityConst.LOGIN_URL, SecurityConst.LOGOUT_URL).permitAll()
+                        .requestMatchers(SecurityConst.PERMIT_URLS).permitAll()
                         // OPTIONS请求放行
                         .requestMatchers(HttpMethod.OPTIONS).permitAll()
                         // 其余url都必须认证
@@ -230,6 +230,18 @@ public class SecurityConfigurer {
     }
 
     /**
+     * 刷新令牌登录
+     *
+     * @param userDetailsService
+     * @param tokenService
+     * @return
+     */
+    @Bean
+    public RefreshTokenAuthenticationProvider refreshTokenAuthenticationProvider(UserDetailsService userDetailsService, TokenService tokenService) {
+        return new RefreshTokenAuthenticationProvider(userDetailsService, tokenService);
+    }
+
+    /**
      * 认证管理器
      *
      * @param http
@@ -238,11 +250,13 @@ public class SecurityConfigurer {
      * @throws Exception
      */
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http, SmsAuthenticationProvider smsAuthenticationProvider) throws Exception {
+    public AuthenticationManager authenticationManager(HttpSecurity http, SmsAuthenticationProvider smsAuthenticationProvider, RefreshTokenAuthenticationProvider refreshTokenAuthenticationProvider) throws Exception {
         AuthenticationManagerBuilder builder =
                 http.getSharedObject(AuthenticationManagerBuilder.class);
         // 添加自定义的短信登录
         builder.authenticationProvider(smsAuthenticationProvider);
+        // 添加刷新令牌登录
+        builder.authenticationProvider(refreshTokenAuthenticationProvider);
         return builder.build();
     }
 

@@ -74,7 +74,7 @@ public class LogOperateAspect {
             if (!hasError || logOperation.logIfError()) {
                 LocalDateTime endTime = LocalDateTime.now();
                 try {
-                    HttpServletRequest request = Objects.requireNonNull(SpringWebContextHolder.getRequest());
+                    HttpServletRequest request = SpringWebContextHolder.getRequest();
                     OperateLogEvent event = new OperateLogEvent(point);
                     // 结果必须可序列化
                     if (logOperation.logResult() && result instanceof Serializable s) {

@@ -19,7 +19,15 @@ public enum LoginType {
     /**
      * 单点
      */
-    SSO("sso");
+    SSO("sso"),
+    /**
+     * 邮箱
+     */
+    EMAIL("email"),
+    /**
+     * 续签
+     */
+    REFRESH_TOKEN("refresh_token");
 
     private final String type;
 

@@ -70,7 +70,11 @@ public enum SensitiveType {
     /**
      * 认证头
      */
-    AUTHORIZATION(str -> MaskingUtil.idCardNum(str, 11, 4));
+    AUTHORIZATION(str -> MaskingUtil.idCardNum(str, 15, 4)),
+    /**
+     * token
+     */
+    TOKEN(str -> MaskingUtil.idCardNum(str, 8, 4));
 
     /**
      * 脱敏实现

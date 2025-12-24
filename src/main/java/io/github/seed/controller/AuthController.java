@@ -35,11 +35,13 @@ public class AuthController {
      *
      * @param loginParams
      * @return
+     * @throws ServletException
+     * @throws IOException
      */
     @PostMapping("/login")
     @Operation(summary = "登录")
-    public LoginResult login(@RequestBody @Valid LoginParams loginParams, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        return securityService.doLogin(loginParams, request, response);
+    public LoginResult login(@RequestBody @Valid LoginParams loginParams) throws ServletException, IOException {
+        return securityService.login(loginParams);
     }
 
     /**
@@ -48,10 +50,10 @@ public class AuthController {
      * @param request
      */
     @DeleteMapping("/logout")
-    @Operation(summary = "注销")
+    @Operation(summary = "注销", description = "无论结果如何，前端都当做注销成功清除本地token")
     // @ResponseStatus(HttpStatus.NO_CONTENT)
     public boolean logout(HttpServletRequest request) {
-        return securityService.doLogout(request);
+        return securityService.logout(request);
     }
 
     /**
@@ -60,17 +62,22 @@ public class AuthController {
      * @return
      */
     @PostMapping("/token/check")
+    @Operation(summary = "检测token", description = "检测当前token是否有效，有效时返回true，无效时响应401")
     public boolean checkToken() {
         return securityService.checkToken();
     }
 
     /**
-     * 刷新token
+     * 续签
      *
+     * @param refreshToken
      * @return
+     * @throws ServletException
+     * @throws IOException
      */
     @PostMapping("/token/refresh")
-    public LoginResult refreshToken(String refreshToken) {
+    @Operation(summary = "续签", description = "使用refresh_token续签token，成功时与登录接口无异，失败时响应401")
+    public LoginResult refreshToken(String refreshToken) throws ServletException, IOException {
         return securityService.refreshToken(refreshToken);
     }
 

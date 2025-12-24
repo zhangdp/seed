@@ -123,6 +123,16 @@ public class TokenService {
     }
 
     /**
+     * 加载刷新令牌
+     *
+     * @param refreshToken
+     * @return
+     */
+    public RefreshToken loadRefreshToken(String refreshToken) {
+        return tokenStore.loadRefreshToken(refreshToken);
+    }
+
+    /**
      * 重置令牌过期时间
      *
      * @param accessToken
