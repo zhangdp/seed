@@ -22,6 +22,7 @@ import java.io.IOException;
  * @author zhangdp
  * @since 1.0.0
  */
+@Deprecated
 @Slf4j
 @RequiredArgsConstructor
 public class TokenLogoutSuccessHandler implements LogoutSuccessHandler {

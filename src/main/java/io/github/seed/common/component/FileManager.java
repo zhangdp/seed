@@ -2,6 +2,7 @@ package io.github.seed.common.component;
 
 import cn.hutool.v7.core.bean.BeanUtil;
 import cn.hutool.v7.core.io.IoUtil;
+import cn.hutool.v7.core.io.file.FileNameUtil;
 import cn.hutool.v7.core.net.url.UrlEncoder;
 import cn.hutool.v7.crypto.SecureUtil;
 import io.github.seed.common.config.FileStorageProperties;
@@ -22,7 +23,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-
 
 /**
  * 2024/11/8 附件管理器
@@ -53,7 +53,12 @@ public class FileManager {
         LocalDateTime expireTime = ttl > 0 ? LocalDateTime.now().plus(ttl, ChronoUnit.MILLIS) : Const.MAX_LOCAL_DATE_TIME;
         String fileId = fileInfoService.generateId();
         String fileName = file.getOriginalFilename();
-        String extension = this.getFilenameExtension(fileName);
+        String extension = FileNameUtil.extName(fileName);
+        if (extension == null) {
+            extension = "";
+        } else if (!extension.isEmpty()) {
+            extension = "." + extension;
+        }
         // 实际路径以日期分文件夹，文件名以文件ID+后缀保存，防止文件名重复覆盖
         String remotePath = fileProperties.getRootPath() + (fileProperties.getRootPath().endsWith("/") ? "" : "/")
                 + now.getYear() + "/" + now.getMonthValue() + "/" + now.getDayOfMonth() + "/" + fileId + extension;
@@ -124,32 +129,6 @@ public class FileManager {
     public String generateDownloadUrl(String fileId, String fileName) {
         return fileProperties.getDownloadUrl().replace("{fileId}", fileId)
                 .replace("{fileName}", UrlEncoder.encodeQuery(fileName));
-    }
-
-    /**
-     * 获取包含.的文件名后缀
-     *
-     * @param fileName
-     * @return
-     */
-    public String getFilenameExtension(String fileName) {
-        return this.getFilenameExtension(fileName, true);
-    }
-
-    /**
-     * 获取文件名后缀
-     *
-     * @param fileName
-     * @param includeDot
-     * @return
-     */
-    public String getFilenameExtension(String fileName, boolean includeDot) {
-        int index = fileName.lastIndexOf('.');
-        // 没有后缀时返回空字符串，如果第一个字符是.不是表示后缀而是表示隐藏文件如.gitignore文件是隐藏文件且后缀是空
-        if (index <= 0) {
-            return "";
-        }
-        return fileName.substring(index + (includeDot ? 0 : 1)).toLowerCase();
     }
 
 }
