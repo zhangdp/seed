@@ -25,6 +25,7 @@ import java.io.InputStream;
  * @author zhangdp
  * @since 1.0.0
  */
+@Deprecated
 @Slf4j
 public class TokenAuthenticationProcessingFilter extends AbstractAuthenticationProcessingFilter {
 

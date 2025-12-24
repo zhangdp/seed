@@ -114,5 +114,5 @@ public interface SecurityConst {
     /**
      * 放行url，即不需要验证是否登录的url
      */
-    String[] PERMIT_URLS = new String[]{"/swagger-ui/**", "/v3/**", "/actuator/**", SecurityConst.LOGIN_URL, SecurityConst.LOGOUT_URL, SecurityConst.REFRESH_TOKEN_URL};
+    String[] PERMIT_URLS = new String[]{"/favicon.ico", "/swagger-ui/**", "/v3/**", "/actuator", "/actuator/**", SecurityConst.LOGIN_URL, SecurityConst.LOGOUT_URL, SecurityConst.REFRESH_TOKEN_URL};
 }

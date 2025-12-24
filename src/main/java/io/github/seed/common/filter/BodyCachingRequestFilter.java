@@ -24,7 +24,7 @@ import java.io.IOException;
 public class BodyCachingRequestFilter extends OncePerRequestFilter implements OrderedFilter {
 
     // 排除的路径url
-    private static final String[] EXCLUDE_PATHS = new String[]{"/actuator/**", "/swagger-ui/**", "/v3/api-docs"};
+    private static final String[] EXCLUDE_PATHS = new String[]{"/favicon.ico", "/actuator/**", "/swagger-ui/**", "/v3/api-docs"};
     // 最大允许缓存的大小8MB
     private static final long MAX_LENGTH = 8 * 1024L * 1024L;
 

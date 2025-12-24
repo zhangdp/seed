@@ -65,11 +65,18 @@ spring:
 management:
   endpoint:
     health:
-      show-details: when_authorized
+      show-details: always
+      probes:
+        enabled: true
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: "*"
+  security:
+    user:
+      name: actuator
+      password: 123456
+      roles: ACTUATOR
 mybatis-flex:
   global-config:
     print-banner: false
@@ -113,6 +120,14 @@ spring:
   config:
     activate:
       on-profile: prod
+management:
+  endpoint:
+    health:
+      show-details: when_authorized
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
 springdoc:
   api-docs:
     enabled: false

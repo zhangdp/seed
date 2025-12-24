@@ -4,6 +4,7 @@ import cn.hutool.v7.http.server.servlet.ServletUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.seed.common.constant.Const;
 import io.github.seed.common.data.LoginLogEvent;
+import io.github.seed.common.data.R;
 import io.github.seed.common.security.data.RefreshToken;
 import io.github.seed.common.security.service.TokenService;
 import io.github.seed.common.util.WebUtils;
@@ -50,8 +51,12 @@ public class TokenAuthenticationSuccessHandler implements AuthenticationSuccessH
         loginResult.setUserId(user.getId());
         loginResult.setUsername(user.getUsername());
         loginResult.setName(user.getName());
+
         // response登录结果
-        this.response(response, loginResult);
+        R<LoginResult> r = R.success(loginResult);
+        WebUtils.responseJson(response, objectMapper.writeValueAsString(r), request.getCharacterEncoding());
+        // WebUtils.responseJson(response, objectMapper.writeValueAsString(loginResult), request.getCharacterEncoding());
+
         // 发出登录日志事件
         this.publishLoginEvent(request, authentication);
     }
@@ -67,16 +72,4 @@ public class TokenAuthenticationSuccessHandler implements AuthenticationSuccessH
         event.setResultCode(Const.RESULT_SUCCESS);
     }
 
-    /**
-     * 输出结果
-     *
-     * @param response
-     * @param loginResult
-     * @throws IOException
-     */
-    private void response(HttpServletResponse response, LoginResult loginResult) throws IOException {
-        // R<LoginResult> r = R.success(loginResult);
-        // WebUtils.responseJson(response, objectMapper.writeValueAsString(r));
-        WebUtils.responseJson(response, objectMapper.writeValueAsString(loginResult));
-    }
 }

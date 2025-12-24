@@ -26,10 +26,10 @@ public class ExceptionResolverFilter extends OncePerRequestFilter implements Ord
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        log.debug("ExceptionResolverFilter: {}", request.getRequestURI());
         try {
             filterChain.doFilter(request, response);
         } catch (Exception e) {
+            log.debug("ExceptionResolverFilter: {}", request.getRequestURI());
             // 委托给全局异常处理器
             handlerExceptionResolver.resolveException(request, response, null, e);
         }

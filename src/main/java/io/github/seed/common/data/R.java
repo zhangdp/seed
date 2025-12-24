@@ -82,7 +82,7 @@ public class R<T> implements Serializable {
      * @return
      */
     public static R<?> success() {
-        return new R<>(Const.RESULT_SUCCESS, null, null);
+        return new R<>(Const.RESULT_SUCCESS, "", null);
     }
 
     /**
@@ -105,7 +105,7 @@ public class R<T> implements Serializable {
      * @return 成功响应
      */
     public static <T> R<T> success(T data) {
-        return new R<>(Const.RESULT_SUCCESS, null, data);
+        return new R<>(Const.RESULT_SUCCESS, "", data);
     }
 
 }

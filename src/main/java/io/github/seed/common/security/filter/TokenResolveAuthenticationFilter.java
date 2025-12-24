@@ -1,7 +1,6 @@
 package io.github.seed.common.security.filter;
 
 import cn.hutool.v7.core.text.StrUtil;
-import cn.hutool.v7.core.text.dfa.SensitiveUtil;
 import io.github.seed.common.enums.SensitiveType;
 import io.github.seed.common.security.SecurityConst;
 import io.github.seed.common.security.SecurityUtils;
@@ -58,5 +57,5 @@ public class TokenResolveAuthenticationFilter extends OncePerRequestFilter {
         }
         filterChain.doFilter(request, response);
     }
-
 }
+

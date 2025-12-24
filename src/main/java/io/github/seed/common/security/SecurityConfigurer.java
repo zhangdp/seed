@@ -9,23 +9,34 @@ import io.github.seed.service.sys.ConfigService;
 import io.github.seed.service.sys.ResourceService;
 import io.github.seed.service.sys.RoleService;
 import io.github.seed.service.sys.UserService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -35,20 +46,71 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
+import java.util.List;
+
 /**
  * 2023/8/15 spring security 配置
  *
  * @author zhangdp
  * @since 1.0.0
  */
+@Slf4j
+@Getter
+@Setter
 @Configuration
+@ConfigurationProperties(value = "management.security.user")
 @EnableWebSecurity
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfigurer {
 
+    private String name;
+    private String password;
+    private String[] roles;
+
     /**
-     * springsecurity配置
+     * 单独配置/actuator端点的认证
+     *
+     * @param http
+     * @return
+     * @throws Exception
+     */
+    @Bean
+    @Order(1)
+    SecurityFilterChain actuatorSecurity(HttpSecurity http, PasswordEncoder passwordEncoder) throws Exception {
+        http
+            .securityMatcher(EndpointRequest.toAnyEndpoint())
+            .authorizeHttpRequests(auth -> auth
+                    .requestMatchers(EndpointRequest.to("health", "info")).permitAll()
+                    .anyRequest().hasRole("ACTUATOR")
+            )
+            .authenticationManager(new ProviderManager(
+                    List.of(new DaoAuthenticationProvider() {{
+                        setUserDetailsService(actuatorUserDetailsService(passwordEncoder));
+                        setPasswordEncoder(passwordEncoder);
+                    }})
+            ))
+            // 使用httpBasic认证
+            .httpBasic(Customizer.withDefaults())
+            .csrf(AbstractHttpConfigurer::disable)
+            .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+        return http.build();
+    }
+
+    /**
+     * actuator端点用户
+     *
+     * @return
+     */
+    private UserDetailsService actuatorUserDetailsService(PasswordEncoder passwordEncoder) {
+        UserDetails user = User.withUsername(this.name).password(passwordEncoder.encode(this.password)).roles(this.roles).build();
+        log.info("actuator端点专用用户：{}", user);
+        return new InMemoryUserDetailsManager(user);
+    }
+
+    /**
+     * 业务spring security配置
      *
      * @param httpSecurity
      * @return
@@ -98,7 +160,9 @@ public class SecurityConfigurer {
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        log.info("Security密码加密器：{}", encoder);
+        return encoder;
     }
 
     /**
@@ -109,7 +173,9 @@ public class SecurityConfigurer {
      */
     @Bean
     public TokenStore tokenStore(RedisTemplate<String, Object> restTemplate) {
-        return new RedisTokenStore(restTemplate);
+        RedisTokenStore store = new RedisTokenStore(restTemplate);
+        log.info("Security token访问使用redis：{}", store);
+        return store;
     }
 
     /**
@@ -133,7 +199,7 @@ public class SecurityConfigurer {
      * @return
      */
     @Bean
-    public UserDetailsService userDetailsService(UserService userService, RoleService roleService, ResourceService resourceService) {
+    public UserDetailsService daoUserDetailsService(UserService userService, RoleService roleService, ResourceService resourceService) {
         return new DaoUserDetailsService(userService, roleService, resourceService);
     }
 

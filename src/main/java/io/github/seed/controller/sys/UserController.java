@@ -77,7 +77,7 @@ public class UserController {
      * @param pageQuery
      * @return
      */
-    @PreAuthorize("hasRole('ADMIN2')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/page")
     @Operation(summary = "分页查询用户")
     @LogOperation(type = OperateType.READ, title = "分页查询用户", refModule = TableNameConst.SYS_USER)

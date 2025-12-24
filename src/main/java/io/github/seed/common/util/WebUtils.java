@@ -167,23 +167,22 @@ public class WebUtils {
      * @return
      */
     public static boolean responseJson(HttpServletResponse response, String json) {
-        return responseJson(response, null, json);
+        return responseJson(response, json, null);
     }
 
     /**
      * 响应json
      *
      * @param response
-     * @param httpStatus
      * @param json
+     * @param charset
      * @return
      */
-    public static boolean responseJson(HttpServletResponse response, Integer httpStatus, String json) {
+    public static boolean responseJson(HttpServletResponse response, String json, String charset) {
         try {
-            if (httpStatus != null) {
-                response.setStatus(httpStatus);
+            if (charset != null && !charset.isEmpty()) {
+                response.setCharacterEncoding(charset);
             }
-            response.setCharacterEncoding(CHARSET);
             response.setContentType("application/json");
             PrintWriter writer = response.getWriter();
             writer.write(json);
