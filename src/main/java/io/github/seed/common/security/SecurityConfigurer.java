@@ -1,6 +1,7 @@
 package io.github.seed.common.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.seed.common.security.data.ActuatorUserProperties;
 import io.github.seed.common.security.filter.TokenResolveAuthenticationFilter;
 import io.github.seed.common.security.filter.TokenAuthenticationProcessingFilter;
 import io.github.seed.common.security.handler.*;
@@ -58,15 +59,13 @@ import java.util.List;
 @Getter
 @Setter
 @Configuration
-@ConfigurationProperties(value = "management.security.user")
+@ConfigurationProperties(value = "management.security")
 @EnableWebSecurity
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfigurer {
 
-    private String name;
-    private String password;
-    private String[] roles;
+    private ActuatorUserProperties user;
 
     /**
      * 单独配置/actuator端点的认证
@@ -104,9 +103,9 @@ public class SecurityConfigurer {
      * @return
      */
     private UserDetailsService actuatorUserDetailsService(PasswordEncoder passwordEncoder) {
-        UserDetails user = User.withUsername(this.name).password(passwordEncoder.encode(this.password)).roles(this.roles).build();
-        log.info("actuator端点专用用户：{}", user);
-        return new InMemoryUserDetailsManager(user);
+        UserDetails userDetails = User.withUsername(this.user.getName()).password(passwordEncoder.encode(this.user.getPassword())).roles(this.user.getRoles()).build();
+        log.info("actuator端点专用用户：{}", userDetails);
+        return new InMemoryUserDetailsManager(userDetails);
     }
 
     /**
