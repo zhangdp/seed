@@ -40,8 +40,8 @@ spring:
       connect-timeout: 10s
       lettuce:
         pool:
-          max-active: 32
-          max-idle: 16
+          max-active: 20
+          max-idle: 12
           min-idle: 4
       repositories:
         enabled: false
@@ -57,7 +57,7 @@ spring:
     password: Seed@2022
     hikari:
       maximum-pool-size: 20
-      minimum-idle: 5
+      minimum-idle: 4
       keepalive-time: 300000
       idle-timeout: 1800000
       max-lifetime: 7200000
@@ -89,6 +89,7 @@ mybatis-flex:
 logging:
   level:
     root: info
+    web: debug
     io.github.seed: debug
 seed:
   file-storage:
@@ -113,6 +114,7 @@ logging:
     path: logs/${spring.application.name}
   level:
     root: info
+    web: debug
     io.github.seed: debug
 
 # 生产环境
@@ -139,4 +141,5 @@ logging:
     path: logs/${spring.application.name}
   level:
     root: info
+    web: info
     io.github.seed: info
