@@ -3,7 +3,6 @@ package io.github.seed.common.component;
 import cn.hutool.v7.core.date.TimeUtil;
 import cn.hutool.v7.core.exception.ExceptionUtil;
 import cn.hutool.v7.core.map.MapUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.seed.common.data.OperateLogEvent;
 import io.github.seed.common.enums.SensitiveType;
 import io.github.seed.common.security.SecurityConst;
@@ -14,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.time.LocalDateTime;
 
@@ -35,7 +35,7 @@ public class OperateLogEventListener {
     /**
      * jackson json工具类
      */
-    private final ObjectMapper objectMapper;
+    private final JsonMapper jsonMapper;
 
     /**
      * 监听OperateLogEvent事件
@@ -67,10 +67,10 @@ public class OperateLogEventListener {
             }
             if (event.getResult() != null) {
                 // lo.setResultCode(event.getResult() instanceof R<?> r ? r.getCode() : CommonConst.RESULT_SUCCESS);
-                lo.setResult(event.getResult() instanceof String s ? s : objectMapper.writeValueAsString(event.getResult()));
+                lo.setResult(event.getResult() instanceof String s ? s : jsonMapper.writeValueAsString(event.getResult()));
             }
             if (MapUtil.isNotEmpty(event.getParameterMap())) {
-                lo.setParameters(objectMapper.writeValueAsString(event.getParameterMap()));
+                lo.setParameters(jsonMapper.writeValueAsString(event.getParameterMap()));
             }
             if (MapUtil.isNotEmpty(event.getHeaderMap())) {
                 String authKey = SecurityConst.AUTHORIZATION_HEADER.toLowerCase();
@@ -80,7 +80,7 @@ public class OperateLogEventListener {
                     authValue = SensitiveType.AUTHORIZATION.getDesensitizer().apply(authValue);
                     event.getHeaderMap().put(authKey, authValue);
                 }
-                lo.setHeaders(objectMapper.writeValueAsString(event.getHeaderMap()));
+                lo.setHeaders(jsonMapper.writeValueAsString(event.getHeaderMap()));
             }
             lo.setRequestBody(event.getRequestBody());
             operationLogService.add(lo);

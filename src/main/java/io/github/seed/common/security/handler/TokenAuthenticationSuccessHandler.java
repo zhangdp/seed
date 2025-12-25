@@ -1,7 +1,6 @@
 package io.github.seed.common.security.handler;
 
 import cn.hutool.v7.http.server.servlet.ServletUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.seed.common.constant.Const;
 import io.github.seed.common.data.LoginLogEvent;
 import io.github.seed.common.data.R;
@@ -18,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -32,7 +32,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class TokenAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
-    private final ObjectMapper objectMapper;
+    private final JsonMapper jsonMapper;
     private final TokenService tokenService;
 
     @Override
@@ -54,8 +54,8 @@ public class TokenAuthenticationSuccessHandler implements AuthenticationSuccessH
 
         // response登录结果
         R<LoginResult> r = R.success(loginResult);
-        WebUtils.responseJson(response, objectMapper.writeValueAsString(r), request.getCharacterEncoding());
-        // WebUtils.responseJson(response, objectMapper.writeValueAsString(loginResult), request.getCharacterEncoding());
+        WebUtils.responseJson(response, jsonMapper.writeValueAsString(r), request.getCharacterEncoding());
+        // WebUtils.responseJson(response, jsonMapper.writeValueAsString(loginResult), request.getCharacterEncoding());
 
         // 发出登录日志事件
         this.publishLoginEvent(request, authentication);

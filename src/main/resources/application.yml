@@ -13,6 +13,9 @@ spring:
     active: dev
   application:
     name: @artifactId@
+  threads:
+    virtual:
+      enabled: true
   servlet:
     multipart:
       enabled: true
@@ -21,14 +24,12 @@ spring:
   jackson:
     deserialization:
       fail-on-unknown-properties: false
-    serialization:
-      write-dates-as-timestamps: true
     date-format: yyyy-MM-dd HH:mm:ss
   task:
     execution:
       pool:
-        core-size: 4
-        max-size: 20
+        core-size: 8
+        max-size: 32
         queue-capacity: 1024
   data:
     redis:

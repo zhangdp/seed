@@ -10,7 +10,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,9 +47,9 @@ public class TestController {
         private String name;
         @NoJsonTrim
         private String description;
-        private LocalDate localDate;
-        private LocalTime localTime;
-        private LocalDateTime localDateTime;
-        private Date date;
+        private LocalDate localDate = LocalDate.now();
+        private LocalTime localTime = LocalTime.now();
+        private LocalDateTime localDateTime = LocalDateTime.now();
+        private Date date = new Date();
     }
 }

@@ -1,12 +1,11 @@
 package io.github.seed.common.component;
 
 import cn.hutool.v7.core.text.StrUtil;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
 import lombok.extern.slf4j.Slf4j;
-
-import java.io.IOException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueSerializer;
 
 /**
  * 2023/8/14 脱敏jackson序列化
@@ -15,7 +14,7 @@ import java.io.IOException;
  * @since 1.0.0
  */
 @Slf4j
-public class DesensitizationJacksonSerializer extends JsonSerializer<String> {
+public class DesensitizationJacksonSerializer extends ValueSerializer<String> {
 
     /**
      * 脱敏起点（含）
@@ -43,8 +42,8 @@ public class DesensitizationJacksonSerializer extends JsonSerializer<String> {
     }
 
     @Override
-    public void serialize(String str, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
-        jsonGenerator.writeString(StrUtil.replaceByCodePoint(str, start, end, mask));
+    public void serialize(String value, JsonGenerator gen, SerializationContext ctxt) throws JacksonException {
+        gen.writeString(StrUtil.replaceByCodePoint(value, start, end, mask));
     }
 
 }

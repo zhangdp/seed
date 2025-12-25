@@ -1,8 +1,8 @@
 package io.github.seed.common.annotation;
 
 import com.fasterxml.jackson.annotation.JacksonAnnotationsInside;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.github.seed.common.component.StringTrimDeserializer;
+import tools.jackson.databind.annotation.JsonDeserialize;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

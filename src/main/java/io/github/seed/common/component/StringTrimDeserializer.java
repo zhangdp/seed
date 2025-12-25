@@ -1,11 +1,6 @@
 package io.github.seed.common.component;
 
-import com.fasterxml.jackson.core.JacksonException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-
-import java.io.IOException;
+import tools.jackson.databind.ValueDeserializer;
 
 /**
  * 2025/3/8 String类型自动trim() jackson反序列化器
@@ -13,12 +8,12 @@ import java.io.IOException;
  * @author zhangdp
  * @since 1.0.0
  */
-public class StringTrimDeserializer extends JsonDeserializer<String> {
+public class StringTrimDeserializer extends ValueDeserializer<String> {
 
     @Override
-    public String deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JacksonException {
-        String s = jsonParser.getText();
-        return s != null ? s.trim() : null;
+    public String deserialize(tools.jackson.core.JsonParser p, tools.jackson.databind.DeserializationContext ctxt) throws tools.jackson.core.JacksonException {
+        String s = p.getString();
+        return s == null ? null : s.trim();
     }
 
     @Override

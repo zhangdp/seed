@@ -1,17 +1,16 @@
 package io.github.seed.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.seed.common.constant.Const;
 import io.github.seed.entity.sys.Config;
 import io.github.seed.model.PageData;
 import io.github.seed.model.params.BaseQueryParams;
 import io.github.seed.model.params.PageQuery;
 import io.github.seed.service.sys.ConfigService;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * 2023/4/12
@@ -26,7 +25,7 @@ public class ConfigServiceTest {
     @Autowired
     private ConfigService configService;
     @Autowired
-    private ObjectMapper objectMapper;
+    private JsonMapper jsonMapper;
 
     @Test
     public void add() {
@@ -54,11 +53,10 @@ public class ConfigServiceTest {
     }
 
     @Test
-    @SneakyThrows
     public void page() {
         PageQuery<BaseQueryParams> pageQuery = new PageQuery<>(1, 10, new BaseQueryParams("a"));
         pageQuery.setOrderBy("config_key asc, id desc");
         PageData<Config> pd = configService.queryPage(pageQuery);
-        System.out.println(objectMapper.writeValueAsString(pd));
+        System.out.println(jsonMapper.writeValueAsString(pd));
     }
 }

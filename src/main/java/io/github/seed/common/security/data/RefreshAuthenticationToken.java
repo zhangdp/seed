@@ -4,6 +4,8 @@ import lombok.Getter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collections;
+
 /**
  * 2025/12/24 续签登录spring security对象
  *
@@ -16,7 +18,7 @@ public class RefreshAuthenticationToken extends AbstractAuthenticationToken {
     private final Object principal;
 
     public RefreshAuthenticationToken(Object principal) {
-        super(null);
+        super(Collections.emptyList());
         this.principal = principal;
     }
 

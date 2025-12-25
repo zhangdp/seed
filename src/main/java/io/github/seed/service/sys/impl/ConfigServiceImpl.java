@@ -1,8 +1,6 @@
 package io.github.seed.service.sys.impl;
 
 import cn.hutool.v7.core.lang.Assert;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.seed.common.constant.Const;
 import io.github.seed.common.constant.TableNameConst;
 import io.github.seed.common.enums.ErrorCode;
@@ -16,13 +14,13 @@ import io.github.seed.model.params.PageQuery;
 import io.github.seed.service.sys.ConfigService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.aop.framework.AopContext;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.List;
 
@@ -39,7 +37,7 @@ import java.util.List;
 public class ConfigServiceImpl implements ConfigService {
 
     private final ConfigMapper configMapper;
-    private final ObjectMapper objectMapper;
+    private final JsonMapper jsonMapper;
 
     @Cacheable(key = "#key")
     @Override
@@ -203,9 +201,9 @@ public class ConfigServiceImpl implements ConfigService {
     public <T> T getConfigJsonBean(String key, Class<T> clazz) {
         String v = this.getConfigValue(key);
         try {
-            return v == null || v.isEmpty() ? null : objectMapper.readValue(v, clazz);
-        } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException("配置项" + key + "的值不是一个json格式", e);
+            return v == null || v.isEmpty() ? null : jsonMapper.readValue(v, clazz);
+        } catch (JacksonException e) {
+            throw new IllegalArgumentException("配置项" + key + "的值不是一个合法的JSON", e);
         }
     }
 

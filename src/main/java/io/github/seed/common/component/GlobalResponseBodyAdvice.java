@@ -1,11 +1,8 @@
 package io.github.seed.common.component;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.seed.common.data.R;
 import io.github.seed.common.annotation.NoResponseAdvice;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.io.Resource;
@@ -19,6 +16,7 @@ import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.InputStream;
 
@@ -34,7 +32,7 @@ import java.io.InputStream;
 @RestControllerAdvice(basePackages = "io.github.seed")
 public class GlobalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
 
-    private final ObjectMapper objectMapper;
+    private final JsonMapper jsonMapper;
 
     /**
      * 处理条件判断
@@ -72,7 +70,6 @@ public class GlobalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
      * @return
      * @see R
      */
-    @SneakyThrows
     @Override
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType,
                                   Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request,
@@ -113,7 +110,7 @@ public class GlobalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
         if (body instanceof String) {
             HttpHeaders headers = response.getHeaders();
             headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-            return objectMapper.writeValueAsString(r);
+            return jsonMapper.writeValueAsString(r);
         }
         log.debug("使用{}统一包装返回：{}", R.class, body != null ? body.getClass() : null);
         return r;

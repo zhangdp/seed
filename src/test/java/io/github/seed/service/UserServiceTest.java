@@ -1,17 +1,16 @@
 package io.github.seed.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.seed.entity.sys.User;
 import io.github.seed.model.PageData;
 import io.github.seed.model.dto.UserInfo;
 import io.github.seed.model.params.PageQuery;
 import io.github.seed.model.params.UserQuery;
 import io.github.seed.service.sys.UserService;
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.time.LocalDate;
 
@@ -29,7 +28,7 @@ public class UserServiceTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
-    private ObjectMapper objectMapper;
+    private JsonMapper jsonMapper;
 
     @Test
     public void add() {
@@ -45,13 +44,11 @@ public class UserServiceTest {
     }
 
     @Test
-    @SneakyThrows
     public void get() {
-        System.out.println(objectMapper.writeValueAsString(userService.getByUsername("admin")));
+        System.out.println(jsonMapper.writeValueAsString(userService.getByUsername("admin")));
     }
 
     @Test
-    @SneakyThrows
     public void page() {
         PageQuery<UserQuery> pq = new PageQuery<>();
         pq.setPage(1);
@@ -62,7 +59,7 @@ public class UserServiceTest {
         query.setExcludeSelf(true);
         pq.setParams(query);
         PageData<UserInfo> pd = userService.queryPage(pq);
-        System.out.println(objectMapper.writeValueAsString(pd));
+        System.out.println(jsonMapper.writeValueAsString(pd));
     }
 
     @Test

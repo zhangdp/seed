@@ -5,6 +5,8 @@ import lombok.Setter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collections;
+
 /**
  * 2025/12/17 短信验证码登录对象
  *
@@ -25,7 +27,7 @@ public class SmsAuthenticationToken extends AbstractAuthenticationToken {
     private String code;
 
     public SmsAuthenticationToken(Object principal, String code) {
-        super(null);
+        super(Collections.emptyList());
         this.principal = principal;
         this.code = code;
     }

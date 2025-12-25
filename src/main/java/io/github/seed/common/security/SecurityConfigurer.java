@@ -1,9 +1,7 @@
 package io.github.seed.common.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.seed.common.security.data.ActuatorUserProperties;
 import io.github.seed.common.security.filter.TokenResolveAuthenticationFilter;
-import io.github.seed.common.security.filter.TokenAuthenticationProcessingFilter;
 import io.github.seed.common.security.handler.*;
 import io.github.seed.common.security.service.*;
 import io.github.seed.service.sys.ConfigService;
@@ -14,8 +12,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.security.autoconfigure.actuate.web.servlet.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -46,6 +44,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.web.servlet.HandlerExceptionResolver;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.List;
 
@@ -84,8 +83,7 @@ public class SecurityConfigurer {
                     .anyRequest().hasRole("ACTUATOR")
             )
             .authenticationManager(new ProviderManager(
-                    List.of(new DaoAuthenticationProvider() {{
-                        setUserDetailsService(actuatorUserDetailsService(passwordEncoder));
+                    List.of(new DaoAuthenticationProvider(actuatorUserDetailsService(passwordEncoder)) {{
                         setPasswordEncoder(passwordEncoder);
                     }})
             ))
@@ -216,13 +214,13 @@ public class SecurityConfigurer {
     /**
      * 登录成功处理器
      *
-     * @param objectMapper
+     * @param jsonMapper
      * @param tokenService
      * @return
      */
     @Bean
-    public AuthenticationSuccessHandler authenticationSuccessHandler(ObjectMapper objectMapper, TokenService tokenService) {
-        return new TokenAuthenticationSuccessHandler(objectMapper, tokenService);
+    public AuthenticationSuccessHandler authenticationSuccessHandler(JsonMapper jsonMapper, TokenService tokenService) {
+        return new TokenAuthenticationSuccessHandler(jsonMapper, tokenService);
     }
 
     /**
@@ -266,8 +264,7 @@ public class SecurityConfigurer {
      */
     @Bean
     public AuthenticationProvider authenticationProvider(PasswordEncoder passwordEncoder, UserDetailsService userDetailsService) {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService);
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder);
         return authProvider;
     }
@@ -323,26 +320,6 @@ public class SecurityConfigurer {
         // 添加刷新令牌登录
         builder.authenticationProvider(refreshTokenAuthenticationProvider);
         return builder.build();
-    }
-
-    /**
-     * 自定义token登录
-     *
-     * @param authenticationManager
-     * @param authenticationSuccessHandler
-     * @param authenticationFailureHandler
-     * @param objectMapper
-     * @return
-     */
-    // @Bean
-    public TokenAuthenticationProcessingFilter tokenAuthenticationProcessingFilter(AuthenticationManager authenticationManager, AuthenticationSuccessHandler authenticationSuccessHandler, AuthenticationFailureHandler authenticationFailureHandler, ObjectMapper objectMapper) {
-        TokenAuthenticationProcessingFilter filter = new TokenAuthenticationProcessingFilter(objectMapper);
-        filter.setAuthenticationManager(authenticationManager);
-        //认证成功处理器
-        filter.setAuthenticationSuccessHandler(authenticationSuccessHandler);
-        //认证失败处理器
-        filter.setAuthenticationFailureHandler(authenticationFailureHandler);
-        return filter;
     }
 
     /**

@@ -1,18 +1,18 @@
 package io.github.seed.common.util;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import lombok.Getter;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.ext.javatime.deser.LocalDateDeserializer;
+import tools.jackson.databind.ext.javatime.deser.LocalDateTimeDeserializer;
+import tools.jackson.databind.ext.javatime.deser.LocalTimeDeserializer;
+import tools.jackson.databind.ext.javatime.ser.LocalDateSerializer;
+import tools.jackson.databind.ext.javatime.ser.LocalDateTimeSerializer;
+import tools.jackson.databind.ext.javatime.ser.LocalTimeSerializer;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.module.SimpleModule;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -33,7 +33,7 @@ public class JsonUtils {
     /**
      * 时间格式模块
      */
-    public static final JavaTimeModule TIME_MODULE;
+    public static final SimpleModule TIME_MODULE;
 
     /**
      * 日期格式化
@@ -50,15 +50,15 @@ public class JsonUtils {
     /**
      * jackson
      * -- GETTER --
-     * 获取objectMapper对象
+     * 获取JsonMapper对象
      *
      * @return
      */
     @Getter
-    private static final ObjectMapper objectMapper;
+    private static final JsonMapper jsonMapper;
 
     static {
-        TIME_MODULE = new JavaTimeModule();
+        TIME_MODULE = new SimpleModule();
         // ======================= 时间序列化规则 ==============================
         TIME_MODULE.addSerializer(LocalDateTime.class,
                 new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(DATETIME_FORMATTER)));
@@ -75,16 +75,12 @@ public class JsonUtils {
         TIME_MODULE.addDeserializer(LocalTime.class,
                 new LocalTimeDeserializer(DateTimeFormatter.ofPattern(TIME_FORMATTER)));
 
-        objectMapper = new ObjectMapper();
-
-        // 设置Date格式
-        // objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
-        // 日期输出为时间戳
-        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
-        // 反序列化时未知字段报错：false
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-        objectMapper.registerModule(TIME_MODULE);
+        jsonMapper = JsonMapper.builder()
+                // .enable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                .defaultDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"))
+                .addModule(TIME_MODULE)
+                .build();
     }
 
     /**
@@ -97,11 +93,7 @@ public class JsonUtils {
         if (object == null) {
             return null;
         }
-        try {
-            return objectMapper.writeValueAsString(object);
-        } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException("对象序列化成JSON字符串失败", e);
-        }
+        return jsonMapper.writeValueAsString(object);
     }
 
     /**
@@ -116,11 +108,7 @@ public class JsonUtils {
         if (json == null) {
             return null;
         }
-        try {
-            return objectMapper.readValue(json, clazz);
-        } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException("JSON字符串反序列化成对象失败", e);
-        }
+        return jsonMapper.readValue(json, clazz);
     }
 
     /**
@@ -131,12 +119,8 @@ public class JsonUtils {
      * @return
      */
     public static String formatJson(String json, boolean isPretty) {
-        try {
-            Object jsonObject = objectMapper.readTree(json);
-            return isPretty ? objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonObject) : objectMapper.writeValueAsString(jsonObject);
-        } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException("格式化JSON字符串失败", e);
-        }
+        Object jsonObject = jsonMapper.readTree(json);
+        return isPretty ? jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonObject) : jsonMapper.writeValueAsString(jsonObject);
     }
 
     /**
@@ -148,9 +132,9 @@ public class JsonUtils {
     public static boolean isJson(String json) {
         try {
             // 尝试解析 JSON 字符串
-            objectMapper.readTree(json);
+            jsonMapper.readTree(json);
             return true; // 如果没有抛出异常，说明是合法的 JSON
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             return false; // 解析失败，说明不是合法的 JSON
         }
     }
