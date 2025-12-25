@@ -3,6 +3,8 @@ package io.github.seed.common.aspect;
 import cn.hutool.v7.core.text.StrUtil;
 import cn.hutool.v7.http.server.servlet.ServletUtil;
 import io.github.seed.common.constant.Const;
+import io.github.seed.common.enums.SensitiveType;
+import io.github.seed.common.security.SecurityConst;
 import io.github.seed.common.util.SpELUtils;
 import io.github.seed.common.util.SpringWebContextHolder;
 import io.github.seed.common.annotation.LogOperation;
@@ -104,6 +106,10 @@ public class LogOperateAspect {
                         while (headerNames.hasMoreElements()) {
                             String name = headerNames.nextElement();
                             String value = request.getHeader(name);
+                            // Authorization认证头脱敏
+                            if (SecurityConst.AUTHORIZATION_HEADER.equalsIgnoreCase(name) && value != null && value.length() >= 20) {
+                                value = SensitiveType.AUTHORIZATION.getDesensitizer().apply(value);
+                            }
                             headers.put(name, value);
                         }
                         event.setHeaderMap(headers);
