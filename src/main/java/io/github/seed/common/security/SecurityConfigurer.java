@@ -8,11 +8,9 @@ import io.github.seed.service.sys.ConfigService;
 import io.github.seed.service.sys.ResourceService;
 import io.github.seed.service.sys.RoleService;
 import io.github.seed.service.sys.UserService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.security.autoconfigure.actuate.web.servlet.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -55,16 +53,14 @@ import java.util.List;
  * @since 1.0.0
  */
 @Slf4j
-@Getter
-@Setter
 @Configuration
-@ConfigurationProperties(value = "management.security")
+@EnableConfigurationProperties(ActuatorUserProperties.class)
 @EnableWebSecurity
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfigurer {
 
-    private ActuatorUserProperties user;
+    private final ActuatorUserProperties actuatorUserProperties;
 
     /**
      * 单独配置/actuator端点的认证
@@ -101,7 +97,9 @@ public class SecurityConfigurer {
      * @return
      */
     private UserDetailsService actuatorUserDetailsService(PasswordEncoder passwordEncoder) {
-        UserDetails userDetails = User.withUsername(this.user.getName()).password(passwordEncoder.encode(this.user.getPassword())).roles(this.user.getRoles()).build();
+        UserDetails userDetails = User.withUsername(this.actuatorUserProperties.getName())
+                .password(passwordEncoder.encode(this.actuatorUserProperties.getPassword()))
+                .roles(this.actuatorUserProperties.getRoles()).build();
         log.info("actuator端点专用用户：{}", userDetails);
         return new InMemoryUserDetailsManager(userDetails);
     }
