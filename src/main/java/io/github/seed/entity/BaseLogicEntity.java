@@ -3,10 +3,8 @@ package io.github.seed.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mybatisflex.annotation.Column;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
-import lombok.experimental.Accessors;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -17,11 +15,9 @@ import java.io.Serializable;
  * @author zhangdp
  * @since 1.0.0
  */
-@Data
-@Accessors(chain = true)
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
-public abstract class BaseLogicEntity<T extends Serializable> extends BaseEntity<T> implements Serializable {
+@Getter
+@Setter
+public abstract class BaseLogicEntity extends BaseEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

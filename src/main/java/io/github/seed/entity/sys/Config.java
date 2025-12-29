@@ -8,7 +8,6 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
 
@@ -22,12 +21,11 @@ import java.io.Serializable;
  * @since 1.0.0
  */
 @Data
-@Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Table(TableNameConst.SYS_CONFIG)
 @Schema(title = "系统配置")
-public class Config extends BaseLogicEntity<Long> implements Serializable {
+public class Config extends BaseLogicEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

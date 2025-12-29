@@ -4,7 +4,6 @@ import io.github.seed.common.security.data.LoginUser;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-import lombok.experimental.Accessors;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -16,7 +15,6 @@ import java.io.Serializable;
  * @since 1.0.0
  */
 @Data
-@Accessors(chain = true)
 @Schema(title = "AI聊天入参")
 public class AiChatInput implements Serializable {
 

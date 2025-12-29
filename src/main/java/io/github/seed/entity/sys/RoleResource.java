@@ -6,7 +6,6 @@ import io.github.seed.entity.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import lombok.experimental.Accessors;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -18,11 +17,10 @@ import java.io.Serializable;
  * @since 1.0.0
  */
 @Data
-@Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Table(TableNameConst.SYS_ROLE_RESOURCE)
-public class RoleResource extends BaseEntity<Long> implements Serializable {
+public class RoleResource extends BaseEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

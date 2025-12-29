@@ -58,7 +58,7 @@ public class GlobalExceptionHandleAdvice {
             throw accessDeniedException;
         }
         log.error("全局异常：uri={}", request.getRequestURI(), e);
-        return new R<>(ErrorCode.SERVER_ERROR);
+        return R.fail(ErrorCode.SERVER_ERROR);
     }
 
     /**
@@ -88,7 +88,7 @@ public class GlobalExceptionHandleAdvice {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public R<?> sqlException(Exception e, HttpServletRequest request) {
         log.error("SQL异常：uri={}", request.getRequestURI(), e);
-        return new R<>(ErrorCode.SQL_ERROR);
+        return R.fail(ErrorCode.SQL_ERROR);
     }
 
 
@@ -104,7 +104,7 @@ public class GlobalExceptionHandleAdvice {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public R<?> noResourceFoundException(NoResourceFoundException e, HttpServletRequest request) {
         log.warn("请求路径不存在异常：uri={}, error={}", request.getRequestURI(), e.getMessage());
-        return new R<>(ErrorCode.NOT_FOUND);
+        return R.fail(ErrorCode.NOT_FOUND);
     }
 
     /**
@@ -134,7 +134,7 @@ public class GlobalExceptionHandleAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public R<?> servletException(ServletException e, HttpServletRequest request) {
         log.warn("servlet异常：uri={}, error={}", request.getRequestURI(), e.getMessage());
-        return new R<>(ErrorCode.BAD_REQUEST);
+        return R.fail(ErrorCode.BAD_REQUEST);
     }
 
     /**
@@ -149,7 +149,7 @@ public class GlobalExceptionHandleAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public R<?> httpMessageNotReadableException(HttpMessageNotReadableException e, HttpServletRequest request) {
         log.warn("Request Body不可读异常：uri={}, error={}", request.getRequestURI(), e.getMessage());
-        return new R<>(ErrorCode.REQUEST_BODY_NOT_FOUND);
+        return R.fail(ErrorCode.REQUEST_BODY_NOT_FOUND);
     }
 
     /**
@@ -172,9 +172,7 @@ public class GlobalExceptionHandleAdvice {
         }
         errors = new ArrayList<>(fieldErrors.size());
         for (FieldError fieldError : fieldErrors) {
-            ParamsError pe = new ParamsError();
-            pe.setField(fieldError.getField());
-            pe.setMessage(fieldError.getDefaultMessage());
+            ParamsError pe = new ParamsError(fieldError.getField(), fieldError.getDefaultMessage());
             errors.add(pe);
         }
         String errMsg = joinParamsErrors(errors);

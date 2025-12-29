@@ -22,7 +22,7 @@ public class MybatisFlexFillUserListener implements InsertListener, UpdateListen
     @Override
     public void onInsert(Object entity) {
         // 自动设置创建者
-        if (entity instanceof BaseLogicAuditableEntity<?> b && b.getCreatedBy() == null) {
+        if (entity instanceof BaseLogicAuditableEntity b && b.getCreatedBy() == null) {
             LoginUser user = SecurityUtils.getLoginUser();
             if (user != null) {
                 b.setCreatedBy(user.getId());
@@ -38,7 +38,7 @@ public class MybatisFlexFillUserListener implements InsertListener, UpdateListen
     @Override
     public void onUpdate(Object entity) {
         // 设置最后者
-        if (entity instanceof BaseLogicAuditableEntity<?> b && b.getUpdatedAt() == null) {
+        if (entity instanceof BaseLogicAuditableEntity b && b.getUpdatedAt() == null) {
             LoginUser user = SecurityUtils.getLoginUser();
             if (user != null) {
                 b.setUpdatedBy(user.getId());

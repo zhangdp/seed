@@ -1,10 +1,7 @@
 package io.github.seed.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
-import lombok.experimental.Accessors;
+import lombok.*;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -16,12 +13,10 @@ import java.util.List;
  * @author zhangdp
  * @since 1.0.0
  */
-@Data
-@Accessors(chain = true)
-@ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = true)
+@Getter
+@Setter
 @Schema(title = "树节点")
-public class TreeNode<T> extends SelectNode<T> implements Serializable {
+public abstract class TreeNode<T> extends SelectNode<T> implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

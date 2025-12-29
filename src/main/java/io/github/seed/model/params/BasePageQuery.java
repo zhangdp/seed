@@ -7,7 +7,6 @@ import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.Accessors;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -19,7 +18,6 @@ import java.io.Serializable;
  * @since 1.0.0
  */
 @Data
-@Accessors(chain = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(title = "分页查询入参")

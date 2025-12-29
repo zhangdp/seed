@@ -1,10 +1,7 @@
 package io.github.seed.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.experimental.Accessors;
+import lombok.*;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -15,12 +12,12 @@ import java.io.Serializable;
  * @author zhangdp
  * @since 1.0.0
  */
-@Data
-@Accessors(chain = true)
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(title = "key-value对象")
-public class KevValue<T> implements Serializable {
+public abstract class KevValue<T> implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

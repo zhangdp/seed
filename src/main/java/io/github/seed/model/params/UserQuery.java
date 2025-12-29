@@ -2,7 +2,6 @@ package io.github.seed.model.params;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import lombok.experimental.Accessors;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -14,7 +13,6 @@ import java.io.Serializable;
  * @since 1.0.0
  */
 @Data
-@Accessors(chain = true)
 @Schema(title = "查询用户")
 public class UserQuery implements Serializable {
 

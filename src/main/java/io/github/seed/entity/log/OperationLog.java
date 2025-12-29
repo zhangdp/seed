@@ -1,8 +1,6 @@
 package io.github.seed.entity.log;
 
-import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.Table;
-import io.github.seed.common.constant.Const;
 import io.github.seed.common.constant.TableNameConst;
 import io.github.seed.common.enums.OperateType;
 import io.github.seed.entity.BaseEntity;
@@ -10,7 +8,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import lombok.experimental.Accessors;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -23,12 +20,11 @@ import java.time.LocalDateTime;
  * @since 1.0.0
  */
 @Data
-@Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Table(TableNameConst.LOG_OPERATION)
 @Schema(title = "操作日志")
-public class OperationLog extends BaseEntity<Long> implements Serializable {
+public class OperationLog extends BaseEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

@@ -9,7 +9,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * 2024/10/8
+ * 2024/10/8 操作日志查询入参
  *
  * @author zhangdp
  * @since 1.0.0
@@ -17,6 +17,7 @@ import java.io.Serializable;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@Schema(title = "操作日志查询")
 public class OperationLogQuery extends BaseQueryParams implements Serializable {
 
     @Serial

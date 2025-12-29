@@ -1,10 +1,8 @@
 package io.github.seed.entity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
-import lombok.experimental.Accessors;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 
@@ -14,11 +12,9 @@ import java.io.Serializable;
  * @author zhangdp
  * @since 1.0.0
  */
-@Data
-@Accessors(chain = true)
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
-public abstract class BaseLogicAuditableEntity<T extends Serializable> extends BaseLogicEntity<T> implements Serializable {
+@Getter
+@Setter
+public abstract class BaseLogicAuditableEntity extends BaseLogicEntity implements Serializable {
 
     /**
      * 创建人

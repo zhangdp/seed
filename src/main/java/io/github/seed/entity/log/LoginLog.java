@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import lombok.experimental.Accessors;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -21,12 +20,11 @@ import java.time.LocalDateTime;
  * @since 1.0.0
  */
 @Data
-@Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Table(TableNameConst.LOGIN_LOG)
 @Schema(title = "登录日志")
-public class LoginLog extends BaseEntity<Long> implements Serializable {
+public class LoginLog extends BaseEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

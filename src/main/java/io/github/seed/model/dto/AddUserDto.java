@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import lombok.experimental.Accessors;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -19,7 +18,6 @@ import java.util.Set;
  * @since 2025/9/11
  */
 @Data
-@Accessors(chain = true)
 @EqualsAndHashCode(callSuper = false)
 @ToString(callSuper = true)
 @Schema(title = "添加用户")

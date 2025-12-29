@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import lombok.experimental.Accessors;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -17,7 +16,6 @@ import java.io.Serializable;
  * @since 1.0.0
  */
 @Data
-@Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Schema(title = "部门树节点")
@@ -31,4 +29,5 @@ public class DeptTreeNode extends TreeNode<Long> implements Serializable {
      */
     @Schema(title = "排序", description = "升序")
     private Integer sorts;
+
 }

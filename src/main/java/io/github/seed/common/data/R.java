@@ -3,9 +3,7 @@ package io.github.seed.common.data;
 import io.github.seed.common.constant.Const;
 import io.github.seed.common.enums.ErrorCode;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.experimental.Accessors;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -17,8 +15,6 @@ import java.io.Serializable;
  * @since 1.0.0
  */
 @Data
-@Accessors(chain = true)
-@AllArgsConstructor
 @Schema(title = "响应信息")
 public class R<T> implements Serializable {
 
@@ -42,30 +38,7 @@ public class R<T> implements Serializable {
     private final T data;
 
     /**
-     * 根据错误码枚举创建响应对象
-     *
-     * @param errorCode 错误码枚举
-     */
-    public R(ErrorCode errorCode) {
-        this.code = errorCode.code();
-        this.message = errorCode.message();
-        this.data = null;
-    }
-
-    /**
-     * 根据错误码枚举创建响应对象
-     *
-     * @param errorCode 错误码枚举
-     * @param data      任意类型数据体
-     */
-    public R(ErrorCode errorCode, T data) {
-        this.code = errorCode.code();
-        this.message = errorCode.message();
-        this.data = data;
-    }
-
-    /**
-     * 根据状态码、描述常见对象
+     * 根据状态码、描述创建对象
      *
      * @param code
      * @param message
@@ -74,6 +47,19 @@ public class R<T> implements Serializable {
         this.code = code;
         this.message = message;
         this.data = null;
+    }
+
+    /**
+     * 根据状态码、描述、数据体创建对象
+     *
+     * @param code
+     * @param message
+     * @param data
+     */
+    public R(int code, String message, T data) {
+        this.code = code;
+        this.message = message;
+        this.data = data;
     }
 
     /**
@@ -106,6 +92,27 @@ public class R<T> implements Serializable {
      */
     public static <T> R<T> success(T data) {
         return new R<>(Const.RESULT_SUCCESS, "", data);
+    }
+
+    /**
+     * 失败
+     *
+     * @param errorCode 错误码枚举
+     * @return
+     */
+    public static R<?> fail(ErrorCode errorCode) {
+        return new R<>(errorCode.code(), errorCode.message(), null);
+    }
+
+    /**
+     * 根据错误码枚举创建响应对象
+     *
+     * @param errorCode 错误码枚举
+     * @param data      任意类型数据体
+     * @return
+     */
+    public static <T> R<T> fail(ErrorCode errorCode, T data) {
+        return new R<>(errorCode.code(), errorCode.message(), data);
     }
 
 }

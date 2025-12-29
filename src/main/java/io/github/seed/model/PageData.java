@@ -2,7 +2,6 @@ package io.github.seed.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import lombok.experimental.Accessors;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -16,7 +15,6 @@ import java.util.List;
  * @since 1.0.0
  */
 @Data
-@Accessors(chain = true)
 @Schema(title = "分页数据")
 public class PageData<T> implements Serializable {
 

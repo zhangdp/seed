@@ -3,21 +3,19 @@ package io.github.seed.model.params;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-import lombok.experimental.Accessors;
 
 import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * 2025/12/22 登录入参
+ * 2025/12/22 短信登录入参
  *
  * @author zhangdp
  * @since 1.0.0
  */
 @Deprecated
 @Data
-@Accessors(chain = true)
-@Schema(title = "登录入参")
+@Schema(title = "短信登录入参")
 public class SmsLoginParams implements Serializable {
 
     @Serial

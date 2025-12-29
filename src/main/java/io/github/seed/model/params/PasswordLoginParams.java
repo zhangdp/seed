@@ -3,7 +3,6 @@ package io.github.seed.model.params;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-import lombok.experimental.Accessors;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -16,7 +15,6 @@ import java.io.Serializable;
  */
 @Deprecated
 @Data
-@Accessors(chain = true)
 @Schema(title = "密码登录")
 public class PasswordLoginParams implements Serializable {
 

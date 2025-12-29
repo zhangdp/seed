@@ -11,7 +11,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.Length;
 
 import java.io.Serial;
@@ -24,12 +23,11 @@ import java.io.Serializable;
  * @since 1.0.0
  */
 @Data
-@Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Table(TableNameConst.SYS_DEPT)
 @Schema(title = "部门")
-public class Dept extends BaseLogicEntity<Long> implements Serializable {
+public class Dept extends BaseLogicEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

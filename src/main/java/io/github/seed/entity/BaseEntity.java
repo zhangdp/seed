@@ -5,8 +5,8 @@ import io.github.seed.common.data.ValidGroup;
 import io.github.seed.common.constant.Const;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
-import lombok.experimental.Accessors;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -17,9 +17,9 @@ import java.time.LocalDateTime;
  * @author zhangdp
  * @since 1.0.0
  */
-@Data
-@Accessors(chain = true)
-public abstract class BaseEntity<T extends Serializable> implements Serializable {
+@Getter
+@Setter
+public abstract class BaseEntity implements Serializable {
 
     /**
      * 主键
@@ -27,7 +27,7 @@ public abstract class BaseEntity<T extends Serializable> implements Serializable
     @Id
     @Schema(title = "id", description = "修改时需传")
     @NotNull(message = "ID不能为空", groups = ValidGroup.Update.class)
-    protected T id;
+    protected Long id;
     /**
      * 创建时间
      */
