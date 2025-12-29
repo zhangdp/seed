@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -18,6 +19,9 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @Schema(title = "登录入参")
 public class SmsLoginParams implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     /**
      * 手机号

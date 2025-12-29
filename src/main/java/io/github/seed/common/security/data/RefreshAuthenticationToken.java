@@ -4,6 +4,7 @@ import lombok.Getter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.Serial;
 import java.util.Collections;
 
 /**
@@ -15,6 +16,12 @@ import java.util.Collections;
 @Getter
 public class RefreshAuthenticationToken extends AbstractAuthenticationToken {
 
+    @Serial
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * 认证前：refreshToken；认证成功后：userDetails
+     */
     private final Object principal;
 
     public RefreshAuthenticationToken(Object principal) {

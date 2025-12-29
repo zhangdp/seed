@@ -17,7 +17,6 @@ import java.io.Serializable;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-
 public class OperationLogQuery extends BaseQueryParams implements Serializable {
 
     @Serial

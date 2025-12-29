@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -19,6 +20,9 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @Schema(title = "登录入参")
 public class LoginParams implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     /**
      * 登录方式

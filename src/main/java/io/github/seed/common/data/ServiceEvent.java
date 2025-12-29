@@ -1,6 +1,7 @@
 package io.github.seed.common.data;
 
 import lombok.Getter;
+import lombok.ToString;
 import org.springframework.context.ApplicationEvent;
 
 import java.io.Serial;
@@ -15,6 +16,7 @@ import java.util.Set;
  * @since 2024/9/17
  */
 @Getter
+@ToString
 public class ServiceEvent extends ApplicationEvent {
 
     @Serial

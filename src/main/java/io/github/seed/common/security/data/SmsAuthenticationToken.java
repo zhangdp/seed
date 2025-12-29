@@ -5,6 +5,7 @@ import lombok.Setter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.Serial;
 import java.util.Collections;
 
 /**
@@ -17,8 +18,11 @@ import java.util.Collections;
 @Setter
 public class SmsAuthenticationToken extends AbstractAuthenticationToken {
 
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     /**
-     * 手机号
+     * 认证前：手机号；认证后：userDetails
      */
     private final Object principal;
     /**

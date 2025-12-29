@@ -19,9 +19,7 @@ import java.util.Map;
  * @since 1.0.0
  */
 @Getter
-@Setter
 @ToString
-@Accessors(chain = true)
 public class OperateLogEvent extends ApplicationEvent {
 
     @Serial
@@ -30,50 +28,62 @@ public class OperateLogEvent extends ApplicationEvent {
     /**
      * 事件类型
      */
+    @Setter
     private OperateType type;
     /**
      * 操作描述
      */
+    @Setter
     private String title;
     /**
      * 关联模块
      */
+    @Setter
     private String refModule;
     /**
      * 关联模块id，spel表达式
      */
+    @Setter
     private Long refId;
     /**
      * 调用方法
      */
+    @Setter
     private String method;
     /**
      * 参数
      */
+    @Setter
     private Map<String, String[]> parameterMap;
     /**
      * 结果
      */
+    @Setter
     private Serializable result;
     /**
      * 开始时间
      */
+    @Setter
     private LocalDateTime startTime;
     /**
      * 结束时间
      */
+    @Setter
     private LocalDateTime endTime;
     /**
      * 用户id
      */
+    @Setter
     private Long userId;
     /**
      * 请求uri
      */
+    @Setter
     private String uri;
     /**
      * http方法
      */
+    @Setter
     private String httpMethod;
     /**
      * 浏览器标识
@@ -82,18 +92,22 @@ public class OperateLogEvent extends ApplicationEvent {
     /**
      * 客户端ip
      */
+    @Setter
     private String clientIp;
     /**
      * 异常
      */
+    @Setter
     private Throwable throwable;
     /**
      * 请求体
      */
+    @Setter
     private String requestBody;
     /**
      * 请求头
      */
+    @Setter
     private Map<String, String> headerMap;
 
     public OperateLogEvent(Object source) {

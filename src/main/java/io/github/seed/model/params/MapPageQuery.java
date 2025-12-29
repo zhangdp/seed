@@ -3,6 +3,7 @@ package io.github.seed.model.params;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -24,6 +25,7 @@ import java.util.Map;
 @Deprecated
 public class MapPageQuery extends BasePageQuery implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**
