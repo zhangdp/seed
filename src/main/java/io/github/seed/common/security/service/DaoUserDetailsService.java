@@ -42,8 +42,7 @@ public class DaoUserDetailsService implements UserDetailsService {
             user = userService.getByMobile(username);
         } else if (Validator.isEmail(username)) {
             user = userService.getByEmail(username);
-        }
-        if (user == null) {
+        } else {
             user = userService.getByUsername(username);
         }
         Assert.notNull(user, () -> new UsernameNotFoundException("不存在账号：" + username));

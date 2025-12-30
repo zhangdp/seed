@@ -22,6 +22,7 @@ import io.github.seed.service.sys.UserRoleService;
 import io.github.seed.service.sys.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -48,7 +49,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    @Cacheable(key = "#username", unless = "#result == null")
+    @Cacheable(key = "#username")
     public User getByUsername(String username) {
         return userMapper.selectOneByUsername(username);
     }
@@ -75,6 +76,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = "#user.username", condition = "#result == true")
     @PublishEvent(value = EventConst.ADD_USER, condition = "#result == true")
     public boolean add(AddUserDto user) {
         Assert.isFalse(this.existsUsername(user.getUsername()), () -> new BizException(ErrorCode.USERNAME_REPEAT.code(), "账号" + user.getUsername() + "已存在"));

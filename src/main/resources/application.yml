@@ -40,7 +40,7 @@ spring:
       connect-timeout: 10s
       lettuce:
         pool:
-          max-active: 20
+          max-active: 32
           max-idle: 12
           min-idle: 4
       repositories:

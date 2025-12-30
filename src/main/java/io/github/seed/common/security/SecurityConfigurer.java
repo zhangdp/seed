@@ -163,12 +163,12 @@ public class SecurityConfigurer {
     /**
      * token持久化
      *
-     * @param restTemplate
+     * @param redisTemplate
      * @return
      */
     @Bean
-    public TokenStore tokenStore(RedisTemplate<String, Object> restTemplate) {
-        RedisTokenStore store = new RedisTokenStore(restTemplate);
+    public TokenStore tokenStore(RedisTemplate<String, Object> redisTemplate) {
+        RedisTokenStore store = new RedisTokenStore(redisTemplate);
         log.info("Security token访问使用redis：{}", store);
         return store;
     }
