@@ -1,6 +1,5 @@
 package io.github.seed.common.security.handler;
 
-import cn.hutool.v7.http.server.servlet.ServletUtil;
 import io.github.seed.common.constant.Const;
 import io.github.seed.common.data.LoginLogEvent;
 import io.github.seed.common.data.R;
@@ -67,7 +66,7 @@ public class TokenAuthenticationSuccessHandler implements AuthenticationSuccessH
         // event.setUsername();
         event.setLoginTime(LocalDateTime.now());
         event.setLoginUser((LoginUser) authentication.getPrincipal());
-        event.setClientIp(ServletUtil.getClientIP(request));
+        event.setClientIp(WebUtils.getClientIP(request));
         event.setUserAgent(request.getHeader("User-Agent"));
         event.setResultCode(Const.RESULT_SUCCESS);
     }

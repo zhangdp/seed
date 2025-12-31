@@ -1,5 +1,6 @@
 package io.github.seed.common.util;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.SneakyThrows;
@@ -12,6 +13,7 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * 2023/4/4 web相关工具
@@ -22,6 +24,7 @@ import java.util.regex.Pattern;
 @Slf4j
 public class WebUtils {
 
+    private static final String[] IP_HEADERS = {"X-Forwarded-For", "X-Real-IP", "Proxy-Client-IP", "WL-Proxy-Client-IP", "HTTP_CLIENT_IP", "HTTP_X_FORWARDED_FOR"};
     /**
      * 默认true参数列表
      */
@@ -530,4 +533,28 @@ public class WebUtils {
         return encoded;
     }
 
+    /**
+     * 获取客户端ip
+     *
+     * @param request
+     * @return
+     */
+    public static String getClientIP(HttpServletRequest request) {
+        for (String header : IP_HEADERS) {
+            
+        }
+        return null;
+    }
+
+    /**
+     * 获取请求体
+     *
+     * @param request
+     * @return
+     */
+    public static String getBody(HttpServletRequest request) throws IOException {
+        try (BufferedReader reader = request.getReader()) {
+            return reader.lines().collect(Collectors.joining());
+        }
+    }
 }

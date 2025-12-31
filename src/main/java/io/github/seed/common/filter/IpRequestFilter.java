@@ -1,9 +1,9 @@
 package io.github.seed.common.filter;
 
 import cn.hutool.v7.core.text.StrUtil;
-import cn.hutool.v7.http.server.servlet.ServletUtil;
 import io.github.seed.common.enums.ErrorCode;
 import io.github.seed.common.exception.ForbiddenException;
+import io.github.seed.common.util.WebUtils;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -43,7 +43,7 @@ public class IpRequestFilter extends OncePerRequestFilter {
         if (log.isTraceEnabled()) {
             log.trace("IP Request Filter in. uri={}, ipSet={}, filterMode={}", request.getRequestURI(), ipSet, filterMode);
         }
-        String ip = ServletUtil.getClientIP(request);
+        String ip = WebUtils.getClientIP(request);
         boolean flag = StrUtil.isNotBlank(ip) && ipSet.contains(ip);
         // ip不在白名单里面时不允许访问
         if (filterMode == FilterMode.WHITE_LIST && !flag) {

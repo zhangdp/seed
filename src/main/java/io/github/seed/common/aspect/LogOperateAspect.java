@@ -1,7 +1,6 @@
 package io.github.seed.common.aspect;
 
 import cn.hutool.v7.core.text.StrUtil;
-import cn.hutool.v7.http.server.servlet.ServletUtil;
 import io.github.seed.common.constant.Const;
 import io.github.seed.common.enums.SensitiveType;
 import io.github.seed.common.security.SecurityConst;
@@ -11,6 +10,7 @@ import io.github.seed.common.annotation.LogOperation;
 import io.github.seed.common.data.OperateLogEvent;
 import io.github.seed.common.security.SecurityUtils;
 import io.github.seed.common.security.data.LoginUser;
+import io.github.seed.common.util.WebUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -93,9 +93,9 @@ public class LogOperateAspect {
                     event.setUri(request.getRequestURI());
                     event.setHttpMethod(request.getMethod());
                     // event.setUserAgent(request.getHeader("User-Agent"));
-                    event.setClientIp(ServletUtil.getClientIP(request));
+                    event.setClientIp(WebUtils.getClientIP(request));
                     if (logOperation.logRequestBody()) {
-                        event.setRequestBody(ServletUtil.getBody(request));
+                        event.setRequestBody(WebUtils.getBody(request));
                     }
                     if (logOperation.logParameter()) {
                         event.setParameterMap(request.getParameterMap());
