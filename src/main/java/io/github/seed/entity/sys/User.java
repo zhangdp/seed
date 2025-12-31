@@ -15,7 +15,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 
 /**
- * 2023/4/3 用户表
+ * 用户
  *
  * @author zhangdp
  * @since 1.0.0
@@ -24,7 +24,7 @@ import java.time.LocalDate;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Table(TableNameConst.SYS_USER)
-@Schema(title = "用户")
+@Schema(description = "用户")
 public class User extends BaseLogicEntity implements Serializable {
 
     @Serial
@@ -33,62 +33,62 @@ public class User extends BaseLogicEntity implements Serializable {
     /**
      * 账号
      */
-    @Schema(title = "账号")
+    @Schema(description = "账号")
     private String username;
     /**
      * 密码
      */
-    @Schema(title = "密码")
+    @Schema(description = "密码")
     @Desensitization(SensitiveType.PASSWORD)
     private String password;
     /**
      * 手机号
      */
-    @Schema(title = "手机号")
+    @Schema(description = "手机号")
     @Desensitization(SensitiveType.MOBILE)
     private String mobile;
     /**
      * 性别，F：女，M：男，null：未知
      */
-    @Schema(title = "性别", description = "F：女，M：男，null：未知")
+    @Schema(description = "性别，F：女，M：男，null：未知")
     private Character gender;
     /**
      * 生日
      */
-    @Schema(title = "生日")
+    @Schema(description = "生日")
     private LocalDate birthDate;
     /**
      * 邮箱
      */
-    @Schema(title = "邮箱")
+    @Schema(description = "邮箱")
     @Desensitization(SensitiveType.EMAIL)
     private String email;
     /**
      * 头像地址
      */
-    @Schema(title = "头像地址")
+    @Schema(description = "头像地址")
     private String avatarUrl;
     /**
      * 姓名
      */
-    @Schema(title = "姓名")
+    @Schema(description = "姓名")
     // @Desensitization(SensitiveType.CHINESE_NAME)
     private String name;
     /**
      * 身份证号
      */
-    @Schema(title = "身份证号")
+    @Schema(description = "身份证号")
     @Desensitization(SensitiveType.CITIZEN_ID)
     private String citizenId;
     /**
      * 部门id
      */
-    @Schema(title = "部门id")
+    @Schema(description = "部门id")
     private Long deptId;
     /**
      * 状态，0：正常，其它异常
      */
-    @Schema(title = "状态", description = "0：正常；其它：锁定或者异常")
+    @Schema(description = "状态，0：正常；其它：锁定或者异常")
     private Integer status;
 
 }

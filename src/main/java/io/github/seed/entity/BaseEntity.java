@@ -12,7 +12,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * 2023/4/3 实体基类
+ * 实体基类
  *
  * @author zhangdp
  * @since 1.0.0
@@ -25,17 +25,17 @@ public abstract class BaseEntity implements Serializable {
      * 主键
      */
     @Id
-    @Schema(title = "id", description = "修改时需传")
+    @Schema(description = "ID，修改时需传")
     @NotNull(message = "ID不能为空", groups = ValidGroup.Update.class)
     protected Long id;
     /**
      * 创建时间
      */
-    @Schema(title = "添加时间", description = "格式：" + Const.DATETIME_FORMATTER + "。保存时忽略")
+    @Schema(description = "添加时间，格式：" + Const.DATETIME_FORMATTER + "。保存时忽略")
     protected LocalDateTime createdAt;
     /**
      * 修改时间
      */
-    @Schema(title = "修改时间", description = "格式：" + Const.DATETIME_FORMATTER + "。保存时忽略")
+    @Schema(description = "修改时间，格式：" + Const.DATETIME_FORMATTER + "。保存时忽略")
     protected LocalDateTime updatedAt;
 }

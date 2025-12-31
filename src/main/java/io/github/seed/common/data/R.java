@@ -15,7 +15,7 @@ import java.io.Serializable;
  * @since 1.0.0
  */
 @Data
-@Schema(title = "响应信息")
+@Schema(description = "响应信息")
 public class R<T> implements Serializable {
 
     @Serial
@@ -24,17 +24,17 @@ public class R<T> implements Serializable {
     /**
      * 状态码
      */
-    @Schema(title = "状态码", description = Const.RESULT_SUCCESS + "：成功，其它失败")
+    @Schema(description = "状态码" + Const.RESULT_SUCCESS + "：成功，其它失败")
     private final int code;
     /**
      * 描述
      */
-    @Schema(title = "描述")
+    @Schema(description = "描述")
     private final String message;
     /**
      * 数据体
      */
-    @Schema(title = "数据体")
+    @Schema(description = "数据体")
     private final T data;
 
     /**

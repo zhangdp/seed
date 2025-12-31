@@ -12,7 +12,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * 2023/4/12 字典数据
+ * 字典数据
  *
  * @author zhangdp
  * @since 1.0.0
@@ -21,7 +21,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Table(TableNameConst.SYS_DICT_DATA)
-@Schema(title = "字典数据")
+@Schema(description = "字典数据")
 public class DictData extends BaseLogicEntity implements Serializable {
 
     @Serial
@@ -30,31 +30,31 @@ public class DictData extends BaseLogicEntity implements Serializable {
     /**
      * 所属字典id
      */
-    @Schema(title = "字典id")
+    @Schema(description = "字典id")
     private Long dictId;
     /**
      * 数据值
      */
-    @Schema(title = "数据值")
+    @Schema(description = "数据值")
     private String value;
     /**
      * 标签名
      */
-    @Schema(title = "标签名")
+    @Schema(description = "标签名")
     private String label;
     /**
      * 描述
      */
-    @Schema(title = "描述")
+    @Schema(description = "描述")
     private String description;
     /**
      * 扩展数据
      */
-    @Schema(title = "扩展数据")
+    @Schema(description = "扩展数据")
     private String metaData;
     /**
      * 排序（升序）
      */
-    @Schema(title = "排序", description = "同级排序，升序")
+    @Schema(description = "同级排序，升序")
     private Integer sorts;
 }

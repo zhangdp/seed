@@ -10,7 +10,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * 2023/4/3 带有逻辑删除字段的实体基类
+ * 带有逻辑删除字段的实体基类
  *
  * @author zhangdp
  * @since 1.0.0
@@ -26,7 +26,7 @@ public abstract class BaseLogicEntity extends BaseEntity implements Serializable
      * 逻辑删除，0：否，默认；1：已删除
      */
     @Column(isLogicDelete = true)
-    @Schema(title = "逻辑删除", description = "0：否，默认；1：已删除", hidden = true)
+    @Schema(description = "逻辑删除，0：否，默认；1：已删除", hidden = true)
     @JsonIgnore
     protected Integer deleted;
 

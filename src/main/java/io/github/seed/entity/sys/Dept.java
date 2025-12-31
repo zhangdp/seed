@@ -17,7 +17,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * 2023/4/3 部门表
+ * 部门表
  *
  * @author zhangdp
  * @since 1.0.0
@@ -26,7 +26,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Table(TableNameConst.SYS_DEPT)
-@Schema(title = "部门")
+@Schema(description = "部门")
 public class Dept extends BaseLogicEntity implements Serializable {
 
     @Serial
@@ -35,21 +35,21 @@ public class Dept extends BaseLogicEntity implements Serializable {
     /**
      * 部门名称
      */
-    @Schema(title = "部门名称")
+    @Schema(description = "部门名称")
     @NotBlank(message = "部门名称不能为空")
     @Length(max = 30, message = "部门名称最多30个字符")
     private String name;
     /**
      * 父级部门id
      */
-    @Schema(title = "父级部门id", description = "根部门则为" + Const.ROOT_ID)
+    @Schema(description = "父级部门id，根部门则为" + Const.ROOT_ID)
     @NotNull(message = "父级部门id不能为空")
     @Min(value = 0, message = "父级部门id不合法")
     private Long parentId;
     /**
      * 同级排序，升序
      */
-    @Schema(title = "排序", description = "同级排序，升序")
+    @Schema(description = "同级排序，升序")
     private Integer sorts;
 
 }

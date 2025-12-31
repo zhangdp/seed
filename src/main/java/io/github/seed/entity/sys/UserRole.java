@@ -12,7 +12,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * 2023/4/4 用户角色
+ * 用户角色
  *
  * @author zhangdp
  * @since 1.0.0

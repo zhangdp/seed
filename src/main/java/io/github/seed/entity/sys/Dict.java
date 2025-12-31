@@ -12,7 +12,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * 2023/4/12 字典
+ * 字典
  *
  * @author zhangdp
  * @since 1.0.0
@@ -30,21 +30,21 @@ public class Dict extends BaseLogicEntity implements Serializable {
     /**
      * 类型
      */
-    @Schema(title = "字典类型")
+    @Schema(description = "字典类型")
     private String type;
     /**
      * 字典名称
      */
-    @Schema(title = "字典名称")
+    @Schema(description = "字典名称")
     private String name;
     /**
      * 描述
      */
-    @Schema(title = "描述")
+    @Schema(description = "描述")
     private String description;
     /**
      * 是否是系统内置
      */
-    @Schema(title = "系统内置", description = "系统内置的不允许页面修改。1：是；0：否")
+    @Schema(description = "系统内置的不允许页面修改。1：是；0：否")
     private Integer isSystem;
 }

@@ -1,22 +1,23 @@
 package io.github.seed.common.data;
 
-import lombok.Getter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.springframework.context.ApplicationEvent;
 
 import java.io.Serial;
 import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.Set;
 
 /**
  * 业务事件
  *
  * @author zhangdp
- * @since 2024/9/17
+ * @since 1.0.0
  */
-@Getter
-@ToString
+@Data
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class ServiceEvent extends ApplicationEvent {
 
     @Serial

@@ -11,7 +11,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * 2023/4/12 角色关联资源
+ * 角色关联资源
  *
  * @author zhangdp
  * @since 1.0.0
