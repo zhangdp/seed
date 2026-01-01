@@ -24,6 +24,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class WebUtils {
 
+    /**
+     * ip header
+     */
     private static final String[] IP_HEADERS = {"X-Forwarded-For", "X-Real-IP", "Proxy-Client-IP", "WL-Proxy-Client-IP", "HTTP_CLIENT_IP", "HTTP_X_FORWARDED_FOR"};
     /**
      * 默认true参数列表
@@ -540,10 +543,25 @@ public class WebUtils {
      * @return
      */
     public static String getClientIP(HttpServletRequest request) {
-        for (String header : IP_HEADERS) {
-            
+        return getClientIP(request, IP_HEADERS);
+    }
+
+    /**
+     * 获取客户端ip
+     *
+     * @param request
+     * @param headers
+     * @return
+     */
+    public static String getClientIP(HttpServletRequest request, String... headers) {
+        for (String header : headers) {
+            String ip = request.getHeader(header);
+            if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
+                // 多级代理，第一个才是真实 IP
+                return ip.split(",")[0].trim();
+            }
         }
-        return null;
+        return request.getRemoteAddr();
     }
 
     /**
