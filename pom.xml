@@ -19,7 +19,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <hutool.version>7.0.0-M3</hutool.version>
         <mybatis-flex.version>1.11.5</mybatis-flex.version>
-        <springdoc.version>3.0.0</springdoc.version>
+        <springdoc.version>3.0.1</springdoc.version>
         <minio.version>8.5.17</minio.version>
     </properties>
 
