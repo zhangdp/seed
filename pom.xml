@@ -148,13 +148,6 @@
             <artifactId>commons-pool2</artifactId>
         </dependency>
         <!-- java工具大全 https://www.hutool.cn/ -->
-        <!--
-        <dependency>
-            <groupId>cn.hutool.v7</groupId>
-            <artifactId>hutool-all</artifactId>
-            <version>${hutool.version}</version>
-        </dependency>
-        -->
         <dependency>
             <groupId>cn.hutool.v7</groupId>
             <artifactId>hutool-core</artifactId>
@@ -173,12 +166,6 @@
         <dependency>
             <groupId>cn.hutool.v7</groupId>
             <artifactId>hutool-http</artifactId>
-        </dependency>
-        -->
-        <!--
-        <dependency>
-            <groupId>cn.hutool.v7</groupId>
-            <artifactId>hutool-json</artifactId>
         </dependency>
         -->
         <!-- https://mvnrepository.com/artifact/com.mybatis-flex/mybatis-flex-spring-boot3-starter -->
