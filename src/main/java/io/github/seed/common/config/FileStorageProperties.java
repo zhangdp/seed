@@ -81,6 +81,9 @@ public class FileStorageProperties {
         // AWSS3
     }
 
+    /**
+     * 本地文件存储配置
+     */
     @Getter
     @Setter
     public static class LocalStorageProperties {
@@ -88,7 +91,6 @@ public class FileStorageProperties {
         /**
          * 上传的目录
          */
-        @NotBlank
         private String uploadDir;
     }
 

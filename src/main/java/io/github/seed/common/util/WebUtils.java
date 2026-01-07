@@ -9,11 +9,14 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.*;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * 2023/4/4 web相关工具
@@ -43,7 +46,7 @@ public class WebUtils {
     /**
      * 默认编码
      */
-    private static final String CHARSET = "UTF-8";
+    private static final Charset DEFAULT_CHARSET = UTF_8;
 
     private WebUtils() {
 
@@ -249,7 +252,7 @@ public class WebUtils {
         String disposition = isInline ? "inline" : "attachment";
         if (fileName != null && !fileName.isEmpty()) {
             String encodedFilename = urlEncode(fileName);
-            disposition += "; filename=\"" + encodedFilename + "\"; filename*=" + CHARSET + "''" + encodedFilename;
+            disposition += "; filename=\"" + encodedFilename + "\"; filename*=" + DEFAULT_CHARSET.name() + "''" + encodedFilename;
         }
         response.setHeader("Content-Disposition", disposition);
         response.setContentType(contentType == null || contentType.isEmpty() ? "application/octet-stream" : contentType);
@@ -473,45 +476,69 @@ public class WebUtils {
      * @param response
      */
     public static void setEventStreamHeader(HttpServletResponse response) {
+        setEventStremHeader(response, null);
+    }
+
+    /**
+     * 设置EventStream头
+     *
+     * @param response
+     * @param charset
+     */
+    public static void setEventStremHeader(HttpServletResponse response, String charset) {
         response.setContentType("text/event-stream");
         response.setHeader("Cache-Control", "no-cache");
         response.setHeader("Connection", "keep-alive");
-        response.setCharacterEncoding(CHARSET);
+        response.setCharacterEncoding(charset);
+    }
+
+    /**
+     * url encode，默认使用utf-8编码
+     *
+     * @param data
+     * @return
+     */
+    public static String urlEncode(String data) {
+        return urlEncode(data, DEFAULT_CHARSET);
     }
 
     /**
      * url encode
      *
-     * @param str
+     * @param data
+     * @param charset
      * @return
      */
-    public static String urlEncode(String str) {
-        if (str == null || str.isEmpty()) {
-            return str;
+    public static String urlEncode(String data, Charset charset) {
+        if (data == null || data.isEmpty()) {
+            return data;
         }
-        try {
-            // java使用基于 application/x-www-form-urlencoded 编码规则，会将空格编码为+，因此需要替换成20%，详见https://www.w3.org/TR/REC-html40/interact/forms.html#h-17.13.4
-            return URLEncoder.encode(str, CHARSET).replace("+", "%20");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+        // java使用基于 application/x-www-form-urlencoded 编码规则，会将空格编码为+，因此需要替换成20%，详见https://www.w3.org/TR/REC-html40/interact/forms.html#h-17.13.4
+        return URLEncoder.encode(data, charset).replace("+", "%20");
+    }
+
+    /**
+     * url decode，默认使用utf-8编码
+     *
+     * @param data
+     * @return
+     */
+    public static String urlDecode(String data) {
+        return urlDecode(data, DEFAULT_CHARSET);
     }
 
     /**
      * url decode
      *
-     * @param str
+     * @param data
+     * @param charset
      * @return
      */
-    public static String urlDecode(String str) {
-        if (str == null || str.isEmpty()) {
-            return str;
+    public static String urlDecode(String data, Charset charset) {
+        if (data == null || data.isEmpty()) {
+            return data;
         }
-        try {
-            return URLDecoder.decode(str, CHARSET);
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+        return URLDecoder.decode(data, charset);
     }
 
     /**
