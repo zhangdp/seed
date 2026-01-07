@@ -3,7 +3,6 @@ package io.github.seed.common.util;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
@@ -452,7 +451,7 @@ public class WebUtils {
      * @param response
      * @param strData
      */
-    public static void responseEventStreamData(HttpServletResponse response, String strData) {
+    public static void responseEventStreamData(HttpServletResponse response, String strData) throws IOException {
         responseEventStream(response, "data", strData);
     }
 
@@ -463,8 +462,7 @@ public class WebUtils {
      * @param type
      * @param strData
      */
-    @SneakyThrows
-    public static void responseEventStream(HttpServletResponse response, String type, String strData) {
+    public static void responseEventStream(HttpServletResponse response, String type, String strData) throws IOException {
         PrintWriter writer = response.getWriter();
         writer.write(type + ":" + strData + "\n\n");
         writer.flush();
@@ -476,7 +474,7 @@ public class WebUtils {
      * @param response
      */
     public static void setEventStreamHeader(HttpServletResponse response) {
-        setEventStremHeader(response, null);
+        setEventStreamHeader(response, null);
     }
 
     /**
@@ -485,7 +483,7 @@ public class WebUtils {
      * @param response
      * @param charset
      */
-    public static void setEventStremHeader(HttpServletResponse response, String charset) {
+    public static void setEventStreamHeader(HttpServletResponse response, String charset) {
         response.setContentType("text/event-stream");
         response.setHeader("Cache-Control", "no-cache");
         response.setHeader("Connection", "keep-alive");
