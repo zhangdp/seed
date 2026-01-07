@@ -2,7 +2,6 @@ package io.github.seed.common.config;
 
 import io.github.seed.common.component.FileTemplate;
 import io.github.seed.common.component.LocalFileTemplate;
-import io.github.seed.common.component.MinioTemplate;
 import io.github.seed.common.constant.MimeType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.Map;
 
 /**
- * 2024/11/8 文件访问器自动配置类
+ * 文件访问器自动配置类
  *
  * @author zhangdp
  * @since 1.0.0
@@ -48,7 +47,7 @@ public class FileStorageConfigurer implements InitializingBean {
      *
      * @return
      */
-    @Bean
+    /*@Bean
     @ConditionalOnMissingBean
     @ConditionalOnProperty(prefix = "seed.file-storage", name = "type", havingValue = "minio")
     public FileTemplate minioFileTemplate() {
@@ -56,7 +55,22 @@ public class FileStorageConfigurer implements InitializingBean {
         FileTemplate template = new MinioTemplate(minioProperties.getEndpoint(), minioProperties.getAccessKey(), minioProperties.getSecretKey(), minioProperties.getBucketName());
         log.info("使用MinIO文件访问器：{}, 地址：{}，桶：{}", template, minioProperties.getEndpoint(), minioProperties.getBucketName());
         return template;
-    }
+    }*/
+
+    /**
+     * aws-s3文件访问器
+     *
+     * @return
+     */
+    /*@Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnProperty(prefix = "seed.file-storage", name = "type", havingValue = "awss3")
+    public FileTemplate awsS3FileTemplate() {
+        FileStorageProperties.AwsS3Properties awss3Properties = fileStorageProperties.getAwss3();
+        FileTemplate template = new AwsS3Template(awss3Properties.getEndpoint(), awss3Properties.getAccessKey(), awss3Properties.getSecretKey(), awss3Properties.getBucketName());
+        log.info("使用Aws S3文件访问器：{}, 地址：{}，桶：{}", template, awss3Properties.getEndpoint(), awss3Properties.getBucketName());
+        return template;
+    }*/
 
     @Override
     public void afterPropertiesSet() throws Exception {

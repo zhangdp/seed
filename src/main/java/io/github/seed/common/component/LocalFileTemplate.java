@@ -2,27 +2,33 @@ package io.github.seed.common.component;
 
 import cn.hutool.v7.core.io.IoUtil;
 import cn.hutool.v7.core.io.file.FileUtil;
-import cn.hutool.v7.core.text.StrUtil;
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.File;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.RandomAccessFile;
+import java.io.*;
 
 /**
- * 2024/11/8 本地文件访问器实现
+ * 本地文件访问器实现
  *
  * @author zhangdp
  * @since 1.0.0
  */
 @Slf4j
-@RequiredArgsConstructor
 public class LocalFileTemplate implements FileTemplate {
 
+    /**
+     * 根目录
+     */
+    @Getter
     private final String uploadDir;
+
+    public LocalFileTemplate() {
+        this.uploadDir = "";
+    }
+
+    public LocalFileTemplate(String uploadDir) {
+        this.uploadDir = uploadDir == null ? "" : uploadDir.trim();
+    }
 
     /**
      * 完整路径
@@ -31,10 +37,15 @@ public class LocalFileTemplate implements FileTemplate {
      * @return
      */
     public String fullPath(String path) {
-        if (StrUtil.isBlank(path)) {
-            return path;
+        if (path == null || (path = path.trim()).isEmpty()) {
+            throw new IllegalArgumentException("路径不能为空");
         }
-        return uploadDir + (uploadDir.endsWith("/") || path.startsWith("/") ? "" : "/") + path;
+        String fullPath = this.uploadDir;
+        if (!this.uploadDir.isEmpty()) {
+            fullPath += "/";
+        }
+        fullPath += path;
+        return this.normalizePath(fullPath);
     }
 
     @Override
@@ -107,11 +118,10 @@ public class LocalFileTemplate implements FileTemplate {
         return FileUtil.getInputStream(this.fullPath(path));
     }
 
-    @SneakyThrows
     @Override
     public InputStream download(String path, long offset, long length) {
-        // todo
-        return null;
+        // todo 暂时没有好的算法
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -119,9 +129,8 @@ public class LocalFileTemplate implements FileTemplate {
         return FileUtil.copy(new File(this.fullPath(path)), outputStream);
     }
 
-    @SneakyThrows
     @Override
-    public long download(String path, long offset, long length, OutputStream outputStream) {
+    public long download(String path, long offset, long length, OutputStream outputStream) throws IOException {
         try (RandomAccessFile raf = new RandomAccessFile(this.fullPath(path), "r")) {
             raf.seek(offset);
             byte[] buffer = new byte[8192];
@@ -152,4 +161,5 @@ public class LocalFileTemplate implements FileTemplate {
     public long download(String path, String localPath) {
         return this.download(path, new File(localPath));
     }
+
 }

@@ -1,8 +1,6 @@
 package io.github.seed.common.component;
 
-import java.io.File;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 
 /**
  * 2024/11/8 文件访问器
@@ -47,20 +45,20 @@ public interface FileTemplate {
     /**
      * 复制文件，默认覆盖
      *
-     * @param oldPath
-     * @param newPath
+     * @param srcPath
+     * @param destPath
      * @return
      */
-    boolean copy(String oldPath, String newPath);
+    boolean copy(String srcPath, String destPath);
 
     /**
      * 移动文件，也可用于重命名，默认覆盖
      *
-     * @param oldPath
-     * @param newPath
+     * @param srcPath
+     * @param destPath
      * @return
      */
-    boolean move(String oldPath, String newPath);
+    boolean move(String srcPath, String destPath);
 
     /**
      * 删除文件/文件夹，默认不递归删除即用于删除文件或者空文件夹
@@ -113,7 +111,7 @@ public interface FileTemplate {
      * @param path
      * @return
      */
-    boolean upload(InputStream inputStream, String path);
+    boolean upload(InputStream inputStream, String path) throws IOException;
 
     /**
      * 下载成输入流，用完流记得手动关闭
@@ -140,7 +138,7 @@ public interface FileTemplate {
      * @param outputStream
      * @return
      */
-    long download(String path, OutputStream outputStream);
+    long download(String path, OutputStream outputStream) throws IOException;
 
     /**
      * 分段下载到输出流
@@ -151,7 +149,7 @@ public interface FileTemplate {
      * @param outputStream
      * @return
      */
-    long download(String path, long offset, long length, OutputStream outputStream);
+    long download(String path, long offset, long length, OutputStream outputStream) throws IOException;
 
     /**
      * 下载到本地文件，默认覆盖
@@ -160,7 +158,7 @@ public interface FileTemplate {
      * @param file
      * @return
      */
-    long download(String path, File file);
+    long download(String path, File file) throws IOException;
 
     /**
      * 下载到本地文件，默认覆盖
@@ -169,6 +167,39 @@ public interface FileTemplate {
      * @param localPath
      * @return
      */
-    long download(String path, String localPath);
+    long download(String path, String localPath) throws IOException;
+
+    /**
+     * 标准化处理路径，去掉重复的/，默认只兼容linux路径，如果是windows路径子类自行处理
+     *
+     * @param path
+     * @return
+     */
+    default String normalizePath(String path) {
+        if (path == null || (path = path.trim()).isEmpty()) {
+            throw new IllegalArgumentException("路径不能为空");
+        }
+        // 必须/开头
+        /*
+        if (!path.startsWith("/")) {
+            path = "/" + path;
+        }
+        */
+        // \替换为/
+        path = path.replace('\\', '/');
+        // 重复的/替换为单个/
+        path = path.replaceAll("//+", "/");
+        return path;
+    }
+
+    /**
+     * 路径是否是文件夹
+     *
+     * @param path
+     * @return
+     */
+    default boolean isPathDirectoryStyle(String path) {
+        return path.endsWith("/");
+    }
 
 }

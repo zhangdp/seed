@@ -53,7 +53,11 @@ public class FileStorageProperties {
     /**
      * minio配置
      */
-    private MinioProperties minio;
+    // private MinioProperties minio;
+    /**
+     * aws s3配置
+     */
+    // private AwsS3Properties awss3;
 
     /**
      * 附件保存方式枚举
@@ -64,9 +68,17 @@ public class FileStorageProperties {
          */
         LOCAL,
         /**
+         * SFTP
+         */
+        // SFTP,
+        /**
          * Minio
          */
-        MINIO
+        // MINIO,
+        /**
+         * aws s3
+         */
+        // AWSS3
     }
 
     @Getter
@@ -76,31 +88,64 @@ public class FileStorageProperties {
         /**
          * 上传的目录
          */
+        @NotBlank
         private String uploadDir;
     }
 
+    /**
+     * minio配置
+     *//*
     @Getter
     @Setter
     public static class MinioProperties {
 
-        /**
+        *//**
          * 访问地址
-         */
+         *//*
         private String endpoint;
 
-        /**
+        *//**
          * 用户名
-         */
+         *//*
         private String accessKey;
 
-        /**
+        *//**
          * 密码
-         */
+         *//*
         private String secretKey;
 
-        /**
+        *//**
          * 桶名称
-         */
+         *//*
         private String bucketName;
-    }
+    }*/
+
+    /**
+     * aws s3配置
+     *//*
+    @Getter
+    @Setter
+    public static class AwsS3Properties {
+
+        *//**
+         * 访问地址
+         *//*
+        private String endpoint;
+
+        *//**
+         * 用户名
+         *//*
+        private String accessKey;
+
+        *//**
+         * 密码
+         *//*
+        private String secretKey;
+
+        *//**
+         * 桶名称
+         *//*
+        private String bucketName;
+    }*/
+
 }

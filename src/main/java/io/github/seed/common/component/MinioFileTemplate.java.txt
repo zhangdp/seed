@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 2024/11/14 minio访问器
+ * 2024/11/14 minio文件访问器
  *
  * @author zhangdp
  * @since 1.0.0

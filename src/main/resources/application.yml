@@ -94,14 +94,9 @@ logging:
 seed:
   file-storage:
     root-path: /upload
-    type: minio
+    type: local
     local:
       upload-dir: /Users/peng/tmp/seed
-    minio:
-      endpoint: http://191.168.10.70:9000
-      access-key: rgfj2o2KCq8IQ58THGps
-      secret-key: w1uZCAmYvFdnTEdlg0h6tkDbyiEQsXCmjJh90d07
-      bucket-name: seed
 
 # 测试环境
 ---

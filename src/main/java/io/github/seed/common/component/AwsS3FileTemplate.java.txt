@@ -1,0 +1,276 @@
+package io.github.seed.common.component;
+
+import cn.hutool.v7.core.io.IoUtil;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.Assert;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.S3Configuration;
+import software.amazon.awssdk.services.s3.model.*;
+
+import java.io.*;
+import java.net.URI;
+
+/**
+ * aws s3文件访问器
+ *
+ * @author zhangdp
+ * @since 1.0.0
+ */
+@Slf4j
+@Getter
+public class AwsS3FileTemplate implements FileTemplate, InitializingBean {
+
+    private final String endpoint;
+    private final String accessKey;
+    private final String secretKey;
+    private final String bucket;
+
+    private S3Client s3Client;
+
+    public AwsS3FileTemplate(String endpoint, String accessKey, String secretKey, String bucket) {
+        this.endpoint = endpoint;
+        this.accessKey = accessKey;
+        this.secretKey = secretKey;
+        this.bucket = bucket;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        Assert.hasText(this.endpoint, "endpoint不能为空");
+        Assert.hasText(this.accessKey, "accessKey不能为空");
+        Assert.hasText(this.secretKey, "secretKey不能为空");
+        Assert.hasText(this.bucket, "bucket不能为空");
+        s3Client = S3Client.builder()
+                .endpointOverride(URI.create(this.endpoint))
+                .credentialsProvider(
+                        StaticCredentialsProvider.create(
+                                AwsBasicCredentials.create(this.accessKey, this.secretKey)
+                        )
+                )
+                .region(Region.US_EAST_1) // 必须填
+                .serviceConfiguration(
+                        S3Configuration.builder()
+                                .pathStyleAccessEnabled(true)
+                                .build()
+                )
+                .build();
+        log.info("初始化AWS S3客户端：{}, endpoint: {}, bucket: {}", this.s3Client, this.endpoint, this.bucket);
+    }
+
+    /**
+     * 获取对象元数据
+     *
+     * @param path
+     * @return
+     */
+    public HeadObjectResponse headObject(String path) {
+        try {
+            return s3Client.headObject(HeadObjectRequest.builder()
+                    .bucket(this.bucket)
+                    .key(path)
+                    .build());
+        } catch (NoSuchKeyException e) {
+            return null;
+        }
+    }
+
+    /**
+     * 列出前缀下的对象（比如列出1个，用于快速判断目录非空）
+     *
+     * @param prefix
+     * @param maxKeys
+     * @return
+     */
+    public ListObjectsV2Response listObjects(String prefix, Integer maxKeys) {
+        return s3Client.listObjectsV2(ListObjectsV2Request.builder()
+                .bucket(this.bucket)
+                .prefix(prefix)
+                .maxKeys(maxKeys)
+                .build());
+    }
+
+    @Override
+    public boolean isExists(String path) {
+        path = this.normalizePath(path);
+        if (this.headObject(path) != null) {
+            return true;
+        }
+        // s3没有目录的概念，如果是/结尾就当成目录存在
+        return this.isPathDirectoryStyle(path);
+    }
+
+    @Override
+    public boolean isEmptyDirectory(String path) {
+        path = this.normalizePath(path);
+        if (!this.isPathDirectoryStyle(path)) {
+            path += "/";
+        }
+        ListObjectsV2Response res = this.listObjects(path, 1);
+        return res != null && res.hasContents();
+    }
+
+    @Override
+    public boolean isDirectory(String path) {
+        // s3没有目录的概念，如果是/结尾就当成目录存在
+        return this.isPathDirectoryStyle(path);
+    }
+
+    @Override
+    public boolean mkdir(String path) {
+        // aws s3没有文件夹的概念，逻辑上直接返回true
+        log.debug("[{}]创建文件夹：{}，aws s3没有文件夹的概念,逻辑上直接返回true", this.bucket, path);
+        return true;
+    }
+
+    @Override
+    public boolean copy(String srcPath, String destPath) {
+        srcPath = this.normalizePath(srcPath);
+        destPath = this.normalizePath(destPath);
+        CopyObjectResponse res = s3Client.copyObject(CopyObjectRequest.builder()
+                .sourceBucket(bucket)
+                .sourceKey(srcPath)
+                .destinationBucket(bucket)
+                .destinationKey(destPath)
+                .build());
+        log.debug("[{}]复制文件，srcPath={}, destPath={}, response={}", this.bucket, srcPath, destPath, res);
+        return true;
+    }
+
+    @Override
+    public boolean move(String srcPath, String destPath) {
+        boolean res = this.copy(srcPath, destPath) && this.delete(srcPath);
+        log.debug("[{}]移动文件，srcPath={}, destPath={}, result={}，没有移动文件的api使用复制文件后删掉原文件实现", this.bucket, srcPath, destPath, res);
+        return res;
+    }
+
+    @Override
+    public boolean delete(String path) {
+        path = this.normalizePath(path);
+        DeleteObjectResponse res = s3Client.deleteObject(DeleteObjectRequest.builder()
+                .bucket(this.bucket)
+                .key(path)
+                .build());
+        log.debug("[{}]删除文件，path={}, result={}", this.bucket, path, res);
+        return true;
+    }
+
+    @Override
+    public boolean delete(String path, boolean isRecursive) {
+        // 先删除文件
+        boolean res = this.delete(path);
+        // 递归情况下需递归删除子文件
+        if (isRecursive) {
+            path = this.normalizePath(path);
+            if (!this.isPathDirectoryStyle(path)) {
+                path += "/";
+            }
+            // todo 递归删除
+            // ListObjectsV2Response objs = this.listObjects(path, null);
+        }
+        return res;
+    }
+
+    @Override
+    public boolean upload(File file, String path) {
+        path = this.normalizePath(path);
+        PutObjectResponse res = s3Client.putObject(
+                PutObjectRequest.builder()
+                        .bucket(bucket)
+                        .key(path)
+                        .build(),
+                RequestBody.fromFile(file)
+        );
+        log.debug("[{}]上传本地文件，file={}, path={}, result={}", this.bucket, file, path, res);
+        return true;
+    }
+
+    @Override
+    public boolean upload(String localPath, String path) {
+        return this.upload(new File(localPath), path);
+    }
+
+    @Override
+    public boolean upload(byte[] bytes, String path) {
+        path = this.normalizePath(path);
+        PutObjectResponse res = s3Client.putObject(
+                PutObjectRequest.builder()
+                        .bucket(bucket)
+                        .key(path)
+                        .build(),
+                RequestBody.fromBytes(bytes)
+        );
+        log.debug("[{}]上传bytes文件, path={}, result={}", this.bucket, path, res);
+        return true;
+    }
+
+    @Override
+    public boolean upload(InputStream inputStream, String path) throws IOException {
+        path = this.normalizePath(path);
+        try {
+            PutObjectResponse res = s3Client.putObject(
+                    PutObjectRequest.builder()
+                            .bucket(bucket)
+                            .key(path)
+                            .build(),
+                    RequestBody.fromInputStream(inputStream, inputStream.available())
+            );
+            log.debug("[{}]上传inputStream文件, path={}, result={}", this.bucket, path, res);
+            return true;
+        } finally {
+            IoUtil.closeQuietly(inputStream);
+        }
+    }
+
+    @Override
+    public InputStream download(String path) {
+        path = this.normalizePath(path);
+        return s3Client.getObject(GetObjectRequest.builder()
+                .bucket(bucket)
+                .key(path)
+                .build());
+    }
+
+    @Override
+    public InputStream download(String path, long offset, long length) {
+        path = this.normalizePath(path);
+        String range = "bytes=" + offset + "-" + (offset + length - 1);
+        return s3Client.getObject(GetObjectRequest.builder()
+                .bucket(bucket)
+                .key(path)
+                .range(range)
+                .build());
+    }
+
+    @Override
+    public long download(String path, OutputStream outputStream) throws IOException {
+        try (InputStream in = this.download(path)) {
+            return in.transferTo(outputStream);
+        }
+    }
+
+    @Override
+    public long download(String path, long offset, long length, OutputStream outputStream) throws IOException {
+        try (InputStream in = this.download(path, offset, length)) {
+            return in.transferTo(outputStream);
+        }
+    }
+
+    @Override
+    public long download(String path, File file) throws IOException {
+        try (OutputStream os = new FileOutputStream(file)) {
+            return download(path, os);
+        }
+    }
+
+    @Override
+    public long download(String path, String localPath) throws IOException {
+        return this.download(path, new File(localPath));
+    }
+
+}
