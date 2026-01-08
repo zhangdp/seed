@@ -38,6 +38,14 @@ public class FileStorageProperties {
      */
     private Duration expires = Duration.ofDays(180);
     /**
+     * 是否启用http 缓存
+     */
+    private boolean httpCacheable = true;
+    /**
+     * http缓存存活时间
+     */
+    private int httpCacheMaxAge = 604800;
+    /**
      * 自定义mimeType，后缀名-类型
      */
     private Map<String, String> mimeTypes = new LinkedHashMap<>();

@@ -1,13 +1,6 @@
 server:
   port: 8080
   shutdown: graceful
-  tomcat:
-    threads:
-      min-spare: 20
-      max: 200
-    accept-count: 200
-    max-connections: 8192
-    max-keep-alive-requests: 200
 spring:
   profiles:
     active: dev
@@ -19,8 +12,8 @@ spring:
   servlet:
     multipart:
       enabled: true
-      max-file-size: 1GB
-      max-request-size: 1GB
+      max-file-size: 256MB
+      max-request-size: 256MB
   jackson:
     deserialization:
       fail-on-unknown-properties: false

@@ -6,9 +6,11 @@ import io.github.seed.common.util.WebUtils;
 import io.github.seed.model.dto.FileInfoDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -48,7 +50,7 @@ public class FileController {
      */
     @GetMapping("/download/{fileId}/**")
     @Operation(summary = "下载文件")
-    public void download(HttpServletResponse response, @PathVariable String fileId, @RequestParam(required = false) String inline, @RequestParam(required = false) String filename) {
-        fileManager.doDownload(response, fileId, WebUtils.isParamTrue(inline), filename);
+    public void download(HttpServletRequest request, HttpServletResponse response, @PathVariable String fileId, @RequestParam(required = false) String inline, @RequestParam(required = false) String filename) {
+        fileManager.doDownload(request, response, fileId, WebUtils.isParamTrue(inline), filename);
     }
 }

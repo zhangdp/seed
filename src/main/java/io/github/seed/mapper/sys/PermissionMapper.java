@@ -45,7 +45,7 @@ public interface PermissionMapper extends BaseMapper<Permission> {
      * @return
      */
     default List<Permission> selectListByRoleIdIn(Collection<Long> roleIds) {
-        QueryWrapper subQuery = QueryWrapper.create().select(RolePermission::getResourceId).from(RolePermission.class).in(RolePermission::getRoleId, roleIds);
+        QueryWrapper subQuery = QueryWrapper.create().select(RolePermission::getPermissionId).from(RolePermission.class).in(RolePermission::getRoleId, roleIds);
         return this.selectListByQuery(QueryWrapper.create().in(Permission::getId, subQuery));
     }
 
@@ -56,7 +56,7 @@ public interface PermissionMapper extends BaseMapper<Permission> {
      * @return
      */
     default List<Permission> selectListByRoleId(Long roleId) {
-        QueryWrapper subQuery = QueryWrapper.create().select(RolePermission::getResourceId).from(RolePermission.class).eq(RolePermission::getRoleId, roleId);
+        QueryWrapper subQuery = QueryWrapper.create().select(RolePermission::getPermissionId).from(RolePermission.class).eq(RolePermission::getRoleId, roleId);
         return this.selectListByQuery(QueryWrapper.create().in(Permission::getId, subQuery));
     }
 }

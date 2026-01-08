@@ -204,6 +204,31 @@ public class WebUtils {
     }
 
     /**
+     * 设置缓存响应头
+     *
+     * @param cacheControl
+     * @param lastModified
+     * @param etag
+     */
+    public static void responseCacheHeader(HttpServletResponse response, String cacheControl, long lastModified, String etag) {
+        response.setHeader("Cache-Control", cacheControl);
+        response.setDateHeader("Last-Modified", lastModified);
+        response.setHeader("ETag", etag);
+    }
+
+    /**
+     * 设置缓存响应头
+     *
+     * @param response
+     * @param cacheMaxAge
+     * @param lastModified
+     * @param etag
+     */
+    public static void responseCacheHeader(HttpServletResponse response, int cacheMaxAge, long lastModified, String etag) {
+        responseCacheHeader(response, "public, max-age=" + cacheMaxAge, lastModified, etag);
+    }
+
+    /**
      * 响应附件下载的头部信息
      *
      * @param response
@@ -250,8 +275,8 @@ public class WebUtils {
     public static void responseDispositionHeader(HttpServletResponse response, String fileName, String contentType, long fileSize, boolean isInline) {
         String disposition = isInline ? "inline" : "attachment";
         if (fileName != null && !fileName.isEmpty()) {
-            String encodedFilename = urlEncode(fileName);
-            disposition += "; filename=\"" + encodedFilename + "\"; filename*=" + DEFAULT_CHARSET.name() + "''" + encodedFilename;
+            String encodedFilename = urlEncode(fileName, DEFAULT_CHARSET);
+            disposition += "; filename*=" + DEFAULT_CHARSET.name() + "''" + encodedFilename;
         }
         response.setHeader("Content-Disposition", disposition);
         response.setContentType(contentType == null || contentType.isEmpty() ? "application/octet-stream" : contentType);
@@ -473,8 +498,8 @@ public class WebUtils {
      *
      * @param response
      */
-    public static void setEventStreamHeader(HttpServletResponse response) {
-        setEventStreamHeader(response, null);
+    public static void responseEventStreamHeader(HttpServletResponse response) {
+        responseEventStreamHeader(response, null);
     }
 
     /**
@@ -483,7 +508,7 @@ public class WebUtils {
      * @param response
      * @param charset
      */
-    public static void setEventStreamHeader(HttpServletResponse response, String charset) {
+    public static void responseEventStreamHeader(HttpServletResponse response, String charset) {
         response.setContentType("text/event-stream");
         response.setHeader("Cache-Control", "no-cache");
         response.setHeader("Connection", "keep-alive");
@@ -599,5 +624,38 @@ public class WebUtils {
         try (BufferedReader reader = request.getReader()) {
             return reader.lines().collect(Collectors.joining());
         }
+    }
+
+    /**
+     * 通过请求头检查资源是否未修改
+     *
+     * @param request
+     * @param etag
+     * @param lastModified
+     * @return
+     */
+    public static boolean checkNotModified(HttpServletRequest request, String etag, long lastModified) {
+        // ===== 1. 优先判断 ETag =====
+        if (etag != null) {
+            String ifNoneMatch = request.getHeader("If-None-Match");
+            if (ifNoneMatch != null) {
+                // If-None-Match 可能是多个
+                for (String hash : ifNoneMatch.split(",")) {
+                    if (etag.equals(hash.trim())) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        // ===== 2. 再判断 Last-Modified =====
+        if (lastModified > 0) {
+            long ifModifiedSince = request.getDateHeader("If-Modified-Since");
+            if (ifModifiedSince != -1) {
+                return lastModified <= ifModifiedSince;
+            }
+        }
+
+        return false;
     }
 }

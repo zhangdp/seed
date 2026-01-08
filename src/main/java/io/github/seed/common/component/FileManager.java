@@ -1,9 +1,12 @@
 package io.github.seed.common.component;
 
 import cn.hutool.v7.core.bean.BeanUtil;
+import cn.hutool.v7.core.date.DateUtil;
+import cn.hutool.v7.core.date.TimeUtil;
 import cn.hutool.v7.core.io.IoUtil;
 import cn.hutool.v7.core.io.file.FileNameUtil;
 import cn.hutool.v7.core.net.url.UrlEncoder;
+import cn.hutool.v7.core.util.ObjUtil;
 import cn.hutool.v7.crypto.SecureUtil;
 import io.github.seed.common.config.FileStorageProperties;
 import io.github.seed.common.constant.Const;
@@ -13,9 +16,11 @@ import io.github.seed.common.util.WebUtils;
 import io.github.seed.entity.sys.FileInfo;
 import io.github.seed.model.dto.FileInfoDto;
 import io.github.seed.service.sys.FileInfoService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,6 +35,7 @@ import java.time.temporal.ChronoUnit;
  * @author zhangdp
  * @since 1.0.0
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class FileManager {
@@ -61,7 +67,7 @@ public class FileManager {
         }
         // 实际路径以日期分文件夹，文件名以文件ID+后缀保存，防止文件名重复覆盖
         String remotePath = fileProperties.getRootPath() + (fileProperties.getRootPath().endsWith("/") ? "" : "/")
-                + now.getYear() + "/" + now.getMonthValue() + "/" + now.getDayOfMonth() + "/" + fileId + extension;
+                + TimeUtil.format(now.toLocalDate(), "yyyy-MM/dd") + "/" + fileId + extension;
 
         // 记录保存到数据库
         FileInfo entity = new FileInfo();
@@ -83,25 +89,36 @@ public class FileManager {
 
         FileInfoDto dto = new FileInfoDto();
         BeanUtil.copyProperties(entity, dto);
-        dto.setExpireTime(entity.getExpireTime() == null ? Const.MAX_LOCAL_DATE_TIME : entity.getExpireTime());
         return dto;
     }
 
     /**
      * 下载文件
      *
+     * @param request
      * @param response
      * @param fileId
      * @param isInline
      * @param customFilename
      */
     @SneakyThrows
-    public void doDownload(HttpServletResponse response, String fileId, boolean isInline, String customFilename) {
+    public void doDownload(HttpServletRequest request, HttpServletResponse response, String fileId, boolean isInline, String customFilename) {
         FileInfo fileInfo = fileInfoService.getByFileId(fileId);
         if (fileInfo == null) {
             throw new NotFoundException("不存在文件id为" + fileId + "的文件记录");
         }
+        String etag = "\"" + fileInfo.getFileHash() + "\"";
+        // 上次修改时间，http时间只精确到秒
+        long lastModified = TimeUtil.toEpochMilli(ObjUtil.defaultIfNull(fileInfo.getUpdatedAt(), fileInfo.getCreatedAt())) / 1000L * 1000L;
+        if (fileProperties.isHttpCacheable() && WebUtils.checkNotModified(request, etag, lastModified)) {
+            response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+            log.debug("文件未改变，返回304，fileId={}", fileInfo.getFileId());
+            return;
+        }
         InputStream in = fileTemplate.download(fileInfo.getStoragePath());
+        if (fileProperties.isHttpCacheable()) {
+            WebUtils.responseCacheHeader(response, "public, max-age=" + fileProperties.getHttpCacheMaxAge() + ", immutable", lastModified, etag);
+        }
         WebUtils.responseFile(response, in, fileInfo.getFileName(), fileInfo.getFileSize(), fileInfo.getMimeType(), isInline);
     }
 
