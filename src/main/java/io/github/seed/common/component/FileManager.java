@@ -1,11 +1,10 @@
 package io.github.seed.common.component;
 
 import cn.hutool.v7.core.bean.BeanUtil;
-import cn.hutool.v7.core.date.DateUtil;
 import cn.hutool.v7.core.date.TimeUtil;
 import cn.hutool.v7.core.io.IoUtil;
 import cn.hutool.v7.core.io.file.FileNameUtil;
-import cn.hutool.v7.core.net.url.UrlEncoder;
+import cn.hutool.v7.core.text.StrUtil;
 import cn.hutool.v7.core.util.ObjUtil;
 import cn.hutool.v7.crypto.SecureUtil;
 import io.github.seed.common.config.FileStorageProperties;
@@ -27,10 +26,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 
 /**
- * 2024/11/8 附件管理器
+ * 附件管理器
  *
  * @author zhangdp
  * @since 1.0.0
@@ -55,8 +53,7 @@ public class FileManager {
     @Transactional(rollbackFor = Exception.class)
     public FileInfoDto doUpload(MultipartFile file, Long uploadUserId) {
         LocalDateTime now = LocalDateTime.now();
-        long ttl = fileProperties.getExpires().toMillis();
-        LocalDateTime expireTime = ttl > 0 ? LocalDateTime.now().plus(ttl, ChronoUnit.MILLIS) : Const.MAX_LOCAL_DATE_TIME;
+        LocalDateTime expireTime = fileProperties.getExpireDays() > 0 ? LocalDateTime.now().plusDays(fileProperties.getExpireDays()) : Const.MAX_LOCAL_DATE_TIME;
         String fileId = fileInfoService.generateId();
         String fileName = file.getOriginalFilename();
         String extension = FileNameUtil.extName(fileName);
@@ -66,8 +63,11 @@ public class FileManager {
             extension = "." + extension;
         }
         // 实际路径以日期分文件夹，文件名以文件ID+后缀保存，防止文件名重复覆盖
-        String remotePath = fileProperties.getRootPath() + (fileProperties.getRootPath().endsWith("/") ? "" : "/")
-                + TimeUtil.format(now.toLocalDate(), "yyyy-MM/dd") + "/" + fileId + extension;
+        String remotePath = fileProperties.getRootPath() != null ? fileProperties.getRootPath().trim() : "";
+        if (remotePath.endsWith("/")) {
+            remotePath += "/";
+        }
+        remotePath += TimeUtil.format(now.toLocalDate(), "yyyy-MM/dd") + "/" + fileId + extension;
 
         // 记录保存到数据库
         FileInfo entity = new FileInfo();
@@ -99,14 +99,20 @@ public class FileManager {
      * @param response
      * @param fileId
      * @param isInline
-     * @param customFilename
+     * @param fileName
      */
     @SneakyThrows
-    public void doDownload(HttpServletRequest request, HttpServletResponse response, String fileId, boolean isInline, String customFilename) {
+    public void doDownload(HttpServletRequest request, HttpServletResponse response, String fileId, boolean isInline, String fileName) {
+        // 从数据库取出附件信息
         FileInfo fileInfo = fileInfoService.getByFileId(fileId);
         if (fileInfo == null) {
-            throw new NotFoundException("不存在文件id为" + fileId + "的文件记录");
+            throw new NotFoundException("ID为" + fileId + "的附件记录不存在");
         }
+        // 附件已过期不允许下载
+        if (fileInfo.getExpireTime().isBefore(LocalDateTime.now())) {
+            throw new NotFoundException("ID为" + fileId + "的附件已过期删除");
+        }
+        // 如果有开启http缓存且未修改直接返回304
         String etag = "\"" + fileInfo.getFileHash() + "\"";
         // 上次修改时间，http时间只精确到秒
         long lastModified = TimeUtil.toEpochMilli(ObjUtil.defaultIfNull(fileInfo.getUpdatedAt(), fileInfo.getCreatedAt())) / 1000L * 1000L;
@@ -115,11 +121,14 @@ public class FileManager {
             log.debug("文件未改变，返回304，fileId={}", fileInfo.getFileId());
             return;
         }
-        InputStream in = fileTemplate.download(fileInfo.getStoragePath());
+        // 如果开启http缓存都设置http缓存头
         if (fileProperties.isHttpCacheable()) {
             WebUtils.responseCacheHeader(response, "public, max-age=" + fileProperties.getHttpCacheMaxAge() + ", immutable", lastModified, etag);
         }
-        WebUtils.responseFile(response, in, fileInfo.getFileName(), fileInfo.getFileSize(), fileInfo.getMimeType(), isInline);
+        // 设置下载相关的http头
+        WebUtils.responseDispositionHeader(response, StrUtil.defaultIfBlank(fileName, fileInfo.getFileName()), fileInfo.getFileSize(), fileInfo.getMimeType(), isInline);
+        // 从远端读取文件并输出到输出流，无需flush()或者关闭输出流，web容器会自行处理
+        fileTemplate.download(fileInfo.getStoragePath(), response.getOutputStream());
     }
 
     /**
@@ -145,7 +154,7 @@ public class FileManager {
      */
     public String generateDownloadUrl(String fileId, String fileName) {
         return fileProperties.getDownloadUrl().replace("{fileId}", fileId)
-                .replace("{fileName}", UrlEncoder.encodeQuery(fileName));
+                .replace("{fileName}", WebUtils.urlEncode(fileName));
     }
 
 }

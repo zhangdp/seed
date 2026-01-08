@@ -46,11 +46,11 @@ public class FileController {
      * @param fileId
      * @param response
      * @param inline
-     * @param filename
+     * @param fileName
      */
     @GetMapping("/download/{fileId}/**")
     @Operation(summary = "下载文件")
-    public void download(HttpServletRequest request, HttpServletResponse response, @PathVariable String fileId, @RequestParam(required = false) String inline, @RequestParam(required = false) String filename) {
-        fileManager.doDownload(request, response, fileId, WebUtils.isParamTrue(inline), filename);
+    public void download(HttpServletRequest request, HttpServletResponse response, @PathVariable String fileId, @RequestParam(required = false) String inline, @RequestParam(required = false) String fileName) {
+        fileManager.doDownload(request, response, fileId, WebUtils.isParamTrue(inline), fileName);
     }
 }

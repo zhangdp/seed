@@ -236,7 +236,7 @@ public class WebUtils {
      * @param fileSize
      */
     public static void responseDispositionHeader(HttpServletResponse response, String fileName, long fileSize) {
-        responseDispositionHeader(response, fileName, null, fileSize, false);
+        responseDispositionHeader(response, fileName, fileSize, null, false);
     }
 
     /**
@@ -248,7 +248,7 @@ public class WebUtils {
      * @param contentType
      */
     public static void responseDispositionHeader(HttpServletResponse response, String fileName, long fileSize, String contentType) {
-        responseDispositionHeader(response, fileName, contentType, fileSize, false);
+        responseDispositionHeader(response, fileName, fileSize, contentType, false);
     }
 
     /**
@@ -260,7 +260,7 @@ public class WebUtils {
      * @param isInline
      */
     public static void responseDispositionHeader(HttpServletResponse response, String fileName, long fileSize, boolean isInline) {
-        responseDispositionHeader(response, fileName, null, fileSize, isInline);
+        responseDispositionHeader(response, fileName, fileSize, null, isInline);
     }
 
     /**
@@ -268,11 +268,11 @@ public class WebUtils {
      *
      * @param response
      * @param fileName
-     * @param contentType
      * @param fileSize
+     * @param contentType
      * @param isInline
      */
-    public static void responseDispositionHeader(HttpServletResponse response, String fileName, String contentType, long fileSize, boolean isInline) {
+    public static void responseDispositionHeader(HttpServletResponse response, String fileName, long fileSize, String contentType, boolean isInline) {
         String disposition = isInline ? "inline" : "attachment";
         if (fileName != null && !fileName.isEmpty()) {
             String encodedFilename = urlEncode(fileName, DEFAULT_CHARSET);
@@ -441,7 +441,7 @@ public class WebUtils {
      */
     public static long responseFile(HttpServletResponse response, InputStream in, String fileName, long fileSize, String contentType, boolean isInline) {
         try (in) {
-            responseDispositionHeader(response, fileName, contentType, fileSize, isInline);
+            responseDispositionHeader(response, fileName, fileSize, contentType, isInline);
             OutputStream out = response.getOutputStream();
             long size = in.transferTo(out);
             out.flush();

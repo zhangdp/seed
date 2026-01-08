@@ -86,10 +86,14 @@ logging:
     io.github.seed: debug
 seed:
   file-storage:
-    root-path: /upload
+    root-path: ""
     type: local
+    expire-days: 0
+    http-cacheable: true
+    http-cache-max-age: 604800
+    download-url: /file/download/{fileId}/{fileName}
     local:
-      upload-dir: /Users/peng/tmp/seed
+      upload-dir: /Users/peng/tmp/seed/upload
 
 # 测试环境
 ---
