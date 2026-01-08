@@ -5,9 +5,9 @@ import io.github.seed.common.annotation.LogOperation;
 import io.github.seed.common.constant.TableNameConst;
 import io.github.seed.common.enums.OperateType;
 import io.github.seed.common.security.data.LoginUser;
-import io.github.seed.entity.sys.Resource;
-import io.github.seed.model.dto.ResourceTreeNode;
-import io.github.seed.service.sys.ResourceService;
+import io.github.seed.entity.sys.Permission;
+import io.github.seed.model.dto.PermissionTreeNode;
+import io.github.seed.service.sys.PermissionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -17,77 +17,77 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 2023/6/14 资源相关接口
+ * 权限相关接口
  *
  * @author zhangdp
  * @since 1.0.0
  */
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(TableNameConst.PREFIX_SYS + "/resource")
-@Tag(name = "资源", description = "资源相关接口")
+@RequestMapping(TableNameConst.PREFIX_SYS + "/permission")
+@Tag(name = "权限", description = "权限相关接口")
 public class ResourceController {
 
-    private final ResourceService resourceService;
+    private final PermissionService permissionService;
 
     /**
-     * 新增资源
+     * 新增权限
      *
-     * @param resource
+     * @param permission
      * @return
      */
-    @PostMapping("add")
-    @Operation(summary = "新增资源", description = "新增资源，无需传值id、createTime、updateTime")
-    @LogOperation(type = OperateType.CREATE, title = "新增资源", refModule = TableNameConst.SYS_RESOURCE, refIdEl = "#resource.id")
-    public boolean add(@RequestBody @Validated Resource resource) {
-        return resourceService.add(resource);
+    @PostMapping("/add")
+    @Operation(summary = "新增权限", description = "新增权限，无需传值id、createTime、updateTime")
+    @LogOperation(type = OperateType.CREATE, title = "新增权限", refModule = TableNameConst.SYS_PERMISSION, refIdEl = "#permission.id")
+    public boolean add(@RequestBody @Validated Permission permission) {
+        return permissionService.add(permission);
     }
 
     /**
-     * 修改资源
+     * 修改权限
      *
-     * @param resource
+     * @param permission
      * @return
      */
-    @PatchMapping("update")
-    @Operation(summary = "修改资源", description = "修改资源，需传值id")
-    @LogOperation(type = OperateType.UPDATE, title = "修改资源", refModule = TableNameConst.SYS_RESOURCE, refIdEl = "#resource.id")
-    public boolean update(@RequestBody @Validated(ValidGroup.Update.class) Resource resource) {
-        return resourceService.update(resource);
+    @PatchMapping("/update")
+    @Operation(summary = "修改权限", description = "修改权限，需传值id")
+    @LogOperation(type = OperateType.UPDATE, title = "修改权限", refModule = TableNameConst.SYS_PERMISSION, refIdEl = "#permission.id")
+    public boolean update(@RequestBody @Validated(ValidGroup.Update.class) Permission permission) {
+        return permissionService.update(permission);
     }
 
     /**
-     * 删除资源
+     * 删除权限
      *
      * @param id
      * @return
      */
-    @DeleteMapping("delete/{id}")
-    @Operation(summary = "删除资源", description = "根据id删除资源")
-    @LogOperation(type = OperateType.DELETE, title = "删除资源", refModule = TableNameConst.SYS_RESOURCE, refIdEl = "#id")
+    @DeleteMapping("/delete/{id}")
+    @Operation(summary = "删除权限", description = "根据id删除权限")
+    @LogOperation(type = OperateType.DELETE, title = "删除权限", refModule = TableNameConst.SYS_PERMISSION, refIdEl = "#id")
     public boolean delete(@PathVariable Long id) {
-        return resourceService.delete(id);
+        return permissionService.delete(id);
     }
 
     /**
-     * 获取树形资源列表
+     * 获取树形权限列表
      *
      * @return
      */
-    @GetMapping("tree")
-    @Operation(summary = "获取资源树", description = "获取资源树列表")
-    public List<ResourceTreeNode> tree() {
-        return resourceService.listTree();
+    @GetMapping("/tree")
+    @Operation(summary = "获取权限树", description = "获取权限树列表")
+    public List<PermissionTreeNode> tree() {
+        return permissionService.listTree();
     }
 
     /**
-     * 获取当前登录用户的菜单树列表
+     * 获取当前登录用户的权限树列表
      *
      * @return
      */
-    @GetMapping("menu/user/tree")
-    @Operation(summary = "获取用户的菜单树", description = "获取当前登录用户的菜单树")
-    public List<ResourceTreeNode> usersMenu(LoginUser loginUser) {
+    @GetMapping("/tree/user")
+    @Operation(summary = "获取用户的权限树", description = "获取当前登录用户的权限树")
+    public List<PermissionTreeNode> usersTree(LoginUser loginUser) {
         // todo
         return null;
     }

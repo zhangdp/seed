@@ -8,10 +8,10 @@ import io.github.seed.common.constant.Const;
 import io.github.seed.common.security.SecurityConst;
 import io.github.seed.common.security.data.LoginUser;
 import io.github.seed.common.security.data.RolePermissionGrantedAuthority;
-import io.github.seed.entity.sys.Resource;
+import io.github.seed.entity.sys.Permission;
 import io.github.seed.entity.sys.Role;
 import io.github.seed.entity.sys.User;
-import io.github.seed.service.sys.ResourceService;
+import io.github.seed.service.sys.PermissionService;
 import io.github.seed.service.sys.RoleService;
 import io.github.seed.service.sys.UserService;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +33,7 @@ public class DaoUserDetailsService implements UserDetailsService {
 
     private final UserService userService;
     private final RoleService roleService;
-    private final ResourceService resourceService;
+    private final PermissionService permissionService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -83,13 +83,13 @@ public class DaoUserDetailsService implements UserDetailsService {
                         RolePermissionGrantedAuthority.AuthorityType.ROLE, role.getId()));
 
                 // 获取权限
-                List<Resource> resources = resourceService.listRoleResources(roleIds);
-                if (CollUtil.isNotEmpty(resources)) {
-                    for (Resource resource : resources) {
-                        if (StrUtil.isNotBlank(resource.getPermission())) {
-                            String permissionCode = resource.getPermission().trim().toUpperCase();
+                List<Permission> permissions = permissionService.listRoleResources(roleIds);
+                if (CollUtil.isNotEmpty(permissions)) {
+                    for (Permission permission : permissions) {
+                        if (StrUtil.isNotBlank(permission.getPermission())) {
+                            String permissionCode = permission.getPermission().trim().toUpperCase();
                             authorities.add(new RolePermissionGrantedAuthority(permissionCode,
-                                    RolePermissionGrantedAuthority.AuthorityType.PERMISSION, resource.getId()));
+                                    RolePermissionGrantedAuthority.AuthorityType.PERMISSION, permission.getId()));
                         }
                     }
                 }

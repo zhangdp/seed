@@ -11,7 +11,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * 角色关联资源
+ * 角色关联权限
  *
  * @author zhangdp
  * @since 1.0.0
@@ -19,16 +19,16 @@ import java.io.Serializable;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@Table(TableNameConst.SYS_ROLE_RESOURCE)
-public class RoleResource extends BaseEntity implements Serializable {
+@Table(TableNameConst.SYS_ROLE_PERMISSION)
+public class RolePermission extends BaseEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     /**
-     * 资源id
+     * 权限id
      */
-    private Long resourceId;
+    private Long permissionId;
     /**
      * 角色id
      */

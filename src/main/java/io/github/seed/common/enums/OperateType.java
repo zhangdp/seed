@@ -1,7 +1,7 @@
 package io.github.seed.common.enums;
 
 /**
- * 2023/4/17 操作类型
+ * 操作类型
  *
  * @author zhangdp
  * @since 1.0.0
@@ -23,7 +23,7 @@ public enum OperateType {
     /**
      * 新增
      */
-    CREATE("crete");
+    CREATE("create");
 
     private final String type;
 

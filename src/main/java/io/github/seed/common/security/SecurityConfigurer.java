@@ -5,7 +5,7 @@ import io.github.seed.common.security.filter.TokenResolveAuthenticationFilter;
 import io.github.seed.common.security.handler.*;
 import io.github.seed.common.security.service.*;
 import io.github.seed.service.sys.ConfigService;
-import io.github.seed.service.sys.ResourceService;
+import io.github.seed.service.sys.PermissionService;
 import io.github.seed.service.sys.RoleService;
 import io.github.seed.service.sys.UserService;
 import lombok.RequiredArgsConstructor;
@@ -190,12 +190,12 @@ public class SecurityConfigurer {
      *
      * @param userService
      * @param roleService
-     * @param resourceService
+     * @param permissionService
      * @return
      */
     @Bean
-    public UserDetailsService daoUserDetailsService(UserService userService, RoleService roleService, ResourceService resourceService) {
-        return new DaoUserDetailsService(userService, roleService, resourceService);
+    public UserDetailsService daoUserDetailsService(UserService userService, RoleService roleService, PermissionService permissionService) {
+        return new DaoUserDetailsService(userService, roleService, permissionService);
     }
 
     /**

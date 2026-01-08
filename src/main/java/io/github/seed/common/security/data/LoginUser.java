@@ -18,7 +18,7 @@ import java.util.List;
 @Data
 @Accessors(chain = true)
 @Hidden
-public class LoginUser implements Serializable, UserDetails {
+public final class LoginUser implements Serializable, UserDetails {
 
     @Serial
     private static final long serialVersionUID = 1L;

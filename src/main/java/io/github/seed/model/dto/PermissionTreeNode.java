@@ -10,7 +10,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * 2023/5/27 资源树节点
+ * 权限树节点
  *
  * @author zhangdp
  * @since 1.0.0
@@ -19,7 +19,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Schema(title = "资源树节点")
-public class ResourceTreeNode extends TreeNode<Long> implements Serializable {
+public class PermissionTreeNode extends TreeNode<Long> implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

@@ -1,17 +1,17 @@
 package io.github.seed.service.sys;
 
-import io.github.seed.entity.sys.RoleResource;
+import io.github.seed.entity.sys.RolePermission;
 
 import java.util.Collection;
 import java.util.List;
 
 /**
- * 2023/4/12 角色关联资源service
+ * 角色关联权限service
  *
  * @author zhangdp
  * @since 1.0.0
  */
-public interface RoleResourceService {
+public interface RolePermissionService {
 
     /**
      * 根据角色id获取资源列表
@@ -19,7 +19,7 @@ public interface RoleResourceService {
      * @param roleId
      * @return
      */
-    List<RoleResource> listByRoleId(Long roleId);
+    List<RolePermission> listByRoleId(Long roleId);
 
     /**
      * 根据角色id列表获取资源列表
@@ -27,5 +27,5 @@ public interface RoleResourceService {
      * @param roleIds
      * @return
      */
-    List<RoleResource> listByRoleIds(Collection<Long> roleIds);
+    List<RolePermission> listByRoleIds(Collection<Long> roleIds);
 }

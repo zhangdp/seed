@@ -16,7 +16,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * 资源（菜单、按钮等）
+ * 权限（菜单、按钮等）
  *
  * @author zhangdp
  * @since 1.0.0
@@ -24,9 +24,9 @@ import java.io.Serializable;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@Table(TableNameConst.SYS_RESOURCE)
+@Table(TableNameConst.SYS_PERMISSION)
 @Schema(description = "资源")
-public class Resource extends BaseLogicEntity implements Serializable {
+public class Permission extends BaseLogicEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

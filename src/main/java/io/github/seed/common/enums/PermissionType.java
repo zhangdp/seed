@@ -1,12 +1,12 @@
 package io.github.seed.common.enums;
 
 /**
- * 2023/6/21 资源类型
+ * 权限类型
  *
  * @author zhangdp
  * @since 1.0.0
  */
-public enum ResourceType {
+public enum PermissionType {
 
     /**
      * 菜单
@@ -19,7 +19,7 @@ public enum ResourceType {
 
     private final String type;
 
-    ResourceType(String type) {
+    PermissionType(String type) {
         this.type = type;
     }
 

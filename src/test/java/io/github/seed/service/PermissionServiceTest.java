@@ -1,6 +1,6 @@
 package io.github.seed.service;
 
-import io.github.seed.service.sys.ResourceService;
+import io.github.seed.service.sys.PermissionService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,15 +14,15 @@ import java.util.List;
  * @since
  */
 @SpringBootTest
-public class ResourceServiceTest {
+public class PermissionServiceTest {
 
     @Autowired
-    private ResourceService resourceService;
+    private PermissionService permissionService;
 
     @Test
     public void listRoleResources() {
         List<Long> roleIds = List.of(1L, 2L, 3L);
-        System.out.println(resourceService.listRoleResources(roleIds));
+        System.out.println(permissionService.listRoleResources(roleIds));
     }
 
 }

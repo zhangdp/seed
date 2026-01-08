@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@Table(TableNameConst.LOGIN_LOG)
+@Table(TableNameConst.LOG_LOGIN)
 @Schema(description = "登录日志")
 public class LoginLog extends BaseEntity implements Serializable {
 

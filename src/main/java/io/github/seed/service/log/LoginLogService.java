@@ -1,7 +1,6 @@
 package io.github.seed.service.log;
 
 import io.github.seed.entity.log.LoginLog;
-import io.github.seed.entity.log.OperationLog;
 import io.github.seed.model.PageData;
 import io.github.seed.model.params.LoginLogQuery;
 import io.github.seed.model.params.PageQuery;

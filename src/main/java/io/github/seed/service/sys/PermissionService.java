@@ -2,24 +2,21 @@ package io.github.seed.service.sys;
 
 import cn.hutool.v7.core.collection.CollUtil;
 import io.github.seed.common.constant.Const;
-import io.github.seed.common.enums.ResourceType;
+import io.github.seed.common.enums.PermissionType;
 import io.github.seed.common.util.TreeUtils;
-import io.github.seed.entity.sys.Resource;
-import io.github.seed.model.dto.ResourceTreeNode;
+import io.github.seed.entity.sys.Permission;
+import io.github.seed.model.dto.PermissionTreeNode;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * 2023/4/12 资源service
+ * 权限service
  *
  * @author zhangdp
  * @since 1.0.0
  */
-public interface ResourceService {
+public interface PermissionService {
 
     /**
      * 是否存在
@@ -35,30 +32,30 @@ public interface ResourceService {
      * @param roleId
      * @return
      */
-    List<Resource> listRoleResources(Long roleId);
+    List<Permission> listRoleResources(Long roleId);
 
     /**
      * 添加
      *
-     * @param resource
+     * @param permission
      * @return
      */
-    boolean add(Resource resource);
+    boolean add(Permission permission);
 
     /**
      * 修改
      *
-     * @param resource
+     * @param permission
      * @return
      */
-    boolean update(Resource resource);
+    boolean update(Permission permission);
 
     /**
      * 获取资源树列表
      *
      * @return
      */
-    List<ResourceTreeNode> listTree();
+    List<PermissionTreeNode> listTree();
 
     /**
      * 删除
@@ -74,7 +71,7 @@ public interface ResourceService {
      * @param roleIds
      * @return
      */
-    List<Resource> listRoleResources(Collection<Long> roleIds);
+    List<Permission> listRoleResources(Collection<Long> roleIds);
 
     /**
      * 转为树形节点
@@ -82,13 +79,13 @@ public interface ResourceService {
      * @param coll
      * @return
      */
-    default List<ResourceTreeNode> toTree(Collection<Resource> coll) {
+    default List<PermissionTreeNode> toTree(Collection<Permission> coll) {
         if (CollUtil.isEmpty(coll)) {
-            return new ArrayList<>(0);
+            return Collections.emptyList();
         }
-        List<ResourceTreeNode> treeList = coll.stream()
+        List<PermissionTreeNode> treeList = coll.stream()
                 .map(bean -> {
-                    ResourceTreeNode n = new ResourceTreeNode();
+                    PermissionTreeNode n = new PermissionTreeNode();
                     n.setValue(bean.getId());
                     n.setParent(bean.getParentId());
                     n.setDescription(bean.getDescription());
@@ -101,10 +98,10 @@ public interface ResourceService {
                     n.setPath(bean.getPath());
                     n.setDescription(bean.getDescription());
                     // 菜单不是叶子节点
-                    n.setIsLeaf(ResourceType.MENU.type().equals(bean.getType()));
+                    n.setIsLeaf(PermissionType.MENU.type().equals(bean.getType()));
                     return n;
                 })
-                .sorted(Comparator.comparingInt(ResourceTreeNode::getSorts))
+                .sorted(Comparator.comparingInt(PermissionTreeNode::getSorts))
                 .collect(Collectors.toList());
         return TreeUtils.listToTree(treeList, Const.ROOT_ID);
     }
