@@ -19,14 +19,6 @@ public interface FileTemplate {
     boolean isExists(String path);
 
     /**
-     * 是否是非空文件夹
-     *
-     * @param path
-     * @return
-     */
-    boolean isEmptyDirectory(String path);
-
-    /**
      * 是否是文件夹
      *
      * @param path

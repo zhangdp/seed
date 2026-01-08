@@ -48,14 +48,19 @@ public class LocalFileTemplate implements FileTemplate {
         return this.normalizePath(fullPath);
     }
 
-    @Override
-    public boolean isExists(String path) {
-        return FileUtil.exists(this.fullPath(path));
+    /**
+     * 是否是空闲文件夹
+     *
+     * @param path
+     * @return
+     */
+    public boolean isEmptyDirectory(String path) {
+        return FileUtil.isDirEmpty(new File(this.fullPath(path)));
     }
 
     @Override
-    public boolean isEmptyDirectory(String path) {
-        return FileUtil.isDirEmpty(new File(this.fullPath(path)));
+    public boolean isExists(String path) {
+        return FileUtil.exists(this.fullPath(path));
     }
 
     @Override
