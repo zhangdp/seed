@@ -1,6 +1,6 @@
 package io.github.seed.common.annotation;
 
-import io.github.seed.common.aspect.LogOperateAspect;
+import io.github.seed.common.aspect.RecordOperationLogAspect;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;
@@ -14,6 +14,6 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Import(LogOperateAspect.class)
+@Import(RecordOperationLogAspect.class)
 public @interface EnableLogOperation {
 }

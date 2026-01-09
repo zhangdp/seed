@@ -5,7 +5,7 @@ import io.github.seed.common.enums.OperateType;
 import java.lang.annotation.*;
 
 /**
- * 2023/4/17 记录操作日志注解，在controller方法生效
+ * 记录操作日志注解，在controller方法生效
  *
  * @author zhangdp
  * @since 1.0.0
@@ -14,7 +14,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-public @interface LogOperation {
+public @interface RecordOperationLog {
 
     /**
      * 操作类型
@@ -28,7 +28,7 @@ public @interface LogOperation {
      *
      * @return
      */
-    String title();
+    String description();
 
     /**
      * 关联模块
@@ -49,7 +49,7 @@ public @interface LogOperation {
      *
      * @return
      */
-    boolean logIfError() default false;
+    boolean recordIfError() default false;
 
     /**
      * 是否记录结果

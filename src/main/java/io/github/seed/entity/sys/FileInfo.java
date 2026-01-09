@@ -57,12 +57,12 @@ public class FileInfo extends BaseLogicEntity implements Serializable {
      * 文件大小
      */
     @Schema(description = "文件大小")
-    private Long fileSize;
+    private Long size;
     /**
      * 文件hash
      */
     @Schema(description = "文件hash")
-    private String fileHash;
+    private String hash;
     /**
      * 保存路径
      */
@@ -77,11 +77,11 @@ public class FileInfo extends BaseLogicEntity implements Serializable {
      * 上传时间
      */
     @Schema(description = "上传时间")
-    private LocalDateTime uploadTime;
+    private LocalDateTime uploadAt;
     /**
      * 过期时间
      */
     @Schema(description = "过期时间")
-    private LocalDateTime expireTime;
+    private LocalDateTime expireAt;
 
 }

@@ -91,9 +91,9 @@ public interface PermissionService {
                     n.setDescription(bean.getDescription());
                     n.setLabel(bean.getName());
                     n.setSorts(bean.getSorts());
-                    n.setPermission(bean.getPermission());
-                    n.setIsVisible(bean.getIsVisible());
-                    n.setIsKeepAlive(bean.getIsKeepAlive());
+                    n.setPermission(bean.getCode());
+                    n.setIsVisible(bean.getVisible());
+                    n.setIsKeepAlive(bean.getKeepAlive());
                     n.setIcon(bean.getIcon());
                     n.setPath(bean.getPath());
                     n.setDescription(bean.getDescription());

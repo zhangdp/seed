@@ -31,8 +31,8 @@ public interface OperationLogMapper extends BaseMapper<OperationLog> {
             wrapper.eq(OperationLog::getUserId, params.getUserId())
                     .eq(OperationLog::getRefModule, params.getRefModule())
                     .eq(OperationLog::getType, params.getType())
-                    .lt(OperationLog::getOperateTime, params.getEndTime())
-                    .gt(OperationLog::getOperateTime, params.getStartTime());
+                    .lt(OperationLog::getOperatedAt, params.getEndTime())
+                    .gt(OperationLog::getOperatedAt, params.getStartTime());
         }
         Page<OperationLog> page = this.paginate(pageQuery.getPage(), pageQuery.getSize(), pageQuery.getTotal(), wrapper);
         return new PageData<>(page.getRecords(), page.getTotalRow(), page.getPageNumber(), page.getPageSize());

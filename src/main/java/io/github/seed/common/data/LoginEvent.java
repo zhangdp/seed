@@ -11,7 +11,7 @@ import java.io.Serial;
 import java.time.LocalDateTime;
 
 /**
- * 登录日志事件
+ * 登录事件
  *
  * @author zhangdp
  * @since 1.0.0
@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class LoginLogEvent extends ApplicationEvent {
+public class LoginEvent extends ApplicationEvent {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -57,7 +57,7 @@ public class LoginLogEvent extends ApplicationEvent {
      */
     private Throwable throwable;
 
-    public LoginLogEvent(Object source) {
+    public LoginEvent(Object source) {
         super(source);
     }
 }

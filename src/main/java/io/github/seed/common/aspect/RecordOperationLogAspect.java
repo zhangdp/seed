@@ -1,13 +1,14 @@
 package io.github.seed.common.aspect;
 
 import cn.hutool.v7.core.text.StrUtil;
+import io.github.seed.common.component.OperationLogContext;
 import io.github.seed.common.constant.Const;
 import io.github.seed.common.enums.SensitiveType;
 import io.github.seed.common.security.SecurityConst;
 import io.github.seed.common.util.SpELUtils;
 import io.github.seed.common.util.SpringWebContextHolder;
-import io.github.seed.common.annotation.LogOperation;
-import io.github.seed.common.data.OperateLogEvent;
+import io.github.seed.common.annotation.RecordOperationLog;
+import io.github.seed.common.data.OperateEvent;
 import io.github.seed.common.security.SecurityUtils;
 import io.github.seed.common.security.data.LoginUser;
 import io.github.seed.common.util.WebUtils;
@@ -26,7 +27,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 /**
- * 2023/4/17 记录操作日志aop
+ * 记录操作日志aop
  *
  * @author zhangdp
  * @since 1.0.0
@@ -34,29 +35,25 @@ import java.util.*;
 @Slf4j
 @Aspect
 @RequiredArgsConstructor
-public class LogOperateAspect {
+public class RecordOperationLogAspect {
 
     /**
      * 方法参数解析器
      */
     private final DefaultParameterNameDiscoverer parameterNameDiscoverer = new DefaultParameterNameDiscoverer();
-    /**
-     * spring事件发布器
-     */
-    private final ApplicationEventPublisher applicationEventPublisher;
 
     /**
      * 环绕拥有@OperationLog 注解的controller方法
      *
      * @param point
-     * @param logOperation
+     * @param recordOperationLog
      * @return
      * @throws Throwable
      */
-    @Around("within(io.github.seed.controller..*) && @annotation(logOperation)")
-    public Object around(ProceedingJoinPoint point, LogOperation logOperation) throws Throwable {
+    @Around("within(io.github.seed.controller..*) && @annotation(recordOperationLog)")
+    public Object around(ProceedingJoinPoint point, RecordOperationLog recordOperationLog) throws Throwable {
         String method = point.getTarget().getClass().getName() + "." + point.getSignature().getName();
-        log.debug("OperateLogAspect around: method={}, annotation={}", method, logOperation);
+        log.debug("OperateLogAspect around: method={}, annotation={}", method, recordOperationLog);
 
         Object result = null;
         boolean hasError = false;
@@ -73,34 +70,32 @@ public class LogOperateAspect {
             throw t;
         } finally {
             // 失败时只有logIfError为true才记录日志
-            if (!hasError || logOperation.logIfError()) {
+            if (!hasError || recordOperationLog.recordIfError()) {
                 LocalDateTime endTime = LocalDateTime.now();
                 try {
                     HttpServletRequest request = SpringWebContextHolder.getRequest();
-                    OperateLogEvent event = new OperateLogEvent(point);
+                    OperateEvent event = new OperateEvent(point.getSignature());
                     // 结果必须可序列化
-                    if (logOperation.logResult() && result instanceof Serializable s) {
+                    if (recordOperationLog.logResult() && result instanceof Serializable s) {
                         event.setResult(s);
                     }
-                    event.setStartTime(startTime);
-                    event.setEndTime(endTime);
-                    event.setType(logOperation.type());
-                    event.setTitle(logOperation.title());
-                    event.setRefModule(logOperation.refModule());
+                    event.setStartAt(startTime);
+                    event.setEndAt(endTime);
+                    event.setType(recordOperationLog.type());
+                    event.setDescription(recordOperationLog.description());
+                    event.setRefModule(recordOperationLog.refModule());
                     event.setMethod(method);
-                    event.setStartTime(startTime);
                     event.setThrowable(throwable);
                     event.setUri(request.getRequestURI());
-                    event.setHttpMethod(request.getMethod());
                     // event.setUserAgent(request.getHeader("User-Agent"));
                     event.setClientIp(WebUtils.getClientIP(request));
-                    if (logOperation.logRequestBody()) {
-                        event.setRequestBody(WebUtils.getBody(request));
+                    if (recordOperationLog.logRequestBody()) {
+                        event.setBody(WebUtils.getBody(request));
                     }
-                    if (logOperation.logParameter()) {
+                    if (recordOperationLog.logParameter()) {
                         event.setParameterMap(request.getParameterMap());
                     }
-                    if (logOperation.logHeader()) {
+                    if (recordOperationLog.logHeader()) {
                         Map<String, String> headers = new HashMap<>();
                         Enumeration<String> headerNames = request.getHeaderNames();
                         while (headerNames.hasMoreElements()) {
@@ -118,7 +113,7 @@ public class LogOperateAspect {
                     if (loginUser != null) {
                         event.setUserId(loginUser.getId());
                     }
-                    if (StrUtil.isNotBlank(logOperation.refIdEl())) {
+                    if (StrUtil.isNotBlank(recordOperationLog.refIdEl())) {
                         Map<String, Object> context = new LinkedHashMap<>();
                         Object[] args = point.getArgs();
                         MethodSignature signature = (MethodSignature) point.getSignature();
@@ -132,14 +127,13 @@ public class LogOperateAspect {
                             }
                         }
                         context.put(Const.EL_RESULT, result);
-                        Long refId = SpELUtils.parseExpression(logOperation.refIdEl(), context, Long.class);
+                        Long refId = SpELUtils.parseExpression(recordOperationLog.refIdEl(), context, Long.class);
                         event.setRefId(refId);
                     }
-                    // 发出事件
-                    applicationEventPublisher.publishEvent(event);
-                    log.debug("发出操作日志事件：{}", event);
+                    // 保存操作日志上下文，后续处理结束后记录日志
+                    OperationLogContext.set(event);
                 } catch (Exception e) {
-                    log.warn("发出操作日志事件出错", e);
+                    log.warn("保存操作日志上下文出错", e);
                 }
             }
         }

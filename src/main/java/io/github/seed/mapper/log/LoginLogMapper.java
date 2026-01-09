@@ -29,9 +29,9 @@ public interface LoginLogMapper extends BaseMapper<LoginLog> {
         QueryWrapper wrapper = QueryWrapper.create().orderBy(pageQuery.getOrderBy());
         if (params != null) {
             wrapper.eq(LoginLog::getUserId, params.getUserId())
-                    .eq(LoginLog::getLoginType, params.getLoginType())
-                    .lt(LoginLog::getLoginTime, params.getEndTime())
-                    .gt(LoginLog::getLoginTime, params.getStartTime());
+                    .eq(LoginLog::getType, params.getLoginType())
+                    .lt(LoginLog::getLoginAt, params.getEndTime())
+                    .gt(LoginLog::getLoginAt, params.getStartTime());
         }
         Page<LoginLog> page = this.paginate(pageQuery.getPage(), pageQuery.getSize(), pageQuery.getTotal(), wrapper);
         return new PageData<>(page.getRecords(), page.getTotalRow(), page.getPageNumber(), page.getPageSize());

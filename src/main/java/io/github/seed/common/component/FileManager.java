@@ -82,12 +82,12 @@ public class FileManager {
         entity.setFileName(fileName);
         entity.setExtension(extension);
         entity.setMimeType(MimeType.getType(extension));
-        entity.setFileSize(file.getSize());
-        entity.setFileHash(this.calculateSHA256(file.getInputStream()));
+        entity.setSize(file.getSize());
+        entity.setHash(this.calculateSHA256(file.getInputStream()));
         entity.setStoragePath(remotePath);
         entity.setDownloadUrl(this.generateDownloadUrl(fileId, fileName));
-        entity.setUploadTime(now);
-        entity.setExpireTime(expireTime);
+        entity.setUploadAt(now);
+        entity.setExpireAt(expireTime);
         fileInfoService.add(entity);
 
         // 保存文件
@@ -115,11 +115,11 @@ public class FileManager {
             throw new NotFoundException("ID为" + fileId + "的附件记录不存在");
         }
         // 附件已过期不允许下载
-        if (fileInfo.getExpireTime().isBefore(LocalDateTime.now())) {
+        if (fileInfo.getExpireAt().isBefore(LocalDateTime.now())) {
             throw new NotFoundException("ID为" + fileId + "的附件已过期删除");
         }
         // 如果有开启http缓存且未修改直接返回304
-        String etag = "\"" + fileInfo.getFileHash() + "\"";
+        String etag = "\"" + fileInfo.getHash() + "\"";
         // 上次修改时间，http时间只精确到秒
         long lastModified = TimeUtil.toEpochMilli(ObjUtil.defaultIfNull(fileInfo.getUpdatedAt(), fileInfo.getCreatedAt())) / 1000L * 1000L;
         if (fileProperties.isHttpCacheable() && WebUtils.checkNotModified(request, etag, lastModified)) {
@@ -132,7 +132,7 @@ public class FileManager {
             WebUtils.responseCacheHeader(response, "public, max-age=" + fileProperties.getHttpCacheMaxAge() + ", immutable", lastModified, etag);
         }
         // 设置下载相关的http头
-        WebUtils.responseDispositionHeader(response, StrUtil.defaultIfBlank(fileName, fileInfo.getFileName()), fileInfo.getFileSize(), fileInfo.getMimeType(), isInline);
+        WebUtils.responseDispositionHeader(response, StrUtil.defaultIfBlank(fileName, fileInfo.getFileName()), fileInfo.getSize(), fileInfo.getMimeType(), isInline);
         // 从远端读取文件并输出到输出流，无需flush()或者关闭输出流，web容器会自行处理
         fileTemplate.download(fileInfo.getStoragePath(), response.getOutputStream());
     }

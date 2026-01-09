@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 import java.util.LinkedHashMap;
 
 /**
- * 2023/4/12 事件aop
+ * 业务service事件aop
  * <br>设置@Order最小让顺序比事务aop先进入但后离开，保证原业务代码事务已提交成功才触发事件
  *
  * @author zhangdp
@@ -88,7 +88,7 @@ public class ServiceEventAspect {
                     }
                 }
                 // 发布事件
-                ServiceEvent event = new ServiceEvent(joinPoint, annotation.value(), annotation.tag(), params, result);
+                ServiceEvent event = new ServiceEvent(joinPoint.getSignature(), annotation.value(), annotation.tag(), params, result);
                 applicationEventPublisher.publishEvent(event);
                 log.debug("发布事件：{}", event);
             }

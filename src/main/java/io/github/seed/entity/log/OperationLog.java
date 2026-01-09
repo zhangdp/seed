@@ -33,7 +33,7 @@ public class OperationLog extends BaseEntity implements Serializable {
      * 操作描述
      */
     @Schema(description = "操作描述")
-    private String title;
+    private String description;
     /**
      * 用户id
      */
@@ -50,7 +50,7 @@ public class OperationLog extends BaseEntity implements Serializable {
      * 请求uri
      */
     @Schema(description = "请求uri路径")
-    private String uri;
+    private String requestUri;
     /**
      * 用户浏览器标识
      */
@@ -59,8 +59,8 @@ public class OperationLog extends BaseEntity implements Serializable {
     /**
      * 请求的http 方式
      */
-    @Schema(description = "http方式")
-    private String httpMethod;
+    // @Schema(description = "http方式")
+    // private String httpMethod;
     /**
      * 客户端ip
      */
@@ -75,7 +75,7 @@ public class OperationLog extends BaseEntity implements Serializable {
      * 操作时间
      */
     @Schema(description = "操作时间")
-    private LocalDateTime operateTime;
+    private LocalDateTime operatedAt;
     /**
      * 耗时
      */
@@ -87,10 +87,10 @@ public class OperationLog extends BaseEntity implements Serializable {
     @Schema(description = "关联模块类型")
     private String refModule;
     /**
-     * 返回结果标识
+     * 返回结果状态码
      */
-    // @Schema(description = "返回结果状态码")
-    // private Integer resultCode;
+    @Schema(description = "返回结果状态码")
+    private Integer resultCode;
     /**
      * 是否成功
      */
@@ -110,7 +110,7 @@ public class OperationLog extends BaseEntity implements Serializable {
      * json格式的入参
      */
     @Schema(description = "入参")
-    private String parameters;
+    private String requestParams;
     /**
      * 请求体
      */
@@ -120,7 +120,7 @@ public class OperationLog extends BaseEntity implements Serializable {
      * 请求头
      */
     @Schema(description = "请求头")
-    private String headers;
+    private String requestHeaders;
     /**
      * 异常堆栈
      */

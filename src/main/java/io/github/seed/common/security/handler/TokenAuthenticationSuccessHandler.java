@@ -1,7 +1,7 @@
 package io.github.seed.common.security.handler;
 
 import io.github.seed.common.constant.Const;
-import io.github.seed.common.data.LoginLogEvent;
+import io.github.seed.common.data.LoginEvent;
 import io.github.seed.common.data.R;
 import io.github.seed.common.security.data.RefreshToken;
 import io.github.seed.common.security.service.TokenService;
@@ -61,7 +61,7 @@ public class TokenAuthenticationSuccessHandler implements AuthenticationSuccessH
     }
 
     private void publishLoginEvent(HttpServletRequest request, Authentication authentication) {
-        LoginLogEvent event = new LoginLogEvent(this);
+        LoginEvent event = new LoginEvent(this);
         // event.setLoginType();
         // event.setUsername();
         event.setLoginTime(LocalDateTime.now());

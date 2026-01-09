@@ -1,7 +1,7 @@
 package io.github.seed.controller.sys;
 
 import io.github.seed.common.data.ValidGroup;
-import io.github.seed.common.annotation.LogOperation;
+import io.github.seed.common.annotation.RecordOperationLog;
 import io.github.seed.common.enums.OperateType;
 import io.github.seed.entity.sys.Dept;
 import io.github.seed.model.dto.DeptTreeNode;
@@ -47,7 +47,7 @@ public class DeptController {
      */
     @PostMapping("/add")
     @Operation(summary = "新增部门", description = "新增部门，无需传值id、createTime、updateTime")
-    @LogOperation(type = OperateType.CREATE, title = "新增部门", refModule = "sys_dept", refIdEl = "#dept.id")
+    @RecordOperationLog(type = OperateType.CREATE, description = "新增部门", refModule = "sys_dept", refIdEl = "#dept.id")
     public boolean add(@RequestBody @Validated(ValidGroup.Update.class) Dept dept) {
         return deptService.add(dept);
     }
@@ -60,7 +60,7 @@ public class DeptController {
      */
     @PutMapping("/update")
     @Operation(summary = "修改部门", description = "修改部门，需传值id")
-    @LogOperation(type = OperateType.UPDATE, title = "修改部门", refModule = "sys_dept", refIdEl = "#dept.id")
+    @RecordOperationLog(type = OperateType.UPDATE, description = "修改部门", refModule = "sys_dept", refIdEl = "#dept.id")
     public boolean update(@RequestBody @Validated(ValidGroup.Update.class) Dept dept) {
         return deptService.update(dept);
     }
@@ -73,7 +73,7 @@ public class DeptController {
      */
     @DeleteMapping("/delete/{id}")
     @Operation(summary = "删除部门", description = "根据id删除部门")
-    @LogOperation(type = OperateType.DELETE, title = "删除部门", refModule = "sys_dept", refIdEl = "#id")
+    @RecordOperationLog(type = OperateType.DELETE, description = "删除部门", refModule = "sys_dept", refIdEl = "#id")
     public boolean delete(@PathVariable Long id) {
         return deptService.delete(id);
     }

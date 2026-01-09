@@ -67,7 +67,7 @@ public class User extends BaseLogicEntity implements Serializable {
      * 头像地址
      */
     @Schema(description = "头像地址")
-    private String avatarUrl;
+    private String avatar;
     /**
      * 姓名
      */

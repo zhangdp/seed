@@ -86,8 +86,8 @@ public class DaoUserDetailsService implements UserDetailsService {
                 List<Permission> permissions = permissionService.listRoleResources(roleIds);
                 if (CollUtil.isNotEmpty(permissions)) {
                     for (Permission permission : permissions) {
-                        if (StrUtil.isNotBlank(permission.getPermission())) {
-                            String permissionCode = permission.getPermission().trim().toUpperCase();
+                        if (StrUtil.isNotBlank(permission.getCode())) {
+                            String permissionCode = permission.getCode().trim().toUpperCase();
                             authorities.add(new RolePermissionGrantedAuthority(permissionCode,
                                     RolePermissionGrantedAuthority.AuthorityType.PERMISSION, permission.getId()));
                         }

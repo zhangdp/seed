@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 /**
- * 操作日志事件
+ * 操作事件
  *
  * @author zhangdp
  * @since 1.0.0
@@ -20,7 +20,7 @@ import java.util.Map;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class OperateLogEvent extends ApplicationEvent {
+public class OperateEvent extends ApplicationEvent {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -32,7 +32,7 @@ public class OperateLogEvent extends ApplicationEvent {
     /**
      * 操作描述
      */
-    private String title;
+    private String description;
     /**
      * 关联模块
      */
@@ -54,13 +54,17 @@ public class OperateLogEvent extends ApplicationEvent {
      */
     private Serializable result;
     /**
+     * 返回状态码
+     */
+    private Integer resultCode;
+    /**
      * 开始时间
      */
-    private LocalDateTime startTime;
+    private LocalDateTime startAt;
     /**
      * 结束时间
      */
-    private LocalDateTime endTime;
+    private LocalDateTime endAt;
     /**
      * 用户id
      */
@@ -69,10 +73,6 @@ public class OperateLogEvent extends ApplicationEvent {
      * 请求uri
      */
     private String uri;
-    /**
-     * http方法
-     */
-    private String httpMethod;
     /**
      * 浏览器标识
      */
@@ -88,13 +88,13 @@ public class OperateLogEvent extends ApplicationEvent {
     /**
      * 请求体
      */
-    private String requestBody;
+    private String body;
     /**
      * 请求头
      */
     private Map<String, String> headerMap;
 
-    public OperateLogEvent(Object source) {
+    public OperateEvent(Object source) {
         super(source);
     }
 }

@@ -1,9 +1,13 @@
 package io.github.seed.common.component;
 
+import cn.hutool.v7.core.lang.Assert;
+import io.github.seed.common.constant.Const;
+import io.github.seed.common.data.OperateEvent;
 import io.github.seed.common.data.R;
 import io.github.seed.common.annotation.NoResponseAdvice;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -21,7 +25,7 @@ import tools.jackson.databind.json.JsonMapper;
 import java.io.InputStream;
 
 /**
- * 2023/5/31 全局统一返回
+ * 全局统一返回
  *
  * @author zhangdp
  * @since 1.0.0
@@ -33,6 +37,7 @@ import java.io.InputStream;
 public class GlobalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
 
     private final JsonMapper jsonMapper;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     /**
      * 处理条件判断
@@ -43,18 +48,6 @@ public class GlobalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
      */
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
-        // 不是R或者R的子类
-        if (R.class.isAssignableFrom(returnType.getParameterType())) {
-            return false;
-        }
-        // 所在方法没有@NoResponseAdvice注解
-        if (returnType.hasMethodAnnotation(NoResponseAdvice.class)) {
-            return false;
-        }
-        // 所在类没有@NoResponseAdvice注解
-        if (returnType.getDeclaringClass().isAnnotationPresent(NoResponseAdvice.class)) {
-            return false;
-        }
         return true;
     }
 
@@ -74,45 +67,100 @@ public class GlobalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType,
                                   Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request,
                                   ServerHttpResponse response) {
-        // 已经显示调用response.getWriter()输出了的不再包装
-        if (response instanceof ServletServerHttpResponse servletResponse
-                && servletResponse.getServletResponse().isCommitted()) {
-            return body; // 不包装
-        }
-
-        if (body instanceof ResponseEntity<?> entity) {
-            Object entityBody = entity.getBody();
-            // 流 / 资源：直接返回
-            if (entityBody instanceof Resource ||
-                    entityBody instanceof StreamingResponseBody ||
-                    entityBody instanceof InputStream ||
-                    entityBody instanceof byte[]) {
-                return entity;
+        Object result = body;
+        boolean recordResult = true;
+        try {
+            // 不是R或者R的子类
+            if (R.class.isAssignableFrom(returnType.getParameterType())) {
+                return body;
             }
-            log.debug("使用{}统一包装ResponseEntity的返回：{}", R.class, entityBody != null ? entityBody.getClass() : null);
-            // 非流：重新包装 body
-            return ResponseEntity
-                    .status(entity.getStatusCode())
-                    .headers(entity.getHeaders())
-                    .body(R.success("", entityBody));
-        }
+            // 所在方法没有@NoResponseAdvice注解
+            if (returnType.hasMethodAnnotation(NoResponseAdvice.class)) {
+                return body;
+            }
+            // 所在类没有@NoResponseAdvice注解
+            if (returnType.getDeclaringClass().isAnnotationPresent(NoResponseAdvice.class)) {
+                return body;
+            }
 
-        // 流 / 资源：直接返回
-        if (body instanceof Resource ||
-                body instanceof StreamingResponseBody ||
-                body instanceof InputStream ||
-                body instanceof byte[]) {
-            return body;
-        }
+            // 已经显示调用response.getWriter()输出了的不再包装
+            if (response instanceof ServletServerHttpResponse servletResponse
+                    && servletResponse.getServletResponse().isCommitted()) {
+                return body;
+            }
 
-        R<?> r = R.success("", body);
-        // String类型spring是直接返回，因此R包装后需手动转为json字符串返回，不然会报错
-        if (body instanceof String) {
-            HttpHeaders headers = response.getHeaders();
-            headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-            return jsonMapper.writeValueAsString(r);
+            // 流 / 资源：直接返回
+            if (body instanceof Resource ||
+                    body instanceof StreamingResponseBody ||
+                    body instanceof InputStream ||
+                    body instanceof byte[]) {
+                recordResult = false;
+                return body;
+            }
+
+            if (body instanceof ResponseEntity<?> entity) {
+                Object entityBody = entity.getBody();
+                // 流 / 资源：直接返回
+                if (entityBody instanceof Resource ||
+                        entityBody instanceof StreamingResponseBody ||
+                        entityBody instanceof InputStream ||
+                        entityBody instanceof byte[]) {
+                    recordResult = false;
+                    return body;
+                }
+                log.debug("使用{}统一包装ResponseEntity的返回：{}", R.class, entityBody != null ? entityBody.getClass() : null);
+                // 非流：重新包装 body
+                result = R.success("", entityBody);
+                return ResponseEntity
+                        .status(entity.getStatusCode())
+                        .headers(entity.getHeaders())
+                        .body(result);
+            }
+
+            R<?> r = R.success("", body);
+            result = r;
+            // String类型spring是直接返回，因此R包装后需手动转为json字符串返回，不然会报错
+            if (body instanceof String) {
+                HttpHeaders headers = response.getHeaders();
+                headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+                log.debug("使用{}统一包装String返回", R.class);
+                return jsonMapper.writeValueAsString(r);
+            }
+            log.debug("使用{}统一包装返回：{}", R.class, body != null ? body.getClass() : null);
+            return result;
+        } finally {
+            // 记录操作日志，无论接口有没有异常都能支持
+            OperateEvent event = null;
+            try {
+                event = OperationLogContext.get();
+                if (event != null) {
+                    if (result != null) {
+                        // 记录返回值
+                        if (recordResult) {
+                            if (result instanceof String str) {
+                                event.setResult(str);
+                            } else {
+                                event.setResult(jsonMapper.writeValueAsString(result));
+                            }
+                        }
+                        // 如果是R类型，则可以记录返回状态码
+                        if (result instanceof R<?> r) {
+                            event.setResultCode(r.getCode());
+                        }
+                    }
+                    // 如果没有返回值的情况或者返回值不是R，返回状态码只有成功、失败（抛异常）两种
+                    if (event.getResultCode() == null) {
+                        event.setResultCode(event.getThrowable() == null ? Const.RESULT_SUCCESS : Const.RESULT_FAIL);
+                    }
+                    // 发出事件，异步记录
+                    applicationEventPublisher.publishEvent(event);
+                    log.debug("发布操作日志事件：{}", event);
+                }
+            } catch (Exception e) {
+                log.error("发布操作日志事件失败：{}", event, e);
+            } finally {
+                OperationLogContext.remove();
+            }
         }
-        log.debug("使用{}统一包装返回：{}", R.class, body != null ? body.getClass() : null);
-        return r;
     }
 }

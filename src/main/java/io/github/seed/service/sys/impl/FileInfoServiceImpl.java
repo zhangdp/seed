@@ -32,11 +32,11 @@ public class FileInfoServiceImpl implements FileInfoService {
         if (fileInfo.getFileId() == null || fileInfo.getFileId().isEmpty()) {
             fileInfo.setFileId(this.generateId());
         }
-        if (fileInfo.getUploadTime() == null) {
-            fileInfo.setUploadTime(LocalDateTime.now());
+        if (fileInfo.getUploadAt() == null) {
+            fileInfo.setUploadAt(LocalDateTime.now());
         }
-        if (fileInfo.getExpireTime() == null) {
-            fileInfo.setExpireTime(Const.MAX_LOCAL_DATE_TIME);
+        if (fileInfo.getExpireAt() == null) {
+            fileInfo.setExpireAt(Const.MAX_LOCAL_DATE_TIME);
         }
         return this.fileInfoMapper.insert(fileInfo) > 0;
     }

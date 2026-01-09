@@ -9,7 +9,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * 2023/4/3 全局接口返回对象
+ * 全局接口返回对象
  *
  * @author zhangdp
  * @since 1.0.0

@@ -34,8 +34,8 @@ public class Permission extends BaseLogicEntity implements Serializable {
     /**
      * 资源类型 （menu：菜单；button：按钮）
      */
-    @NotNull(message = "资源类型不能为空")
-    @Schema(description = "资源类型，menu：菜单；button：按钮")
+    @NotNull(message = "权限类型不能为空")
+    @Schema(description = "权限类型，menu：菜单；button：按钮")
     private String type;
     /**
      * 名称
@@ -48,7 +48,7 @@ public class Permission extends BaseLogicEntity implements Serializable {
      * 权限标识
      */
     @Schema(description = "权限标识")
-    private String permission;
+    private String code;
     /**
      * 父节点ID，根节点为0
      */
@@ -61,10 +61,15 @@ public class Permission extends BaseLogicEntity implements Serializable {
     @Schema(description = "图标")
     private String icon;
     /**
-     * 路由路径
+     * 路径
      */
-    @Schema(description = "前端菜单的路由路径")
+    @Schema(description = "路径")
     private String path;
+    /**
+     * 组件
+     */
+    @Schema(description = "组件")
+    private String component;
     /**
      * 描述
      */
@@ -79,11 +84,11 @@ public class Permission extends BaseLogicEntity implements Serializable {
      * 是否路由缓冲
      */
     @Schema(description = "是否路由缓冲，0：否；1：是")
-    private Integer isKeepAlive;
+    private Integer keepAlive;
     /**
      * 是否显示，0：否；1：是，默认
      */
     @Schema(description = "是否显示，0：否；1：是，默认")
-    private Integer isVisible;
+    private Integer visible;
 
 }

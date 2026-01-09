@@ -1,7 +1,7 @@
 package io.github.seed.controller.sys;
 
 import io.github.seed.common.data.ValidGroup;
-import io.github.seed.common.annotation.LogOperation;
+import io.github.seed.common.annotation.RecordOperationLog;
 import io.github.seed.common.constant.TableNameConst;
 import io.github.seed.common.enums.OperateType;
 import io.github.seed.common.security.data.LoginUser;
@@ -38,7 +38,7 @@ public class ResourceController {
      */
     @PostMapping("/add")
     @Operation(summary = "新增权限", description = "新增权限，无需传值id、createTime、updateTime")
-    @LogOperation(type = OperateType.CREATE, title = "新增权限", refModule = TableNameConst.SYS_PERMISSION, refIdEl = "#permission.id")
+    @RecordOperationLog(type = OperateType.CREATE, description = "新增权限", refModule = TableNameConst.SYS_PERMISSION, refIdEl = "#permission.id")
     public boolean add(@RequestBody @Validated Permission permission) {
         return permissionService.add(permission);
     }
@@ -51,7 +51,7 @@ public class ResourceController {
      */
     @PatchMapping("/update")
     @Operation(summary = "修改权限", description = "修改权限，需传值id")
-    @LogOperation(type = OperateType.UPDATE, title = "修改权限", refModule = TableNameConst.SYS_PERMISSION, refIdEl = "#permission.id")
+    @RecordOperationLog(type = OperateType.UPDATE, description = "修改权限", refModule = TableNameConst.SYS_PERMISSION, refIdEl = "#permission.id")
     public boolean update(@RequestBody @Validated(ValidGroup.Update.class) Permission permission) {
         return permissionService.update(permission);
     }
@@ -64,7 +64,7 @@ public class ResourceController {
      */
     @DeleteMapping("/delete/{id}")
     @Operation(summary = "删除权限", description = "根据id删除权限")
-    @LogOperation(type = OperateType.DELETE, title = "删除权限", refModule = TableNameConst.SYS_PERMISSION, refIdEl = "#id")
+    @RecordOperationLog(type = OperateType.DELETE, description = "删除权限", refModule = TableNameConst.SYS_PERMISSION, refIdEl = "#id")
     public boolean delete(@PathVariable Long id) {
         return permissionService.delete(id);
     }

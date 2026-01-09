@@ -1,6 +1,6 @@
 package io.github.seed.controller.sys;
 
-import io.github.seed.common.annotation.LogOperation;
+import io.github.seed.common.annotation.RecordOperationLog;
 import io.github.seed.common.constant.TableNameConst;
 import io.github.seed.common.enums.OperateType;
 import io.github.seed.model.PageData;
@@ -40,7 +40,7 @@ public class UserController {
     @PostMapping("/add")
     @PreAuthorize("hasPermission('sys:user:add')")
     @Operation(summary = "新增用户", description = "新增用户，无需传值id、createTime、updateTime")
-    @LogOperation(type = OperateType.CREATE, title = "新增用户", refModule = TableNameConst.SYS_USER)
+    @RecordOperationLog(type = OperateType.CREATE, description = "新增用户", refModule = TableNameConst.SYS_USER)
     public boolean add(@RequestBody @Valid AddUserDto user) {
         return userService.add(user);
     }
@@ -53,7 +53,7 @@ public class UserController {
      */
     @PutMapping("/update")
     @Operation(summary = "修改用户", description = "修改用户，需传值id，无需传createTime、updateTime")
-    @LogOperation(type = OperateType.UPDATE, title = "修改用户", refModule = TableNameConst.SYS_USER, refIdEl = "#user.id")
+    @RecordOperationLog(type = OperateType.UPDATE, description = "修改用户", refModule = TableNameConst.SYS_USER, refIdEl = "#user.id")
     public boolean update(@RequestBody @Valid AddUserDto user) {
         return userService.update(user);
     }
@@ -66,7 +66,7 @@ public class UserController {
      */
     @DeleteMapping("/delete/{id}")
     @Operation(summary = "删除用户", description = "根据id删除用户，如果本来就不存在则返回false")
-    @LogOperation(type = OperateType.DELETE, title = "删除用户", refModule = TableNameConst.SYS_USER, refIdEl = "#id")
+    @RecordOperationLog(type = OperateType.DELETE, description = "删除用户", refModule = TableNameConst.SYS_USER, refIdEl = "#id")
     public boolean delete(@PathVariable Long id) {
         return userService.delete(id);
     }
@@ -80,7 +80,7 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/page")
     @Operation(summary = "分页查询用户")
-    @LogOperation(type = OperateType.READ, title = "分页查询用户", refModule = TableNameConst.SYS_USER)
+    @RecordOperationLog(type = OperateType.READ, description = "分页查询用户", refModule = TableNameConst.SYS_USER)
     public PageData<UserInfo> queryPage(@RequestBody @Valid PageQuery<UserQuery> pageQuery, LoginUser loginUser) {
         UserQuery params = pageQuery.getParams();
         if (params == null) {

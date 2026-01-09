@@ -88,6 +88,10 @@ public interface Const {
      * 接口返回状态码成功
      */
     int RESULT_SUCCESS = 0;
+    /**
+     * 接口返回状态码失败
+     */
+    int RESULT_FAIL = 1;
 
     /**
      * 编码
@@ -118,4 +122,5 @@ public interface Const {
      * 数据库批量执行时每批个数
      */
     int DB_BATCH_SIZE = 100;
+
 }

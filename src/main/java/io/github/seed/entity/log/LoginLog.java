@@ -33,7 +33,7 @@ public class LoginLog extends BaseEntity implements Serializable {
      * 创建时间
      */
     @Schema(description = "登录时间，格式：" + Const.DATETIME_FORMATTER + "。保存时忽略")
-    private LocalDateTime loginTime;
+    private LocalDateTime loginAt;
     /**
      * 用户id
      */
@@ -48,7 +48,7 @@ public class LoginLog extends BaseEntity implements Serializable {
      * 登录类型
      */
     @Schema(description = "登录类型：sms、password")
-    private Integer loginType;
+    private String type;
     /**
      * 登录结果
      */
