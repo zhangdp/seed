@@ -1,6 +1,5 @@
 package io.github.seed.common.component;
 
-import cn.hutool.v7.core.lang.Assert;
 import io.github.seed.common.constant.Const;
 import io.github.seed.common.data.OperateEvent;
 import io.github.seed.common.data.R;
@@ -70,15 +69,15 @@ public class GlobalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
         Object result = body;
         boolean recordResult = true;
         try {
-            // 不是R或者R的子类
+            // 已经R或者R的子类无需再包装
             if (R.class.isAssignableFrom(returnType.getParameterType())) {
                 return body;
             }
-            // 所在方法没有@NoResponseAdvice注解
+            // 所在方法有@NoResponseAdvice注解表示无需包装
             if (returnType.hasMethodAnnotation(NoResponseAdvice.class)) {
                 return body;
             }
-            // 所在类没有@NoResponseAdvice注解
+            // 所在类有@NoResponseAdvice注解表示无需包装
             if (returnType.getDeclaringClass().isAnnotationPresent(NoResponseAdvice.class)) {
                 return body;
             }

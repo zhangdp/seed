@@ -46,7 +46,6 @@ public class OperateEventListener {
     public void onEvent(OperateEvent event) {
         try {
             log.debug("收到OperateEvent: {}", event);
-            System.err.println(event.getSource());
             OperationLog lo = new OperationLog();
             lo.setCreatedAt(LocalDateTime.now());
             lo.setDescription(event.getDescription());
