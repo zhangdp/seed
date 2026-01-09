@@ -88,9 +88,9 @@ seed:
   file-storage:
     root-path: ""
     type: local
-    expire-days: 0
     http-cacheable: true
     http-cache-max-age: 604800
+    expire-duration: 0
     download-url: /file/download/{fileId}/{fileName}
     local:
       upload-dir: /Users/peng/tmp/seed/upload

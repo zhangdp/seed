@@ -53,21 +53,27 @@ public class FileManager {
     @Transactional(rollbackFor = Exception.class)
     public FileInfoDto doUpload(MultipartFile file, Long uploadUserId) {
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime expireTime = fileProperties.getExpireDays() > 0 ? LocalDateTime.now().plusDays(fileProperties.getExpireDays()) : Const.MAX_LOCAL_DATE_TIME;
+        // 如果是正的表示有过期时间，否则永不过期
+        LocalDateTime expireTime = fileProperties.getExpireDuration() != null && fileProperties.getExpireDuration().isPositive()
+                ? LocalDateTime.now().plus(fileProperties.getExpireDuration())
+                : Const.MAX_LOCAL_DATE_TIME;
+        // 附件唯一id
         String fileId = fileInfoService.generateId();
         String fileName = file.getOriginalFilename();
-        String extension = FileNameUtil.extName(fileName);
-        if (extension == null) {
-            extension = "";
-        } else if (!extension.isEmpty()) {
-            extension = "." + extension;
-        }
-        // 实际路径以日期分文件夹，文件名以文件ID+后缀保存，防止文件名重复覆盖
+        String extension = StrUtil.defaultIfNull(FileNameUtil.extName(fileName), "").trim();
+        // 根目录
         String remotePath = fileProperties.getRootPath() != null ? fileProperties.getRootPath().trim() : "";
         if (remotePath.endsWith("/")) {
             remotePath += "/";
         }
-        remotePath += TimeUtil.format(now.toLocalDate(), "yyyy-MM/dd") + "/" + fileId + extension;
+        // 按日期分文件夹
+        remotePath += TimeUtil.format(now.toLocalDate(), "yyyy-MM/dd") + "/";
+        // 文件名为附件唯一id防止重复
+        remotePath += fileId;
+        // 后缀
+        if (!extension.isEmpty()) {
+            remotePath += "." + extension;
+        }
 
         // 记录保存到数据库
         FileInfo entity = new FileInfo();

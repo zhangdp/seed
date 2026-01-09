@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -32,9 +33,9 @@ public class FileStorageProperties {
     @NotBlank
     private String downloadUrl = "/file/download/{fileId}/{fileName}";
     /**
-     * 默认过期天数，<=0用不过期
+     * 默认过期时间，<=0用不过期
      */
-    private int expireDays = 0;
+    private Duration expireDuration = Duration.ZERO;
     /**
      * 是否启用http 缓存
      */
