@@ -38,15 +38,9 @@ public class GlobalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
     private final JsonMapper jsonMapper;
     private final ApplicationEventPublisher applicationEventPublisher;
 
-    /**
-     * 处理条件判断
-     *
-     * @param returnType
-     * @param converterType
-     * @return
-     */
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
+        // 需要记录日志，因此全部返回true，具体由转换的时候再行判断需不需要
         return true;
     }
 
@@ -69,11 +63,11 @@ public class GlobalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
         Object result = body;
         boolean recordResult = true;
         try {
-            // 已经R或者R的子类无需再包装
+            // 本来就是R或者R的子类无需再包装
             if (R.class.isAssignableFrom(returnType.getParameterType())) {
                 return body;
             }
-            // 所在方法有@NoResponseAdvice注解表示无需包装
+            // 方法有@NoResponseAdvice注解表示无需包装
             if (returnType.hasMethodAnnotation(NoResponseAdvice.class)) {
                 return body;
             }
@@ -85,6 +79,7 @@ public class GlobalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
             // 已经显示调用response.getWriter()输出了的不再包装
             if (response instanceof ServletServerHttpResponse servletResponse
                     && servletResponse.getServletResponse().isCommitted()) {
+                recordResult = false;
                 return body;
             }
 
@@ -116,19 +111,18 @@ public class GlobalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
                         .body(result);
             }
 
-            R<?> r = R.success("", body);
-            result = r;
+            result = R.success("", body);
             // String类型spring是直接返回，因此R包装后需手动转为json字符串返回，不然会报错
             if (body instanceof String) {
                 HttpHeaders headers = response.getHeaders();
                 headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
                 log.debug("使用{}统一包装String返回", R.class);
-                return jsonMapper.writeValueAsString(r);
+                return jsonMapper.writeValueAsString(result);
             }
             log.debug("使用{}统一包装返回：{}", R.class, body != null ? body.getClass() : null);
             return result;
         } finally {
-            // 记录操作日志，无论接口有没有异常都能支持
+            // 记录操作日志，就算接口抛异常了经过GlobalExceptionHandleAdvice全局异常处理后也会走到这里
             OperateEvent event = null;
             try {
                 event = OperationLogContext.get();
