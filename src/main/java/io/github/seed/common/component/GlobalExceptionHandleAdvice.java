@@ -22,7 +22,6 @@ import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
-import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -92,7 +91,7 @@ public class GlobalExceptionHandleAdvice {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public R<?> sqlException(Exception e, HttpServletRequest request) {
         log.error("SQL异常：uri={}", request.getRequestURI(), e);
-        return R.fail(ErrorCode.SQL_ERROR);
+        return new R<>(ErrorCode.SQL_ERROR.code(), "系统错误");
     }
 
 
@@ -112,21 +111,6 @@ public class GlobalExceptionHandleAdvice {
     }
 
     /**
-     * 请求http method不对
-     * <br>输出http状态码：405
-     *
-     * @param e
-     * @param request
-     * @return
-     */
-    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
-    public R<?> httpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e, HttpServletRequest request) {
-        log.warn("请求http method不符合异常：uri={}, error={}", request.getRequestURI(), e.getMessage());
-        return new R<>(ErrorCode.BAD_REQUEST.code(), "请求Http Method \"" + e.getMethod() + "\"不支持");
-    }
-
-    /**
      * servlet异常，httpMethod不对，contentType不对等
      * <br>输出http状态码：400
      *
@@ -137,7 +121,7 @@ public class GlobalExceptionHandleAdvice {
     @ExceptionHandler(ServletException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public R<?> servletException(ServletException e, HttpServletRequest request) {
-        log.warn("servlet异常：uri={}, error={}", request.getRequestURI(), e.getMessage());
+        log.warn("请求异常：uri={}, error={}", request.getRequestURI(), e.getMessage());
         return R.fail(ErrorCode.BAD_REQUEST);
     }
 
