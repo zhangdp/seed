@@ -1,5 +1,6 @@
 package io.github.seed.common.security;
 
+import io.github.seed.common.component.IgnoreAuthPathRegistry;
 import io.github.seed.common.security.data.ActuatorUserProperties;
 import io.github.seed.common.security.filter.TokenResolveAuthenticationFilter;
 import io.github.seed.common.security.handler.*;
@@ -42,12 +43,14 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import tools.jackson.databind.json.JsonMapper;
 
 import java.util.List;
+import java.util.Set;
 
 /**
- * 2023/8/15 spring security 配置
+ * spring security 配置
  *
  * @author zhangdp
  * @since 1.0.0
@@ -73,20 +76,20 @@ public class SecurityConfigurer {
     @Order(1)
     SecurityFilterChain actuatorSecurity(HttpSecurity http, PasswordEncoder passwordEncoder) throws Exception {
         http
-            .securityMatcher(EndpointRequest.toAnyEndpoint())
-            .authorizeHttpRequests(auth -> auth
-                    .requestMatchers(EndpointRequest.to("health", "info")).permitAll()
-                    .anyRequest().hasRole("ACTUATOR")
-            )
-            .authenticationManager(new ProviderManager(
-                    List.of(new DaoAuthenticationProvider(actuatorUserDetailsService(passwordEncoder)) {{
-                        setPasswordEncoder(passwordEncoder);
-                    }})
-            ))
-            // 使用httpBasic认证
-            .httpBasic(Customizer.withDefaults())
-            .csrf(AbstractHttpConfigurer::disable)
-            .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                .securityMatcher(EndpointRequest.toAnyEndpoint())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(EndpointRequest.to("health", "info")).permitAll()
+                        .anyRequest().hasRole("ACTUATOR")
+                )
+                .authenticationManager(new ProviderManager(
+                        List.of(new DaoAuthenticationProvider(actuatorUserDetailsService(passwordEncoder)) {{
+                            setPasswordEncoder(passwordEncoder);
+                        }})
+                ))
+                // 使用httpBasic认证
+                .httpBasic(Customizer.withDefaults())
+                .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return http.build();
     }
@@ -115,7 +118,8 @@ public class SecurityConfigurer {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, TokenResolveAuthenticationFilter tokenResolveAuthenticationFilter,
                                                    // TokenAuthenticationProcessingFilter tokenAuthenticationProcessingFilter,
                                                    // LogoutSuccessHandler logoutSuccessHandler,
-                                                   AccessDeniedHandler accessDeniedHandler, AuthenticationEntryPoint authenticationEntryPoint) throws Exception {
+                                                   AccessDeniedHandler accessDeniedHandler, AuthenticationEntryPoint authenticationEntryPoint,
+                                                   IgnoreAuthPathRegistry ignoreAuthPathRegistry) throws Exception {
         httpSecurity
                 // 禁用csrf
                 .csrf(AbstractHttpConfigurer::disable)
@@ -127,13 +131,27 @@ public class SecurityConfigurer {
                 .formLogin(AbstractHttpConfigurer::disable)
                 // 登出
                 // .logout(c -> c.logoutUrl(SecurityConst.LOGOUT_URL).logoutSuccessHandler(logoutSuccessHandler))
-                .authorizeHttpRequests(req -> req
-                        // 放行url
-                        .requestMatchers(SecurityConst.PERMIT_URLS).permitAll()
-                        // OPTIONS请求放行
-                        .requestMatchers(HttpMethod.OPTIONS).permitAll()
-                        // 其余url都必须认证
-                        .anyRequest().authenticated()
+                .authorizeHttpRequests(req -> {
+                            // 动态添加带有@IgnoreAuth的接口
+                            Set<String> ignorePaths = ignoreAuthPathRegistry.getIgnoreAuthPaths();
+                            if (ignorePaths != null && !ignorePaths.isEmpty()) {
+                                for (String ignorePath : ignorePaths) {
+                                    req.requestMatchers(ignorePath).permitAll();
+                                    log.info("添加忽略认证url：{}", ignorePath);
+                                }
+                            }
+                            // 固定放行url
+                            if (SecurityConst.PERMIT_URLS != null && SecurityConst.PERMIT_URLS.length > 0) {
+                                for (String permitUrl : SecurityConst.PERMIT_URLS) {
+                                    req.requestMatchers(permitUrl).permitAll();
+                                    log.info("添加忽略认证url：{}", permitUrl);
+                                }
+                            }
+                            // OPTIONS请求放行
+                            req.requestMatchers(HttpMethod.OPTIONS).permitAll();
+                            // 其余url都必须认证
+                            req.anyRequest().authenticated();
+                        }
                 )
                 .exceptionHandling(eh -> eh
                         // 无权限访问处理器
@@ -146,6 +164,17 @@ public class SecurityConfigurer {
                 // 解析token过滤器
                 .addFilterBefore(tokenResolveAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
+    }
+
+    /**
+     * 动态忽略认证的url注册器
+     *
+     * @param requestMappingHandlerMapping
+     * @return
+     */
+    @Bean
+    public IgnoreAuthPathRegistry ignoreAuthPathRegistry(RequestMappingHandlerMapping requestMappingHandlerMapping) {
+        return new IgnoreAuthPathRegistry(requestMappingHandlerMapping);
     }
 
     /**

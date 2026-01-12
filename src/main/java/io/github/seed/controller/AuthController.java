@@ -1,5 +1,6 @@
 package io.github.seed.controller;
 
+import io.github.seed.common.annotation.IgnoreAuth;
 import io.github.seed.common.security.data.LoginResult;
 import io.github.seed.common.security.service.SecurityService;
 import io.github.seed.model.params.LoginParams;
@@ -38,6 +39,7 @@ public class AuthController {
      * @throws ServletException
      * @throws IOException
      */
+    @IgnoreAuth
     @PostMapping("/login")
     @Operation(summary = "登录")
     public LoginResult login(@RequestBody @Valid LoginParams loginParams) throws ServletException, IOException {
@@ -49,6 +51,7 @@ public class AuthController {
      *
      * @param request
      */
+    @IgnoreAuth
     @DeleteMapping("/logout")
     @Operation(summary = "注销", description = "无论结果如何，前端都当做注销成功清除本地token")
     // @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -75,6 +78,7 @@ public class AuthController {
      * @throws ServletException
      * @throws IOException
      */
+    @IgnoreAuth
     @PostMapping("/token/refresh")
     @Operation(summary = "续签", description = "使用refresh_token续签token，成功时与登录接口无异，失败时响应401")
     public LoginResult refreshToken(String refreshToken) throws ServletException, IOException {
