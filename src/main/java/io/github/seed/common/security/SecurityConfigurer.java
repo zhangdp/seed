@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.security.autoconfigure.actuate.web.servlet.EndpointRequest;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -241,13 +242,23 @@ public class SecurityConfigurer {
     /**
      * 登录成功处理器
      *
-     * @param jsonMapper
-     * @param tokenService
+     * @param applicationEventPublisher
      * @return
      */
     @Bean
-    public AuthenticationSuccessHandler authenticationSuccessHandler(JsonMapper jsonMapper, TokenService tokenService) {
-        return new TokenAuthenticationSuccessHandler(jsonMapper, tokenService);
+    public AuthenticationSuccessHandler authenticationSuccessHandler(ApplicationEventPublisher applicationEventPublisher) {
+        return new TokenAuthenticationSuccessHandler(applicationEventPublisher);
+    }
+
+    /**
+     * 登录失败处理器
+     *
+     * @param applicationEventPublisher
+     * @return
+     */
+    @Bean
+    public AuthenticationFailureHandler authenticationFailureHandler(ApplicationEventPublisher applicationEventPublisher) {
+        return new TokenAuthenticationFailureHandler(applicationEventPublisher);
     }
 
     /**
@@ -270,17 +281,6 @@ public class SecurityConfigurer {
     @Bean
     public AuthenticationEntryPoint authenticationEntryPoint(HandlerExceptionResolver handlerExceptionResolver) {
         return new TokenAuthenticationEntryPoint(handlerExceptionResolver);
-    }
-
-    /**
-     * 登录失败处理器
-     *
-     * @param handlerExceptionResolver
-     * @return
-     */
-    @Bean
-    public AuthenticationFailureHandler authenticationFailureHandler(HandlerExceptionResolver handlerExceptionResolver) {
-        return new TokenAuthenticationFailureHandler(handlerExceptionResolver);
     }
 
     /**
@@ -355,6 +355,7 @@ public class SecurityConfigurer {
      * @param authenticationManager
      * @param authenticationSuccessHandler
      * @param authenticationFailureHandler
+     * @param tokenService
      * @return
      */
     @Bean

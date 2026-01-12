@@ -4,21 +4,15 @@ import io.github.seed.common.annotation.IgnoreAuth;
 import io.github.seed.common.security.data.LoginResult;
 import io.github.seed.common.security.service.SecurityService;
 import io.github.seed.model.params.LoginParams;
-import io.github.seed.model.params.PasswordLoginParams;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-
 /**
- * 2023/4/3 认证接口
+ * 认证接口
  *
  * @author zhangdp
  * @since 1.0.0
@@ -36,13 +30,11 @@ public class AuthController {
      *
      * @param loginParams
      * @return
-     * @throws ServletException
-     * @throws IOException
      */
     @IgnoreAuth
     @PostMapping("/login")
     @Operation(summary = "登录")
-    public LoginResult login(@RequestBody @Valid LoginParams loginParams) throws ServletException, IOException {
+    public LoginResult login(@RequestBody @Valid LoginParams loginParams) throws Throwable {
         return securityService.login(loginParams);
     }
 
@@ -75,13 +67,12 @@ public class AuthController {
      *
      * @param refreshToken
      * @return
-     * @throws ServletException
-     * @throws IOException
+     * @throws Exception
      */
     @IgnoreAuth
     @PostMapping("/token/refresh")
     @Operation(summary = "续签", description = "使用refresh_token续签token，成功时与登录接口无异，失败时响应401")
-    public LoginResult refreshToken(String refreshToken) throws ServletException, IOException {
+    public LoginResult refreshToken(String refreshToken) throws Throwable {
         return securityService.refreshToken(refreshToken);
     }
 

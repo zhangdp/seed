@@ -1,23 +1,19 @@
 package io.github.seed.common.security.handler;
 
-import io.github.seed.common.enums.ErrorCode;
-import io.github.seed.common.exception.UnauthorizedException;
+import io.github.seed.common.data.LoginEvent;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.authentication.LockedException;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
 
 /**
- * 2024/6/28 spring security 登录失败处理器
+ * spring security 登录失败处理器
  *
  * @author zhangdp
  * @since 1.0.0
@@ -26,22 +22,16 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class TokenAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
-    private final HandlerExceptionResolver handlerExceptionResolver;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-        log.trace("TokenAuthenticationFailureHandler:{}", request.getRequestURI());
-        Exception ex;
-        if (exception instanceof BadCredentialsException) {
-            ex = new UnauthorizedException(ErrorCode.USERNAME_NOT_FOUND_OR_BAD_CREDENTIALS, exception);
-        } else if (exception instanceof DisabledException) {
-            ex = new UnauthorizedException(ErrorCode.ACCOUNT_DISABLED, exception);
-        } else if (exception instanceof LockedException) {
-            ex = new UnauthorizedException(ErrorCode.ACCOUNT_LOCKED, exception);
-        } else {
-            ex = new UnauthorizedException(ErrorCode.LOGIN_FAILURE, exception);
-        }
-        // 转为自定义异常，并委托给异常处理器
-        handlerExceptionResolver.resolveException(request, response, null, ex);
+        log.debug("TokenAuthenticationFailureHandler:{}", request.getRequestURI());
+
+        // todo 更新密码错误次数等业务
+
+        // 发出登录日志事件，有需要的话订阅
+        LoginEvent loginEvent = new LoginEvent(this);
+        applicationEventPublisher.publishEvent(loginEvent);
     }
 }

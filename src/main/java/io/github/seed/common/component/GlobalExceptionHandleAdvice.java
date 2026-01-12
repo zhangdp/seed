@@ -16,6 +16,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -33,7 +37,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 2023/4/3 全局异常处理器
+ * 全局异常处理器
  *
  * @author zhangdp
  * @since 1.0.0
@@ -279,6 +283,29 @@ public class GlobalExceptionHandleAdvice {
     public R<?> unauthorizedException(UnauthorizedException e, HttpServletRequest request) {
         log.warn("未登录异常：uri={}, error={}", request.getRequestURI(), e.getMessage());
         return new R<>(e.getCode(), e.getMessage());
+    }
+
+    /**
+     * 认证失败异常
+     * <br>输出http状态码：401
+     *
+     * @param e
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(AuthenticationException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public R<?> authenticationException(AuthenticationException e, HttpServletRequest request) {
+        log.warn("登录失败异常：uri={}, error={}", request.getRequestURI(), e.getMessage());
+        if (e instanceof BadCredentialsException) {
+            return R.fail(ErrorCode.USERNAME_NOT_FOUND_OR_BAD_CREDENTIALS);
+        } else if (e instanceof DisabledException) {
+            return R.fail(ErrorCode.ACCOUNT_DISABLED);
+        } else if (e instanceof LockedException) {
+            return R.fail(ErrorCode.ACCOUNT_LOCKED);
+        } else {
+            return R.fail(ErrorCode.LOGIN_FAILURE);
+        }
     }
 
     /**
