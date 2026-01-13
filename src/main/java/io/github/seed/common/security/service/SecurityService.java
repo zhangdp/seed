@@ -91,6 +91,7 @@ public class SecurityService {
             loginResult.setUserId(user.getId());
             loginResult.setUsername(user.getUsername());
             loginResult.setName(user.getName());
+            loginResult.setAvatar(user.getAvatar());
             // 认证成功事件
             this.authenticationSuccessHandler.onAuthenticationSuccess(request, response, authResult);
             return loginResult;

@@ -9,7 +9,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * 2023/4/7 登录结果
+ * 登录结果
  *
  * @author zhangdp
  * @since 1.0.0
@@ -58,8 +58,13 @@ public class LoginResult implements Serializable {
     @Schema(title = "账号")
     private String username;
     /**
-     * 名称
+     * 姓名
      */
-    @Schema(title = "用户名称")
+    @Schema(title = "姓名")
     private String name;
+    /**
+     * 头像
+     */
+    @Schema(title = "头像")
+    private String avatar;
 }

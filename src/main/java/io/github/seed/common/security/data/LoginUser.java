@@ -13,7 +13,7 @@ import java.util.List;
  * 登录用户信息
  *
  * @author zhangdp
- * @since 2024/1/8
+ * @since 1.0.0
  */
 @Data
 @Accessors(chain = true)
@@ -43,6 +43,22 @@ public final class LoginUser implements Serializable, UserDetails {
      * 姓名
      */
     private String name;
+    /**
+     * 头像
+     */
+    private String avatar;
+    /**
+     * 性别
+     */
+    private Character gender;
+    /**
+     * 邮箱
+     */
+    private String email;
+    /**
+     * 部门id
+     */
+    private Long deptId;
     /**
      * 拥有的角色权限列表
      */
