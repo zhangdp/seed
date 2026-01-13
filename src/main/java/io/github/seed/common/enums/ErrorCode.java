@@ -98,7 +98,7 @@ public enum ErrorCode {
     /**
      * 读取请求体失败
      */
-    REQUEST_BODY_NOT_FOUND(12003, "缺少请求体"),
+    REQUEST_BODY_NOT_READABLE(12003, "请求体解析失败"),
 
 
     /**
@@ -142,9 +142,13 @@ public enum ErrorCode {
 
     /// 4xxxx开头，中间件的错误
     /**
+     * 中间件错误
+     */
+    MIDDLEWARE_ERROR(40000, "中间件错误"),
+    /**
      * 数据库错误
      */
-    SQL_ERROR(40000, "数据库错误"),
+    SQL_ERROR(40001, "数据库错误"),
     /**
      * redis错误
      */

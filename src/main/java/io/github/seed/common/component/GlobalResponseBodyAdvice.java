@@ -122,38 +122,50 @@ public class GlobalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
             log.debug("使用{}统一包装返回：{}", R.class, body != null ? body.getClass() : null);
             return result;
         } finally {
-            // 记录操作日志，就算接口抛异常了经过GlobalExceptionHandleAdvice全局异常处理后也会走到这里
-            OperateEvent event = null;
-            try {
-                event = OperationLogContext.get();
-                if (event != null) {
-                    if (result != null) {
-                        // 记录返回值
-                        if (recordResult) {
-                            if (result instanceof String str) {
-                                event.setResult(str);
-                            } else {
-                                event.setResult(jsonMapper.writeValueAsString(result));
-                            }
-                        }
-                        // 如果是R类型，则可以记录返回状态码
-                        if (result instanceof R<?> r) {
-                            event.setResultCode(r.getCode());
+            // 发出操作日志事件，从而有需要的话监听记录日志，就算接口抛异常了经过GlobalExceptionHandleAdvice全局异常处理后也会走到这里
+            this.publishEvent(result, recordResult);
+        }
+    }
+
+    /**
+     * 发出操作日志事件
+     *
+     * @param result
+     * @param recordResult
+     */
+    private void publishEvent(Object result, boolean recordResult) {
+        OperateEvent event = null;
+        try {
+            // 从上下文取出操作日志事件
+            event = OperationLogContext.get();
+            if (event != null) {
+                if (result != null) {
+                    // 记录返回值
+                    if (recordResult) {
+                        if (result instanceof String str) {
+                            event.setResult(str);
+                        } else {
+                            event.setResult(jsonMapper.writeValueAsString(result));
                         }
                     }
-                    // 如果没有返回值的情况或者返回值不是R，返回状态码只有成功、失败（抛异常）两种
-                    if (event.getResultCode() == null) {
-                        event.setResultCode(event.getThrowable() == null ? Const.RESULT_SUCCESS : Const.RESULT_FAIL);
+                    // 如果是R类型，则可以记录返回状态码
+                    if (result instanceof R<?> r) {
+                        event.setResultCode(r.getCode());
                     }
-                    // 发出事件，异步记录
-                    applicationEventPublisher.publishEvent(event);
-                    log.debug("发布操作日志事件：{}", event);
                 }
-            } catch (Exception e) {
-                log.error("发布操作日志事件失败：{}", event, e);
-            } finally {
-                OperationLogContext.remove();
+                // 如果没有返回值的情况或者返回值不是R，返回状态码只有成功、失败（抛异常）两种
+                if (event.getResultCode() == null) {
+                    event.setResultCode(event.getThrowable() == null ? Const.RESULT_SUCCESS : Const.RESULT_FAIL);
+                }
+                // 发出事件，异步记录
+                applicationEventPublisher.publishEvent(event);
+                log.debug("发布操作日志事件：{}", event);
             }
+        } catch (Exception e) {
+            log.error("发布操作日志事件失败：{}", event, e);
+        } finally {
+            // 清理上下文
+            OperationLogContext.remove();
         }
     }
 }
