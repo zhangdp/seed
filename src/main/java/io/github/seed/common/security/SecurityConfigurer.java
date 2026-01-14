@@ -42,10 +42,8 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
-import tools.jackson.databind.json.JsonMapper;
 
 import java.util.List;
 import java.util.Set;
@@ -294,17 +292,6 @@ public class SecurityConfigurer {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder);
         return authProvider;
-    }
-
-    /**
-     * 注销成功处理器
-     *
-     * @param tokenService
-     * @return
-     */
-    // @Bean
-    public LogoutSuccessHandler logoutSuccessHandler(TokenService tokenService) {
-        return new TokenLogoutSuccessHandler(tokenService);
     }
 
     /**
