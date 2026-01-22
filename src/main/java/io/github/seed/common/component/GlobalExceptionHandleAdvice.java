@@ -340,14 +340,13 @@ public class GlobalExceptionHandleAdvice {
 
     /**
      * 自定义异常即业务异常
-     * <br>输出http状态码：409
+     * <br>输出http状态码：200
      *
      * @param e
      * @param request
      * @return
      */
     @ExceptionHandler(BizException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
     public R<?> bizException(BizException e, HttpServletRequest request) {
         log.warn("BizException：uri={}, code={}, message={}", request.getRequestURI(), e.getCode(), e.getMessage());
         return new R<>(e.getCode(), e.getMessage());
