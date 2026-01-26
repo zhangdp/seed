@@ -123,4 +123,9 @@ public interface Const {
      */
     int DB_BATCH_SIZE = 100;
 
+    /**
+     * request attr-操作事件
+     */
+    String REQUEST_ATTR_OPERATION = "operation";
+
 }

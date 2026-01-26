@@ -1,7 +1,6 @@
 package io.github.seed.common.aspect;
 
 import cn.hutool.v7.core.text.StrUtil;
-import io.github.seed.common.component.OperationLogContext;
 import io.github.seed.common.constant.Const;
 import io.github.seed.common.enums.SensitiveType;
 import io.github.seed.common.security.SecurityConst;
@@ -19,7 +18,6 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 
 import java.io.Serializable;
@@ -131,7 +129,7 @@ public class RecordOperationLogAspect {
                         event.setRefId(refId);
                     }
                     // 保存操作日志上下文，后续处理结束后记录日志
-                    OperationLogContext.set(event);
+                    request.setAttribute(Const.REQUEST_ATTR_OPERATION, event);
                 } catch (Exception e) {
                     log.warn("保存操作日志上下文出错", e);
                 }
