@@ -34,7 +34,7 @@ public class IgnoreAuthPathRegistry implements InitializingBean {
             if (method.hasMethodAnnotation(IgnoreAuth.class) || method.getBeanType().isAnnotationPresent(IgnoreAuth.class)) {
                 Set<String> values = mapping.getPatternValues();
                 this.ignoreAuthPaths.addAll(values);
-                log.info("忽略认证的接口，method={}，url={}", method, values);
+                log.debug("忽略认证的接口，method={}，url={}", method, values);
             }
         });
     }
