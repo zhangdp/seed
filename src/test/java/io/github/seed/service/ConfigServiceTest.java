@@ -49,7 +49,7 @@ public class ConfigServiceTest {
     @Test
     public void getConfigValue() {
         String key = "ACCESS_TOKEN_TTL";
-        System.out.println(configService.getConfigValue(key));
+        System.out.println(configService.getValue(key));
     }
 
     @Test

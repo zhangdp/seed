@@ -209,7 +209,7 @@ public class TokenService {
      * @return
      */
     private boolean isAutoRenewConfig() {
-        return configService.getConfigBoolValue(SecurityConst.IS_AUTO_RENEW_CONFIG_KEY, SecurityConst.IS_AUTO_RENEW);
+        return configService.getBoolValue(SecurityConst.IS_AUTO_RENEW_CONFIG_KEY, SecurityConst.IS_AUTO_RENEW);
     }
 
     /**
@@ -218,7 +218,7 @@ public class TokenService {
      * @return
      */
     private boolean getEnableRefreshToken() {
-        return configService.getConfigBoolValue(SecurityConst.ENABLE_REFRESH_TOKEN_CONFIG_KEY, SecurityConst.ENABLE_REFRESH_TOKEN);
+        return configService.getBoolValue(SecurityConst.ENABLE_REFRESH_TOKEN_CONFIG_KEY, SecurityConst.ENABLE_REFRESH_TOKEN);
     }
 
     /**
@@ -227,7 +227,7 @@ public class TokenService {
      * @return
      */
     private int getAccessTokenTtlConfig() {
-        return configService.getConfigIntValue(SecurityConst.ACCESS_TOKEN_TTL_CONFIG_KEY, SecurityConst.ACCESS_TOKEN_TTL);
+        return configService.getIntValue(SecurityConst.ACCESS_TOKEN_TTL_CONFIG_KEY, SecurityConst.ACCESS_TOKEN_TTL);
     }
 
     /**
@@ -236,7 +236,7 @@ public class TokenService {
      * @return
      */
     private int getRefreshTokenTtlConfig() {
-        return configService.getConfigIntValue(SecurityConst.REFRESH_TOKEN_TTL_CONFIG_KEY, SecurityConst.REFRESH_TOKEN_TTL);
+        return configService.getIntValue(SecurityConst.REFRESH_TOKEN_TTL_CONFIG_KEY, SecurityConst.REFRESH_TOKEN_TTL);
     }
 
 }

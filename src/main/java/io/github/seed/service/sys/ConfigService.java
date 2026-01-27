@@ -8,7 +8,7 @@ import io.github.seed.model.params.PageQuery;
 import java.util.List;
 
 /**
- * 2023/4/12 系统参数service
+ * 系统配置service
  *
  * @author zhangdp
  * @since 1.0.0
@@ -68,7 +68,7 @@ public interface ConfigService {
      * @param key
      * @return
      */
-    String getConfigValue(String key);
+    String getValue(String key);
 
     /**
      * 获取配置值，如果为空则返回默认值
@@ -77,7 +77,7 @@ public interface ConfigService {
      * @param defaultValue
      * @return
      */
-    String getConfigValue(String key, String defaultValue);
+    String getValue(String key, String defaultValue);
 
     /**
      * 获取short类型的配置值
@@ -85,7 +85,7 @@ public interface ConfigService {
      * @param key
      * @return
      */
-    Short getConfigShortValue(String key);
+    Short getShortValue(String key);
 
     /**
      * 获取short类型的配置值，如果为空则返回默认值
@@ -94,7 +94,7 @@ public interface ConfigService {
      * @param defaultValue
      * @return
      */
-    int getConfigShortValue(String key, short defaultValue);
+    int getShortValue(String key, short defaultValue);
 
     /**
      * 获取int类型的配置值
@@ -102,7 +102,7 @@ public interface ConfigService {
      * @param key
      * @return
      */
-    Integer getConfigIntValue(String key);
+    Integer getIntValue(String key);
 
     /**
      * 获取int类型的配置值，如果为空则返回默认值
@@ -111,7 +111,7 @@ public interface ConfigService {
      * @param defaultValue
      * @return
      */
-    int getConfigIntValue(String key, int defaultValue);
+    int getIntValue(String key, int defaultValue);
 
     /**
      * 获取long类型的配置值
@@ -119,7 +119,7 @@ public interface ConfigService {
      * @param key
      * @return
      */
-    Long getConfigLongValue(String key);
+    Long getLongValue(String key);
 
     /**
      * 获取bool类型的配置值
@@ -127,7 +127,7 @@ public interface ConfigService {
      * @param key
      * @return
      */
-    Boolean getConfigBoolValue(String key);
+    Boolean getBoolValue(String key);
 
     /**
      * 获取bool类型的配置值，如果为空则返回默认值
@@ -136,7 +136,7 @@ public interface ConfigService {
      * @param defaultValue
      * @return
      */
-    boolean getConfigBoolValue(String key, boolean defaultValue);
+    boolean getBoolValue(String key, boolean defaultValue);
 
     /**
      * 获取char类型的配置值
@@ -144,7 +144,7 @@ public interface ConfigService {
      * @param key
      * @return
      */
-    Character getConfigCharValue(String key);
+    Character getCharValue(String key);
 
     /**
      * 获取char类型的配置值，如果为空则返回默认值
@@ -153,7 +153,7 @@ public interface ConfigService {
      * @param defaultValue
      * @return
      */
-    char getConfigCharValue(String key, char defaultValue);
+    char getCharValue(String key, char defaultValue);
 
     /**
      * 获取long类型的配置值，如果为空则返回默认值
@@ -162,7 +162,7 @@ public interface ConfigService {
      * @param defaultValue
      * @return
      */
-    long getConfigLongValue(String key, long defaultValue);
+    long getLongValue(String key, long defaultValue);
 
     /**
      * 获取float类型的配置值
@@ -170,7 +170,7 @@ public interface ConfigService {
      * @param key
      * @return
      */
-    Float getConfigFloatValue(String key);
+    Float getFloatValue(String key);
 
     /**
      * 获取float类型的配置值，如果为空则返回默认值
@@ -179,7 +179,7 @@ public interface ConfigService {
      * @param defaultValue
      * @return
      */
-    float getConfigLongValue(String key, float defaultValue);
+    float getLongValue(String key, float defaultValue);
 
     /**
      * 获取double类型的配置值
@@ -187,7 +187,7 @@ public interface ConfigService {
      * @param key
      * @return
      */
-    Double getConfigDoubleValue(String key);
+    Double getDoubleValue(String key);
 
     /**
      * 获取double类型的配置值，如果为空则返回默认值
@@ -196,7 +196,7 @@ public interface ConfigService {
      * @param defaultValue
      * @return
      */
-    double getConfigDoubleValue(String key, double defaultValue);
+    double getDoubleValue(String key, double defaultValue);
 
     /**
      * 获取json格式的配置值，并转为对应bean
@@ -206,7 +206,7 @@ public interface ConfigService {
      * @param <T>
      * @return
      */
-    <T> T getConfigJsonBean(String key, Class<T> clazz);
+    <T> T getJsonBeanValue(String key, Class<T> clazz);
 
     /**
      * 清理某个key的缓存

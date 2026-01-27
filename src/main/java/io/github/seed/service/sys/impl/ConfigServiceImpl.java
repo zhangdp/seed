@@ -25,7 +25,7 @@ import tools.jackson.databind.json.JsonMapper;
 import java.util.List;
 
 /**
- * 2023/4/12 系统配置service实现
+ * 系统配置service实现
  *
  * @author zhangdp
  * @since 1.0.0
@@ -92,7 +92,7 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
-    public String getConfigValue(String key) {
+    public String getValue(String key) {
         // this自调用无法生效springboot @Cacheable注解
         ConfigService _this = SpringContextHolder.getBean(ConfigService.class);
         Config config = _this.getByKey(key);
@@ -104,56 +104,56 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
-    public String getConfigValue(String key, String defaultValue) {
-        String v = this.getConfigValue(key);
+    public String getValue(String key, String defaultValue) {
+        String v = this.getValue(key);
         return v == null || v.isEmpty() ? defaultValue : v;
     }
 
     @Override
-    public Short getConfigShortValue(String key) {
-        String v = this.getConfigValue(key);
+    public Short getShortValue(String key) {
+        String v = this.getValue(key);
         return v == null || v.isEmpty() ? null : Short.valueOf(v);
     }
 
     @Override
-    public int getConfigShortValue(String key, short defaultValue) {
-        Short v = this.getConfigShortValue(key);
+    public int getShortValue(String key, short defaultValue) {
+        Short v = this.getShortValue(key);
         return v == null ? defaultValue : v;
     }
 
     @Override
-    public Integer getConfigIntValue(String key) {
-        String v = this.getConfigValue(key);
+    public Integer getIntValue(String key) {
+        String v = this.getValue(key);
         return v == null || v.isEmpty() ? null : Integer.valueOf(v);
     }
 
     @Override
-    public int getConfigIntValue(String key, int defaultValue) {
-        Integer v = this.getConfigIntValue(key);
+    public int getIntValue(String key, int defaultValue) {
+        Integer v = this.getIntValue(key);
         return v == null ? defaultValue : v;
     }
 
     @Override
-    public Long getConfigLongValue(String key) {
-        String v = this.getConfigValue(key);
+    public Long getLongValue(String key) {
+        String v = this.getValue(key);
         return v == null || v.isEmpty() ? null : Long.valueOf(v);
     }
 
     @Override
-    public Boolean getConfigBoolValue(String key) {
-        String v = this.getConfigValue(key);
+    public Boolean getBoolValue(String key) {
+        String v = this.getValue(key);
         return v == null || v.isEmpty() ? null : Boolean.valueOf(v);
     }
 
     @Override
-    public boolean getConfigBoolValue(String key, boolean defaultValue) {
-        Boolean v = this.getConfigBoolValue(key);
+    public boolean getBoolValue(String key, boolean defaultValue) {
+        Boolean v = this.getBoolValue(key);
         return v == null ? defaultValue : v;
     }
 
     @Override
-    public Character getConfigCharValue(String key) {
-        String v = this.getConfigValue(key);
+    public Character getCharValue(String key) {
+        String v = this.getValue(key);
         if (v == null || v.isEmpty()) {
             return null;
         }
@@ -162,49 +162,45 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
-    public char getConfigCharValue(String key, char defaultValue) {
-        Character v = this.getConfigCharValue(key);
+    public char getCharValue(String key, char defaultValue) {
+        Character v = this.getCharValue(key);
         return v == null ? defaultValue : v;
     }
 
     @Override
-    public long getConfigLongValue(String key, long defaultValue) {
-        Long v = this.getConfigLongValue(key);
+    public long getLongValue(String key, long defaultValue) {
+        Long v = this.getLongValue(key);
         return v == null ? defaultValue : v;
     }
 
     @Override
-    public Float getConfigFloatValue(String key) {
-        String v = this.getConfigValue(key);
+    public Float getFloatValue(String key) {
+        String v = this.getValue(key);
         return v == null || v.isEmpty() ? null : Float.valueOf(v);
     }
 
     @Override
-    public float getConfigLongValue(String key, float defaultValue) {
-        Float v = this.getConfigFloatValue(key);
+    public float getLongValue(String key, float defaultValue) {
+        Float v = this.getFloatValue(key);
         return v == null ? defaultValue : v;
     }
 
     @Override
-    public Double getConfigDoubleValue(String key) {
-        String v = this.getConfigValue(key);
+    public Double getDoubleValue(String key) {
+        String v = this.getValue(key);
         return v == null || v.isEmpty() ? null : Double.valueOf(v);
     }
 
     @Override
-    public double getConfigDoubleValue(String key, double defaultValue) {
-        Double v = this.getConfigDoubleValue(key);
+    public double getDoubleValue(String key, double defaultValue) {
+        Double v = this.getDoubleValue(key);
         return v == null ? defaultValue : v;
     }
 
     @Override
-    public <T> T getConfigJsonBean(String key, Class<T> clazz) {
-        String v = this.getConfigValue(key);
-        try {
-            return v == null || v.isEmpty() ? null : jsonMapper.readValue(v, clazz);
-        } catch (JacksonException e) {
-            throw new IllegalArgumentException("配置项" + key + "的值不是一个合法的JSON", e);
-        }
+    public <T> T getJsonBeanValue(String key, Class<T> clazz) {
+        String v = this.getValue(key);
+        return v == null || v.isEmpty() ? null : jsonMapper.readValue(v, clazz);
     }
 
     @CacheEvict(key = "#key")
