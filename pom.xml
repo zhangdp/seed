@@ -17,11 +17,12 @@
     <properties>
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <hutool.version>7.0.0-M4</hutool.version>
+        <hutool.version>7.0.0-M5</hutool.version>
         <mybatis-flex.version>1.11.6</mybatis-flex.version>
-        <springdoc.version>3.0.1</springdoc.version>
+        <springdoc.version>3.0.2</springdoc.version>
         <minio.version>8.5.17</minio.version>
         <aws-s3.version>2.41.1</aws-s3.version>
+        <spring-boot-admin.version>4.0.2</spring-boot-admin.version>
     </properties>
 
     <dependencyManagement>
@@ -144,6 +145,16 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-pool2</artifactId>
         </dependency>
+
+        <!-- Source: https://mvnrepository.com/artifact/de.codecentric/spring-boot-admin-starter-client -->
+        <!--
+        <dependency>
+            <groupId>de.codecentric</groupId>
+            <artifactId>spring-boot-admin-starter-client</artifactId>
+            <version>${spring-boot-admin.version}</version>
+        </dependency>
+        -->
+
         <!-- java工具大全 https://www.hutool.cn/ -->
         <dependency>
             <groupId>cn.hutool.v7</groupId>
