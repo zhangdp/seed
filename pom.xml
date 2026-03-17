@@ -12,7 +12,7 @@
     <artifactId>seed</artifactId>
     <version>0.0.1</version>
     <name>seed</name>
-    <description>Springboot 3 权限管理系统种子项目</description>
+    <description>Springboot 4 权限管理系统种子项目</description>
 
     <properties>
         <java.version>21</java.version>
