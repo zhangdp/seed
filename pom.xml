@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.3</version>
+        <version>4.0.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>io.github</groupId>
@@ -20,9 +20,9 @@
         <hutool.version>7.0.0-M5</hutool.version>
         <mybatis-flex.version>1.11.6</mybatis-flex.version>
         <springdoc.version>3.0.2</springdoc.version>
-        <minio.version>8.5.17</minio.version>
-        <aws-s3.version>2.41.1</aws-s3.version>
-        <spring-boot-admin.version>4.0.2</spring-boot-admin.version>
+        <minio.version>9.0.0</minio.version>
+        <aws-s3.version>2.42.33</aws-s3.version>
+        <spring-boot-admin.version>4.0.3</spring-boot-admin.version>
     </properties>
 
     <dependencyManagement>
