@@ -1,6 +1,8 @@
 server:
   port: 8080
   shutdown: graceful
+  tomcat:
+    max-connections: 20000
 spring:
   profiles:
     active: dev
@@ -18,24 +20,29 @@ spring:
     deserialization:
       fail-on-unknown-properties: false
     date-format: yyyy-MM-dd HH:mm:ss
-  task:
-    execution:
-      pool:
-        core-size: 8
-        max-size: 32
-        queue-capacity: 1024
+  # task:
+    # 启用虚拟线程后无需再配置线程池
+    # execution:
+    #   pool:
+    #     core-size: 8
+    #     max-size: 32
+    #     queue-capacity: 1024
   data:
     redis:
       database: 15
       host: 191.168.10.70
       port: 6379
       password: Itsm_2025
-      connect-timeout: 10s
+      connect-timeout: 5s
       lettuce:
         pool:
-          max-active: 32
-          max-idle: 12
-          min-idle: 4
+          # 虚拟线程可大幅提升连接数
+          max-active: 50
+          max-idle: 20
+          min-idle: 10
+          # max-active: 32
+          # max-idle: 12
+          # min-idle: 4
       repositories:
         enabled: false
   cache:
@@ -49,12 +56,15 @@ spring:
     username: seed
     password: Seed@2022
     hikari:
-      maximum-pool-size: 20
-      minimum-idle: 4
+      # 启用虚拟线程可以大幅提升连接数
+      maximum-pool-size: 50
+      minimum-idle: 10
+      # maximum-pool-size: 20
+      # minimum-idle: 4
       keepalive-time: 300000
       idle-timeout: 1800000
       max-lifetime: 7200000
-      connection-timeout: 10000
+      connection-timeout: 5000
       validation-timeout: 3000
 management:
   endpoint:

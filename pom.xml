@@ -19,23 +19,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <hutool.version>7.0.0-M5</hutool.version>
         <mybatis-flex.version>1.11.6</mybatis-flex.version>
-        <springdoc.version>3.0.2</springdoc.version>
+        <springdoc.version>3.0.3</springdoc.version>
         <minio.version>9.0.0</minio.version>
         <aws-s3.version>2.42.33</aws-s3.version>
         <spring-boot-admin.version>4.0.3</spring-boot-admin.version>
     </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>cn.hutool.v7</groupId>
-                <artifactId>hutool-bom</artifactId>
-                <version>${hutool.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -159,21 +147,25 @@
         <dependency>
             <groupId>cn.hutool.v7</groupId>
             <artifactId>hutool-core</artifactId>
+            <version>${hutool.version}</version>
         </dependency>
         <dependency>
             <groupId>cn.hutool.v7</groupId>
             <artifactId>hutool-crypto</artifactId>
+            <version>${hutool.version}</version>
         </dependency>
         <!--
         <dependency>
             <groupId>cn.hutool.v7</groupId>
             <artifactId>hutool-extra</artifactId>
+            <version>${hutool.version}</version>
         </dependency>
         -->
         <!--
         <dependency>
             <groupId>cn.hutool.v7</groupId>
             <artifactId>hutool-http</artifactId>
+            <version>${hutool.version}</version>
         </dependency>
         -->
         <!-- https://mvnrepository.com/artifact/com.mybatis-flex/mybatis-flex-spring-boot3-starter -->
