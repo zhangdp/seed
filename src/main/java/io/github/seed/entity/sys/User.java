@@ -1,7 +1,7 @@
 package io.github.seed.entity.sys;
 
 import com.mybatisflex.annotation.Table;
-import io.github.seed.common.annotation.Desensitization;
+import io.github.seed.common.annotation.Sensitive;
 import io.github.seed.common.constant.TableNameConst;
 import io.github.seed.common.enums.SensitiveType;
 import io.github.seed.entity.BaseLogicEntity;
@@ -39,13 +39,13 @@ public class User extends BaseLogicEntity implements Serializable {
      * 密码
      */
     @Schema(description = "密码")
-    @Desensitization(SensitiveType.PASSWORD)
+    @Sensitive(SensitiveType.PASSWORD)
     private String password;
     /**
      * 手机号
      */
     @Schema(description = "手机号")
-    @Desensitization(SensitiveType.MOBILE)
+    @Sensitive(SensitiveType.MOBILE)
     private String mobile;
     /**
      * 性别，F：女，M：男，null：未知
@@ -61,7 +61,7 @@ public class User extends BaseLogicEntity implements Serializable {
      * 邮箱
      */
     @Schema(description = "邮箱")
-    @Desensitization(SensitiveType.EMAIL)
+    @Sensitive(SensitiveType.EMAIL)
     private String email;
     /**
      * 头像地址
@@ -78,7 +78,7 @@ public class User extends BaseLogicEntity implements Serializable {
      * 身份证号
      */
     @Schema(description = "身份证号")
-    @Desensitization(SensitiveType.CITIZEN_ID)
+    @Sensitive(SensitiveType.CITIZEN_ID)
     private String citizenId;
     /**
      * 部门id

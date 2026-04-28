@@ -43,6 +43,7 @@ spring:
           # max-active: 32
           # max-idle: 12
           # min-idle: 4
+          max-wait: 5s
       repositories:
         enabled: false
   cache:
@@ -93,7 +94,7 @@ logging:
   level:
     root: info
     web: debug
-    io.github.seed: debug
+    io.github.seed: trace
 seed:
   file-storage:
     root-path: ""

@@ -1,5 +1,6 @@
 package io.github.seed.controller.sys;
 
+import io.github.seed.common.annotation.Desensitization;
 import io.github.seed.common.annotation.RecordOperationLog;
 import io.github.seed.common.constant.TableNameConst;
 import io.github.seed.common.enums.OperateType;
@@ -81,6 +82,7 @@ public class UserController {
     @PostMapping("/page")
     @Operation(summary = "分页查询用户")
     @RecordOperationLog(type = OperateType.READ, description = "分页查询用户", refModule = TableNameConst.SYS_USER)
+    @Desensitization
     public PageData<UserInfo> queryPage(@RequestBody @Valid PageQuery<UserQuery> pageQuery, LoginUser loginUser) {
         UserQuery params = pageQuery.getParams();
         if (params == null) {

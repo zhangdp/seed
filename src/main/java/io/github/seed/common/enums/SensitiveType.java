@@ -16,7 +16,7 @@ public enum SensitiveType {
     /**
      * 自定义
      */
-    CUSTOMER(str -> {
+    CUSTOM(str -> {
         throw new UnsupportedOperationException("自定义类型需自行实现脱敏逻辑");
     }),
     /**

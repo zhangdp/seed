@@ -1,6 +1,5 @@
 package io.github.seed.common.config;
 
-import io.github.seed.common.component.DesensitizationJacksonAnnotationIntrospector;
 import io.github.seed.common.component.SafeLongSerializer;
 import io.github.seed.common.component.StringTrimDeserializer;
 import io.github.seed.common.constant.Const;
@@ -87,9 +86,9 @@ public class JacksonConfigurer {
         return builder -> builder
                 .findAndAddModules()
                 .addModule(this.javaTimeModule())
-                .addModule(this.customerModule())
+                .addModule(this.customerModule());
                 // 添加脱敏拦截器
-                .annotationIntrospector(new DesensitizationJacksonAnnotationIntrospector());
+                // .annotationIntrospector(new DesensitizationJacksonAnnotationIntrospector());
     }
 
     /**

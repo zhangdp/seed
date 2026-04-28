@@ -2,6 +2,7 @@ package io.github.seed.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -15,6 +16,7 @@ import java.util.List;
  * @since 1.0.0
  */
 @Data
+@NoArgsConstructor
 @Schema(title = "分页数据")
 public class PageData<T> implements Serializable {
 
@@ -34,22 +36,22 @@ public class PageData<T> implements Serializable {
      * 当前页数据列表
      */
     @Schema(title = "数据列表")
-    private final List<T> list;
+    private List<T> list;
     /**
      * 总数
      */
     @Schema(title = "总数")
-    private final long total;
+    private long total;
     /**
      * 当前页数
      */
     @Schema(title = "当前页数")
-    private final long page;
+    private long page;
     /**
      * 每页条数
      */
     @Schema(title = "每页条数")
-    private final long size;
+    private long size;
 
     /**
      * 使用默认页数、条数构造函数

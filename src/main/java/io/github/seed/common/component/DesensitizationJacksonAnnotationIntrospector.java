@@ -1,7 +1,7 @@
 package io.github.seed.common.component;
 
 import cn.hutool.v7.core.lang.Assert;
-import io.github.seed.common.annotation.Desensitization;
+import io.github.seed.common.annotation.Sensitive;
 import io.github.seed.common.enums.SensitiveType;
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.core.JacksonException;
@@ -22,6 +22,7 @@ import java.util.Map;
  * @author zhangdp
  * @since 1.0.0
  */
+@Deprecated
 @Slf4j
 public class DesensitizationJacksonAnnotationIntrospector extends JacksonAnnotationIntrospector {
 
@@ -35,7 +36,7 @@ public class DesensitizationJacksonAnnotationIntrospector extends JacksonAnnotat
 
     public DesensitizationJacksonAnnotationIntrospector() {
         for (SensitiveType type : SensitiveType.values()) {
-            if (type != SensitiveType.CUSTOMER) {
+            if (type != SensitiveType.CUSTOM) {
                 serializerCache.put(type, new ValueSerializer<>() {
                     @Override
                     public void serialize(String value, JsonGenerator gen, SerializationContext ctxt) throws JacksonException {
@@ -50,12 +51,12 @@ public class DesensitizationJacksonAnnotationIntrospector extends JacksonAnnotat
     public Object findSerializer(MapperConfig<?> config, Annotated a) {
         if (a.getRawType().equals(String.class)) {
             // 如果含有需要脱敏的@Desensitization注解，则根据上下文动态创建序列化器
-            Desensitization desensitization = a.getAnnotation(Desensitization.class);
-            if (desensitization != null) {
-                SensitiveType type = desensitization.value();
-                if (type == SensitiveType.CUSTOMER) {
-                    log.trace("字段{}使用自定义脱敏序列化，脱敏起始位置: {}，脱敏截止位置: {}，遮罩字符: {}", a.getName(), desensitization.start(), desensitization.end(), desensitization.mask());
-                    return new DesensitizationJacksonSerializer(desensitization.start(), desensitization.end(), desensitization.mask());
+            Sensitive sensitive = a.getAnnotation(Sensitive.class);
+            if (sensitive != null) {
+                SensitiveType type = sensitive.value();
+                if (type == SensitiveType.CUSTOM) {
+                    log.trace("字段{}使用自定义脱敏序列化，脱敏起始位置: {}，脱敏截止位置: {}，遮罩字符: {}", a.getName(), sensitive.start(), sensitive.end(), sensitive.mask());
+                    return new DesensitizationJacksonSerializer(sensitive.start(), sensitive.end(), sensitive.mask());
                 } else {
                     ValueSerializer<String> serializer = serializerCache.get(type);
                     Assert.notNull(serializer, "No JsonSerializer for " + type);

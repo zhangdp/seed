@@ -13,6 +13,7 @@ import tools.jackson.databind.ValueSerializer;
  * @author zhangdp
  * @since 1.0.0
  */
+@Deprecated
 @Slf4j
 public class DesensitizationJacksonSerializer extends ValueSerializer<String> {
 

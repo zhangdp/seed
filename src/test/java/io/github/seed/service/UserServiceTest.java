@@ -1,5 +1,6 @@
 package io.github.seed.service;
 
+import io.github.seed.common.util.DesensitizationUtil;
 import io.github.seed.entity.sys.User;
 import io.github.seed.model.PageData;
 import io.github.seed.model.dto.UserInfo;
@@ -45,7 +46,9 @@ public class UserServiceTest {
 
     @Test
     public void get() {
-        System.out.println(jsonMapper.writeValueAsString(userService.getByUsername("admin")));
+        User user = userService.getByUsername("admin");
+        DesensitizationUtil.desensitize(user);
+        System.out.println(jsonMapper.writeValueAsString(user));
     }
 
     @Test
@@ -56,9 +59,10 @@ public class UserServiceTest {
         UserQuery query = new UserQuery();
         query.setUsername("admin");
         query.setLoginUserId(1L);
-        query.setExcludeSelf(true);
+        query.setExcludeSelf(false);
         pq.setParams(query);
         PageData<UserInfo> pd = userService.queryPage(pq);
+        DesensitizationUtil.desensitize(pd);
         System.out.println(jsonMapper.writeValueAsString(pd));
     }
 

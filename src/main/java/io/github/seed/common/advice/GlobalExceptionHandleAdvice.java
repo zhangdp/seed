@@ -1,4 +1,4 @@
-package io.github.seed.common.component;
+package io.github.seed.common.advice;
 
 import cn.hutool.v7.core.text.StrUtil;
 import io.github.seed.common.data.R;
