@@ -39,7 +39,7 @@ public class DesensitizationUtil {
      * @param setter
      * @param sensitive
      */
-    record FieldMeta(Field field, Method getter, Method setter, Sensitive sensitive) {}
+    private record FieldMeta(Field field, Method getter, Method setter, Sensitive sensitive) {}
 
     /**
      * 获取某个类所有字段（包含父类的）元数据
@@ -102,14 +102,14 @@ public class DesensitizationUtil {
             return;
         }
         // 处理集合
-        else if (obj instanceof Collection<?> collection) {
+        if (obj instanceof Collection<?> collection) {
             for (Object item : collection) {
                 desensitize(item, visited);
             }
             return;
         }
         // 处理Map
-        else if (obj instanceof Map<?, ?> map) {
+        if (obj instanceof Map<?, ?> map) {
             for (Map.Entry<?, ?> entry : map.entrySet()) {
                 desensitize(entry.getKey(), visited);
                 desensitize(entry.getValue(), visited);
@@ -117,7 +117,7 @@ public class DesensitizationUtil {
             return;
         }
         // 处理数组
-        else if (obj.getClass().isArray()) {
+        if (obj.getClass().isArray()) {
             int length = Array.getLength(obj);
             for (int i = 0; i < length; i++) {
                 desensitize(Array.get(obj, i), visited);

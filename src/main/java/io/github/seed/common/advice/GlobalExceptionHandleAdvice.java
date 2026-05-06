@@ -68,6 +68,7 @@ public class GlobalExceptionHandleAdvice {
 
     /**
      * redis 异常
+     * <br>输出http状态码：500
      *
      * @param e
      * @param request
@@ -100,6 +101,7 @@ public class GlobalExceptionHandleAdvice {
 
     /**
      * 兜底中间件异常，包括数据库、redis等中间件
+     * <br>输出http状态码：500
      *
      * @param e
      * @param request
@@ -215,6 +217,7 @@ public class GlobalExceptionHandleAdvice {
 
     /**
      * 参数校验异常
+     * <br>输出http状态码：400
      *
      * @param e
      * @param request
@@ -326,6 +329,7 @@ public class GlobalExceptionHandleAdvice {
 
     /**
      * spring security 权限不足异常
+     * <br>输出http状态码：403
      *
      * @param e
      * @param request

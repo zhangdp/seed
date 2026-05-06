@@ -30,7 +30,7 @@ public class DesensitizationResponseBodyAdvice implements ResponseBodyAdvice<Obj
 
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
-        // 方法有@Desensitization注解或者所在类有@@Desensitization注解
+        // 方法有@Desensitization注解或者所在类有@Desensitization注解
         return returnType.hasMethodAnnotation(Desensitization.class) ||
                 returnType.getDeclaringClass().isAnnotationPresent(Desensitization.class);
     }
