@@ -9,6 +9,7 @@ import io.github.seed.service.sys.DeptService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,6 +35,7 @@ public class DeptController {
      * @return
      */
     @GetMapping("/tree")
+    @PreAuthorize("hasPermission('sys:dept:read')")
     @Operation(summary = "获取部门树")
     public List<DeptTreeNode> tree() {
         return deptService.listTree();
@@ -46,6 +48,7 @@ public class DeptController {
      * @return
      */
     @PostMapping("/add")
+    @PreAuthorize("hasPermission('sys:dept:create')")
     @Operation(summary = "新增部门", description = "新增部门，无需传值id、createTime、updateTime")
     @RecordOperationLog(type = OperateType.CREATE, description = "新增部门", refModule = "sys_dept", refIdEl = "#dept.id")
     public boolean add(@RequestBody @Validated(ValidGroup.Update.class) Dept dept) {
@@ -59,6 +62,7 @@ public class DeptController {
      * @return
      */
     @PutMapping("/update")
+    @PreAuthorize("hasPermission('sys:dept:update')")
     @Operation(summary = "修改部门", description = "修改部门，需传值id")
     @RecordOperationLog(type = OperateType.UPDATE, description = "修改部门", refModule = "sys_dept", refIdEl = "#dept.id")
     public boolean update(@RequestBody @Validated(ValidGroup.Update.class) Dept dept) {
@@ -72,6 +76,7 @@ public class DeptController {
      * @return
      */
     @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasPermission('sys:dept:delete')")
     @Operation(summary = "删除部门", description = "根据id删除部门")
     @RecordOperationLog(type = OperateType.DELETE, description = "删除部门", refModule = "sys_dept", refIdEl = "#id")
     public boolean delete(@PathVariable Long id) {

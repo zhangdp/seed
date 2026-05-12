@@ -8,6 +8,7 @@ import io.github.seed.common.annotation.PublishEvent;
 import io.github.seed.common.annotation.RecordOperationLog;
 import io.github.seed.common.constant.EventConst;
 import io.github.seed.common.enums.OperateType;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -22,6 +23,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * 测试接口
@@ -38,8 +42,17 @@ public class TestController {
     @PostMapping("/helloWorld")
     @RecordOperationLog(type = OperateType.READ, description = "测试", refModule = "test", refIdEl = "#data.id", recordIfError = true)
     @PublishEvent(EventConst.TEST)
-    public TestData helloWorld(@RequestBody @Valid TestData data) {
-        log.info("测试：{}", data);
+    public TestData helloWorld(@RequestBody @Valid TestData data, HttpServletRequest request) {
+        log.info("测试：requestUri={}, contextPath={}, requestUrl={}, servletPath={}, data={}", request.getRequestURI(),
+                request.getContextPath(), request.getRequestURL(), request.getServletPath(), data);
+        Map<String, String> headers = new LinkedHashMap<>();
+        Enumeration<String> headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String name = headerNames.nextElement();
+            String value = request.getHeader(name);
+            headers.put(name, value);
+        }
+        data.setHeaders(headers);
         // 模拟处理耗时，随机10-100毫秒
         ThreadUtil.sleep(RandomUtil.randomInt(10, 100));
         if (data.getId() % 2 == 0) {
@@ -60,5 +73,6 @@ public class TestController {
         private LocalTime localTime = LocalTime.now();
         private LocalDateTime localDateTime = LocalDateTime.now();
         private Date date = new Date();
+        private Map<String, String> headers = new LinkedHashMap<>();
     }
 }

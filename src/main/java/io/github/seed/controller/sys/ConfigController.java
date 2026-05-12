@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,6 +40,7 @@ public class ConfigController {
      * @return
      */
     @PostMapping("/add")
+    @PreAuthorize("hasPermission('sys:config:create')")
     @Operation(summary = "新增配置", description = "新增配置，无需传值id、createTime、updateTime")
     @RecordOperationLog(type = OperateType.CREATE, description = "新增配置", refModule = TableNameConst.SYS_CONFIG, refIdEl = "#model.id")
     public boolean add(@RequestBody @Validated(ValidGroup.Insert.class) Config model) {
@@ -52,6 +54,7 @@ public class ConfigController {
      * @return
      */
     @PutMapping("/update")
+    @PreAuthorize("hasPermission('sys:config:update')")
     @Operation(summary = "修改配置", description = "修改配置，需传值id")
     @RecordOperationLog(type = OperateType.UPDATE, description = "修改配置", refModule = TableNameConst.SYS_CONFIG, refIdEl = "#model.id")
     public boolean update(@RequestBody @Validated(ValidGroup.Update.class) Config model) {
@@ -65,6 +68,7 @@ public class ConfigController {
      * @return
      */
     @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasPermission('sys:config:delete')")
     @Operation(summary = "删除配置", description = "根据id删除配置")
     @RecordOperationLog(type = OperateType.DELETE, description = "删除配置", refModule = TableNameConst.SYS_CONFIG, refIdEl = "#id")
     public boolean delete(@PathVariable Long id) {
@@ -78,6 +82,7 @@ public class ConfigController {
      * @return
      */
     @PostMapping("/page")
+    @PreAuthorize("hasPermission('sys:config:read')")
     @Operation(summary = "分页查询配置")
     public PageData<Config> queryPage(@RequestBody @Valid PageQuery<BaseQueryParams> pageQuery) {
         return configService.queryPage(pageQuery);
@@ -89,6 +94,7 @@ public class ConfigController {
      * @return
      */
     @PostMapping("/list")
+    @PreAuthorize("hasPermission('sys:config:read')")
     @Operation(summary = "获取所有配置列表")
     public List<Config> list() {
         return configService.listAll();

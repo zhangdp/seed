@@ -2,7 +2,9 @@ package io.github.seed.controller;
 
 import io.github.seed.common.annotation.IgnoreAuth;
 import io.github.seed.common.security.data.LoginResult;
+import io.github.seed.common.security.data.LoginUser;
 import io.github.seed.common.security.service.SecurityService;
+import io.github.seed.model.dto.PermissionTreeNode;
 import io.github.seed.model.params.LoginParams;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -10,6 +12,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 认证接口
@@ -74,6 +78,10 @@ public class AuthController {
     @Operation(summary = "续签", description = "使用refresh_token续签token，成功时与登录接口无异，失败时响应401")
     public LoginResult refreshToken(String refreshToken) throws Throwable {
         return securityService.refreshToken(refreshToken);
+    }
+
+    public List<PermissionTreeNode> userMenus(LoginUser loginUser) {
+        return null;
     }
 
 }

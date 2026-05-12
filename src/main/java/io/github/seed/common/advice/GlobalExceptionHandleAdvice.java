@@ -17,6 +17,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.QueryTimeoutException;
 import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.jdbc.*;
 import org.springframework.security.access.AccessDeniedException;
@@ -27,6 +28,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestValueException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -137,10 +139,10 @@ public class GlobalExceptionHandleAdvice {
      * @param request
      * @return
      */
-    @ExceptionHandler(MissingServletRequestParameterException.class)
+    @ExceptionHandler(MissingRequestValueException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public R<?> missingServletRequestParameterException(MissingServletRequestParameterException e, HttpServletRequest request) {
-        log.warn("MissingServletRequestParameterException：uri={}, error={}", request.getRequestURI(), e.getMessage());
+    public R<?> missingRequestValueException(MissingServletRequestParameterException e, HttpServletRequest request) {
+        log.warn("MissingRequestValueException：uri={}, error={}", request.getRequestURI(), e.getMessage());
         String errMsg = e.getParameterName() + "不能为空";
         List<ParamsError> errors = new ArrayList<>();
         errors.add(new ParamsError(e.getParameterName(), errMsg));
@@ -159,7 +161,7 @@ public class GlobalExceptionHandleAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public R<?> servletException(ServletException e, HttpServletRequest request) {
         log.warn("ServletException：uri={}, error={}", request.getRequestURI(), e.getMessage());
-        return R.fail(ErrorCode.BAD_REQUEST);
+        return R.fail(ErrorCode.BAD_REQUEST.code(), e.getMessage());
     }
 
     /**
@@ -170,23 +172,23 @@ public class GlobalExceptionHandleAdvice {
      * @param request
      * @return
      */
-    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ExceptionHandler(HttpMessageConversionException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public R<?> httpMessageNotReadableException(HttpMessageNotReadableException e, HttpServletRequest request) {
-        log.warn("HttpMessageNotReadableException：uri={}, error={}", request.getRequestURI(), e.getMessage());
+    public R<?> httpMessageConversionException(HttpMessageNotReadableException e, HttpServletRequest request) {
+        log.warn("HttpMessageConversionException：uri={}, error={}", request.getRequestURI(), e.getMessage());
         return R.fail(ErrorCode.REQUEST_BODY_NOT_READABLE);
     }
 
     /**
      * 参数校验异常
-     * <br>输出http状态码：400
+     * <br>输出http状态码：422
      *
      * @param e
      * @param request
      * @return
      */
     @ExceptionHandler(ConstraintViolationException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_CONTENT)
     public R<List<ParamsError>> constraintViolationException(ConstraintViolationException e, HttpServletRequest request) {
         List<ParamsError> errors = e.getConstraintViolations()
                 .stream()
@@ -194,7 +196,7 @@ public class GlobalExceptionHandleAdvice {
                 .toList();
         String errMsg = joinParamsErrors(errors);
         log.warn("ConstraintViolationException：uri={}, error={}", request.getRequestURI(), errMsg);
-        return new R<>(ErrorCode.PARAMS_VALID_FAILED.code(), "参数错误：" + errMsg);
+        return R.fail(ErrorCode.PARAMS_VALID_FAILED.code(), "参数错误：" + errMsg);
     }
 
     /**
@@ -212,19 +214,19 @@ public class GlobalExceptionHandleAdvice {
         String msg = e.getName() + (e.getRequiredType() != null ? "需为" + e.getRequiredType().getSimpleName() + "类型" : "类型错误");
         List<ParamsError> errors = new ArrayList<>();
         errors.add(new ParamsError(e.getName(), msg));
-        return new R<>(ErrorCode.PARAMETER_TYPE_ERROR.code(), "参数错误：" + msg, errors);
+        return R.fail(ErrorCode.PARAMETER_TYPE_ERROR.code(), "参数错误：" + msg, errors);
     }
 
     /**
      * 参数校验异常
-     * <br>输出http状态码：400
+     * <br>输出http状态码：422
      *
      * @param e
      * @param request
      * @return
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_CONTENT)
     public R<List<ParamsError>> methodArgumentNotValidException(MethodArgumentNotValidException e, HttpServletRequest request) {
         List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
         List<ParamsError> errors = new ArrayList<>(fieldErrors.size());
@@ -234,19 +236,19 @@ public class GlobalExceptionHandleAdvice {
         }
         String errMsg = joinParamsErrors(errors);
         log.warn("MethodArgumentNotValidException：uri={}, error={}", request.getRequestURI(), errMsg);
-        return new R<>(ErrorCode.PARAMS_VALID_FAILED.code(), "参数错误：" + errMsg, errors);
+        return R.fail(ErrorCode.PARAMS_VALID_FAILED.code(), "参数错误：" + errMsg, errors);
     }
 
     /**
      * 参数校验异常
-     * <br>输出http状态码：400
+     * <br>输出http状态码：422
      *
      * @param e
      * @param request
      * @return R
      */
     @ExceptionHandler(BindException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_CONTENT)
     public R<List<ParamsError>> bindException(BindException e, HttpServletRequest request) {
         List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
         List<ParamsError> errors = new ArrayList<>(fieldErrors.size());
@@ -256,7 +258,7 @@ public class GlobalExceptionHandleAdvice {
         }
         String errMsg = joinParamsErrors(errors);
         log.warn("BindException：uri={}, error={}", request.getRequestURI(), errMsg);
-        return new R<>(ErrorCode.PARAMS_VALID_FAILED.code(), "参数错误：" + errMsg, errors);
+        return R.fail(ErrorCode.PARAMS_VALID_FAILED.code(), "参数错误：" + errMsg, errors);
     }
 
     /**
@@ -271,7 +273,7 @@ public class GlobalExceptionHandleAdvice {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public R<?> notFoundException(NotFoundException e, HttpServletRequest request) {
         log.warn("NotFoundException：uri={}, error={}", request.getRequestURI(), e.getMessage());
-        return new R<>(e.getCode(), e.getMessage());
+        return R.fail(e.getCode(), e.getMessage());
     }
 
     /**
@@ -286,7 +288,7 @@ public class GlobalExceptionHandleAdvice {
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public R<?> forbiddenException(ForbiddenException e, HttpServletRequest request) {
         log.warn("ForbiddenException：uri={}, error={}", request.getRequestURI(), e.getMessage());
-        return new R<>(e.getCode(), e.getMessage());
+        return R.fail(e.getCode(), e.getMessage());
     }
 
     /**
@@ -301,7 +303,7 @@ public class GlobalExceptionHandleAdvice {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public R<?> unauthorizedException(UnauthorizedException e, HttpServletRequest request) {
         log.warn("UnauthorizedException：uri={}, error={}", request.getRequestURI(), e.getMessage());
-        return new R<>(e.getCode(), e.getMessage());
+        return R.fail(e.getCode(), e.getMessage());
     }
 
     /**
@@ -353,7 +355,7 @@ public class GlobalExceptionHandleAdvice {
     @ExceptionHandler(BizException.class)
     public R<?> bizException(BizException e, HttpServletRequest request) {
         log.warn("BizException：uri={}, code={}, message={}", request.getRequestURI(), e.getCode(), e.getMessage());
-        return new R<>(e.getCode(), e.getMessage());
+        return R.fail(e.getCode(), e.getMessage());
     }
 
     /**
@@ -368,7 +370,7 @@ public class GlobalExceptionHandleAdvice {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public R<?> exception(Exception e, HttpServletRequest request) {
         log.error("INTERNAL_SERVER_ERROR：uri={}", request.getRequestURI(), e);
-        return new R<>(ErrorCode.SERVER_ERROR.code(), ERROR);
+        return R.fail(ErrorCode.SERVER_ERROR.code(), ERROR);
     }
 
     /**

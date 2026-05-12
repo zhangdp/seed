@@ -105,14 +105,27 @@ public class R<T> implements Serializable {
     }
 
     /**
-     * 根据错误码枚举创建响应对象
+     * 失败
      *
-     * @param errorCode 错误码枚举
-     * @param data      任意类型数据体
+     * @param code    错误码
+     * @param message 错误描述
      * @return
      */
-    public static <T> R<T> fail(ErrorCode errorCode, T data) {
-        return new R<>(errorCode.code(), errorCode.message(), data);
+    public static <T> R<T> fail(int code, String message) {
+        return new R<>(code, message);
+    }
+
+    /**
+     * 失败
+     *
+     * @param code    错误码
+     * @param message 错误描述
+     * @param data    数据
+     * @param <T>
+     * @return
+     */
+    public static <T> R<T> fail(int code, String message, T data) {
+        return new R<>(code, message, data);
     }
 
 }
