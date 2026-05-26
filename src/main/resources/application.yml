@@ -49,7 +49,7 @@ spring:
   cache:
     type: redis
     redis:
-      time-to-live: 1h
+      time-to-live: 30m
       key-prefix: "cache::"
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver

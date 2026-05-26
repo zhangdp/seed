@@ -5,7 +5,10 @@ import io.github.seed.common.security.data.LoginResult;
 import io.github.seed.common.security.data.LoginUser;
 import io.github.seed.common.security.service.SecurityService;
 import io.github.seed.model.dto.PermissionTreeNode;
+import io.github.seed.model.dto.UserInfo;
 import io.github.seed.model.params.LoginParams;
+import io.github.seed.service.sys.PermissionService;
+import io.github.seed.service.sys.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,6 +31,8 @@ import java.util.List;
 public class AuthController {
 
     private final SecurityService securityService;
+    private final UserService userService;
+    private final PermissionService permissionService;
 
     /**
      * 登录
@@ -80,8 +85,28 @@ public class AuthController {
         return securityService.refreshToken(refreshToken);
     }
 
+    /**
+     * 获取当前登录用户的菜单树列表
+     *
+     * @param loginUser
+     * @return
+     */
+    @GetMapping("/user/menus")
+    @Operation(summary = "获取登录用户的菜单树", description = "获取当前登录用户的菜单树列表")
     public List<PermissionTreeNode> userMenus(LoginUser loginUser) {
-        return null;
+        return permissionService.listUserMenuTrees(loginUser.getId());
+    }
+
+    /**
+     * 获取当前登录用户的详细信息
+     *
+     * @param loginUser
+     * @return
+     */
+    @GetMapping("/user/info")
+    @Operation(summary = "获取登录用户信息", description = "获取当前登录用户的详细信息")
+    public UserInfo userInfo(LoginUser loginUser) {
+        return userService.getInfo(loginUser.getId());
     }
 
 }

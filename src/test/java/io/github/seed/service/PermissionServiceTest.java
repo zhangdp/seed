@@ -20,9 +20,15 @@ public class PermissionServiceTest {
     private PermissionService permissionService;
 
     @Test
-    public void listRoleResources() {
+    public void listRolePermissions() {
         List<Long> roleIds = List.of(1L, 2L, 3L);
         System.out.println(permissionService.listRoleResources(roleIds));
+    }
+
+    @Test
+    public void listUserMenuTrees() {
+        Long userId = 1L;
+        System.out.println(permissionService.listUserMenuTrees(userId));
     }
 
 }

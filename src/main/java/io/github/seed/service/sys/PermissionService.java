@@ -74,6 +74,14 @@ public interface PermissionService {
     List<Permission> listRoleResources(Collection<Long> roleIds);
 
     /**
+     * 获取某个用户拥有的菜单树
+     *
+     * @param userId
+     * @return
+     */
+    List<PermissionTreeNode> listUserMenuTrees(Long userId);
+
+    /**
      * 转为树形节点
      *
      * @param coll

@@ -63,7 +63,6 @@ public class SecurityService {
         return this.doLogin(authentication, request, response);
     }
 
-
     /**
      * 执行登录
      *

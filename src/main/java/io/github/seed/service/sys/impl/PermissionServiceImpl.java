@@ -1,16 +1,22 @@
 package io.github.seed.service.sys.impl;
 
 import cn.hutool.v7.core.lang.Assert;
+import com.mybatisflex.core.query.QueryWrapper;
 import io.github.seed.common.constant.CacheConst;
 import io.github.seed.common.constant.Const;
 import io.github.seed.common.constant.TableNameConst;
 import io.github.seed.common.enums.ErrorCode;
+import io.github.seed.common.enums.PermissionType;
 import io.github.seed.common.exception.BizException;
 import io.github.seed.entity.sys.Permission;
+import io.github.seed.entity.sys.Role;
+import io.github.seed.entity.sys.RolePermission;
 import io.github.seed.mapper.sys.PermissionMapper;
 import io.github.seed.model.dto.PermissionTreeNode;
 import io.github.seed.service.sys.PermissionService;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -77,5 +83,10 @@ public class PermissionServiceImpl implements PermissionService {
     @Override
     public List<Permission> listRoleResources(Collection<Long> roleIds) {
         return this.permissionMapper.selectListByRoleIdIn(roleIds);
+    }
+
+    @Override
+    public List<PermissionTreeNode> listUserMenuTrees(Long userId) {
+        return this.toTree(this.permissionMapper.selectMenuListByUserId(userId));
     }
 }

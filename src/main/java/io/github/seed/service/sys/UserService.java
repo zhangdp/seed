@@ -88,4 +88,19 @@ public interface UserService {
      */
     PageData<UserInfo> queryPage(PageQuery<UserQuery> pageQuery);
 
+    /**
+     * 根据用户id获取用户详细信息
+     *
+     * @param id
+     * @return
+     */
+    UserInfo getInfo(Long id);
+
+    /**
+     * 根据用户id获取用户
+     *
+     * @param id
+     * @return
+     */
+    User getById(Long id);
 }

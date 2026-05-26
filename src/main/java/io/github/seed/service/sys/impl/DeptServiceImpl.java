@@ -80,4 +80,9 @@ public class DeptServiceImpl implements DeptService {
     public boolean delete(Long id) {
         return deptMapper.deleteById(id) > 0;
     }
+
+    @Override
+    public Dept getById(Long id) {
+        return deptMapper.selectOneById(id);
+    }
 }

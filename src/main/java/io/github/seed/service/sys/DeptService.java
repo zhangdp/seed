@@ -51,4 +51,12 @@ public interface DeptService {
      * @return
      */
     boolean delete(Long id);
+
+    /**
+     * 根据id获取部门信息
+     *
+     * @param id
+     * @return
+     */
+    Dept getById(Long id);
 }

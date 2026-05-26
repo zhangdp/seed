@@ -8,6 +8,8 @@ import io.github.seed.common.constant.EventConst;
 import io.github.seed.common.constant.TableNameConst;
 import io.github.seed.common.enums.ErrorCode;
 import io.github.seed.common.exception.BizException;
+import io.github.seed.entity.sys.Dept;
+import io.github.seed.entity.sys.Role;
 import io.github.seed.entity.sys.User;
 import io.github.seed.entity.sys.UserRole;
 import io.github.seed.mapper.sys.UserMapper;
@@ -21,6 +23,7 @@ import io.github.seed.service.sys.RoleService;
 import io.github.seed.service.sys.UserRoleService;
 import io.github.seed.service.sys.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -76,7 +79,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @CacheEvict(value = "#user.username", condition = "#result == true")
     @PublishEvent(value = EventConst.ADD_USER, condition = "#result == true")
     public boolean add(AddUserDto user) {
         Assert.isFalse(this.existsUsername(user.getUsername()), () -> new BizException(ErrorCode.USERNAME_REPEAT.code(), "账号" + user.getUsername() + "已存在"));
@@ -102,6 +104,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = "#user.username", condition = "#result == true")
     @PublishEvent(value = EventConst.UPDATE_USER, condition = "#result == true")
     public boolean update(AddUserDto user) {
         Assert.isFalse(this.existsUsernameAndIdNot(user.getUsername(), user.getId()), () -> new BizException(ErrorCode.USERNAME_REPEAT.code(), "账号" + user.getUsername() + "已存在"));
@@ -125,4 +128,30 @@ public class UserServiceImpl implements UserService {
         return userMapper.deleteById(id) > 0;
     }
 
+    @Override
+    public UserInfo getInfo(Long id) {
+        User user = this.getById(id);
+        if (user == null) {
+            return null;
+        }
+        UserInfo info = new UserInfo();
+        BeanUtils.copyProperties(user, info);
+
+        // 获取部门信息
+        if (user.getDeptId() != null) {
+            Dept dept = this.deptService.getById(user.getDeptId());
+            info.setDept(dept);
+        }
+
+        // 获取角色信息
+        List<Role> roles = roleService.listUserRoles(user.getId());
+        info.setRoles(roles);
+
+        return info;
+    }
+
+    @Override
+    public User getById(Long id) {
+        return this.userMapper.selectOneById(id);
+    }
 }

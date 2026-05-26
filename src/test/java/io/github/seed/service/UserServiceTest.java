@@ -45,10 +45,16 @@ public class UserServiceTest {
     }
 
     @Test
-    public void get() {
+    public void getByUsername() {
         User user = userService.getByUsername("admin");
         DesensitizationUtil.desensitize(user);
         System.out.println(jsonMapper.writeValueAsString(user));
+    }
+
+    @Test
+    public void getInfo() {
+        UserInfo info = userService.getInfo(1L);
+        System.out.println(info);
     }
 
     @Test

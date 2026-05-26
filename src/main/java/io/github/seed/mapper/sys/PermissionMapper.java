@@ -2,8 +2,11 @@ package io.github.seed.mapper.sys;
 
 import com.mybatisflex.core.BaseMapper;
 import com.mybatisflex.core.query.QueryWrapper;
+import io.github.seed.common.enums.PermissionType;
 import io.github.seed.entity.sys.Permission;
 import io.github.seed.entity.sys.RolePermission;
+import io.github.seed.entity.sys.UserRole;
+import io.github.seed.model.dto.PermissionTreeNode;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.Collection;
@@ -45,7 +48,10 @@ public interface PermissionMapper extends BaseMapper<Permission> {
      * @return
      */
     default List<Permission> selectListByRoleIdIn(Collection<Long> roleIds) {
-        QueryWrapper subQuery = QueryWrapper.create().select(RolePermission::getPermissionId).from(RolePermission.class).in(RolePermission::getRoleId, roleIds);
+        QueryWrapper subQuery = QueryWrapper.create()
+                .select(RolePermission::getPermissionId)
+                .from(RolePermission.class)
+                .in(RolePermission::getRoleId, roleIds);
         return this.selectListByQuery(QueryWrapper.create().in(Permission::getId, subQuery));
     }
 
@@ -56,7 +62,32 @@ public interface PermissionMapper extends BaseMapper<Permission> {
      * @return
      */
     default List<Permission> selectListByRoleId(Long roleId) {
-        QueryWrapper subQuery = QueryWrapper.create().select(RolePermission::getPermissionId).from(RolePermission.class).eq(RolePermission::getRoleId, roleId);
+        QueryWrapper subQuery = QueryWrapper.create()
+                .select(RolePermission::getPermissionId)
+                .from(RolePermission.class)
+                .eq(RolePermission::getRoleId, roleId);
         return this.selectListByQuery(QueryWrapper.create().in(Permission::getId, subQuery));
+    }
+
+    /**
+     * 查询某个用户拥有的菜单列表
+     *
+     * @param userId
+     * @return
+     */
+    default List<Permission> selectMenuListByUserId(Long userId) {
+        QueryWrapper userRoleQuery = QueryWrapper.create()
+                .select(UserRole::getRoleId)
+                .from(UserRole.class)
+                .eq(UserRole::getUserId, userId);
+        QueryWrapper rolePermissionQuery = QueryWrapper.create()
+                .select(RolePermission::getPermissionId)
+                .from(RolePermission.class)
+                .in(RolePermission::getRoleId, userRoleQuery);
+        QueryWrapper query = QueryWrapper.create()
+                .eq(Permission::getType, PermissionType.MENU.type())
+                .in(Permission::getId, rolePermissionQuery)
+                .orderBy(Permission::getSorts, true);
+        return this.selectListByQuery(query);
     }
 }
