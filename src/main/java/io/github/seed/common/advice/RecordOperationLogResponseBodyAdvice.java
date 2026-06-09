@@ -1,11 +1,9 @@
 package io.github.seed.common.advice;
 
-import io.github.seed.common.annotation.Desensitization;
 import io.github.seed.common.annotation.RecordOperationLog;
 import io.github.seed.common.constant.Const;
 import io.github.seed.common.data.OperateEvent;
 import io.github.seed.common.data.R;
-import io.github.seed.entity.log.OperationLog;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;

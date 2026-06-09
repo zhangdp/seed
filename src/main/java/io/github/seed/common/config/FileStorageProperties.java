@@ -4,7 +4,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.time.Duration;
@@ -20,7 +19,6 @@ import java.util.Map;
 @Getter
 @Setter
 @ConfigurationProperties(value = "seed.file-storage")
-@Slf4j
 public class FileStorageProperties {
 
     /**
