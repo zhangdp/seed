@@ -56,6 +56,7 @@ spring:
     url: jdbc:mysql://191.168.10.71:3306/seed?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
     username: seed
     password: Seed@2022
+    lazy: true
     hikari:
       # 启用虚拟线程可以大幅提升连接数
       maximum-pool-size: 50
