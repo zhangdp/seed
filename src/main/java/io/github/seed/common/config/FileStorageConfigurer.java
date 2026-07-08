@@ -1,5 +1,6 @@
 package io.github.seed.common.config;
 
+import io.github.seed.common.component.AwsS3FileTemplate;
 import io.github.seed.common.component.FileTemplate;
 import io.github.seed.common.component.LocalFileTemplate;
 import io.github.seed.common.constant.MimeType;
@@ -62,15 +63,15 @@ public class FileStorageConfigurer implements InitializingBean {
      *
      * @return
      */
-    /*@Bean
+    @Bean
     @ConditionalOnMissingBean
     @ConditionalOnProperty(prefix = "seed.file-storage", name = "type", havingValue = "awss3")
     public FileTemplate awsS3FileTemplate() {
         FileStorageProperties.AwsS3Properties awss3Properties = fileStorageProperties.getAwss3();
-        FileTemplate template = new AwsS3Template(awss3Properties.getEndpoint(), awss3Properties.getAccessKey(), awss3Properties.getSecretKey(), awss3Properties.getBucketName());
+        FileTemplate template = new AwsS3FileTemplate(awss3Properties.getEndpoint(), awss3Properties.getAccessKey(), awss3Properties.getSecretKey(), awss3Properties.getBucketName());
         log.info("使用Aws S3文件访问器：{}, 地址：{}，桶：{}", template, awss3Properties.getEndpoint(), awss3Properties.getBucketName());
         return template;
-    }*/
+    }
 
     @Override
     public void afterPropertiesSet() throws Exception {

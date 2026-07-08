@@ -46,7 +46,7 @@ public class AwsS3FileTemplate implements FileTemplate, InitializingBean {
         Assert.hasText(this.accessKey, "accessKey不能为空");
         Assert.hasText(this.secretKey, "secretKey不能为空");
         Assert.hasText(this.bucket, "bucket不能为空");
-        s3Client = S3Client.builder()
+        this.s3Client = S3Client.builder()
                 .endpointOverride(URI.create(this.endpoint))
                 .credentialsProvider(
                         StaticCredentialsProvider.create(
@@ -105,7 +105,6 @@ public class AwsS3FileTemplate implements FileTemplate, InitializingBean {
         return this.isPathDirectoryStyle(path);
     }
 
-    @Override
     public boolean isEmptyDirectory(String path) {
         path = this.normalizePath(path);
         if (!this.isPathDirectoryStyle(path)) {

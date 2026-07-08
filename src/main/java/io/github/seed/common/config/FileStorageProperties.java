@@ -62,7 +62,7 @@ public class FileStorageProperties {
     /**
      * aws s3配置
      */
-    // private AwsS3Properties awss3;
+    private AwsS3Properties awss3;
 
     /**
      * 附件保存方式枚举
@@ -83,7 +83,7 @@ public class FileStorageProperties {
         /**
          * aws s3
          */
-        // AWSS3
+        AWS_S3
     }
 
     /**
@@ -129,30 +129,30 @@ public class FileStorageProperties {
 
     /**
      * aws s3配置
-     *//*
+     */
     @Getter
     @Setter
     public static class AwsS3Properties {
 
-        *//**
+        /**
          * 访问地址
-         *//*
+         */
         private String endpoint;
 
-        *//**
+        /**
          * 用户名
-         *//*
+         */
         private String accessKey;
 
-        *//**
+        /**
          * 密码
-         *//*
+         */
         private String secretKey;
 
-        *//**
+        /**
          * 桶名称
-         *//*
+         */
         private String bucketName;
-    }*/
+    }
 
 }
