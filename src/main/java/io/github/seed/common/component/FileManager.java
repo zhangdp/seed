@@ -91,7 +91,7 @@ public class FileManager {
         fileInfoService.add(entity);
 
         // 保存文件
-        fileTemplate.upload(file.getInputStream(), remotePath);
+        fileTemplate.upload(file.getInputStream(), file.getSize(), remotePath);
 
         FileInfoDto dto = new FileInfoDto();
         BeanUtil.copyProperties(entity, dto);

@@ -1,8 +1,10 @@
 package io.github.seed.common.component;
 
 import cn.hutool.v7.core.io.IoUtil;
+import io.github.seed.common.util.MimeTypes;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -24,20 +26,26 @@ import java.net.URI;
  */
 @Slf4j
 @Getter
-public class AwsS3FileTemplate implements FileTemplate, InitializingBean {
+public class AwsS3FileTemplate implements FileTemplate, InitializingBean, DisposableBean {
 
     private final String endpoint;
     private final String accessKey;
     private final String secretKey;
     private final String bucket;
+    private final String region;
 
     private S3Client s3Client;
 
     public AwsS3FileTemplate(String endpoint, String accessKey, String secretKey, String bucket) {
+        this(endpoint, accessKey, secretKey, bucket, Region.US_EAST_1.id());
+    }
+
+    public AwsS3FileTemplate(String endpoint, String accessKey, String secretKey, String bucket, String region) {
         this.endpoint = endpoint;
         this.accessKey = accessKey;
         this.secretKey = secretKey;
         this.bucket = bucket;
+        this.region = region;
     }
 
     @Override
@@ -46,6 +54,7 @@ public class AwsS3FileTemplate implements FileTemplate, InitializingBean {
         Assert.hasText(this.accessKey, "accessKey不能为空");
         Assert.hasText(this.secretKey, "secretKey不能为空");
         Assert.hasText(this.bucket, "bucket不能为空");
+        Assert.hasText(this.region, "region不能为空");
         this.s3Client = S3Client.builder()
                 .endpointOverride(URI.create(this.endpoint))
                 .credentialsProvider(
@@ -53,7 +62,7 @@ public class AwsS3FileTemplate implements FileTemplate, InitializingBean {
                                 AwsBasicCredentials.create(this.accessKey, this.secretKey)
                         )
                 )
-                .region(Region.US_EAST_1) // 必须填
+                .region(Region.of(this.region)) // 必须填
                 .serviceConfiguration(
                         S3Configuration.builder()
                                 .pathStyleAccessEnabled(true)
@@ -61,6 +70,20 @@ public class AwsS3FileTemplate implements FileTemplate, InitializingBean {
                 )
                 .build();
         log.info("初始化AWS S3客户端：{}, endpoint: {}, bucket: {}", this.s3Client, this.endpoint, this.bucket);
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        if (this.s3Client != null) {
+            try {
+                this.s3Client.close();
+                log.info("s3Client {} 已关闭", this.s3Client);
+            } catch (Exception e) {
+                log.warn("关闭S3客户端异常", e);
+            } finally {
+                this.s3Client = null;
+            }
+        }
     }
 
     /**
@@ -74,7 +97,8 @@ public class AwsS3FileTemplate implements FileTemplate, InitializingBean {
             return s3Client.headObject(HeadObjectRequest.builder()
                     .bucket(this.bucket)
                     .key(path)
-                    .build());
+                    .build()
+            );
         } catch (NoSuchKeyException e) {
             return null;
         }
@@ -92,7 +116,8 @@ public class AwsS3FileTemplate implements FileTemplate, InitializingBean {
                 .bucket(this.bucket)
                 .prefix(prefix)
                 .maxKeys(maxKeys)
-                .build());
+                .build()
+        );
     }
 
     @Override
@@ -111,7 +136,7 @@ public class AwsS3FileTemplate implements FileTemplate, InitializingBean {
             path += "/";
         }
         ListObjectsV2Response res = this.listObjects(path, 1);
-        return res != null && res.hasContents();
+        return res == null || res.hasContents();
     }
 
     @Override
@@ -182,6 +207,7 @@ public class AwsS3FileTemplate implements FileTemplate, InitializingBean {
                 PutObjectRequest.builder()
                         .bucket(bucket)
                         .key(path)
+                        .contentType(MimeTypes.guessMimeType(file))
                         .build(),
                 RequestBody.fromFile(file)
         );
@@ -201,6 +227,7 @@ public class AwsS3FileTemplate implements FileTemplate, InitializingBean {
                 PutObjectRequest.builder()
                         .bucket(bucket)
                         .key(path)
+                        .contentType(MimeTypes.guessMimeType(path))
                         .build(),
                 RequestBody.fromBytes(bytes)
         );
@@ -209,16 +236,36 @@ public class AwsS3FileTemplate implements FileTemplate, InitializingBean {
     }
 
     @Override
-    public boolean upload(InputStream inputStream, String path) throws IOException {
+    public boolean upload(InputStream inputStream, long size, String path) throws IOException {
         path = this.normalizePath(path);
         try {
             PutObjectResponse res = s3Client.putObject(
                     PutObjectRequest.builder()
                             .bucket(bucket)
                             .key(path)
+                            .contentType(MimeTypes.guessMimeType(path))
                             .build(),
-                    RequestBody.fromInputStream(inputStream, inputStream.available())
+                    RequestBody.fromInputStream(inputStream, size)
             );
+            log.debug("[{}]上传inputStream文件, path={}, size={}, result={}", this.bucket, path, size, res);
+            return true;
+        } finally {
+            IoUtil.closeQuietly(inputStream);
+        }
+    }
+
+    @Override
+    public boolean upload(InputStream inputStream, String path) throws IOException {
+        path = this.normalizePath(path);
+        try {
+            String contentType = MimeTypes.guessMimeType(path);
+            PutObjectResponse res = s3Client.putObject(PutObjectRequest.builder()
+                            .bucket(bucket)
+                            .key(path)
+                            .contentType(contentType)
+                            .build(),
+                    RequestBody.fromContentProvider(() -> inputStream, -1L, contentType));
+
             log.debug("[{}]上传inputStream文件, path={}, result={}", this.bucket, path, res);
             return true;
         } finally {
@@ -232,7 +279,8 @@ public class AwsS3FileTemplate implements FileTemplate, InitializingBean {
         return s3Client.getObject(GetObjectRequest.builder()
                 .bucket(bucket)
                 .key(path)
-                .build());
+                .build()
+        );
     }
 
     @Override
@@ -243,7 +291,8 @@ public class AwsS3FileTemplate implements FileTemplate, InitializingBean {
                 .bucket(bucket)
                 .key(path)
                 .range(range)
-                .build());
+                .build()
+        );
     }
 
     @Override
@@ -272,4 +321,13 @@ public class AwsS3FileTemplate implements FileTemplate, InitializingBean {
         return this.download(path, new File(localPath));
     }
 
+    @Override
+    public String normalizePath(String path) {
+        String p = FileTemplate.super.normalizePath(path);
+        // aws s3不应该以/开头
+        if (p.startsWith("/")) {
+            p =p.substring(1);
+        }
+        return p;
+    }
 }

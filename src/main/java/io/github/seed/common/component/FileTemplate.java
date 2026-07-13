@@ -97,11 +97,22 @@ public interface FileTemplate {
     boolean upload(byte[] bytes, String path);
 
     /**
-     * 从输入流上传文件到指定路径，默认覆盖。会自动关闭输入流
+     * 从输入流上传文件到指定路径（知道数据大小），默认覆盖。会自动关闭输入流
+     *
+     * @param inputStream
+     * @param size
+     * @param path
+     * @return
+     */
+    boolean upload(InputStream inputStream, long size, String path) throws IOException;
+
+    /**
+     * 从输入流上传文件到指定路径（未知数据大小），默认覆盖。会自动关闭输入流
      *
      * @param inputStream
      * @param path
      * @return
+     * @throws IOException
      */
     boolean upload(InputStream inputStream, String path) throws IOException;
 
@@ -181,6 +192,10 @@ public interface FileTemplate {
         path = path.replace('\\', '/');
         // 重复的/替换为单个/
         path = path.replaceAll("//+", "/");
+        // 防止路径遍历攻击，如果包含 ../ 则抛出异常或进行过滤
+        if (path.contains("../")) {
+            throw new IllegalArgumentException("路径包含非法字符 ../，禁止路径遍历");
+        }
         return path;
     }
 

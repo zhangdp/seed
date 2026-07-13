@@ -114,7 +114,12 @@ public class LocalFileTemplate implements FileTemplate {
     }
 
     @Override
-    public boolean upload(InputStream inputStream, String path) {
+    public boolean upload(InputStream inputStream, long size, String path) {
+        return FileUtil.writeFromStream(inputStream, new File(this.fullPath(path)), true) != null;
+    }
+
+    @Override
+    public boolean upload(InputStream inputStream, String path) throws IOException {
         return FileUtil.writeFromStream(inputStream, new File(this.fullPath(path)), true) != null;
     }
 
