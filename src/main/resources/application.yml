@@ -96,7 +96,7 @@ logging:
     root: info
     web: debug
     io.github.seed: trace
-seed:
+app:
   security:
     access-token-ttl: 30m
     refresh-token-ttl: 24h
@@ -114,7 +114,7 @@ seed:
       username: actuator
       password: Seed@2026
       roles: ACTUATOR
-      permit-urls: health,info
+      permit-urls: /actuator,/actuator/health,/actuator/info
   file-storage:
     root-path: ""
     type: local

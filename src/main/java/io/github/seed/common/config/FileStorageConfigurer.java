@@ -36,7 +36,7 @@ public class FileStorageConfigurer implements InitializingBean {
      */
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnProperty(prefix = "seed.file-storage", name = "type", havingValue = "local")
+    @ConditionalOnProperty(prefix = FileStorageProperties.CONFIG_PREFIX, name = "type", havingValue = "local")
     public FileTemplate localFileTemplate() {
         FileTemplate template = new LocalFileTemplate(fileStorageProperties.getLocal().getUploadDir());
         log.info("使用本地文件访问器：{}，上传文件夹：{}", template, fileStorageProperties.getLocal().getUploadDir());
@@ -50,7 +50,7 @@ public class FileStorageConfigurer implements InitializingBean {
      */
     /*@Bean
     @ConditionalOnMissingBean
-    @ConditionalOnProperty(prefix = "seed.file-storage", name = "type", havingValue = "minio")
+    @ConditionalOnProperty(prefix = FileStorageProperties.CONFIG_PREFIX, name = "type", havingValue = "minio")
     public FileTemplate minioFileTemplate() {
         FileStorageProperties.MinioProperties minioProperties = fileStorageProperties.getMinio();
         FileTemplate template = new MinioTemplate(minioProperties.getEndpoint(), minioProperties.getAccessKey(), minioProperties.getSecretKey(), minioProperties.getBucketName());
@@ -65,7 +65,7 @@ public class FileStorageConfigurer implements InitializingBean {
      */
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnProperty(prefix = "seed.file-storage", name = "type", havingValue = "awss3")
+    @ConditionalOnProperty(prefix = FileStorageProperties.CONFIG_PREFIX, name = "type", havingValue = "awss3")
     public FileTemplate awsS3FileTemplate() {
         FileStorageProperties.AwsS3Properties awss3Properties = fileStorageProperties.getAwss3();
         FileTemplate template = new AwsS3FileTemplate(awss3Properties.getEndpoint(), awss3Properties.getAccessKey(), awss3Properties.getSecretKey(), awss3Properties.getBucketName());

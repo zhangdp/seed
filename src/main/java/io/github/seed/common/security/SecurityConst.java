@@ -11,7 +11,7 @@ public interface SecurityConst {
     /**
      * application配置前缀名称
      */
-    String CONFIG_PREFIX = "seed.security";
+    String CONFIG_PREFIX = "app.security";
 
     /**
      * session key 用户信息

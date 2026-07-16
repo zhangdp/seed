@@ -21,6 +21,7 @@ import org.springframework.util.PatternMatchUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Set;
 
 /**
  * spring security解析token过滤器
@@ -34,23 +35,26 @@ import java.io.IOException;
 public class TokenResolveAuthenticationFilter extends OncePerRequestFilter {
 
     private final TokenService tokenService;
+    private final String[] ignoreUrls;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String uri = request.getRequestURI();
-        // todo 跳过放行的url
-        String token = SecurityUtils.resolveBearerToken(request);
-        log.debug("TokenAuthenticationFilter: {}, token: {}", uri, SensitiveType.TOKEN.getDesensitizer().apply(token));
-        if (StrUtil.isNotBlank(token)) {
-            AccessToken accessToken = tokenService.loadAccessToken(token);
-            if (accessToken != null) {
-                UserDetails userDetails = accessToken.getUserDetails();
-                Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                SecurityContext context = SecurityContextHolder.getContext();
-                context.setAuthentication(authentication);
-                request.setAttribute(SecurityConst.REQUEST_ATTR_ACCESS_TOKEN, accessToken);
-                // 重置token过期时间
-                tokenService.resetTokenExpireIfNecessary(token, userDetails);
+        // 跳过放行的url
+        if (ignoreUrls != null && ignoreUrls.length > 0 && !PatternMatchUtils.simpleMatch(ignoreUrls, uri)) {
+            String token = SecurityUtils.resolveBearerToken(request);
+            log.debug("TokenAuthenticationFilter: {}, token: {}", uri, SensitiveType.TOKEN.getDesensitizer().apply(token));
+            if (StrUtil.isNotBlank(token)) {
+                AccessToken accessToken = tokenService.loadAccessToken(token);
+                if (accessToken != null) {
+                    UserDetails userDetails = accessToken.getUserDetails();
+                    Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    SecurityContext context = SecurityContextHolder.getContext();
+                    context.setAuthentication(authentication);
+                    request.setAttribute(SecurityConst.REQUEST_ATTR_ACCESS_TOKEN, accessToken);
+                    // 重置token过期时间
+                    tokenService.resetTokenExpireIfNecessary(token, userDetails);
+                }
             }
         }
         filterChain.doFilter(request, response);

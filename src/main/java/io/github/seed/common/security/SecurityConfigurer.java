@@ -75,7 +75,7 @@ public class SecurityConfigurer {
      */
     @Bean
     @Order(Ordered.LOWEST_PRECEDENCE - 1)
-    @ConditionalOnProperty(prefix = SecurityConst.CONFIG_PREFIX, name = "enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = SecurityConst.CONFIG_PREFIX + ".actuator", name = "enabled", havingValue = "true")
     SecurityFilterChain actuatorSecurity(HttpSecurity http, PasswordEncoder passwordEncoder) throws Exception {
         http
                 .securityMatcher(EndpointRequest.toAnyEndpoint())
@@ -240,7 +240,7 @@ public class SecurityConfigurer {
      */
     @Bean
     public TokenResolveAuthenticationFilter tokenAuthenticationFilter(TokenService tokenService) {
-        return new TokenResolveAuthenticationFilter(tokenService);
+        return new TokenResolveAuthenticationFilter(tokenService, securityProperties.getPermitUrls());
     }
 
     /**

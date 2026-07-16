@@ -18,8 +18,10 @@ import java.util.Map;
  */
 @Getter
 @Setter
-@ConfigurationProperties(value = "seed.file-storage")
+@ConfigurationProperties(FileStorageProperties.CONFIG_PREFIX)
 public class FileStorageProperties {
+
+    public static final String CONFIG_PREFIX = "app.file-storage";
 
     /**
      * 根目录
