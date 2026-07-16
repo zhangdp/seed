@@ -1,7 +1,5 @@
 package io.github.seed.common.security;
 
-import org.springframework.http.HttpMethod;
-
 /**
  * 2023/4/4 认证相关常量
  *
@@ -11,21 +9,15 @@ import org.springframework.http.HttpMethod;
 public interface SecurityConst {
 
     /**
+     * application配置前缀名称
+     */
+    String CONFIG_PREFIX = "seed.security";
+
+    /**
      * session key 用户信息
      */
     String SESSION_USER = "user";
-    /**
-     * 认证类型:BEARER
-     */
-    String AUTH_TYPE_BEARER = "Bearer";
-    /**
-     * 认证头
-     */
-    String AUTHORIZATION_HEADER = "Authorization";
-    /**
-     * 认证参数名称
-     */
-    String AUTHORIZATION_PARAMETER = "access_token";
+
     /**
      * 角色前缀
      */
@@ -46,14 +38,7 @@ public interface SecurityConst {
      * 刷新token url
      */
     String REFRESH_TOKEN_URL = AUTH_URL + "/token/refresh";
-    /**
-     * 访问令牌有效期
-     */
-    int ACCESS_TOKEN_TTL = 30 * 60;
-    /**
-     * 刷新令牌有效期
-     */
-    int REFRESH_TOKEN_TTL = 24 * 60 * 60;
+
     /**
      * redis key 前缀
      */
@@ -62,32 +47,6 @@ public interface SecurityConst {
      * redis key 分隔符
      */
     String REDIS_SPLIT = "::";
-
-    /**
-     * 是否自动刷新访问令牌过期时间
-     */
-    boolean IS_AUTO_RENEW = false;
-    /**
-     * 是否启动刷新token
-     */
-    boolean ENABLE_REFRESH_TOKEN = true;
-
-    /**
-     * 访问令牌过期时间配置key
-     */
-    String ACCESS_TOKEN_TTL_CONFIG_KEY = "ACCESS_TOKEN_TTL";
-    /**
-     * 刷新令牌过期时间配置key
-     */
-    String REFRESH_TOKEN_TTL_CONFIG_KEY = "REFRESH_TOKEN_TTL";
-    /**
-     * 是否自动刷新令牌过期时间配置key
-     */
-    String IS_AUTO_RENEW_CONFIG_KEY = "IS_AUTO_RENEW";
-    /**
-     * 是否启动刷新令牌配置key
-     */
-    String ENABLE_REFRESH_TOKEN_CONFIG_KEY = "ENABLE_REFRESH_TOKEN";
 
     /**
      * redis 访问令牌key前缀
@@ -112,7 +71,27 @@ public interface SecurityConst {
     String REQUEST_ATTR_ACCESS_TOKEN = "security_access_token";
 
     /**
-     * 放行url，即不需要验证是否登录的url
+     * ACTUATOR端点需要的角色
      */
-    String[] PERMIT_URLS = new String[]{"/favicon.ico", "/swagger-ui/**", "/v3/**", "/actuator", "/actuator/**", "/error"};
+    String ACTUATOR_NEED_ROLE = "ACTUATOR";
+
+    /**
+     * 认证类型：Bearer
+     */
+    String AUTH_TYPE_BEARER = "Bearer";
+
+    /**
+     * 认证类型：Basic
+     */
+    String AUTH_TYPE_BASIC = "Basic";
+
+    /**
+     * 认证头
+     */
+    String AUTHORIZATION_HEADER = "Authorization";
+
+    /**
+     * token参数名称
+     */
+    String AUTHORIZATION_PARAMETER = "access_token";
 }

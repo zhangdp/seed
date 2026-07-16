@@ -39,7 +39,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/add")
-    @PreAuthorize("hasPermission('sys:user:add')")
+    @PreAuthorize("hasAuthority('sys:user:add')")
     @Operation(summary = "新增用户", description = "新增用户，无需传值id、createTime、updateTime")
     @RecordOperationLog(type = OperateType.CREATE, description = "新增用户", refModule = TableNameConst.SYS_USER)
     public boolean add(@RequestBody @Valid AddUserDto user) {
@@ -53,7 +53,7 @@ public class UserController {
      * @return
      */
     @PutMapping("/update")
-    @PreAuthorize("hasPermission('sys:user:update')")
+    @PreAuthorize("hasAuthority('sys:user:update')")
     @Operation(summary = "修改用户", description = "修改用户，需传值id，无需传createTime、updateTime")
     @RecordOperationLog(type = OperateType.UPDATE, description = "修改用户", refModule = TableNameConst.SYS_USER, refIdEl = "#user.id")
     public boolean update(@RequestBody @Valid AddUserDto user) {
@@ -67,7 +67,7 @@ public class UserController {
      * @return
      */
     @DeleteMapping("/delete/{id}")
-    @PreAuthorize("hasPermission('sys:user:delete')")
+    @PreAuthorize("hasAuthority('sys:user:delete')")
     @Operation(summary = "删除用户", description = "根据id删除用户，如果本来就不存在则返回false")
     @RecordOperationLog(type = OperateType.DELETE, description = "删除用户", refModule = TableNameConst.SYS_USER, refIdEl = "#id")
     public boolean delete(@PathVariable Long id) {
@@ -80,7 +80,7 @@ public class UserController {
      * @param pageQuery
      * @return
      */
-    @PreAuthorize("hasPermission('sys:user:read')")
+    @PreAuthorize("hasAuthority('sys:user:read')")
     @PostMapping("/page")
     @Operation(summary = "分页查询用户")
     @RecordOperationLog(type = OperateType.READ, description = "分页查询用户", refModule = TableNameConst.SYS_USER)

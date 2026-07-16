@@ -1,7 +1,6 @@
 package io.github.seed.common.security.data;
 
 import lombok.Data;
-import lombok.experimental.Accessors;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -13,7 +12,6 @@ import java.io.Serializable;
  * @since 1.0.0
  */
 @Data
-@Accessors(chain = true)
 public class RefreshToken implements Serializable {
 
     @Serial
@@ -30,11 +28,11 @@ public class RefreshToken implements Serializable {
     /**
      * 剩余有效时间（秒）
      */
-    private int expiresIn;
+    private Long expiresIn;
     /**
      * 签发时间
      */
-    private long issuedAt;
+    private Long issuedAt;
     /**
      * 用户
      */

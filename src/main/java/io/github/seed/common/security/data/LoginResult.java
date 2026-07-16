@@ -1,9 +1,7 @@
 package io.github.seed.common.security.data;
 
-import io.github.seed.common.security.SecurityConst;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import lombok.experimental.Accessors;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -15,7 +13,6 @@ import java.io.Serializable;
  * @since 1.0.0
  */
 @Data
-@Accessors(chain = true)
 @Schema(title = "登录结果")
 public class LoginResult implements Serializable {
 
@@ -31,7 +28,7 @@ public class LoginResult implements Serializable {
      * 令牌类型
      */
     @Schema(title = "令牌类型")
-    private String tokenType = SecurityConst.AUTH_TYPE_BEARER;
+    private String tokenType;
     /**
      * 刷新令牌
      */
@@ -41,7 +38,7 @@ public class LoginResult implements Serializable {
      * 访问令牌剩余有效期，单位：秒
      */
     @Schema(title = "访问令牌剩余有效期", description = "单位：秒")
-    private Integer expiresIn;
+    private Long expiresIn;
     /**
      * 用户id
      */

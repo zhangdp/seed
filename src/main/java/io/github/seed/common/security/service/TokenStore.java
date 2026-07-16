@@ -106,14 +106,6 @@ public interface TokenStore {
     int countUserToAccessToken(String username);
 
     /**
-     * 清理用户已过期token
-     *
-     * @param username
-     * @param expire
-     */
-    void pruneExpiredUserToAccessToken(String username, Duration expire);
-
-    /**
      * 删除用户某个访问令牌
      *
      * @param username

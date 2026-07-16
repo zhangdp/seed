@@ -1,8 +1,7 @@
 package io.github.seed.common.security.service;
 
 import cn.hutool.v7.core.util.RandomUtil;
-import io.github.seed.common.enums.ErrorCode;
-import io.github.seed.common.exception.UnauthorizedException;
+import io.github.seed.common.security.SecurityConst;
 import io.github.seed.common.security.SecurityUtils;
 import io.github.seed.common.security.data.*;
 import io.github.seed.common.util.SpringWebContextHolder;
@@ -91,6 +90,7 @@ public class SecurityService {
             loginResult.setUsername(user.getUsername());
             loginResult.setName(user.getName());
             loginResult.setAvatar(user.getAvatar());
+            loginResult.setTokenType(SecurityConst.AUTH_TYPE_BEARER);
             // 认证成功事件
             this.authenticationSuccessHandler.onAuthenticationSuccess(request, response, authResult);
             return loginResult;
@@ -126,7 +126,7 @@ public class SecurityService {
      * @return
      */
     public boolean logout(HttpServletRequest request) {
-        String token = SecurityUtils.resolveToken(request);
+        String token = SecurityUtils.resolveBearerToken(request);
         // 没有token不报错也相当于注销成功
         if (token == null || token.isEmpty()) {
             return false;

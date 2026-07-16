@@ -37,7 +37,7 @@ public class PermissionController {
      * @return
      */
     @PostMapping("/add")
-    @PreAuthorize("hasPermission('sys:permission:create')")
+    @PreAuthorize("hasAuthority('sys:permission:create')")
     @Operation(summary = "新增权限", description = "新增权限，无需传值id、createTime、updateTime")
     @RecordOperationLog(type = OperateType.CREATE, description = "新增权限", refModule = TableNameConst.SYS_PERMISSION, refIdEl = "#permission.id")
     public boolean add(@RequestBody @Validated Permission permission) {
@@ -51,7 +51,7 @@ public class PermissionController {
      * @return
      */
     @PatchMapping("/update")
-    @PreAuthorize("hasPermission('sys:permission:update')")
+    @PreAuthorize("hasAuthority('sys:permission:update')")
     @Operation(summary = "修改权限", description = "修改权限，需传值id")
     @RecordOperationLog(type = OperateType.UPDATE, description = "修改权限", refModule = TableNameConst.SYS_PERMISSION, refIdEl = "#permission.id")
     public boolean update(@RequestBody @Validated(ValidGroup.Update.class) Permission permission) {
@@ -65,7 +65,7 @@ public class PermissionController {
      * @return
      */
     @DeleteMapping("/delete/{id}")
-    @PreAuthorize("hasPermission('sys:permission:delete')")
+    @PreAuthorize("hasAuthority('sys:permission:delete')")
     @Operation(summary = "删除权限", description = "根据id删除权限")
     @RecordOperationLog(type = OperateType.DELETE, description = "删除权限", refModule = TableNameConst.SYS_PERMISSION, refIdEl = "#id")
     public boolean delete(@PathVariable Long id) {
@@ -78,7 +78,7 @@ public class PermissionController {
      * @return
      */
     @GetMapping("/tree")
-    @PreAuthorize("hasPermission('sys:permission:read')")
+    @PreAuthorize("hasAuthority('sys:permission:read')")
     @Operation(summary = "获取权限树", description = "获取权限树列表")
     public List<PermissionTreeNode> tree() {
         return permissionService.listTree();

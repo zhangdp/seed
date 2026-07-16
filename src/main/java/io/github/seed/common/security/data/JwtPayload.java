@@ -1,7 +1,6 @@
 package io.github.seed.common.security.data;
 
 import lombok.Data;
-import lombok.experimental.Accessors;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -13,8 +12,8 @@ import java.util.List;
  * @author zhangdp
  * @since 1.0.0
  */
+@Deprecated
 @Data
-@Accessors(chain = true)
 public class JwtPayload implements Serializable {
 
     @Serial

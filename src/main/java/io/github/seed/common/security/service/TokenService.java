@@ -1,15 +1,14 @@
 package io.github.seed.common.security.service;
 
-import io.github.seed.common.security.SecurityConst;
+import cn.hutool.v7.core.data.id.IdUtil;
 import io.github.seed.common.security.data.AccessToken;
 import io.github.seed.common.security.data.RefreshToken;
-import io.github.seed.service.sys.ConfigService;
+import io.github.seed.common.security.SecurityProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.Duration;
-import java.util.UUID;
 
 /**
  * 2024/6/27 token服务
@@ -22,7 +21,9 @@ import java.util.UUID;
 public class TokenService {
 
     private final TokenStore tokenStore;
-    private final ConfigService configService;
+    private final SecurityProperties securityProperties;
+
+    // private FIFOCache<String, AccessToken> accessTokenCache = new FIFOCache<>(200);
 
     /**
      * 创建token
@@ -30,20 +31,19 @@ public class TokenService {
      * @return
      */
     public AccessToken createToken(UserDetails userDetails) {
-        int ttl = this.getAccessTokenTtlConfig();
+        Duration ttl = securityProperties.getAccessTokenTtl();
         String token = this.generateToken();
         AccessToken accessToken = new AccessToken();
         accessToken.setToken(token);
-        accessToken.setExpiresIn(ttl);
+        accessToken.setExpiresIn(ttl.toSeconds());
         accessToken.setUserDetails(userDetails);
         accessToken.setIssuedAt(System.currentTimeMillis());
-        if (this.getEnableRefreshToken()) {
+        if (securityProperties.isEnableRefreshToken()) {
             RefreshToken refreshToken = this.createRefreshToken(token, userDetails);
             accessToken.setRefreshToken(refreshToken);
         }
-        Duration accessTokenDuration = Duration.ofSeconds(ttl);
-        tokenStore.storeAccessToken(accessToken, accessTokenDuration);
-        tokenStore.storeUserToAccessToken(userDetails.getUsername(), accessToken.getToken(), accessTokenDuration);
+        tokenStore.storeAccessToken(accessToken, ttl);
+        tokenStore.storeUserToAccessToken(userDetails.getUsername(), accessToken.getToken(), ttl);
         if (accessToken.getRefreshToken() != null) {
             tokenStore.storeRefreshToken(accessToken.getRefreshToken(), Duration.ofSeconds(accessToken.getRefreshToken().getExpiresIn()));
         }
@@ -63,7 +63,7 @@ public class TokenService {
         refreshToken.setToken(token);
         refreshToken.setAccessToken(accessToken);
         refreshToken.setIssuedAt(System.currentTimeMillis());
-        refreshToken.setExpiresIn(this.getRefreshTokenTtlConfig());
+        refreshToken.setExpiresIn(securityProperties.getRefreshTokenTtl().toSeconds());
         refreshToken.setUsername(userDetails.getUsername());
         return refreshToken;
     }
@@ -89,7 +89,12 @@ public class TokenService {
      * @return
      */
     public AccessToken loadAccessToken(String accessToken) {
-        return tokenStore.loadAccessToken(accessToken);
+        // if (accessTokenCache.containsKey(accessToken)) {
+        //     return accessTokenCache.get(accessToken, false);
+        // }
+        AccessToken token = tokenStore.loadAccessToken(accessToken);
+        // accessTokenCache.put(accessToken, token, 10000L);
+        return token;
     }
 
     /**
@@ -98,7 +103,7 @@ public class TokenService {
      * @return
      */
     public String generateToken() {
-        return UUID.randomUUID().toString();
+        return IdUtil.fastUUID();
     }
 
     /**
@@ -163,9 +168,9 @@ public class TokenService {
      * @return
      */
     public boolean resetTokenExpire(String accessToken, UserDetails userDetails) {
-        Duration expire = Duration.ofSeconds(this.getAccessTokenTtlConfig());
-        boolean ret = tokenStore.updateAccessTokenExpire(accessToken, expire);
-        tokenStore.updateUserToAccessTokenExpire(userDetails.getUsername(), accessToken, expire);
+        Duration ttl = securityProperties.getAccessTokenTtl();
+        boolean ret = tokenStore.updateAccessTokenExpire(accessToken, ttl);
+        tokenStore.updateUserToAccessTokenExpire(userDetails.getUsername(), accessToken, ttl);
         return ret;
     }
 
@@ -176,7 +181,7 @@ public class TokenService {
      * @param userDetails
      */
     public void resetTokenExpireIfNecessary(String accessToken, UserDetails userDetails) {
-        if (this.isAutoRenewConfig()) {
+        if (securityProperties.isAutoRenew()) {
             this.resetTokenExpire(accessToken, userDetails);
         }
     }
@@ -187,7 +192,7 @@ public class TokenService {
      * @param accessToken
      */
     public void resetTokenExpireIfNecessary(String accessToken) {
-        if (this.isAutoRenewConfig()) {
+        if (securityProperties.isAutoRenew()) {
             this.resetTokenExpire(accessToken);
         }
     }
@@ -198,45 +203,10 @@ public class TokenService {
      * @param accessToken
      */
     public void resetTokenExpireIfNecessary(AccessToken accessToken) {
-        if (this.isAutoRenewConfig()) {
+        if (securityProperties.isAutoRenew()) {
             this.resetTokenExpire(accessToken);
         }
     }
 
-    /**
-     * 获取是否自动刷新访问令牌过期时间配置
-     *
-     * @return
-     */
-    private boolean isAutoRenewConfig() {
-        return configService.getBoolValue(SecurityConst.IS_AUTO_RENEW_CONFIG_KEY, SecurityConst.IS_AUTO_RENEW);
-    }
-
-    /**
-     * 获取是否启用刷新token
-     *
-     * @return
-     */
-    private boolean getEnableRefreshToken() {
-        return configService.getBoolValue(SecurityConst.ENABLE_REFRESH_TOKEN_CONFIG_KEY, SecurityConst.ENABLE_REFRESH_TOKEN);
-    }
-
-    /**
-     * 获取访问令牌过期时间配置
-     *
-     * @return
-     */
-    private int getAccessTokenTtlConfig() {
-        return configService.getIntValue(SecurityConst.ACCESS_TOKEN_TTL_CONFIG_KEY, SecurityConst.ACCESS_TOKEN_TTL);
-    }
-
-    /**
-     * 获取刷新令牌过期时间配置
-     *
-     * @return
-     */
-    private int getRefreshTokenTtlConfig() {
-        return configService.getIntValue(SecurityConst.REFRESH_TOKEN_TTL_CONFIG_KEY, SecurityConst.REFRESH_TOKEN_TTL);
-    }
 
 }

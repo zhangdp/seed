@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 
 /**
  * 2024/6/28 redis方式保存token信息
@@ -68,33 +69,34 @@ public class RedisTokenStore implements TokenStore {
     @Override
     public void storeUserToAccessToken(String username, String accessToken, Duration expire) {
         String key = this.generateUserToAccessKey(username);
-        redisTemplate.opsForZSet().add(key, accessToken, System.currentTimeMillis());
-        redisTemplate.expire(key, expire);
+        redisTemplate.opsForHash().put(key, accessToken, System.currentTimeMillis());
+        redisTemplate.opsForHash().expiration(key, accessToken).expire(expire);
+        // redisTemplate.opsForZSet().add(key, accessToken, System.currentTimeMillis());
+        // redisTemplate.expire(key, expire);
     }
 
     @Override
     public int countUserToAccessToken(String username) {
-        Long count = redisTemplate.opsForZSet().size(this.generateUserToAccessKey(username));
-        return count == null ? 0 : count.intValue();
-    }
-
-    @Override
-    public void pruneExpiredUserToAccessToken(String username, Duration expire) {
-        long score = System.currentTimeMillis() - expire.toMillis();
-        redisTemplate.opsForZSet().removeRangeByScore(this.generateUserToAccessKey(username), 0, score);
+        // Long count = redisTemplate.opsForZSet().size(this.generateUserToAccessKey(username));
+        // return count == null ? 0 : count.intValue();
+        String key = this.generateUserToAccessKey(username);
+        Long v = redisTemplate.opsForHash().size(key);
+        return v == null ? 0 : v.intValue();
     }
 
     @Override
     public void updateUserToAccessTokenExpire(String username, String accessToken, Duration expire) {
         String key = this.generateUserToAccessKey(username);
-        redisTemplate.opsForZSet().add(key, accessToken, System.currentTimeMillis());
-        redisTemplate.expire(key, expire);
+        // redisTemplate.opsForZSet().add(key, accessToken, System.currentTimeMillis());
+        // redisTemplate.expire(key, expire);
+        redisTemplate.opsForHash().expiration(key, accessToken).expire(expire);
     }
 
     @Override
     public void removeUserToAccessToken(String username, String accessToken) {
         String key = this.generateUserToAccessKey(username);
-        redisTemplate.opsForZSet().remove(key, accessToken);
+        // redisTemplate.opsForZSet().remove(key, accessToken);
+        redisTemplate.opsForHash().delete(key, accessToken);
     }
 
     /**

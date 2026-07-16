@@ -71,7 +71,7 @@ spring:
 management:
   endpoint:
     health:
-      show-details: always
+      show-details: when_authorized
       probes:
         enabled: true
   endpoints:
@@ -97,6 +97,24 @@ logging:
     web: debug
     io.github.seed: trace
 seed:
+  security:
+    access-token-ttl: 30m
+    refresh-token-ttl: 24h
+    auto-renew: false
+    enable-refresh-token: true
+    permit-urls:
+      - /favicon.ico
+      - /swagger-ui/**
+      - /v3/**
+      - /actuator
+      - /actuator/**
+      - /error
+    actuator:
+      enabled: true
+      username: actuator
+      password: Seed@2026
+      roles: ACTUATOR
+      permit-urls: health,info
   file-storage:
     root-path: ""
     type: local

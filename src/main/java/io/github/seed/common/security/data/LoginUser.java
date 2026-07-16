@@ -2,7 +2,6 @@ package io.github.seed.common.security.data;
 
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.Data;
-import lombok.experimental.Accessors;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serial;
@@ -16,7 +15,6 @@ import java.util.List;
  * @since 1.0.0
  */
 @Data
-@Accessors(chain = true)
 @Hidden
 public final class LoginUser implements Serializable, UserDetails {
 

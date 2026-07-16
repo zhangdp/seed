@@ -1,21 +1,21 @@
 package io.github.seed.common.security;
 
 import io.github.seed.common.component.IgnoreAuthPathRegistry;
-import io.github.seed.common.security.data.ActuatorUserProperties;
 import io.github.seed.common.security.filter.TokenResolveAuthenticationFilter;
 import io.github.seed.common.security.handler.*;
 import io.github.seed.common.security.service.*;
-import io.github.seed.service.sys.ConfigService;
 import io.github.seed.service.sys.PermissionService;
 import io.github.seed.service.sys.RoleService;
 import io.github.seed.service.sys.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.security.autoconfigure.actuate.web.servlet.EndpointRequest;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpMethod;
@@ -45,6 +45,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -56,30 +57,37 @@ import java.util.Set;
  */
 @Slf4j
 @Configuration
-@EnableConfigurationProperties(ActuatorUserProperties.class)
+@EnableConfigurationProperties({SecurityProperties.class})
 @EnableWebSecurity
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfigurer {
 
-    private final ActuatorUserProperties actuatorUserProperties;
+    private final SecurityProperties securityProperties;
 
     /**
      * 单独配置/actuator端点的认证
+     * 必须在全局的Security配置前面注册生效
      *
      * @param http
      * @return
      * @throws Exception
      */
     @Bean
-    @Order(1)
+    @Order(Ordered.LOWEST_PRECEDENCE - 1)
+    @ConditionalOnProperty(prefix = SecurityConst.CONFIG_PREFIX, name = "enabled", havingValue = "true")
     SecurityFilterChain actuatorSecurity(HttpSecurity http, PasswordEncoder passwordEncoder) throws Exception {
         http
                 .securityMatcher(EndpointRequest.toAnyEndpoint())
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(EndpointRequest.to("health", "info")).permitAll()
-                        .anyRequest().hasRole("ACTUATOR")
-                )
+                .authorizeHttpRequests(auth -> {
+                    // 放行指定url
+                    String[] permitUrls = this.securityProperties.getActuator().getPermitUrls();
+                    if (permitUrls != null && permitUrls.length > 0) {
+                        auth.requestMatchers(permitUrls).permitAll();
+                    }
+                    // 其余url均需包含角色ACTUATOR
+                    auth.anyRequest().hasRole(SecurityConst.ACTUATOR_NEED_ROLE);
+                })
                 .authenticationManager(new ProviderManager(
                         List.of(new DaoAuthenticationProvider(actuatorUserDetailsService(passwordEncoder)) {{
                             setPasswordEncoder(passwordEncoder);
@@ -99,9 +107,10 @@ public class SecurityConfigurer {
      * @return
      */
     private UserDetailsService actuatorUserDetailsService(PasswordEncoder passwordEncoder) {
-        UserDetails userDetails = User.withUsername(this.actuatorUserProperties.getName())
-                .password(passwordEncoder.encode(this.actuatorUserProperties.getPassword()))
-                .roles(this.actuatorUserProperties.getRoles()).build();
+        SecurityProperties.ActuatorProperties actuatorUserProperties = this.securityProperties.getActuator();
+        UserDetails userDetails = User.withUsername(actuatorUserProperties.getName())
+                .password(passwordEncoder.encode(actuatorUserProperties.getPassword()))
+                .roles(actuatorUserProperties.getRoles()).build();
         log.info("actuator端点专用用户：{}", userDetails);
         return new InMemoryUserDetailsManager(userDetails);
     }
@@ -126,7 +135,7 @@ public class SecurityConfigurer {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // 禁用httpBasic
                 .httpBasic(AbstractHttpConfigurer::disable)
-                // 默认表单登录
+                // 禁用默认表单登录
                 .formLogin(AbstractHttpConfigurer::disable)
                 // 登出
                 // .logout(c -> c.logoutUrl(SecurityConst.LOGOUT_URL).logoutSuccessHandler(logoutSuccessHandler))
@@ -134,17 +143,15 @@ public class SecurityConfigurer {
                             // 动态添加带有@IgnoreAuth的接口
                             Set<String> ignorePaths = ignoreAuthPathRegistry.getIgnoreAuthPaths();
                             if (ignorePaths != null && !ignorePaths.isEmpty()) {
-                                for (String ignorePath : ignorePaths) {
-                                    req.requestMatchers(ignorePath).permitAll();
-                                    log.info("添加忽略认证url：{}", ignorePath);
-                                }
+                                String[] ignorePathArr = ignorePaths.toArray(String[]::new);
+                                req.requestMatchers(ignorePathArr).permitAll();
+                                log.info("添加忽略认证url：{}", Arrays.toString(ignorePathArr));
                             }
-                            // 固定放行url
-                            if (SecurityConst.PERMIT_URLS != null && SecurityConst.PERMIT_URLS.length > 0) {
-                                for (String permitUrl : SecurityConst.PERMIT_URLS) {
-                                    req.requestMatchers(permitUrl).permitAll();
-                                    log.info("添加忽略认证url：{}", permitUrl);
-                                }
+                            // 动态放行配置文件配置的url
+                            String[] permitUrls = this.securityProperties.getPermitUrls();
+                            if (permitUrls != null && permitUrls.length > 0) {
+                                req.requestMatchers(permitUrls).permitAll();
+                                log.info("添加忽略认证url：{}", Arrays.toString(permitUrls));
                             }
                             // OPTIONS请求放行
                             req.requestMatchers(HttpMethod.OPTIONS).permitAll();
@@ -205,12 +212,11 @@ public class SecurityConfigurer {
      * token服务
      *
      * @param tokenStore
-     * @param configService
      * @return
      */
     @Bean
-    public TokenService tokenService(TokenStore tokenStore, ConfigService configService) {
-        return new TokenService(tokenStore, configService);
+    public TokenService tokenService(TokenStore tokenStore) {
+        return new TokenService(tokenStore, this.securityProperties);
     }
 
     /**

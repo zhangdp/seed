@@ -3,6 +3,7 @@ package io.github.seed.common.security;
 import cn.hutool.v7.core.lang.Assert;
 import cn.hutool.v7.core.text.StrUtil;
 import io.github.seed.common.security.data.LoginUser;
+import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,24 +18,25 @@ import java.util.Base64;
  */
 public class SecurityUtils {
 
-    private static final String BASIC_PREFIX = "Basic";
-
     /**
-     * 从请求中解析出token
+     * 从请求中解析出bearer token
      *
      * @param request
      * @return
      */
-    public static String resolveToken(HttpServletRequest request) {
+    public static String resolveBearerToken(HttpServletRequest request) {
         String token = request.getHeader(SecurityConst.AUTHORIZATION_HEADER);
         if (token != null && !(token = token.trim()).isEmpty() && StrUtil.startWithIgnoreCase(token, SecurityConst.AUTH_TYPE_BEARER)) {
-            token = token.substring(SecurityConst.AUTH_TYPE_BEARER.length() + 1);
+            token = token.substring(SecurityConst.AUTH_TYPE_BEARER.length() + 1).trim();
         }
-        // 如果header中没有token，则从请求参数中获取
-        if (token == null || (token = token.trim()).isEmpty()) {
+        // 如果header中取不到token则从参数中取
+        if (token == null || token.isEmpty()) {
             token = request.getParameter(SecurityConst.AUTHORIZATION_PARAMETER);
+            if (token != null) {
+                token = token.trim();
+            }
         }
-        return token == null ? null : token.trim();
+        return token;
     }
 
     /**
@@ -54,6 +56,21 @@ public class SecurityUtils {
     }
 
     /**
+     * 从http header解析Basic认证，结果为数组：[用户名, 密码]
+     *
+     * @param request
+     * @return
+     */
+    public static String[] resolveBasicAuth(HttpServletRequest request) {
+        String header = request.getHeader(SecurityConst.AUTHORIZATION_HEADER);
+        if (header == null || (header = header.trim()).isEmpty()) {
+            return null;
+        }
+
+        return resolveBasicAuth(header);
+    }
+
+    /**
      * 解析basic auth字符串，结果为数组：[用户名, 密码]
      *
      * @param basicAuth
@@ -61,9 +78,10 @@ public class SecurityUtils {
      */
     public static String[] resolveBasicAuth(String basicAuth) {
         basicAuth = basicAuth.trim();
-        Assert.isTrue(StrUtil.startWithIgnoreCase(basicAuth, BASIC_PREFIX), basicAuth + " is not a valid Basic Auth string");
-        String auth = basicAuth.substring(BASIC_PREFIX.length() + 1);
-        String str = new String(Base64.getDecoder().decode(auth));
+        if (StrUtil.startWithIgnoreCase(basicAuth, SecurityConst.AUTH_TYPE_BASIC)) {
+            basicAuth = basicAuth.substring(SecurityConst.AUTH_TYPE_BASIC.length() + 1).trim();
+        }
+        String str = new String(Base64.getDecoder().decode(basicAuth));
         int index = str.indexOf(':');
         Assert.isTrue(index > -1, "Invalid Basic Auth format, missing ':' separator");
         return new String[]{str.substring(0, index), str.substring(index + 1)};
@@ -78,8 +96,29 @@ public class SecurityUtils {
      * @return
      */
     public static boolean validateBasicAuth(String basicAuth, String username, String password) {
-        String[] arr = resolveBasicAuth(basicAuth);
-        return arr[0].equals(username) && arr[1].equals(password);
+        try {
+            String[] arr = resolveBasicAuth(basicAuth);
+            return arr.length == 2 && arr[0].equals(username) && arr[1].equals(password);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * 从request header解析出basic auth并验证
+     *
+     * @param request
+     * @param username
+     * @param password
+     * @return
+     */
+    public static boolean validateBasicAuth(HttpServletRequest request, String username, String password) {
+        try {
+            String[] arr = resolveBasicAuth(request);
+            return arr != null && arr.length == 2 && arr[0].equals(username) && arr[1].equals(password);
+        } catch (Exception e) {
+            return false;
+        }
     }
 
 }
