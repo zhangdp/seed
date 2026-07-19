@@ -3,6 +3,10 @@ server:
   shutdown: graceful
   tomcat:
     max-connections: 20000
+  # 禁止session
+  servlet:
+    session:
+      tracking-modes: []
 spring:
   profiles:
     active: dev
@@ -29,10 +33,10 @@ spring:
     #     queue-capacity: 1024
   data:
     redis:
-      database: 15
-      host: 191.168.10.70
+      database: 0
+      host: 192.168.100.100
       port: 6379
-      password: Itsm_2025
+      password: Abc123456.
       connect-timeout: 5s
       lettuce:
         pool:
@@ -52,10 +56,10 @@ spring:
       time-to-live: 30m
       key-prefix: "cache::"
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://191.168.10.71:3306/seed?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://192.168.100.100:5432/seed_db?currentSchema=public&connectTimeout=5&socketTimeout=60&tcpKeepAlive=true
     username: seed
-    password: Seed@2022
+    password: Abc123456.
     lazy: true
     hikari:
       # 启用虚拟线程可以大幅提升连接数
@@ -78,11 +82,6 @@ management:
     web:
       exposure:
         include: "*"
-  security:
-    user:
-      name: actuator
-      password: 123456
-      roles: ACTUATOR
 mybatis-flex:
   global-config:
     print-banner: false
@@ -114,7 +113,7 @@ app:
       username: actuator
       password: Seed@2026
       roles: ACTUATOR
-      permit-urls: /actuator,/actuator/health,/actuator/info
+      permit-urls: /health,/info
   file-storage:
     root-path: ""
     type: local

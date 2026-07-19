@@ -53,7 +53,7 @@ public class SecurityProperties {
         /**
          * 账号
          */
-        private String name = "actuator";
+        private String username = "actuator";
         /**
          * 密码
          */
