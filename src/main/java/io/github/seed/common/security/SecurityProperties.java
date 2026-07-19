@@ -34,7 +34,7 @@ public class SecurityProperties {
     /**
      * 放行的url
      */
-    private String[] permitUrls = new String[]{ "/favicon.ico", "/swagger-ui/**", "/v3/**", "/actuator", "/actuator/**", "/error" };
+    private String[] permitUrls = new String[]{ "/favicon.ico", "/swagger-ui/**", "/v3/**", "/error", "/actuator/**" };
     /**
      * actuator端点认证配置
      */
