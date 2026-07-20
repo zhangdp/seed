@@ -104,7 +104,8 @@ app:
     permit-urls:
       - /favicon.ico
       - /swagger-ui/**
-      - /v3/**
+      - /swagger-ui.html
+      - /v3/api-docs/**
       - /actuator/**
       - /error
     actuator:
