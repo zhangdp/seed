@@ -34,9 +34,9 @@ spring:
   data:
     redis:
       database: 0
-      host: 192.168.100.100
+      host: 127.0.0.0
       port: 6379
-      password: Abc123456.
+      password: 123456
       connect-timeout: 5s
       lettuce:
         pool:
@@ -57,9 +57,9 @@ spring:
       key-prefix: "cache::"
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://192.168.100.100:5432/seed_db?currentSchema=public&connectTimeout=5&socketTimeout=60&tcpKeepAlive=true
+    url: jdbc:postgresql://127.0.0.1:5432/seed_db?currentSchema=public&connectTimeout=5&socketTimeout=60&tcpKeepAlive=true
     username: seed
-    password: Abc123456.
+    password: 123456
     lazy: true
     hikari:
       # 启用虚拟线程可以大幅提升连接数
