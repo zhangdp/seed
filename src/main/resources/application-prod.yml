@@ -1,0 +1,32 @@
+# 生产环境
+spring:
+  data:
+    redis:
+      database: 0
+      host: 127.0.0.0
+      port: 6379
+      password: 123456
+  datasource:
+    url: jdbc:postgresql://127.0.0.1:5432/seed_db?currentSchema=public&connectTimeout=5&socketTimeout=60&tcpKeepAlive=true
+    username: seed
+    password: 123456
+management:
+  endpoint:
+    health:
+      show-details: when_authorized
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+logging:
+  file:
+    path: logs/${spring.application.name}
+  level:
+    root: info
+    web: info
+    io.github.seed: info

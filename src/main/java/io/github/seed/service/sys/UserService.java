@@ -7,6 +7,8 @@ import io.github.seed.model.dto.UserInfo;
 import io.github.seed.model.params.PageQuery;
 import io.github.seed.model.params.UserQuery;
 
+import java.util.Collection;
+
 /**
  * 2023/4/3 用户service
  *
@@ -103,4 +105,12 @@ public interface UserService {
      * @return
      */
     User getById(Long id);
+
+    /**
+     * 根据id列表批量删除
+     *
+     * @param ids
+     * @return
+     */
+    int deleteBatch(Collection<Long> ids);
 }

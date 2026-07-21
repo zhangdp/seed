@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -153,5 +154,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getById(Long id) {
         return this.userMapper.selectOneById(id);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public int deleteBatch(Collection<Long> ids) {
+        return this.userMapper.deleteBatchByIds(ids);
     }
 }

@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
+
 /**
  * 2023/4/17 操作日志service实现
  *
@@ -26,6 +28,12 @@ public class OperationLogServiceImpl implements OperationLogService {
     @Override
     public boolean add(OperationLog entity) {
         return operationLogMapper.insert(entity) > 0;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public int deleteBatch(Collection<Long> ids) {
+        return this.operationLogMapper.deleteBatchByIds(ids);
     }
 
     @Override

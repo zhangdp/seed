@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import tools.jackson.databind.json.JsonMapper;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * 2023/4/4 用户service测试
@@ -86,6 +87,12 @@ public class UserServiceTest {
     @Test
     public void existsUsernameAndIdNot() {
         System.out.println(userService.existsUsernameAndIdNot("test", 1L));
+    }
+
+    @Test
+    public void deleteBatch() {
+        List<Long> ids = List.of(1L, 2L, 3L, 4L);
+        System.out.println(userService.deleteBatch(ids));
     }
 
 }

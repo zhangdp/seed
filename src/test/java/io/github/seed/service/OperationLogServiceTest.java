@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
+
 /**
  * 操作日志测试类
  *
@@ -20,6 +22,12 @@ public class OperationLogServiceTest {
 
     @Autowired
     private OperationLogService operationLogService;
+
+    @Test
+    public void deleteBatch() {
+        List<Long> ids = List.of(1L, 2L, 3L);
+        System.out.println(operationLogService.deleteBatch(ids));
+    }
 
     @Test
     public void pageQuery() {

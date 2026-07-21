@@ -5,6 +5,8 @@ import io.github.seed.model.PageData;
 import io.github.seed.model.params.OperationLogQuery;
 import io.github.seed.model.params.PageQuery;
 
+import java.util.Collection;
+
 /**
  * 2023/4/17 操作日志service
  *
@@ -20,6 +22,14 @@ public interface OperationLogService {
      * @return
      */
     boolean add(OperationLog entity);
+
+    /**
+     * 批量删除
+     *
+     * @param ids
+     * @return
+     */
+    int deleteBatch(Collection<Long> ids);
 
     /**
      * 分页查询操作日志
