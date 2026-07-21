@@ -122,4 +122,4 @@ app:
     expire-duration: 0
     download-url: /file/download/{fileId}/{fileName}
     local:
-      upload-dir: /Users/peng/tmp/seed/upload
+      upload-dir: upload
