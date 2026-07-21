@@ -156,6 +156,7 @@ public class AwsS3FileTemplate implements FileTemplate, InitializingBean, Dispos
     public boolean copy(String srcPath, String destPath) {
         srcPath = this.normalizePath(srcPath);
         destPath = this.normalizePath(destPath);
+        Assert.isTrue(!srcPath.equals(destPath), "原路径不能与目标路径一样");
         CopyObjectResponse res = s3Client.copyObject(CopyObjectRequest.builder()
                 .sourceBucket(bucket)
                 .sourceKey(srcPath)
@@ -169,18 +170,22 @@ public class AwsS3FileTemplate implements FileTemplate, InitializingBean, Dispos
     @Override
     public boolean move(String srcPath, String destPath) {
         boolean res = this.copy(srcPath, destPath) && this.delete(srcPath);
-        log.debug("[{}]移动文件，srcPath={}, destPath={}, result={}，没有移动文件的api使用复制文件后删掉原文件实现", this.bucket, srcPath, destPath, res);
+        log.debug("[{}]移动文件，srcPath={}, destPath={}, result={}，注：aws s3没有移动文件的api使因此使用复制文件后删掉原文件实现", this.bucket, srcPath, destPath, res);
         return res;
     }
 
     @Override
     public boolean delete(String path) {
         path = this.normalizePath(path);
-        DeleteObjectResponse res = s3Client.deleteObject(DeleteObjectRequest.builder()
-                .bucket(this.bucket)
-                .key(path)
-                .build());
-        log.debug("[{}]删除文件，path={}, result={}", this.bucket, path, res);
+        try {
+            DeleteObjectResponse res = s3Client.deleteObject(DeleteObjectRequest.builder()
+                    .bucket(this.bucket)
+                    .key(path)
+                    .build());
+            log.debug("[{}]删除文件，path={}, result={}", this.bucket, path, res);
+        } catch (NoSuchKeyException e) {
+            return true;
+        }
         return true;
     }
 
