@@ -1,9 +1,9 @@
 package io.github.seed.common.config;
 
-import io.github.seed.common.component.AwsS3FileTemplate;
+import io.github.seed.common.component.S3FileTemplate;
 import io.github.seed.common.component.FileTemplate;
 import io.github.seed.common.component.LocalFileTemplate;
-import io.github.seed.common.constant.MimeType;
+import io.github.seed.common.util.MimeType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
@@ -44,32 +44,17 @@ public class FileStorageConfigurer implements InitializingBean {
     }
 
     /**
-     * minio文件访问器
-     *
-     * @return
-     */
-    /*@Bean
-    @ConditionalOnMissingBean
-    @ConditionalOnProperty(prefix = FileStorageProperties.CONFIG_PREFIX, name = "type", havingValue = "minio")
-    public FileTemplate minioFileTemplate() {
-        FileStorageProperties.MinioProperties minioProperties = fileStorageProperties.getMinio();
-        FileTemplate template = new MinioTemplate(minioProperties.getEndpoint(), minioProperties.getAccessKey(), minioProperties.getSecretKey(), minioProperties.getBucketName());
-        log.info("使用MinIO文件访问器：{}, 地址：{}，桶：{}", template, minioProperties.getEndpoint(), minioProperties.getBucketName());
-        return template;
-    }*/
-
-    /**
      * aws-s3文件访问器
      *
      * @return
      */
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnProperty(prefix = FileStorageProperties.CONFIG_PREFIX, name = "type", havingValue = "awss3")
-    public FileTemplate awsS3FileTemplate() {
-        FileStorageProperties.AwsS3Properties awss3Properties = fileStorageProperties.getAwss3();
-        FileTemplate template = new AwsS3FileTemplate(awss3Properties.getEndpoint(), awss3Properties.getAccessKey(), awss3Properties.getSecretKey(), awss3Properties.getBucketName());
-        log.info("使用Aws S3文件访问器：{}, 地址：{}，桶：{}", template, awss3Properties.getEndpoint(), awss3Properties.getBucketName());
+    @ConditionalOnProperty(prefix = FileStorageProperties.CONFIG_PREFIX, name = "type", havingValue = "s3")
+    public FileTemplate s3FileTemplate() {
+        FileStorageProperties.S3Properties s3Properties = fileStorageProperties.getS3();
+        FileTemplate template = new S3FileTemplate(s3Properties.getEndpoint(), s3Properties.getAccessKey(), s3Properties.getSecretKey(), s3Properties.getBucketName());
+        log.info("使用Aws S3文件访问器：{}, 地址：{}，桶：{}", template, s3Properties.getEndpoint(), s3Properties.getBucketName());
         return template;
     }
 
@@ -78,7 +63,7 @@ public class FileStorageConfigurer implements InitializingBean {
         Map<String, String> mimeTypes = fileStorageProperties.getMimeTypes();
         if (mimeTypes != null && !mimeTypes.isEmpty()) {
             mimeTypes.forEach((k, v) -> {
-                if (v != null && !v.isEmpty()) {
+                if (k != null && !(k = k.trim()).isEmpty() && v != null && !(v = v.trim()).isEmpty()) {
                     String old = MimeType.addType(k, v);
                     log.info("新增自定义文件类型：文件后缀={}, 新类型={}, 原类型={}", k, v, old);
                 }

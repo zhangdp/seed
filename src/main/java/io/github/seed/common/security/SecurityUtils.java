@@ -48,8 +48,8 @@ public class SecurityUtils {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null) {
             Object principal = authentication.getPrincipal();
-            if (principal instanceof LoginUser) {
-                return (LoginUser) principal;
+            if (principal instanceof LoginUser loginUser) {
+                return loginUser;
             }
         }
         return null;

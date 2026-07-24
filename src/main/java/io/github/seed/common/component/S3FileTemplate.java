@@ -1,11 +1,10 @@
 package io.github.seed.common.component;
 
 import cn.hutool.v7.core.io.IoUtil;
-import io.github.seed.common.util.MimeTypes;
+import io.github.seed.common.util.MimeType;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
@@ -19,14 +18,14 @@ import java.io.*;
 import java.net.URI;
 
 /**
- * aws s3文件访问器
+ * aws s3标准协议文件访问器，也兼容minio、oos、ocs等类s3协议
  *
  * @author zhangdp
  * @since 1.0.0
  */
 @Slf4j
 @Getter
-public class AwsS3FileTemplate implements FileTemplate, InitializingBean, DisposableBean {
+public class S3FileTemplate implements FileTemplate, DisposableBean {
 
     private final String endpoint;
     private final String accessKey;
@@ -36,20 +35,23 @@ public class AwsS3FileTemplate implements FileTemplate, InitializingBean, Dispos
 
     private S3Client s3Client;
 
-    public AwsS3FileTemplate(String endpoint, String accessKey, String secretKey, String bucket) {
+    public S3FileTemplate(String endpoint, String accessKey, String secretKey, String bucket) {
         this(endpoint, accessKey, secretKey, bucket, Region.US_EAST_1.id());
     }
 
-    public AwsS3FileTemplate(String endpoint, String accessKey, String secretKey, String bucket, String region) {
+    public S3FileTemplate(String endpoint, String accessKey, String secretKey, String bucket, String region) {
         this.endpoint = endpoint;
         this.accessKey = accessKey;
         this.secretKey = secretKey;
         this.bucket = bucket;
         this.region = region;
+        this.init();
     }
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
+    /**
+     * 初始化
+     */
+    private void init() {
         Assert.hasText(this.endpoint, "endpoint不能为空");
         Assert.hasText(this.accessKey, "accessKey不能为空");
         Assert.hasText(this.secretKey, "secretKey不能为空");
@@ -212,7 +214,7 @@ public class AwsS3FileTemplate implements FileTemplate, InitializingBean, Dispos
                 PutObjectRequest.builder()
                         .bucket(bucket)
                         .key(path)
-                        .contentType(MimeTypes.guessMimeType(file))
+                        .contentType(MimeType.guessMimeType(file))
                         .build(),
                 RequestBody.fromFile(file)
         );
@@ -232,7 +234,7 @@ public class AwsS3FileTemplate implements FileTemplate, InitializingBean, Dispos
                 PutObjectRequest.builder()
                         .bucket(bucket)
                         .key(path)
-                        .contentType(MimeTypes.guessMimeType(path))
+                        .contentType(MimeType.guessMimeType(path))
                         .build(),
                 RequestBody.fromBytes(bytes)
         );
@@ -248,7 +250,7 @@ public class AwsS3FileTemplate implements FileTemplate, InitializingBean, Dispos
                     PutObjectRequest.builder()
                             .bucket(bucket)
                             .key(path)
-                            .contentType(MimeTypes.guessMimeType(path))
+                            .contentType(MimeType.guessMimeType(path))
                             .build(),
                     RequestBody.fromInputStream(inputStream, size)
             );
@@ -263,7 +265,7 @@ public class AwsS3FileTemplate implements FileTemplate, InitializingBean, Dispos
     public boolean upload(InputStream inputStream, String path) throws IOException {
         path = this.normalizePath(path);
         try {
-            String contentType = MimeTypes.guessMimeType(path);
+            String contentType = MimeType.guessMimeType(path);
             PutObjectResponse res = s3Client.putObject(PutObjectRequest.builder()
                             .bucket(bucket)
                             .key(path)

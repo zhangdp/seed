@@ -115,11 +115,12 @@ app:
       roles: ACTUATOR
       permit-urls: health,info
   file-storage:
-    root-path: ""
     type: local
-    http-cacheable: true
-    http-cache-max-age: 604800
+    root-path: ""
     expire-duration: 0
-    download-url: /file/download/{fileId}/{fileName}
+    download:
+      http-cacheable: true
+      http-cache-max-age: 604800
+      urlTemplate: /file/download/{fileId}/{fileName}
     local:
       upload-dir: upload

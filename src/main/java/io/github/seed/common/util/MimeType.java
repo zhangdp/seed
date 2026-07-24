@@ -19,7 +19,7 @@ import java.util.Map;
  * @since 2026/7/13
  */
 @Slf4j
-public class MimeTypes {
+public class MimeType {
 
     /**
      * 默认二进制文件流类型application/octet-stream
@@ -34,7 +34,7 @@ public class MimeTypes {
         loadMimeTypes();
     }
 
-    private MimeTypes() {}
+    private MimeType() {}
 
     /**
      * 根据后缀获取文件类型，如果不存在则返回默认MIMETYPE_OCTET_STREAM
@@ -138,4 +138,14 @@ public class MimeTypes {
         }
     }
 
+    /**
+     * 新增mimetype，覆盖
+     *
+     * @param extension
+     * @param mimeType
+     * @return
+     */
+    public static String addType(String extension, String mimeType) {
+        return extensionToMimetype.put(extension.toLowerCase(), mimeType);
+    }
 }

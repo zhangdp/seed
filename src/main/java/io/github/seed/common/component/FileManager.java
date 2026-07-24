@@ -9,8 +9,8 @@ import cn.hutool.v7.core.util.ObjUtil;
 import cn.hutool.v7.crypto.SecureUtil;
 import io.github.seed.common.config.FileStorageProperties;
 import io.github.seed.common.constant.Const;
-import io.github.seed.common.constant.MimeType;
 import io.github.seed.common.exception.NotFoundException;
+import io.github.seed.common.util.MimeType;
 import io.github.seed.common.util.WebUtils;
 import io.github.seed.entity.sys.FileInfo;
 import io.github.seed.model.dto.FileInfoDto;
@@ -81,7 +81,7 @@ public class FileManager {
         entity.setUserId(uploadUserId);
         entity.setFileName(fileName);
         entity.setExtension(extension);
-        entity.setMimeType(MimeType.getType(extension));
+        entity.setMimeType(MimeType.getMimeType(extension));
         entity.setSize(file.getSize());
         entity.setHash(this.calculateSHA256(file.getInputStream()));
         entity.setStoragePath(remotePath);
@@ -118,18 +118,19 @@ public class FileManager {
         if (fileInfo.getExpireAt().isBefore(LocalDateTime.now())) {
             throw new NotFoundException("ID为" + fileId + "的附件已过期删除");
         }
+        FileStorageProperties.DownloadProperties downloadProperties = this.fileProperties.getDownload();
         // 如果有开启http缓存且未修改直接返回304
         String etag = "\"" + fileInfo.getHash() + "\"";
         // 上次修改时间，http时间只精确到秒
-        long lastModified = TimeUtil.toEpochMilli(ObjUtil.defaultIfNull(fileInfo.getUpdatedAt(), fileInfo.getCreatedAt())) / 1000L * 1000L;
-        if (fileProperties.isHttpCacheable() && WebUtils.checkNotModified(request, etag, lastModified)) {
+        long lastModified = TimeUtil.toEpochMilli(ObjUtil.defaultIfNull(fileInfo.getUpdatedAt(), fileInfo.getCreatedAt())) / 1000L;
+        if (downloadProperties.isHttpCacheable() && WebUtils.checkNotModified(request, etag, lastModified)) {
             response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             log.debug("文件未改变，返回304，fileId={}", fileInfo.getFileId());
             return;
         }
         // 如果开启http缓存都设置http缓存头
-        if (fileProperties.isHttpCacheable()) {
-            WebUtils.responseCacheHeader(response, "public, max-age=" + fileProperties.getHttpCacheMaxAge() + ", immutable", lastModified, etag);
+        if (downloadProperties.isHttpCacheable()) {
+            WebUtils.responseCacheHeader(response, "public, max-age=" + downloadProperties.getHttpCacheMaxAge() + ", immutable", lastModified, etag);
         }
         // 设置下载相关的http头
         WebUtils.responseDispositionHeader(response, StrUtil.defaultIfBlank(fileName, fileInfo.getFileName()), fileInfo.getSize(), fileInfo.getMimeType(), isInline);
@@ -159,7 +160,7 @@ public class FileManager {
      * @return
      */
     public String generateDownloadUrl(String fileId, String fileName) {
-        return fileProperties.getDownloadUrl().replace("{fileId}", fileId)
+        return this.fileProperties.getDownload().getUrlTemplate().replace("{fileId}", fileId)
                 .replace("{fileName}", WebUtils.urlEncode(fileName));
     }
 
