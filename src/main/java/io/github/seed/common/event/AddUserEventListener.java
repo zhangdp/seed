@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Slf4j
-public class AddUserEventHandler {
+public class AddUserEventListener {
 
     /**
      * 添加用户事件处理

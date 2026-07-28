@@ -1,4 +1,4 @@
-package io.github.seed.common.component;
+package io.github.seed.common.event;
 
 import cn.hutool.v7.core.date.TimeUtil;
 import cn.hutool.v7.core.exception.ExceptionUtil;

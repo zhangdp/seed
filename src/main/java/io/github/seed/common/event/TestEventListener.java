@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Slf4j
-public class TestEventHandler {
+public class TestEventListener {
 
     /**
      * 添加用户事件处理
