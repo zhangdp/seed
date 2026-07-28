@@ -6,7 +6,7 @@ import io.github.seed.common.enums.SensitiveType;
 import io.github.seed.common.security.SecurityConst;
 import io.github.seed.common.util.SpELUtils;
 import io.github.seed.common.util.SpringWebContextHolder;
-import io.github.seed.common.annotation.RecordOperationLog;
+import io.github.seed.common.annotation.RecordLog;
 import io.github.seed.common.data.OperateEvent;
 import io.github.seed.common.security.SecurityUtils;
 import io.github.seed.common.security.data.LoginUser;
@@ -44,14 +44,14 @@ public class RecordOperationLogAspect {
      * 环绕拥有@OperationLog 注解的controller方法
      *
      * @param point
-     * @param recordOperationLog
+     * @param recordLog
      * @return
      * @throws Throwable
      */
-    @Around("within(io.github.seed.controller..*) && @annotation(recordOperationLog)")
-    public Object around(ProceedingJoinPoint point, RecordOperationLog recordOperationLog) throws Throwable {
+    @Around("within(io.github.seed.controller..*) && @annotation(recordLog)")
+    public Object around(ProceedingJoinPoint point, RecordLog recordLog) throws Throwable {
         String method = point.getTarget().getClass().getName() + "." + point.getSignature().getName();
-        log.debug("OperateLogAspect around: method={}, annotation={}", method, recordOperationLog);
+        log.debug("OperateLogAspect around: method={}, annotation={}", method, recordLog);
 
         Object result = null;
         boolean hasError = false;
@@ -68,32 +68,34 @@ public class RecordOperationLogAspect {
             throw t;
         } finally {
             // 失败时只有logIfError为true才记录日志
-            if (!hasError || recordOperationLog.recordIfError()) {
+            if (!hasError || recordLog.recordIfError()) {
                 LocalDateTime endTime = LocalDateTime.now();
                 try {
                     HttpServletRequest request = SpringWebContextHolder.getRequest();
                     OperateEvent event = new OperateEvent(point.getSignature());
                     // 结果必须可序列化
-                    if (recordOperationLog.logResult() && result instanceof Serializable s) {
+                    if (recordLog.recordResult() && result instanceof Serializable s) {
                         event.setResult(s);
                     }
                     event.setStartAt(startTime);
                     event.setEndAt(endTime);
-                    event.setType(recordOperationLog.type());
-                    event.setDescription(recordOperationLog.description());
-                    event.setRefModule(recordOperationLog.refModule());
+                    event.setType(recordLog.type());
+                    event.setDescription(recordLog.description());
+                    event.setRefModule(recordLog.refModule());
                     event.setMethod(method);
                     event.setThrowable(throwable);
                     event.setUri(request.getRequestURI());
-                    // event.setUserAgent(request.getHeader("User-Agent"));
+                    event.setUserAgent(request.getHeader("User-Agent"));
                     event.setClientIp(WebUtils.getClientIP(request));
-                    if (recordOperationLog.logRequestBody()) {
+                    event.setHttpMethod(request.getMethod());
+                    event.setTraceId(request.getHeader("X-TraceId"));
+                    if (recordLog.recordBody()) {
                         event.setBody(WebUtils.getBody(request));
                     }
-                    if (recordOperationLog.logParameter()) {
+                    if (recordLog.recordParameter()) {
                         event.setParameterMap(request.getParameterMap());
                     }
-                    if (recordOperationLog.logHeader()) {
+                    if (recordLog.recordHeader()) {
                         Map<String, String> headers = new HashMap<>();
                         Enumeration<String> headerNames = request.getHeaderNames();
                         while (headerNames.hasMoreElements()) {
@@ -111,7 +113,7 @@ public class RecordOperationLogAspect {
                     if (loginUser != null) {
                         event.setUserId(loginUser.getId());
                     }
-                    if (StrUtil.isNotBlank(recordOperationLog.refIdEl())) {
+                    if (StrUtil.isNotBlank(recordLog.refIdEl())) {
                         Map<String, Object> context = new LinkedHashMap<>();
                         Object[] args = point.getArgs();
                         MethodSignature signature = (MethodSignature) point.getSignature();
@@ -125,7 +127,7 @@ public class RecordOperationLogAspect {
                             }
                         }
                         context.put(Const.EL_RESULT, result);
-                        Long refId = SpELUtils.parseExpression(recordOperationLog.refIdEl(), context, Long.class);
+                        Long refId = SpELUtils.parseExpression(recordLog.refIdEl(), context, Long.class);
                         event.setRefId(refId);
                     }
                     // 保存操作日志上下文，后续处理结束后记录日志

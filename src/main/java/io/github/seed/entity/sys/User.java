@@ -72,7 +72,7 @@ public class User extends BaseLogicEntity implements Serializable {
      * 姓名
      */
     @Schema(description = "姓名")
-    // @Desensitization(SensitiveType.CHINESE_NAME)
+    // @Sensitive(SensitiveType.CHINESE_NAME)
     private String name;
     /**
      * 身份证号

@@ -37,7 +37,7 @@ public class BasePageQuery implements Serializable {
      */
     @Schema(title = "每页条数", description = "默认" + Const.PAGE_SIZE)
     @Min(value = 1, message = "每页至少{value}条")
-    @Max(value = 100, message = "每页最多{value}条")
+    @Max(value = Const.DB_BATCH_SIZE * 10, message = "每页最多{value}条")
     protected int size = Const.PAGE_SIZE;
     /**
      * 排序

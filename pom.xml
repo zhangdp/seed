@@ -20,7 +20,7 @@
         <hutool.version>7.0.0-M7</hutool.version>
         <mybatis-flex.version>1.11.8</mybatis-flex.version>
         <springdoc.version>3.0.3</springdoc.version>
-        <aws-s3.version>2.47.4</aws-s3.version>
+        <aws-s3.version>2.47.5</aws-s3.version>
         <spring-boot-admin.version>4.1.1</spring-boot-admin.version>
     </properties>
 

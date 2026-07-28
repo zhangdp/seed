@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@Table(TableNameConst.LOG_LOGIN)
+@Table(TableNameConst.LOGIN_LOG)
 @Schema(description = "登录日志")
 public class LoginLog extends BaseEntity implements Serializable {
 
@@ -59,6 +59,11 @@ public class LoginLog extends BaseEntity implements Serializable {
      */
     @Schema(description = "客户端ip")
     private String clientIp;
+    /**
+     * 根据ip推断出来的位置
+     */
+    @Schema(description = "位置")
+    private String location;
     /**
      * userAgent
      */

@@ -3,6 +3,7 @@ package io.github.seed.service;
 import io.github.seed.common.util.DesensitizationUtil;
 import io.github.seed.entity.sys.User;
 import io.github.seed.model.PageData;
+import io.github.seed.model.dto.AddUserDto;
 import io.github.seed.model.dto.UserInfo;
 import io.github.seed.model.params.PageQuery;
 import io.github.seed.model.params.UserQuery;
@@ -34,7 +35,7 @@ public class UserServiceTest {
 
     @Test
     public void add() {
-        User user = new User();
+        AddUserDto user = new AddUserDto();
         user.setUsername("test");
         user.setPassword("123456");
         user.setMobile("13900000000");
@@ -42,7 +43,7 @@ public class UserServiceTest {
         user.setBirthDate(LocalDate.of(2000, 1, 1));
         user.setEmail("test@seed.com");
         user.setName("测试员");
-        // sysUserService.save(user);
+        userService.add(user);
     }
 
     @Test

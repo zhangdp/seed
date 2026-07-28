@@ -60,6 +60,9 @@ public class OperateEventListener {
             lo.setCostTime(TimeUtil.between(event.getStartAt(), event.getEndAt()).toMillis());
             lo.setRefModule(event.getRefModule());
             lo.setRefId(event.getRefId());
+            lo.setUserAgent(event.getUserAgent());
+            lo.setHttpMethod(event.getHttpMethod());
+            lo.setTraceId(event.getTraceId());
             if (event.getThrowable() != null) {
                 lo.setErrorStrace(ExceptionUtil.stacktraceToString(event.getThrowable(), 1024));
             }

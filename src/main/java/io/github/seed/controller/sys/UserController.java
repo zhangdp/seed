@@ -1,7 +1,7 @@
 package io.github.seed.controller.sys;
 
 import io.github.seed.common.annotation.Desensitization;
-import io.github.seed.common.annotation.RecordOperationLog;
+import io.github.seed.common.annotation.RecordLog;
 import io.github.seed.common.constant.TableNameConst;
 import io.github.seed.common.enums.OperateType;
 import io.github.seed.model.PageData;
@@ -41,7 +41,7 @@ public class UserController {
     @PostMapping("/add")
     @PreAuthorize("hasAuthority('sys:user:add')")
     @Operation(summary = "新增用户", description = "新增用户，无需传值id、createTime、updateTime")
-    @RecordOperationLog(type = OperateType.CREATE, description = "新增用户", refModule = TableNameConst.SYS_USER)
+    @RecordLog(type = OperateType.CREATE, description = "新增用户", refModule = TableNameConst.SYS_USER)
     public boolean add(@RequestBody @Valid AddUserDto user) {
         return userService.add(user);
     }
@@ -55,7 +55,7 @@ public class UserController {
     @PutMapping("/update")
     @PreAuthorize("hasAuthority('sys:user:update')")
     @Operation(summary = "修改用户", description = "修改用户，需传值id，无需传createTime、updateTime")
-    @RecordOperationLog(type = OperateType.UPDATE, description = "修改用户", refModule = TableNameConst.SYS_USER, refIdEl = "#user.id")
+    @RecordLog(type = OperateType.UPDATE, description = "修改用户", refModule = TableNameConst.SYS_USER, refIdEl = "#user.id")
     public boolean update(@RequestBody @Valid AddUserDto user) {
         return userService.update(user);
     }
@@ -69,7 +69,7 @@ public class UserController {
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAuthority('sys:user:delete')")
     @Operation(summary = "删除用户", description = "根据id删除用户，如果本来就不存在则返回false")
-    @RecordOperationLog(type = OperateType.DELETE, description = "删除用户", refModule = TableNameConst.SYS_USER, refIdEl = "#id")
+    @RecordLog(type = OperateType.DELETE, description = "删除用户", refModule = TableNameConst.SYS_USER, refIdEl = "#id")
     public boolean delete(@PathVariable Long id) {
         return userService.delete(id);
     }
@@ -83,7 +83,7 @@ public class UserController {
     @PreAuthorize("hasAuthority('sys:user:read')")
     @PostMapping("/page")
     @Operation(summary = "分页查询用户")
-    @RecordOperationLog(type = OperateType.READ, description = "分页查询用户", refModule = TableNameConst.SYS_USER)
+    @RecordLog(type = OperateType.READ, description = "分页查询用户", refModule = TableNameConst.SYS_USER)
     @Desensitization
     public PageData<UserInfo> queryPage(@RequestBody @Valid PageQuery<UserQuery> pageQuery, LoginUser loginUser) {
         UserQuery params = pageQuery.getParams();

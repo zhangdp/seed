@@ -1,6 +1,6 @@
 package io.github.seed.common.advice;
 
-import io.github.seed.common.annotation.RecordOperationLog;
+import io.github.seed.common.annotation.RecordLog;
 import io.github.seed.common.constant.Const;
 import io.github.seed.common.data.OperateEvent;
 import io.github.seed.common.data.R;
@@ -38,7 +38,7 @@ public class RecordOperationLogResponseBodyAdvice implements ResponseBodyAdvice<
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
         // 方法有@RecordOperationLog注解
-        return returnType.hasMethodAnnotation(RecordOperationLog.class);
+        return returnType.hasMethodAnnotation(RecordLog.class);
     }
 
     @Override

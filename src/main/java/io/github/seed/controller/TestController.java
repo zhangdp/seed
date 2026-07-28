@@ -5,7 +5,7 @@ import cn.hutool.v7.core.util.RandomUtil;
 import io.github.seed.common.annotation.IgnoreAuth;
 import io.github.seed.common.annotation.NoJsonTrim;
 import io.github.seed.common.annotation.PublishEvent;
-import io.github.seed.common.annotation.RecordOperationLog;
+import io.github.seed.common.annotation.RecordLog;
 import io.github.seed.common.constant.EventConst;
 import io.github.seed.common.enums.OperateType;
 import jakarta.servlet.http.HttpServletRequest;
@@ -40,7 +40,7 @@ public class TestController {
 
     @IgnoreAuth
     @PostMapping("/helloWorld")
-    @RecordOperationLog(type = OperateType.READ, description = "测试", refModule = "test", refIdEl = "#data.id", recordIfError = true)
+    @RecordLog(type = OperateType.READ, description = "测试", refModule = "test", refIdEl = "#data.id", recordIfError = true)
     @PublishEvent(EventConst.TEST)
     public TestData helloWorld(@RequestBody @Valid TestData data, HttpServletRequest request) {
         log.info("测试：requestUri={}, contextPath={}, requestUrl={}, servletPath={}, data={}", request.getRequestURI(),

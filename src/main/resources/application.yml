@@ -57,7 +57,7 @@ spring:
       key-prefix: "cache::"
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://127.0.0.1:5432/seed_db?currentSchema=public&connectTimeout=5&socketTimeout=60&tcpKeepAlive=true
+    url: jdbc:postgresql://127.0.0.1:5432/seed_db?currentSchema=public&connectTimeout=5&socketTimeout=60&tcpKeepAlive=true&stringtype=unspecified
     username: seed
     password: 123456
     lazy: true
@@ -86,7 +86,8 @@ mybatis-flex:
   global-config:
     print-banner: false
     key-config:
-      key-type: auto
+      key-type: generator
+      value: snowFlakeId
     logic-delete-column: deleted
     normal-value-of-logic-delete: 0
     deleted-value-of-logic-delete: 1

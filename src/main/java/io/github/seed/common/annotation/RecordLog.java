@@ -14,7 +14,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-public @interface RecordOperationLog {
+public @interface RecordLog {
 
     /**
      * 操作类型
@@ -56,27 +56,27 @@ public @interface RecordOperationLog {
      *
      * @return
      */
-    boolean logResult() default true;
+    boolean recordResult() default true;
 
     /**
      * 是否记录入参
      *
      * @return
      */
-    boolean logParameter() default true;
+    boolean recordParameter() default true;
 
     /**
      * 是否记录请求头
      *
      * @return
      */
-    boolean logHeader() default true;
+    boolean recordHeader() default false;
 
     /**
      * 是否记录请求体
      *
      * @return
      */
-    boolean logRequestBody() default true;
+    boolean recordBody() default true;
 
 }

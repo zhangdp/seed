@@ -1,7 +1,7 @@
 package io.github.seed.controller.sys;
 
 import io.github.seed.common.data.ValidGroup;
-import io.github.seed.common.annotation.RecordOperationLog;
+import io.github.seed.common.annotation.RecordLog;
 import io.github.seed.common.enums.OperateType;
 import io.github.seed.entity.sys.Dept;
 import io.github.seed.model.dto.DeptTreeNode;
@@ -50,7 +50,7 @@ public class DeptController {
     @PostMapping("/add")
     @PreAuthorize("hasAuthority('sys:dept:create')")
     @Operation(summary = "新增部门", description = "新增部门，无需传值id、createTime、updateTime")
-    @RecordOperationLog(type = OperateType.CREATE, description = "新增部门", refModule = "sys_dept", refIdEl = "#dept.id")
+    @RecordLog(type = OperateType.CREATE, description = "新增部门", refModule = "sys_dept", refIdEl = "#dept.id")
     public boolean add(@RequestBody @Validated(ValidGroup.Update.class) Dept dept) {
         return deptService.add(dept);
     }
@@ -64,7 +64,7 @@ public class DeptController {
     @PutMapping("/update")
     @PreAuthorize("hasAuthority('sys:dept:update')")
     @Operation(summary = "修改部门", description = "修改部门，需传值id")
-    @RecordOperationLog(type = OperateType.UPDATE, description = "修改部门", refModule = "sys_dept", refIdEl = "#dept.id")
+    @RecordLog(type = OperateType.UPDATE, description = "修改部门", refModule = "sys_dept", refIdEl = "#dept.id")
     public boolean update(@RequestBody @Validated(ValidGroup.Update.class) Dept dept) {
         return deptService.update(dept);
     }
@@ -78,7 +78,7 @@ public class DeptController {
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAuthority('sys:dept:delete')")
     @Operation(summary = "删除部门", description = "根据id删除部门")
-    @RecordOperationLog(type = OperateType.DELETE, description = "删除部门", refModule = "sys_dept", refIdEl = "#id")
+    @RecordLog(type = OperateType.DELETE, description = "删除部门", refModule = "sys_dept", refIdEl = "#id")
     public boolean delete(@PathVariable Long id) {
         return deptService.delete(id);
     }

@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@Table(TableNameConst.LOG_OPERATION)
+@Table(TableNameConst.OPERATION_LOG)
 @Schema(description = "操作日志")
 public class OperationLog extends BaseEntity implements Serializable {
 
@@ -47,31 +47,6 @@ public class OperationLog extends BaseEntity implements Serializable {
     @Schema(description = "操作类型")
     private String type;
     /**
-     * 请求uri
-     */
-    @Schema(description = "请求uri路径")
-    private String requestUri;
-    /**
-     * 用户浏览器标识
-     */
-    // @Schema(description = "用户浏览器标识")
-    // private String userAgent;
-    /**
-     * 请求的http 方式
-     */
-    // @Schema(description = "http方式")
-    // private String httpMethod;
-    /**
-     * 客户端ip
-     */
-    @Schema(description = "客户端ip")
-    private String clientIp;
-    /**
-     * 执行的方法
-     */
-    @Schema(description = "执行的方法")
-    private String method;
-    /**
      * 操作时间
      */
     @Schema(description = "操作时间")
@@ -87,11 +62,6 @@ public class OperationLog extends BaseEntity implements Serializable {
     @Schema(description = "关联模块类型")
     private String refModule;
     /**
-     * 返回结果状态码
-     */
-    @Schema(description = "返回结果状态码")
-    private Integer resultCode;
-    /**
      * 是否成功
      */
     // @Schema(description = "是否成功")
@@ -102,10 +72,30 @@ public class OperationLog extends BaseEntity implements Serializable {
     @Schema(description = "关联模块id")
     private Long refId;
     /**
-     * json格式的返回值
+     * 请求轨迹id
      */
-    @Schema(description = "返回值")
-    private String result;
+    @Schema(description = "请求轨迹id")
+    private String traceId;
+    /**
+     * 请求uri
+     */
+    @Schema(description = "请求uri路径")
+    private String requestUri;
+    /**
+     * 用户浏览器标识
+     */
+    @Schema(description = "用户浏览器标识")
+    private String userAgent;
+    /**
+     * 请求的http 方式
+     */
+    @Schema(description = "http方式")
+    private String httpMethod;
+    /**
+     * 客户端ip
+     */
+    @Schema(description = "客户端ip")
+    private String clientIp;
     /**
      * json格式的入参
      */
@@ -121,6 +111,21 @@ public class OperationLog extends BaseEntity implements Serializable {
      */
     @Schema(description = "请求头")
     private String requestHeaders;
+    /**
+     * 执行的java方法
+     */
+    @Schema(description = "执行的java方法")
+    private String method;
+    /**
+     * 返回结果状态码
+     */
+    @Schema(description = "返回结果状态码")
+    private Integer resultCode;
+    /**
+     * json格式的返回值
+     */
+    @Schema(description = "返回值")
+    private String result;
     /**
      * 异常堆栈
      */

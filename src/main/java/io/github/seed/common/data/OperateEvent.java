@@ -76,7 +76,7 @@ public class OperateEvent extends ApplicationEvent {
     /**
      * 浏览器标识
      */
-    // private String userAgent;
+    private String userAgent;
     /**
      * 客户端ip
      */
@@ -93,6 +93,14 @@ public class OperateEvent extends ApplicationEvent {
      * 请求头
      */
     private Map<String, String> headerMap;
+    /**
+     * http方法
+     */
+    private String httpMethod;
+    /**
+     * 请求轨迹id
+     */
+    private String traceId;
 
     public OperateEvent(Object source) {
         super(source);

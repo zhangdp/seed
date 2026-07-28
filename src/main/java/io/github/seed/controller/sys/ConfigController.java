@@ -1,7 +1,7 @@
 package io.github.seed.controller.sys;
 
 import io.github.seed.common.data.ValidGroup;
-import io.github.seed.common.annotation.RecordOperationLog;
+import io.github.seed.common.annotation.RecordLog;
 import io.github.seed.common.constant.TableNameConst;
 import io.github.seed.common.enums.OperateType;
 import io.github.seed.entity.sys.Config;
@@ -42,7 +42,7 @@ public class ConfigController {
     @PostMapping("/add")
     @PreAuthorize("hasAuthority('sys:config:create')")
     @Operation(summary = "新增配置", description = "新增配置，无需传值id、createTime、updateTime")
-    @RecordOperationLog(type = OperateType.CREATE, description = "新增配置", refModule = TableNameConst.SYS_CONFIG, refIdEl = "#model.id")
+    @RecordLog(type = OperateType.CREATE, description = "新增配置", refModule = TableNameConst.SYS_CONFIG, refIdEl = "#model.id")
     public boolean add(@RequestBody @Validated(ValidGroup.Insert.class) Config model) {
         return configService.add(model);
     }
@@ -56,7 +56,7 @@ public class ConfigController {
     @PutMapping("/update")
     @PreAuthorize("hasAuthority('sys:config:update')")
     @Operation(summary = "修改配置", description = "修改配置，需传值id")
-    @RecordOperationLog(type = OperateType.UPDATE, description = "修改配置", refModule = TableNameConst.SYS_CONFIG, refIdEl = "#model.id")
+    @RecordLog(type = OperateType.UPDATE, description = "修改配置", refModule = TableNameConst.SYS_CONFIG, refIdEl = "#model.id")
     public boolean update(@RequestBody @Validated(ValidGroup.Update.class) Config model) {
         return configService.update(model);
     }
@@ -70,7 +70,7 @@ public class ConfigController {
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAuthority('sys:config:delete')")
     @Operation(summary = "删除配置", description = "根据id删除配置")
-    @RecordOperationLog(type = OperateType.DELETE, description = "删除配置", refModule = TableNameConst.SYS_CONFIG, refIdEl = "#id")
+    @RecordLog(type = OperateType.DELETE, description = "删除配置", refModule = TableNameConst.SYS_CONFIG, refIdEl = "#id")
     public boolean delete(@PathVariable Long id) {
         return configService.delete(id) != null;
     }

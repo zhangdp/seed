@@ -7,7 +7,7 @@ spring:
       port: 6379
       password: 123456
   datasource:
-    url: jdbc:postgresql://127.0.0.1:5432/seed_db?currentSchema=public&connectTimeout=5&socketTimeout=60&tcpKeepAlive=true
+    url: jdbc:postgresql://127.0.0.1:5432/seed_db?currentSchema=public&connectTimeout=5&socketTimeout=60&tcpKeepAlive=true&stringtype=unspecified
     username: seed
     password: 123456
 management:
