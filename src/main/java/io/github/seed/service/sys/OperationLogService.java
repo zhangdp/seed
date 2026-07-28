@@ -1,6 +1,6 @@
-package io.github.seed.service.log;
+package io.github.seed.service.sys;
 
-import io.github.seed.entity.log.OperationLog;
+import io.github.seed.entity.sys.OperationLog;
 import io.github.seed.model.PageData;
 import io.github.seed.model.params.OperationLogQuery;
 import io.github.seed.model.params.PageQuery;

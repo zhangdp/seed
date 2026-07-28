@@ -1,10 +1,9 @@
-package io.github.seed.service.log;
+package io.github.seed.service.sys;
 
-import io.github.seed.entity.log.LoginLog;
+import io.github.seed.entity.sys.LoginLog;
 import io.github.seed.model.PageData;
 import io.github.seed.model.params.LoginLogQuery;
 import io.github.seed.model.params.PageQuery;
-import jakarta.validation.Valid;
 
 /**
  * 2023/4/17 登录日志service
@@ -28,5 +27,5 @@ public interface LoginLogService {
      * @param pageQuery
      * @return
      */
-    PageData<LoginLog> queryPage(@Valid PageQuery<LoginLogQuery> pageQuery);
+    PageData<LoginLog> queryPage(PageQuery<LoginLogQuery> pageQuery);
 }

@@ -1,10 +1,10 @@
-package io.github.seed.controller.log;
+package io.github.seed.controller.sys;
 
-import io.github.seed.entity.log.OperationLog;
+import io.github.seed.entity.sys.OperationLog;
 import io.github.seed.model.PageData;
 import io.github.seed.model.params.OperationLogQuery;
 import io.github.seed.model.params.PageQuery;
-import io.github.seed.service.log.OperationLogService;
+import io.github.seed.service.sys.OperationLogService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

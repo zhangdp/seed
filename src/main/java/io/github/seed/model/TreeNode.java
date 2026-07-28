@@ -16,7 +16,7 @@ import java.util.List;
 @Getter
 @Setter
 @Schema(title = "树节点")
-public abstract class TreeNode<T> extends SelectNode<T> implements Serializable {
+public abstract class TreeNode<T, E extends TreeNode<T, E>> extends SelectNode<T> implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -35,5 +35,5 @@ public abstract class TreeNode<T> extends SelectNode<T> implements Serializable 
      * 孩子节点列表
      */
     @Schema(title = "孩子节点")
-    protected List<TreeNode<T>> children;
+    protected List<E> children;
 }

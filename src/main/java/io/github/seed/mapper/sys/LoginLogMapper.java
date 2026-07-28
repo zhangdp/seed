@@ -1,9 +1,9 @@
-package io.github.seed.mapper.log;
+package io.github.seed.mapper.sys;
 
 import com.mybatisflex.core.BaseMapper;
 import com.mybatisflex.core.paginate.Page;
 import com.mybatisflex.core.query.QueryWrapper;
-import io.github.seed.entity.log.LoginLog;
+import io.github.seed.entity.sys.LoginLog;
 import io.github.seed.model.PageData;
 import io.github.seed.model.params.LoginLogQuery;
 import io.github.seed.model.params.PageQuery;

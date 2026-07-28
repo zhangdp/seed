@@ -1,10 +1,10 @@
 package io.github.seed.service;
 
-import io.github.seed.entity.log.OperationLog;
+import io.github.seed.entity.sys.OperationLog;
 import io.github.seed.model.PageData;
 import io.github.seed.model.params.OperationLogQuery;
 import io.github.seed.model.params.PageQuery;
-import io.github.seed.service.log.OperationLogService;
+import io.github.seed.service.sys.OperationLogService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

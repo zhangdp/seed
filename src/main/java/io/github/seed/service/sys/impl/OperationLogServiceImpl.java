@@ -1,11 +1,11 @@
-package io.github.seed.service.log.impl;
+package io.github.seed.service.sys.impl;
 
-import io.github.seed.entity.log.OperationLog;
-import io.github.seed.mapper.log.OperationLogMapper;
+import io.github.seed.entity.sys.OperationLog;
+import io.github.seed.mapper.sys.OperationLogMapper;
 import io.github.seed.model.PageData;
 import io.github.seed.model.params.OperationLogQuery;
 import io.github.seed.model.params.PageQuery;
-import io.github.seed.service.log.OperationLogService;
+import io.github.seed.service.sys.OperationLogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

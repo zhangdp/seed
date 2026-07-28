@@ -1,6 +1,6 @@
 package io.github.seed;
 
-import io.github.seed.common.annotation.EnableLogOperation;
+import io.github.seed.common.annotation.EnableRecordOperationLog;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,7 +16,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @SpringBootApplication
 @EnableAsync
 @EnableCaching
-@EnableLogOperation
+@EnableRecordOperationLog
 @MapperScan("io.github.seed.mapper")
 public class SeedApplication {
 

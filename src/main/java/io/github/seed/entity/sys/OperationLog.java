@@ -1,4 +1,4 @@
-package io.github.seed.entity.log;
+package io.github.seed.entity.sys;
 
 import com.mybatisflex.annotation.Table;
 import io.github.seed.common.constant.TableNameConst;

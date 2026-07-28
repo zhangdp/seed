@@ -15,5 +15,5 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Import(RecordOperationLogAspect.class)
-public @interface EnableLogOperation {
+public @interface EnableRecordOperationLog {
 }

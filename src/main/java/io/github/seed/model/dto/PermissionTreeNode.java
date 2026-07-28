@@ -19,7 +19,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Schema(title = "资源树节点")
-public class PermissionTreeNode extends TreeNode<Long> implements Serializable {
+public class PermissionTreeNode extends TreeNode<Long, PermissionTreeNode> implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

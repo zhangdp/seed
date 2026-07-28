@@ -1,10 +1,10 @@
 package io.github.seed.service;
 
-import io.github.seed.entity.log.LoginLog;
+import io.github.seed.entity.sys.LoginLog;
 import io.github.seed.model.PageData;
 import io.github.seed.model.params.LoginLogQuery;
 import io.github.seed.model.params.PageQuery;
-import io.github.seed.service.log.LoginLogService;
+import io.github.seed.service.sys.LoginLogService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
