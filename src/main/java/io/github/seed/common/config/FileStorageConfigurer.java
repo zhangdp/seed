@@ -1,12 +1,14 @@
 package io.github.seed.common.config;
 
-import io.github.seed.common.component.S3FileTemplate;
-import io.github.seed.common.component.FileTemplate;
-import io.github.seed.common.component.LocalFileTemplate;
+import io.github.seed.common.component.S3StogeAdapter;
+import io.github.seed.common.component.S3Template;
+import io.github.seed.common.component.StogeAdapter;
+import io.github.seed.common.component.LocalStogeAdapter;
 import io.github.seed.common.util.MimeType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -30,31 +32,42 @@ public class FileStorageConfigurer implements InitializingBean {
     private final FileStorageProperties fileStorageProperties;
 
     /**
-     * 本地文件访问器
+     * s3访问器
      *
      * @return
      */
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnProperty(prefix = FileStorageProperties.CONFIG_PREFIX, name = "type", havingValue = "local")
-    public FileTemplate localFileTemplate() {
-        FileTemplate template = new LocalFileTemplate(fileStorageProperties.getLocal().getUploadDir());
-        log.info("使用本地文件访问器：{}，上传文件夹：{}", template, fileStorageProperties.getLocal().getUploadDir());
-        return template;
+    @ConditionalOnProperty(prefix = FileStorageProperties.CONFIG_PREFIX + ".s3", name = "endpoint")
+    public S3Template s3Template() {
+        FileStorageProperties.S3Properties s3Properties = fileStorageProperties.getS3();
+        return new S3Template(s3Properties.getEndpoint(), s3Properties.getAccessKey(), s3Properties.getSecretKey(), s3Properties.getBucketName());
     }
 
     /**
      * aws-s3文件访问器
      *
+     * @param s3Template
      * @return
      */
     @Bean
-    @ConditionalOnMissingBean
-    @ConditionalOnProperty(prefix = FileStorageProperties.CONFIG_PREFIX, name = "type", havingValue = "s3")
-    public FileTemplate s3FileTemplate() {
-        FileStorageProperties.S3Properties s3Properties = fileStorageProperties.getS3();
-        FileTemplate template = new S3FileTemplate(s3Properties.getEndpoint(), s3Properties.getAccessKey(), s3Properties.getSecretKey(), s3Properties.getBucketName());
-        log.info("使用Aws S3文件访问器：{}, 地址：{}，桶：{}", template, s3Properties.getEndpoint(), s3Properties.getBucketName());
+    @ConditionalOnBean(S3Template.class)
+    public StogeAdapter s3StogeAdapter(S3Template s3Template) {
+        S3StogeAdapter adapter = new S3StogeAdapter(s3Template);
+        log.info("使用S3文件访问适配器：{}", adapter);
+        return adapter;
+    }
+
+    /**
+     * 本地文件访问器
+     *
+     * @return
+     */
+    @Bean
+    @ConditionalOnMissingBean(StogeAdapter.class)
+    public StogeAdapter localStogeAdapter() {
+        StogeAdapter template = new LocalStogeAdapter();
+        log.warn("未发现文件访问器，使用本地文件访问器：{}", template);
         return template;
     }
 

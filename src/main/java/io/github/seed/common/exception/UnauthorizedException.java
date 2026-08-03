@@ -5,7 +5,7 @@ import io.github.seed.common.enums.ErrorCode;
 import java.io.Serial;
 
 /**
- * 2024/6/27 未登录异常
+ * 2024/6/27 未登录异常，输出http status 401
  *
  * @author zhangdp
  * @since 1.0.0

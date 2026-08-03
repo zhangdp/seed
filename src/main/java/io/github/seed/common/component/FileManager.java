@@ -39,7 +39,7 @@ import java.time.LocalDateTime;
 public class FileManager {
 
     private final FileInfoService fileInfoService;
-    private final FileTemplate fileTemplate;
+    private final StogeAdapter fileTemplate;
     private final FileStorageProperties fileProperties;
 
     /**
@@ -91,7 +91,7 @@ public class FileManager {
         fileInfoService.add(entity);
 
         // 保存文件
-        fileTemplate.upload(file.getInputStream(), file.getSize(), remotePath);
+        fileTemplate.upload(remotePath, file);
 
         FileInfoDto dto = new FileInfoDto();
         BeanUtil.copyProperties(entity, dto);

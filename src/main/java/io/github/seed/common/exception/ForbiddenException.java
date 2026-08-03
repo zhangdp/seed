@@ -5,7 +5,7 @@ import io.github.seed.common.enums.ErrorCode;
 import java.io.Serial;
 
 /**
- * 2024/6/27 没权限异常
+ * 2024/6/27 没权限异常，输出http status 403
  *
  * @author zhangdp
  * @since 1.0.0

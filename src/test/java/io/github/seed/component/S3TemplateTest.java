@@ -1,12 +1,12 @@
 package io.github.seed.component;
 
 import cn.hutool.v7.core.date.TimeUtil;
-import io.github.seed.common.component.S3FileTemplate;
+import io.github.seed.common.component.S3Template;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
+import software.amazon.awssdk.services.s3.model.*;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -19,15 +19,15 @@ import java.time.LocalDate;
  */
 @Slf4j
 @SpringBootTest
-public class S3FileTemplateTest {
+public class S3TemplateTest {
 
     @Autowired
-    private S3FileTemplate s3FileTemplate;
+    private S3Template s3Template;
 
     @Test
     public void listObjects() {
         String path = "upload/";
-        ListObjectsV2Response res = s3FileTemplate.listObjects(path, 100);
+        ListObjectsV2Response res = s3Template.listObjects(path, 100);
         log.debug("列出子文件列表，path={}，result={}", path, res);
     }
 
@@ -35,7 +35,7 @@ public class S3FileTemplateTest {
     public void download() throws IOException {
         String path = "upload/2024/11/18/1858417482725986304.txt";
         String localPath = "/Users/peng/tmp/1858417482725986304.txt";
-        long result = s3FileTemplate.download(path, localPath);
+        long result = s3Template.download(path, localPath);
         log.debug("下载文件{}到{}：{}", path, localPath, result);
     }
 
@@ -45,14 +45,14 @@ public class S3FileTemplateTest {
         String localPath = "/Users/peng/tmp/智能小飞切换服务器地址为https加域名.docx";
         String fileName = localPath.substring(localPath.lastIndexOf("/") + 1);
         String path = dir + fileName;
-        boolean result = s3FileTemplate.upload(localPath, path);
+        PutObjectResponse result = s3Template.upload(localPath, path);
         log.debug("上传文件{}到{}：{}", localPath, path, result);
     }
 
     @Test
     public void delete() {
         String path = "upload/2024/11/18/1858417482725986304.txt";
-        boolean result = s3FileTemplate.delete(path);
+        DeleteObjectResponse result = s3Template.delete(path);
         log.debug("删除文件{}：{}", path, result);
     }
 
@@ -60,7 +60,7 @@ public class S3FileTemplateTest {
     public void copy() {
         String srcPath = "upload/2024/11/18/1858418349910921216.jpg";
         String destPath = "upload/2026/07/21/1858418349910921216.jpg";
-        boolean result = s3FileTemplate.copy(srcPath, destPath);
+        CopyObjectResponse result = s3Template.copy(srcPath, destPath);
         log.debug("复制文件{}到{}：{}", srcPath, destPath, result);
     }
 
@@ -68,7 +68,14 @@ public class S3FileTemplateTest {
     public void move() {
         String srcPath = "upload/2024/11/18/1858427159597682688.html";
         String destPath = "upload/2026/07/21/1858427159597682688.html";
-        boolean result = s3FileTemplate.move(srcPath, destPath);
+        CopyObjectResponse result = s3Template.move(srcPath, destPath);
         log.debug("移动文件{}到{}：{}", srcPath, destPath, result);
+    }
+
+    @Test
+    public void headObject() {
+        String path = "upload/2024/11/18/1858417482725986304.txt";
+        HeadObjectResponse result = s3Template.headObject(path);
+        log.debug("获取文件信息，path={}, result={}", path, result);
     }
 }

@@ -155,13 +155,9 @@ public enum ErrorCode {
     REDIS_ERROR(40100, "Redis错误"),
 
     /**
-     * MinIO错误
+     * S3对象存储访问错误
      */
-    MINIO_ERROR(40200, "MinIO错误"),
-    /**
-     * MinIO不存在资源
-     */
-    MINIO_NOT_FOUND_ERROR(40201, "MinIO不存在资源"),
+    S3_ERROR(40200, "S3对象存储访问错误"),
 
     /// 5xxxx，错误来源是第三方接口或sdk
     /**

@@ -5,7 +5,7 @@ import io.github.seed.common.enums.ErrorCode;
 import java.io.Serial;
 
 /**
- * 2023/6/12 不存在资源异常
+ * 2023/6/12 不存在资源异常，输出http status 404
  *
  * @author zhangdp
  * @since 1.0.0
