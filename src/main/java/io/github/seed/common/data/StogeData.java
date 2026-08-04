@@ -49,5 +49,5 @@ public class StogeData implements Serializable {
     /**
      * 元数据
      */
-    private Map<String, Object> metadata;
+    private Map<String, String> metadata;
 }

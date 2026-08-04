@@ -51,7 +51,7 @@ public class S3TemplateTest {
 
     @Test
     public void delete() {
-        String path = "upload/2024/11/18/1858417482725986304.txt";
+        String path = "upload/2024/11/18/9594905148383235.docx";
         DeleteObjectResponse result = s3Template.delete(path);
         log.debug("删除文件{}：{}", path, result);
     }

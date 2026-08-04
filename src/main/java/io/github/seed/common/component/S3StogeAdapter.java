@@ -1,31 +1,22 @@
 package io.github.seed.common.component;
 
-import cn.hutool.v7.core.io.IoUtil;
 import cn.hutool.v7.core.lang.Assert;
 import io.github.seed.common.data.StogeData;
-import io.github.seed.common.enums.ErrorCode;
 import io.github.seed.common.exception.BadRequestException;
-import io.github.seed.common.exception.BizException;
 import io.github.seed.common.util.MimeType;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.web.multipart.MultipartFile;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
-import software.amazon.awssdk.core.ResponseInputStream;
-import software.amazon.awssdk.core.sync.RequestBody;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.S3Configuration;
-import software.amazon.awssdk.services.s3.model.*;
+import software.amazon.awssdk.services.s3.model.DeleteObjectsResponse;
+import software.amazon.awssdk.services.s3.model.PutObjectResponse;
+import software.amazon.awssdk.services.s3.model.S3Error;
 
-import java.io.*;
-import java.net.URI;
-import java.time.LocalDateTime;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -66,22 +57,19 @@ public class S3StogeAdapter implements StogeAdapter {
 
     @Override
     public StogeData upload(String path, File file) {
-        try {
-            String fileName = file.getName();
-            PutObjectResponse res = s3Template.upload(path, file);
-            StogeData data = new StogeData();
-            data.setFileName(file.getName());
-            data.setMimeType(MimeType.getMimeType(fileName));
-            data.setETag(res.eTag().replace("\"", ""));
-            data.setChecksum(null);
-            data.setLastModified(System.currentTimeMillis());
-            data.setExpire(null);
-            data.setSize(file.length());
-            data.setMetadata(null);
-            return data;
-        } catch (S3Exception e) {
-            throw new BizException(ErrorCode.S3_ERROR.code(), "上传文件到对象存储失败", e);
-        }
+        String fileName = file.getName();
+        PutObjectResponse res = s3Template.upload(path, file);
+        StogeData data = new StogeData();
+        data.setFileName(file.getName());
+        data.setMimeType(MimeType.getMimeType(fileName));
+        data.setETag(res.eTag().replace("\"", ""));
+        // 单个文件上传etag就是文件md5
+        data.setChecksum(data.getETag());
+        data.setLastModified(System.currentTimeMillis());
+        data.setExpire(null);
+        data.setSize(file.length());
+        data.setMetadata(null);
+        return data;
     }
 
     @Override
@@ -89,23 +77,15 @@ public class S3StogeAdapter implements StogeAdapter {
         return s3Template.download(path);
     }
 
-    public long download(String path, OutputStream outputStream) {
-        return this.download(path).transferTo(outputStream);
-    }
-
     @Override
     public boolean delete(String path) {
-        return false;
-    }
-
-    @Override
-    public List<String> deleteBatch(String... paths) {
-        return List.of();
+        return s3Template.delete(path) != null;
     }
 
     @Override
     public List<String> deleteBatch(Collection<String> paths) {
-        return List.of();
+        DeleteObjectsResponse res = s3Template.deleteBatch(paths);
+        return res.errors() != null ? res.errors().stream().map(S3Error::key).toList() : Collections.emptyList();
     }
 
 }

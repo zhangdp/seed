@@ -23,10 +23,6 @@ public class FileStorageProperties {
     public static final String CONFIG_PREFIX = "app.file-storage";
 
     /**
-     * 存储类型
-     */
-    private StorageType type;
-    /**
      * 根目录
      */
     private String rootPath = "";
@@ -52,13 +48,6 @@ public class FileStorageProperties {
     private S3Properties s3;
 
     /**
-     * 存储类型
-     */
-    public enum StorageType {
-        LOCAL, S3
-    }
-
-    /**
      * 本地文件存储配置
      */
     @Getter
@@ -66,14 +55,9 @@ public class FileStorageProperties {
     public static class LocalStorageProperties {
 
         /**
-         * 是否启用
-         */
-        private boolean enabled = false;
-
-        /**
          * 上传的目录
          */
-        private String uploadDir;
+        private String dir = "";
     }
 
     /**

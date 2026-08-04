@@ -38,7 +38,7 @@ public class FileStorageConfigurer implements InitializingBean {
      */
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnProperty(prefix = FileStorageProperties.CONFIG_PREFIX + ".s3", name = "endpoint")
+    @ConditionalOnProperty(prefix = FileStorageProperties.CONFIG_PREFIX + ".s3", name = "enabled", havingValue = "true")
     public S3Template s3Template() {
         FileStorageProperties.S3Properties s3Properties = fileStorageProperties.getS3();
         return new S3Template(s3Properties.getEndpoint(), s3Properties.getAccessKey(), s3Properties.getSecretKey(), s3Properties.getBucketName());
@@ -66,7 +66,7 @@ public class FileStorageConfigurer implements InitializingBean {
     @Bean
     @ConditionalOnMissingBean(StogeAdapter.class)
     public StogeAdapter localStogeAdapter() {
-        StogeAdapter template = new LocalStogeAdapter();
+        StogeAdapter template = new LocalStogeAdapter(fileStorageProperties.getLocal().getDir());
         log.warn("未发现文件访问器，使用本地文件访问器：{}", template);
         return template;
     }

@@ -9,8 +9,8 @@ import cn.hutool.v7.core.util.ObjUtil;
 import cn.hutool.v7.crypto.SecureUtil;
 import io.github.seed.common.config.FileStorageProperties;
 import io.github.seed.common.constant.Const;
+import io.github.seed.common.data.StogeData;
 import io.github.seed.common.exception.NotFoundException;
-import io.github.seed.common.util.MimeType;
 import io.github.seed.common.util.WebUtils;
 import io.github.seed.entity.sys.FileInfo;
 import io.github.seed.model.dto.FileInfoDto;
@@ -39,7 +39,7 @@ import java.time.LocalDateTime;
 public class FileManager {
 
     private final FileInfoService fileInfoService;
-    private final StogeAdapter fileTemplate;
+    private final StogeAdapter stogeAdapter;
     private final FileStorageProperties fileProperties;
 
     /**
@@ -67,7 +67,7 @@ public class FileManager {
             remotePath += "/";
         }
         // 按日期分文件夹
-        remotePath += TimeUtil.format(now.toLocalDate(), "yyyy-MM/dd") + "/";
+        remotePath += TimeUtil.format(now.toLocalDate(), "yyyy/MM/dd") + "/";
         // 文件名为附件唯一id防止重复
         remotePath += fileId;
         // 后缀
@@ -75,23 +75,23 @@ public class FileManager {
             remotePath += "." + extension;
         }
 
+        // 保存文件到存储服务
+        StogeData stoge = stogeAdapter.upload(remotePath, file);
+
         // 记录保存到数据库
         FileInfo entity = new FileInfo();
         entity.setFileId(fileId);
         entity.setUserId(uploadUserId);
         entity.setFileName(fileName);
         entity.setExtension(extension);
-        entity.setMimeType(MimeType.getMimeType(extension));
+        entity.setMimeType(stoge.getMimeType());
         entity.setSize(file.getSize());
-        entity.setHash(this.calculateSHA256(file.getInputStream()));
+        entity.setChecksum(stoge.getChecksum());
         entity.setStoragePath(remotePath);
         entity.setDownloadUrl(this.generateDownloadUrl(fileId, fileName));
         entity.setUploadAt(now);
         entity.setExpireAt(expireTime);
         fileInfoService.add(entity);
-
-        // 保存文件
-        fileTemplate.upload(remotePath, file);
 
         FileInfoDto dto = new FileInfoDto();
         BeanUtil.copyProperties(entity, dto);
@@ -120,7 +120,7 @@ public class FileManager {
         }
         FileStorageProperties.DownloadProperties downloadProperties = this.fileProperties.getDownload();
         // 如果有开启http缓存且未修改直接返回304
-        String etag = "\"" + fileInfo.getHash() + "\"";
+        String etag = "\"" + fileInfo.getChecksum() + "\"";
         // 上次修改时间，http时间只精确到秒
         long lastModified = TimeUtil.toEpochMilli(ObjUtil.defaultIfNull(fileInfo.getUpdatedAt(), fileInfo.getCreatedAt())) / 1000L;
         if (downloadProperties.isHttpCacheable() && WebUtils.checkNotModified(request, etag, lastModified)) {
@@ -135,7 +135,7 @@ public class FileManager {
         // 设置下载相关的http头
         WebUtils.responseDispositionHeader(response, StrUtil.defaultIfBlank(fileName, fileInfo.getFileName()), fileInfo.getSize(), fileInfo.getMimeType(), isInline);
         // 从远端读取文件并输出到输出流，无需flush()或者关闭输出流，web容器会自行处理
-        fileTemplate.download(fileInfo.getStoragePath(), response.getOutputStream());
+        stogeAdapter.download(fileInfo.getStoragePath(), response.getOutputStream());
     }
 
     /**

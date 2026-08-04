@@ -338,26 +338,21 @@ public class S3Template implements InitializingBean, DisposableBean {
     }
 
     /**
-     * 删除文件，s3没有目录概念，不支持目录。删除成功返回删除结果，如果文件本身就不存在返回null也可以算作成功，失败会抛异常
+     * 删除文件，s3没有目录概念，不支持目录
      *
      * @param path
      * @return
      */
     public DeleteObjectResponse delete(String path) {
         path = this.normalizePath(path);
-        try {
-            DeleteObjectResponse res = s3Client.deleteObject(
-                    DeleteObjectRequest.builder()
-                        .bucket(bucket)
-                        .key(path)
-                        .build()
-            );
-            log.debug("[{}]删除文件，path={}, result={}", bucket, path, res);
-            return res;
-        } catch (NoSuchKeyException e) {
-            log.warn("[{}]忽略删除文件，不存在文件：{}", bucket, path, e);
-            return null;
-        }
+        DeleteObjectResponse res = s3Client.deleteObject(
+                DeleteObjectRequest.builder()
+                    .bucket(bucket)
+                    .key(path)
+                    .build()
+        );
+        log.debug("[{}]删除文件，path={}, result={}", bucket, path, res);
+        return res;
     }
 
     /**

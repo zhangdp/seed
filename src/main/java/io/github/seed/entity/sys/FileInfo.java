@@ -59,10 +59,10 @@ public class FileInfo extends BaseLogicEntity implements Serializable {
     @Schema(description = "文件大小")
     private Long size;
     /**
-     * 文件hash
+     * 文件校验码
      */
-    @Schema(description = "文件hash")
-    private String hash;
+    @Schema(description = "文件校验码")
+    private String checksum;
     /**
      * 保存路径
      */

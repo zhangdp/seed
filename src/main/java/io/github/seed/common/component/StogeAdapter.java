@@ -108,7 +108,9 @@ public interface StogeAdapter {
      * @param paths
      * @return
      */
-    List<String> deleteBatch(String... paths);
+    default List<String> deleteBatch(String... paths) {
+        return this.deleteBatch(List.of(paths));
+    }
 
     /**
      * 批量删除，返回失败列表
