@@ -1,7 +1,5 @@
 package io.github.seed.common.component;
 
-import cn.hutool.v7.core.collection.CollUtil;
-import cn.hutool.v7.core.io.IoUtil;
 import io.github.seed.common.util.MimeType;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -21,11 +19,7 @@ import software.amazon.awssdk.services.s3.paginators.ListObjectsV2Iterable;
 
 import java.io.*;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
 
 /**
  * S3访问类，适用于任何S3协议的文件存储如minio、阿里oss、腾讯cos、电信翼龙ocs等
@@ -372,13 +366,13 @@ public class S3Template implements InitializingBean, DisposableBean {
             }
             List<String> paths = response.contents().stream()
                     .map(S3Object::key)
-                    .collect(Collectors.toList());
+                    .toList();
             // 批量删除当前页
             DeleteObjectsResponse res = this.deleteBatch(paths);
-            if (CollUtil.isNotEmpty(res.deleted())) {
+            if (res.hasDeleted()) {
                 allDeleted.addAll(res.deleted());
             }
-            if (CollUtil.isNotEmpty(res.errors())) {
+            if (res.hasErrors()) {
                 allErrors.addAll(res.errors());
             }
         }
@@ -418,43 +412,30 @@ public class S3Template implements InitializingBean, DisposableBean {
      * @return
      */
     public DeleteObjectsResponse deleteBatch(Collection<String> paths, boolean quiteMode) {
-        List<DeletedObject> allDeleted = new ArrayList<>(100);
-        List<S3Error> allErrors = new ArrayList<>(100);
-        // s3批量操作每次最多1000条，超过1000条的分批处理
-        List<List<String>> splitList = CollUtil.partition(paths, BATCH_SIZE);
-        int i = 1;
-        for (List<String> list : splitList) {
-            // 构建待删除的对象列表
-            List<ObjectIdentifier> objectsToDelete = list.stream()
-                    .map(path -> ObjectIdentifier.builder().key(this.normalizePath(path)).build())
-                    .collect(Collectors.toList());
+        // 构建待删除的对象列表
+        List<ObjectIdentifier> objectsToDelete = paths.stream()
+                .map(this::normalizePath)
+                .distinct()
+                .map(path -> ObjectIdentifier.builder().key(path).build())
+                .toList();
 
-            DeleteObjectsResponse res = s3Client.deleteObjects(
-                    DeleteObjectsRequest.builder()
-                        .bucket(bucket)
-                        .delete(Delete.builder()
-                                .objects(objectsToDelete)
-                                // quiet静默模式，不返回成功列表减少带宽，只返回失败列表
-                                .quiet(quiteMode)
-                                .build()
-                        )
-                        .build()
-            );
-            if (CollUtil.isNotEmpty(res.deleted())) {
-                allDeleted.addAll(res.deleted());
-            }
-            if (CollUtil.isNotEmpty(res.errors())) {
-                allErrors.addAll(res.errors());
-            }
-            log.debug("[{}]分批批量删除文件，批次：{}，结果列表：{}", bucket, i, res);
-            i++;
-        }
+        // s3批量操作每次最多1000条
+        Assert.isTrue(objectsToDelete.size() <= BATCH_SIZE, "S3批量删除每次最多" + BATCH_SIZE + "条");
 
-        // 将分批收集的结果统一聚合回单个 DeleteObjectsResponse 对象
-        return DeleteObjectsResponse.builder()
-                .deleted(allDeleted.isEmpty() ? null : allDeleted)
-                .errors(allErrors.isEmpty() ? null : allErrors)
-                .build();
+        DeleteObjectsResponse res = s3Client.deleteObjects(
+                DeleteObjectsRequest.builder()
+                    .bucket(bucket)
+                    .delete(Delete.builder()
+                            .objects(objectsToDelete)
+                            // quiet静默模式，不返回成功列表减少带宽，只返回失败列表
+                            .quiet(quiteMode)
+                            .build()
+                    )
+                    .build()
+        );
+
+        log.debug("[{}]分批批量删除文件：{}", bucket, res);
+        return res;
     }
 
     /**
@@ -557,7 +538,12 @@ public class S3Template implements InitializingBean, DisposableBean {
             log.debug("[{}]上传inputStream文件, path={}, size={}, result={}", bucket, path, size, res);
             return res;
         } finally {
-            IoUtil.closeQuietly(inputStream);
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException ignore) {
+                }
+            }
         }
     }
 
@@ -592,7 +578,12 @@ public class S3Template implements InitializingBean, DisposableBean {
             log.debug("[{}]上传inputStream文件, path={}, result={}", bucket, path, res);
             return res;
         } finally {
-            IoUtil.closeQuietly(inputStream);
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException ignore) {
+                }
+            }
         }
     }
 
