@@ -2,7 +2,6 @@ package io.github.seed.common.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
-import software.amazon.awssdk.utils.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -74,11 +73,9 @@ public class MimeType {
      */
     public static String guessMimeType(String fileName) {
         int lastPeriodIndex = fileName.lastIndexOf('.');
-        if (lastPeriodIndex > 0 && lastPeriodIndex + 1 < fileName.length()) {
-            String ext = StringUtils.lowerCase(fileName.substring(lastPeriodIndex + 1));
-            if (extensionToMimetype.containsKey(ext)) {
-                return extensionToMimetype.get(ext);
-            }
+        String ext = (lastPeriodIndex > -1 ? fileName.substring(lastPeriodIndex + 1) : fileName).trim().toLowerCase();
+        if (extensionToMimetype.containsKey(ext)) {
+            return extensionToMimetype.get(ext);
         }
         return MIMETYPE_OCTET_STREAM;
     }

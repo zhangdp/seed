@@ -517,7 +517,7 @@ public class S3Template implements InitializingBean, DisposableBean {
     }
 
     /**
-     * 上传文件流，会自动关闭输入流
+     * 上传文件流，不会自动关闭输入流
      *
      * @param path
      * @param inputStream
@@ -526,29 +526,20 @@ public class S3Template implements InitializingBean, DisposableBean {
      */
     public PutObjectResponse upload(String path, InputStream inputStream, long size, String mimeType) {
         path = this.normalizePath(path);
-        try {
-            PutObjectResponse res = s3Client.putObject(
-                    PutObjectRequest.builder()
-                            .bucket(bucket)
-                            .key(path)
-                            .contentType(mimeType)
-                            .build(),
-                    RequestBody.fromInputStream(inputStream, size)
-            );
-            log.debug("[{}]上传inputStream文件, path={}, size={}, result={}", bucket, path, size, res);
-            return res;
-        } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException ignore) {
-                }
-            }
-        }
+        PutObjectResponse res = s3Client.putObject(
+                PutObjectRequest.builder()
+                        .bucket(bucket)
+                        .key(path)
+                        .contentType(mimeType)
+                        .build(),
+                RequestBody.fromInputStream(inputStream, size)
+        );
+        log.debug("[{}]上传inputStream文件, path={}, size={}, result={}", bucket, path, size, res);
+        return res;
     }
 
     /**
-     * 上传未知大小文件流，会自动关闭文件流，尽量避免使用
+     * 上传未知大小文件流，尽量避免使用此方法而应该使用带大小的上传，不会自动关闭文件流
      *
      * @param path
      * @param inputStream
@@ -559,7 +550,7 @@ public class S3Template implements InitializingBean, DisposableBean {
     }
 
     /**
-     * 上传未知大小文件流，会自动关闭文件流，尽量避免使用
+     * 上传未知大小文件流，尽量避免使用此方法而应该使用带大小的上传，不会自动关闭文件流
      *
      * @param path
      * @param inputStream
@@ -595,12 +586,14 @@ public class S3Template implements InitializingBean, DisposableBean {
      */
     public ResponseInputStream<GetObjectResponse> download(String path) {
         path = this.normalizePath(path);
-        return s3Client.getObject(
+        ResponseInputStream<GetObjectResponse> res = s3Client.getObject(
                 GetObjectRequest.builder()
                         .bucket(bucket)
                         .key(path)
                         .build()
         );
+        log.debug("[{}]下载文件，path={}, result={}", bucket, path, res.response());
+        return res;
     }
 
     /**
