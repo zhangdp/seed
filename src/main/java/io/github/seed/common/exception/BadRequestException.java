@@ -1,6 +1,7 @@
 package io.github.seed.common.exception;
 
 import io.github.seed.common.enums.ErrorCode;
+import org.springframework.http.HttpStatus;
 
 import java.io.Serial;
 
@@ -16,42 +17,42 @@ public class BadRequestException extends BizException {
     private static final long serialVersionUID = 1L;
 
     public BadRequestException() {
-        super(ErrorCode.BAD_REQUEST);
+        super(ErrorCode.BAD_REQUEST, HttpStatus.BAD_REQUEST.value());
     }
 
     public BadRequestException(Throwable cause) {
-        super(ErrorCode.BAD_REQUEST, cause);
+        super(ErrorCode.BAD_REQUEST, HttpStatus.BAD_REQUEST.value(), cause);
     }
 
     public BadRequestException(String message) {
-        super(ErrorCode.BAD_REQUEST.code(), message);
+        super(ErrorCode.BAD_REQUEST.code(), message, HttpStatus.BAD_REQUEST.value());
     }
 
     public BadRequestException(String message, Throwable cause) {
-        super(ErrorCode.BAD_REQUEST.code(), message, cause);
+        super(ErrorCode.BAD_REQUEST.code(), message, HttpStatus.BAD_REQUEST.value(), cause);
     }
 
     public BadRequestException(int code, String message) {
-        super(code, message);
+        super(code, message, HttpStatus.BAD_REQUEST.value());
     }
 
     public BadRequestException(int code, String message, Throwable cause) {
-        super(code, message, cause);
+        super(code, message, HttpStatus.BAD_REQUEST.value(), cause);
     }
 
     public BadRequestException(int code, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(code, message, cause, enableSuppression, writableStackTrace);
+        super(code, message, HttpStatus.BAD_REQUEST.value(), cause, enableSuppression, writableStackTrace);
     }
 
     public BadRequestException(ErrorCode errorCode) {
-        super(errorCode);
+        super(errorCode, HttpStatus.BAD_REQUEST.value());
     }
 
     public BadRequestException(ErrorCode errorCode, Throwable cause) {
-        super(errorCode, cause);
+        super(errorCode, HttpStatus.BAD_REQUEST.value(), cause);
     }
 
     public BadRequestException(ErrorCode errorCode, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(errorCode, cause, enableSuppression, writableStackTrace);
+        super(errorCode, HttpStatus.BAD_REQUEST.value(), cause, enableSuppression, writableStackTrace);
     }
 }

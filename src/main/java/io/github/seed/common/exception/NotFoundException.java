@@ -1,6 +1,7 @@
 package io.github.seed.common.exception;
 
 import io.github.seed.common.enums.ErrorCode;
+import org.springframework.http.HttpStatus;
 
 import java.io.Serial;
 
@@ -16,42 +17,42 @@ public class NotFoundException extends BizException {
     private static final long serialVersionUID = 1L;
 
     public NotFoundException() {
-        super(ErrorCode.NOT_FOUND);
+        super(ErrorCode.NOT_FOUND, HttpStatus.NOT_FOUND.value());
     }
 
     public NotFoundException(Throwable cause) {
-        super(ErrorCode.NOT_FOUND, cause);
+        super(ErrorCode.NOT_FOUND, HttpStatus.NOT_FOUND.value(), cause);
     }
 
     public NotFoundException(String message) {
-        super(ErrorCode.NOT_FOUND.code(), message);
+        super(ErrorCode.NOT_FOUND.code(), message, HttpStatus.NOT_FOUND.value());
     }
 
     public NotFoundException(String message, Throwable cause) {
-        super(ErrorCode.NOT_FOUND.code(), message, cause);
+        super(ErrorCode.NOT_FOUND.code(), message, HttpStatus.NOT_FOUND.value(), cause);
     }
 
     public NotFoundException(int code, String message) {
-        super(code, message);
+        super(code, message, HttpStatus.NOT_FOUND.value());
     }
 
     public NotFoundException(int code, String message, Throwable cause) {
-        super(code, message, cause);
+        super(code, message, HttpStatus.NOT_FOUND.value(), cause);
     }
 
     public NotFoundException(int code, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(code, message, cause, enableSuppression, writableStackTrace);
+        super(code, message, HttpStatus.NOT_FOUND.value(), cause, enableSuppression, writableStackTrace);
     }
 
     public NotFoundException(ErrorCode errorCode) {
-        super(errorCode);
+        super(errorCode, HttpStatus.NOT_FOUND.value());
     }
 
     public NotFoundException(ErrorCode errorCode, Throwable cause) {
-        super(errorCode, cause);
+        super(errorCode, HttpStatus.NOT_FOUND.value(), cause);
     }
 
     public NotFoundException(ErrorCode errorCode, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(errorCode, cause, enableSuppression, writableStackTrace);
+        super(errorCode, HttpStatus.NOT_FOUND.value(), cause, enableSuppression, writableStackTrace);
     }
 }

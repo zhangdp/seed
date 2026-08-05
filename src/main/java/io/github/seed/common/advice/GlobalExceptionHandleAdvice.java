@@ -3,13 +3,11 @@ package io.github.seed.common.advice;
 import cn.hutool.v7.core.text.StrUtil;
 import io.github.seed.common.data.R;
 import io.github.seed.common.enums.ErrorCode;
-import io.github.seed.common.exception.BizException;
-import io.github.seed.common.exception.ForbiddenException;
-import io.github.seed.common.exception.NotFoundException;
-import io.github.seed.common.exception.UnauthorizedException;
+import io.github.seed.common.exception.*;
 import io.github.seed.model.ParamsError;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
@@ -35,6 +33,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -51,7 +50,7 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandleAdvice {
 
-    public static final String ERROR = "系统异常，请稍后再试";
+    public static final String ERROR = "系统内部错误，请稍后再试";
 
     /**
      * 非法异常，正常是断言产生的
@@ -66,54 +65,6 @@ public class GlobalExceptionHandleAdvice {
     public R<?> illegalArgumentException(IllegalArgumentException e, HttpServletRequest request) {
         log.warn("IllegalArgumentException：uri={}", request.getRequestURI(), e);
         return new R<>(ErrorCode.BAD_REQUEST.code(), StrUtil.defaultIfEmpty(e.getMessage(), ErrorCode.BAD_REQUEST.message()));
-    }
-
-    /**
-     * redis 异常
-     * <br>输出http状态码：500
-     *
-     * @param e
-     * @param request
-     * @return
-     */
-    @ExceptionHandler(RedisConnectionFailureException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public R<?> redisConnectionFailureException(RedisConnectionFailureException e, HttpServletRequest request) {
-        log.error("RedisConnectionFailureException：uri={}", request.getRequestURI(), e);
-        return new R<>(ErrorCode.REDIS_ERROR.code(), ERROR);
-    }
-
-    /**
-     * 数据库异常
-     * <br>输出http状态码：500
-     *
-     * @param e
-     * @param request
-     * @return
-     */
-    @ExceptionHandler({SQLException.class, DataIntegrityViolationException.class, BadSqlGrammarException.class,
-            CannotGetJdbcConnectionException.class, QueryTimeoutException.class, UncategorizedSQLException.class,
-            JdbcUpdateAffectedIncorrectNumberOfRowsException.class, InvalidResultSetAccessException.class,
-            IncorrectResultSetColumnCountException.class})
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public R<?> sqlException(Exception e, HttpServletRequest request) {
-        log.error("SQLException：uri={}", request.getRequestURI(), e);
-        return new R<>(ErrorCode.SQL_ERROR.code(), ERROR);
-    }
-
-    /**
-     * 兜底中间件异常，包括数据库、redis等中间件
-     * <br>输出http状态码：500
-     *
-     * @param e
-     * @param request
-     * @return
-     */
-    @ExceptionHandler(DataAccessException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public R<?> dataAccessException(DataAccessException e, HttpServletRequest request) {
-        log.error("DataAccessException：uri={}", request.getRequestURI(), e);
-        return new R<>(ErrorCode.MIDDLEWARE_ERROR.code(), ERROR);
     }
 
     /**
@@ -262,7 +213,7 @@ public class GlobalExceptionHandleAdvice {
     }
 
     /**
-     * 资源不存在异常
+     * 自定义资源不存在异常
      * <br>输出http状态码：404
      *
      * @param e
@@ -277,7 +228,7 @@ public class GlobalExceptionHandleAdvice {
     }
 
     /**
-     * 权限不足异常
+     * 自定义权限不足异常
      * <br>输出http状态码：403
      *
      * @param e
@@ -292,7 +243,7 @@ public class GlobalExceptionHandleAdvice {
     }
 
     /**
-     * 未登录异常
+     * 自定义未登录异常
      * <br>输出http状态码：401
      *
      * @param e
@@ -303,6 +254,52 @@ public class GlobalExceptionHandleAdvice {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public R<?> unauthorizedException(UnauthorizedException e, HttpServletRequest request) {
         log.warn("UnauthorizedException：uri={}, error={}", request.getRequestURI(), e.getMessage());
+        return R.fail(e.getCode(), e.getMessage());
+    }
+
+    /**
+     * 自定义请求异常
+     * <br>输出http状态码：400
+     *
+     * @param e
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(BadRequestException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public R<?> badRequestException(BadRequestException e, HttpServletRequest request) {
+        log.warn("BadRequestException：uri={}, code={}, message={}", request.getRequestURI(), e.getCode(), e.getMessage());
+        return R.fail(e.getCode(), e.getMessage());
+    }
+
+    /**
+     * 自定义系统内部异常
+     * <br>输出http状态码：500
+     *
+     * @param e
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(InternalServerException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public R<?> internalServerException(InternalServerException e, HttpServletRequest request) {
+        log.warn("InternalServerException：uri={}, code={}, message={}", request.getRequestURI(), e.getCode(), e.getMessage());
+        return R.fail(e.getCode(), e.getMessage());
+    }
+
+    /**
+     * 自定义业务异常
+     * <br>输出自定义http状态码
+     *
+     * @param e
+     * @param request
+     * @param response
+     * @return
+     */
+    @ExceptionHandler(BizException.class)
+    public R<?> bizException(BizException e, HttpServletRequest request, HttpServletResponse response) {
+        log.warn("BizException：uri={}, code={}, message={}", request.getRequestURI(), e.getCode(), e.getMessage());
+        response.setStatus(e.getHttpStatus());
         return R.fail(e.getCode(), e.getMessage());
     }
 
@@ -345,17 +342,66 @@ public class GlobalExceptionHandleAdvice {
     }
 
     /**
-     * 自定义异常即业务异常
-     * <br>输出http状态码：200
+     * redis 异常
+     * <br>输出http状态码：500
      *
      * @param e
      * @param request
      * @return
      */
-    @ExceptionHandler(BizException.class)
-    public R<?> bizException(BizException e, HttpServletRequest request) {
-        log.warn("BizException：uri={}, code={}, message={}", request.getRequestURI(), e.getCode(), e.getMessage());
-        return R.fail(e.getCode(), e.getMessage());
+    @ExceptionHandler(RedisConnectionFailureException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public R<?> redisConnectionFailureException(RedisConnectionFailureException e, HttpServletRequest request) {
+        log.error("RedisConnectionFailureException：uri={}", request.getRequestURI(), e);
+        return new R<>(ErrorCode.REDIS_ERROR.code(), ERROR);
+    }
+
+    /**
+     * 数据库异常
+     * <br>输出http状态码：500
+     *
+     * @param e
+     * @param request
+     * @return
+     */
+    @ExceptionHandler({SQLException.class, DataIntegrityViolationException.class, BadSqlGrammarException.class,
+            CannotGetJdbcConnectionException.class, QueryTimeoutException.class, UncategorizedSQLException.class,
+            JdbcUpdateAffectedIncorrectNumberOfRowsException.class, InvalidResultSetAccessException.class,
+            IncorrectResultSetColumnCountException.class})
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public R<?> sqlException(Exception e, HttpServletRequest request) {
+        log.error("SQLException：uri={}", request.getRequestURI(), e);
+        return new R<>(ErrorCode.SQL_ERROR.code(), ERROR);
+    }
+
+    /**
+     * 兜底中间件异常，包括数据库、redis等中间件
+     * <br>输出http状态码：500
+     *
+     * @param e
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(DataAccessException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public R<?> dataAccessException(DataAccessException e, HttpServletRequest request) {
+        log.error("DataAccessException：uri={}", request.getRequestURI(), e);
+        return new R<>(ErrorCode.MIDDLEWARE_ERROR.code(), ERROR);
+    }
+
+    /**
+     * s3对象存储异常
+     * <br>输出http状态码：500
+     *
+     * @param e
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(S3Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public R<?> S3Exception(S3Exception e, HttpServletRequest request) {
+        log.error("S3Exception：uri={}", request.getRequestURI(), e);
+        return new R<>(ErrorCode.S3_ERROR.code(), ERROR);
     }
 
     /**
@@ -369,8 +415,8 @@ public class GlobalExceptionHandleAdvice {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public R<?> exception(Exception e, HttpServletRequest request) {
-        log.error("INTERNAL_SERVER_ERROR：uri={}", request.getRequestURI(), e);
-        return R.fail(ErrorCode.SERVER_ERROR.code(), ERROR);
+        log.error("全局异常：uri={}", request.getRequestURI(), e);
+        return R.fail(ErrorCode.INTERNAL_SERVER_ERROR.code(), ERROR);
     }
 
     /**

@@ -2,6 +2,7 @@ package io.github.seed.common.component;
 
 import cn.hutool.v7.core.lang.Assert;
 import io.github.seed.common.data.StogeData;
+import io.github.seed.common.enums.ErrorCode;
 import io.github.seed.common.exception.BadRequestException;
 import io.github.seed.common.util.MimeType;
 import lombok.Getter;
@@ -51,7 +52,7 @@ public class S3StogeAdapter implements StogeAdapter {
             //data.setMetadata();
             return data;
         } catch (IOException e) {
-            throw new BadRequestException(e);
+            throw new BadRequestException(ErrorCode.REQUEST_BODY_NOT_READABLE.code(), file.getOriginalFilename() + "上传失败", e);
         }
     }
 

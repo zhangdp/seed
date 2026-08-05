@@ -1,6 +1,7 @@
 package io.github.seed.common.exception;
 
 import io.github.seed.common.enums.ErrorCode;
+import org.springframework.http.HttpStatus;
 
 import java.io.Serial;
 
@@ -16,42 +17,42 @@ public class ForbiddenException extends BizException {
     private static final long serialVersionUID = 1L;
 
     public ForbiddenException() {
-        super(ErrorCode.FORBIDDEN);
+        super(ErrorCode.FORBIDDEN, HttpStatus.FORBIDDEN.value());
     }
 
     public ForbiddenException(Throwable cause) {
-        super(ErrorCode.FORBIDDEN, cause);
+        super(ErrorCode.FORBIDDEN, HttpStatus.FORBIDDEN.value(), cause);
     }
 
     public ForbiddenException(String message) {
-        super(ErrorCode.FORBIDDEN.code(), message);
+        super(ErrorCode.FORBIDDEN.code(), message, HttpStatus.FORBIDDEN.value());
     }
 
     public ForbiddenException(String message, Throwable cause) {
-        super(ErrorCode.FORBIDDEN.code(), message, cause);
+        super(ErrorCode.FORBIDDEN.code(), message, HttpStatus.FORBIDDEN.value(), cause);
     }
 
     public ForbiddenException(int code, String message) {
-        super(code, message);
+        super(code, message, HttpStatus.FORBIDDEN.value());
     }
 
     public ForbiddenException(int code, String message, Throwable cause) {
-        super(code, message, cause);
+        super(code, message, HttpStatus.FORBIDDEN.value(), cause);
     }
 
     public ForbiddenException(int code, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(code, message, cause, enableSuppression, writableStackTrace);
+        super(code, message, HttpStatus.FORBIDDEN.value(), cause, enableSuppression, writableStackTrace);
     }
 
     public ForbiddenException(ErrorCode errorCode) {
-        super(errorCode);
+        super(errorCode, HttpStatus.FORBIDDEN.value());
     }
 
     public ForbiddenException(ErrorCode errorCode, Throwable cause) {
-        super(errorCode, cause);
+        super(errorCode, HttpStatus.FORBIDDEN.value(), cause);
     }
 
     public ForbiddenException(ErrorCode errorCode, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(errorCode, cause, enableSuppression, writableStackTrace);
+        super(errorCode, HttpStatus.FORBIDDEN.value(), cause, enableSuppression, writableStackTrace);
     }
 }

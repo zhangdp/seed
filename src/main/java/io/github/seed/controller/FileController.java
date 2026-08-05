@@ -10,8 +10,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 /**
  * 2024/11/8 文件接口
@@ -47,10 +48,11 @@ public class FileController {
      * @param response
      * @param inline
      * @param fileName
+     * @throws IOException
      */
     @GetMapping("/download/{fileId}/**")
     @Operation(summary = "下载文件")
-    public void download(HttpServletRequest request, HttpServletResponse response, @PathVariable String fileId, @RequestParam(required = false) String inline, @RequestParam(required = false) String fileName) {
+    public void download(HttpServletRequest request, HttpServletResponse response, @PathVariable String fileId, @RequestParam(required = false) String inline, @RequestParam(required = false) String fileName) throws IOException {
         fileManager.doDownload(request, response, fileId, WebUtils.isParamTrue(inline), fileName);
     }
 }

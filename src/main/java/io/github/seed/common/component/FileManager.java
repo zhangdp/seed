@@ -2,11 +2,9 @@ package io.github.seed.common.component;
 
 import cn.hutool.v7.core.bean.BeanUtil;
 import cn.hutool.v7.core.date.TimeUtil;
-import cn.hutool.v7.core.io.IoUtil;
 import cn.hutool.v7.core.io.file.FileNameUtil;
 import cn.hutool.v7.core.text.StrUtil;
 import cn.hutool.v7.core.util.ObjUtil;
-import cn.hutool.v7.crypto.SecureUtil;
 import io.github.seed.common.config.FileStorageProperties;
 import io.github.seed.common.constant.Const;
 import io.github.seed.common.data.StogeData;
@@ -18,13 +16,11 @@ import io.github.seed.service.sys.FileInfoService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.InputStream;
+import java.io.IOException;
 import java.time.LocalDateTime;
 
 /**
@@ -49,8 +45,6 @@ public class FileManager {
      * @param uploadUserId
      * @return
      */
-    @SneakyThrows
-    @Transactional(rollbackFor = Exception.class)
     public FileInfoDto doUpload(MultipartFile file, Long uploadUserId) {
         LocalDateTime now = LocalDateTime.now();
         // 如果是正的表示有过期时间，否则永不过期
@@ -63,7 +57,7 @@ public class FileManager {
         String extension = StrUtil.defaultIfNull(FileNameUtil.extName(fileName), "").trim();
         // 根目录
         String remotePath = fileProperties.getRootPath() != null ? fileProperties.getRootPath().trim() : "";
-        if (remotePath.endsWith("/")) {
+        if (!remotePath.endsWith("/")) {
             remotePath += "/";
         }
         // 按日期分文件夹
@@ -106,9 +100,9 @@ public class FileManager {
      * @param fileId
      * @param isInline
      * @param fileName
+     * @throws IOException
      */
-    @SneakyThrows
-    public void doDownload(HttpServletRequest request, HttpServletResponse response, String fileId, boolean isInline, String fileName) {
+    public void doDownload(HttpServletRequest request, HttpServletResponse response, String fileId, boolean isInline, String fileName) throws IOException {
         // 从数据库取出附件信息
         FileInfo fileInfo = fileInfoService.getByFileId(fileId);
         if (fileInfo == null) {
@@ -136,20 +130,6 @@ public class FileManager {
         WebUtils.responseDispositionHeader(response, StrUtil.defaultIfBlank(fileName, fileInfo.getFileName()), fileInfo.getSize(), fileInfo.getMimeType(), isInline);
         // 从远端读取文件并输出到输出流，无需flush()或者关闭输出流，web容器会自行处理
         stogeAdapter.download(fileInfo.getStoragePath(), response.getOutputStream());
-    }
-
-    /**
-     * 计算文件sha-256
-     *
-     * @param inputStream
-     * @return
-     */
-    public String calculateSHA256(InputStream inputStream) {
-        try {
-            return SecureUtil.sha256(inputStream);
-        } finally {
-            IoUtil.closeQuietly(inputStream);
-        }
     }
 
     /**

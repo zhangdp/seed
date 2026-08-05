@@ -4,11 +4,10 @@ import cn.hutool.v7.core.io.file.FileUtil;
 import cn.hutool.v7.crypto.digest.DigestUtil;
 import io.github.seed.common.data.StogeData;
 import io.github.seed.common.enums.ErrorCode;
-import io.github.seed.common.exception.BizException;
 import io.github.seed.common.exception.NotFoundException;
 import io.github.seed.common.util.MimeType;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.SneakyThrows;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -20,13 +19,12 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- *
+ * 本地文件访问适配器
  *
  * @author zhangdp
  * @since 2026/8/3
  */
 @Getter
-@Setter
 public class LocalStogeAdapter implements StogeAdapter {
 
     private final String rootPath;
@@ -35,27 +33,20 @@ public class LocalStogeAdapter implements StogeAdapter {
         this.rootPath = rootPath == null ? "" : rootPath.trim();
     }
 
+    @SneakyThrows
     @Override
     public StogeData upload(String path, MultipartFile file) {
-        try {
-            File f = new File(this.normalizePath(path));
-            FileUtil.mkParentDirs(f);
-            file.transferTo(f);
-            return this.toStogeData(f);
-        } catch (Exception e) {
-            throw new BizException(ErrorCode.SERVER_ERROR.code(), "保存上传文件到本地磁盘失败", e);
-        }
+        File f = new File(this.normalizePath(path));
+        FileUtil.mkParentDirs(f);
+        file.transferTo(f);
+        return this.toStogeData(f);
     }
 
     @Override
     public StogeData upload(String path, File file) {
-        try {
-            File targetFile = new File(this.normalizePath(path));
-            FileUtil.copy(file, targetFile, true);
-            return this.toStogeData(targetFile);
-        } catch (Exception e) {
-            throw new BizException(ErrorCode.SERVER_ERROR.code(), "保存本地文件失败", e);
-        }
+        File targetFile = new File(this.normalizePath(path));
+        FileUtil.copy(file, targetFile, true);
+        return this.toStogeData(targetFile);
     }
 
     @Override
@@ -64,7 +55,7 @@ public class LocalStogeAdapter implements StogeAdapter {
         try {
             return new FileInputStream(path);
         } catch (FileNotFoundException e) {
-            throw new NotFoundException(ErrorCode.NOT_FOUND.code(), "不存在文件" + path, e);
+            throw new NotFoundException(ErrorCode.NOT_FOUND.code(), "文件不存在", e);
         }
     }
 

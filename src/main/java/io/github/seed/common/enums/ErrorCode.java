@@ -98,8 +98,7 @@ public enum ErrorCode {
     /**
      * 读取请求体失败
      */
-    REQUEST_BODY_NOT_READABLE(12003, "请求体解析失败"),
-
+    REQUEST_BODY_NOT_READABLE(12003, "读取请求数据失败"),
 
     /**
      * 2开头的错误码，错误来源是业务
@@ -138,7 +137,11 @@ public enum ErrorCode {
     /**
      * 系统错误
      */
-    SERVER_ERROR(30000, "系统错误"),
+    INTERNAL_SERVER_ERROR(30000, "系统错误"),
+    /**
+     * 磁盘读写出错
+     */
+    DISK_ERROR(30100, "磁盘读写出错"),
 
     /// 4xxxx开头，中间件的错误
     /**
