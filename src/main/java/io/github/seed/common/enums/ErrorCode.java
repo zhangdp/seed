@@ -84,6 +84,10 @@ public enum ErrorCode {
      */
     NOT_FOUND(11000, "资源不存在"),
     /**
+     * s3对象存储服务不存在该文件
+     */
+    S3_NO_SUCH_KEY_ERROR(11010, "对象存储服务不存在该文件"),
+    /**
      * 参数校验失败
      */
     PARAMS_VALID_FAILED(12000, "参数错误"),

@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
+import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
 import java.sql.SQLException;
@@ -387,6 +388,21 @@ public class GlobalExceptionHandleAdvice {
     public R<?> dataAccessException(DataAccessException e, HttpServletRequest request) {
         log.error("DataAccessException：uri={}", request.getRequestURI(), e);
         return new R<>(ErrorCode.MIDDLEWARE_ERROR.code(), ERROR);
+    }
+
+    /**
+     * S3 文件不存在
+     * <br>输出状态码：404
+     *
+     * @param e
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(NoSuchKeyException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public R<?> moSuchKeyException(NoSuchKeyException e, HttpServletRequest request) {
+        log.warn("S3 NoSuchKeyException：uri={}, error={}", request.getRequestURI(), e.getMessage());
+        return new R<>(ErrorCode.S3_NO_SUCH_KEY_ERROR.code(), "文件不存在");
     }
 
     /**
