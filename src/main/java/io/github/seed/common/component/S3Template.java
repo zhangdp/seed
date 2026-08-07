@@ -91,7 +91,7 @@ public class S3Template implements InitializingBean, DisposableBean {
                                 .build()
                 )
                 .build();
-        log.info("[{}]初始化S3 Client：{}", bucket, s3Client);
+        log.info("[{}]初始化S3 Client：endpoint={}, accessKey={}", bucket, endpoint, accessKey);
     }
 
     /**
@@ -434,7 +434,7 @@ public class S3Template implements InitializingBean, DisposableBean {
                     .build()
         );
 
-        log.debug("[{}]分批批量删除文件：{}", bucket, res);
+        log.debug("[{}]批量删除文件：{}", bucket, res);
         return res;
     }
 

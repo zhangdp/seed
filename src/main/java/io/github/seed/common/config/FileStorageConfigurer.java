@@ -41,7 +41,9 @@ public class FileStorageConfigurer implements InitializingBean {
     @ConditionalOnProperty(prefix = FileStorageProperties.CONFIG_PREFIX + ".s3", name = "enabled", havingValue = "true")
     public S3Template s3Template() {
         FileStorageProperties.S3Properties s3Properties = fileStorageProperties.getS3();
-        return new S3Template(s3Properties.getEndpoint(), s3Properties.getAccessKey(), s3Properties.getSecretKey(), s3Properties.getBucketName());
+        S3Template template = new S3Template(s3Properties.getEndpoint(), s3Properties.getAccessKey(), s3Properties.getSecretKey(), s3Properties.getBucket());
+        log.info("创建S3访问器：{}", template);
+        return template;
     }
 
     /**

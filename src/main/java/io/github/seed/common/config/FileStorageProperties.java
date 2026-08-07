@@ -90,7 +90,7 @@ public class FileStorageProperties {
         /**
          * 桶名称
          */
-        private String bucketName;
+        private String bucket;
     }
 
     /**

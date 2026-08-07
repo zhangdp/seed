@@ -45,7 +45,7 @@ public class S3TemplateTest {
         String localPath = "/Users/peng/tmp/智能小飞切换服务器地址为https加域名.docx";
         String fileName = localPath.substring(localPath.lastIndexOf("/") + 1);
         String path = dir + fileName;
-        PutObjectResponse result = s3Template.upload(localPath, path);
+        PutObjectResponse result = s3Template.upload(path, localPath);
         log.debug("上传文件{}到{}：{}", localPath, path, result);
     }
 
