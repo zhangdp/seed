@@ -1,5 +1,6 @@
 package io.github.seed.controller;
 
+import cn.hutool.v7.core.lang.Assert;
 import io.github.seed.common.component.FileManager;
 import io.github.seed.common.security.data.LoginUser;
 import io.github.seed.common.util.WebUtils;
@@ -38,6 +39,7 @@ public class FileController {
     @PostMapping("/upload")
     @Operation(summary = "上传文件")
     public FileInfoDto upload(MultipartFile file, LoginUser loginUser) {
+        Assert.isTrue(file != null && !file.isEmpty(), "上传文件为空");
         return fileManager.doUpload(file, loginUser.getId());
     }
 

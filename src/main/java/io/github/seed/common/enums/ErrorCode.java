@@ -84,6 +84,10 @@ public enum ErrorCode {
      */
     NOT_FOUND(11000, "资源不存在"),
     /**
+     * 本地磁盘文件不存在
+     */
+    FILE_NOT_FOUND(11001, "本地磁盘文件不存在"),
+    /**
      * s3对象存储服务不存在该文件
      */
     S3_NO_SUCH_KEY_ERROR(11010, "对象存储服务不存在该文件"),

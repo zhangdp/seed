@@ -10,10 +10,7 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -55,8 +52,29 @@ public class LocalStogeAdapter implements StogeAdapter {
         try {
             return new FileInputStream(path);
         } catch (FileNotFoundException e) {
-            throw new NotFoundException(ErrorCode.NOT_FOUND.code(), "文件不存在", e);
+            throw new NotFoundException(ErrorCode.FILE_NOT_FOUND.code(), "文件不存在：" + path, e);
         }
+    }
+
+    @Override
+    public long download(String path, OutputStream out) {
+        path = this.normalizePath(path);
+        File file = new File(path);
+        if (!file.exists()) {
+            throw new NotFoundException(ErrorCode.FILE_NOT_FOUND.code(), "文件不存在：" + path);
+        }
+        return FileUtil.copy(file, out);
+    }
+
+    @Override
+    public long download(String path, File file) {
+        path = this.normalizePath(path);
+        File f = new File(path);
+        if (!f.exists()) {
+            throw new NotFoundException(ErrorCode.FILE_NOT_FOUND.code(), "文件不存在：" + path);
+        }
+        FileUtil.copy(f, file, true);
+        return file.length();
     }
 
     @Override

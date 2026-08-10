@@ -1,9 +1,9 @@
 package io.github.seed.common.component;
 
-import cn.hutool.v7.core.lang.Assert;
 import io.github.seed.common.data.StogeData;
 import io.github.seed.common.enums.ErrorCode;
 import io.github.seed.common.exception.BadRequestException;
+import io.github.seed.common.exception.InternalServerException;
 import io.github.seed.common.util.MimeType;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +16,7 @@ import software.amazon.awssdk.services.s3.model.S3Error;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -35,7 +36,6 @@ public class S3StogeAdapter implements StogeAdapter {
 
     @Override
     public StogeData upload(String path, MultipartFile file) {
-        Assert.isTrue(file != null && !file.isEmpty(), "上传文件为空");
         try (InputStream in = file.getInputStream()) {
             String fileName = file.getOriginalFilename();
             String mimeType = MimeType.guessMimeType(fileName);
@@ -76,6 +76,24 @@ public class S3StogeAdapter implements StogeAdapter {
     @Override
     public InputStream download(String path) {
         return s3Template.download(path);
+    }
+
+    @Override
+    public long download(String path, OutputStream out) {
+        try {
+            return s3Template.download(path, out);
+        } catch (IOException e) {
+            throw new InternalServerException(ErrorCode.S3_ERROR.code(), "下载文件失败", e);
+        }
+    }
+
+    @Override
+    public long download(String path, File file) {
+        try {
+            return s3Template.download(path, file);
+        } catch (IOException e) {
+            throw new InternalServerException(ErrorCode.S3_ERROR.code(), "下载文件失败", e);
+        }
     }
 
     @Override
