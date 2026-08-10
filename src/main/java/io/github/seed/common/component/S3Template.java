@@ -100,21 +100,32 @@ public class S3Template implements InitializingBean, DisposableBean {
      * @return
      */
     public HeadBucketResponse headBucket() {
+        return s3Client.headBucket(
+                HeadBucketRequest.builder()
+                        .bucket(bucket)
+                        .build()
+        );
+    }
+
+    /**
+     * 桶bucket是否存在
+     *
+     * @return
+     */
+    public boolean isBucketExists() {
         try {
-            return s3Client.headBucket(
-                    HeadBucketRequest.builder()
-                            .bucket(bucket)
-                            .build()
-            );
+            return this.headBucket() != null;
         } catch (NoSuchBucketException e) {
-            return null;
+            return false;
         }
     }
 
     /**
-     * 创建桶bucket，创建成功返回true，如果已存在返回false，失败会抛异常
+     * 创建桶bucket，如果已存在返回null，失败会抛异常
+     *
+     * @return
      */
-    public boolean createBucket() {
+    public CreateBucketResponse createBucket() {
         try {
             CreateBucketResponse res = s3Client.createBucket(
                     CreateBucketRequest.builder()
@@ -122,10 +133,10 @@ public class S3Template implements InitializingBean, DisposableBean {
                             .build()
             );
             log.info("[{}] Bucket创建成功，result={}", bucket, res);
-            return true;
+            return res;
         } catch (BucketAlreadyOwnedByYouException e) {
             log.info("[{}] Bucket已存在，无需重复创建", bucket);
-            return false;
+            return null;
         }
     }
 
@@ -137,17 +148,12 @@ public class S3Template implements InitializingBean, DisposableBean {
      */
     public HeadObjectResponse headObject(String path) {
         path = this.normalizePath(path);
-        try {
-            return s3Client.headObject(
-                    HeadObjectRequest.builder()
-                        .bucket(bucket)
-                        .key(path)
-                        .build()
-            );
-        } catch (NoSuchKeyException e) {
-            log.warn("[{}]不存在文件：{}", bucket, path, e);
-            return null;
-        }
+        return s3Client.headObject(
+                HeadObjectRequest.builder()
+                    .bucket(bucket)
+                    .key(path)
+                    .build()
+        );
     }
 
     /**
@@ -215,7 +221,11 @@ public class S3Template implements InitializingBean, DisposableBean {
      * @return
      */
     public boolean isExists(String path) {
-        return this.headObject(path) != null;
+        try {
+            return this.headObject(path) != null;
+        } catch (NoSuchKeyException e) {
+            return false;
+        }
     }
 
     /**

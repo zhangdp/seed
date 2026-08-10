@@ -26,7 +26,7 @@ public class S3TemplateTest {
 
     @Test
     public void listObjects() {
-        String path = "upload/";
+        String path = "upload2/";
         ListObjectsV2Response res = s3Template.listObjects(path, 100);
         log.debug("列出子文件列表，path={}，result={}", path, res);
     }
