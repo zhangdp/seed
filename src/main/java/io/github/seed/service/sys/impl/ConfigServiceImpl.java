@@ -9,8 +9,8 @@ import io.github.seed.common.util.SpringContextHolder;
 import io.github.seed.entity.sys.Config;
 import io.github.seed.mapper.sys.ConfigMapper;
 import io.github.seed.model.PageData;
-import io.github.seed.model.params.BaseQueryParams;
-import io.github.seed.model.params.PageQuery;
+import io.github.seed.model.query.BaseTextQuery;
+import io.github.seed.model.query.PageQuery;
 import io.github.seed.service.sys.ConfigService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +19,6 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import tools.jackson.core.JacksonException;
 import tools.jackson.databind.json.JsonMapper;
 
 import java.util.List;
@@ -82,7 +81,7 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
-    public PageData<Config> queryPage(PageQuery<BaseQueryParams> pageQuery) {
+    public PageData<Config> queryPage(PageQuery<BaseTextQuery> pageQuery) {
         return this.configMapper.queryPage(pageQuery);
     }
 

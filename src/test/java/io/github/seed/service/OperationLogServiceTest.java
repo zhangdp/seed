@@ -2,8 +2,8 @@ package io.github.seed.service;
 
 import io.github.seed.entity.sys.OperationLog;
 import io.github.seed.model.PageData;
-import io.github.seed.model.params.OperationLogQuery;
-import io.github.seed.model.params.PageQuery;
+import io.github.seed.model.query.OperationLogTextQuery;
+import io.github.seed.model.query.PageQuery;
 import io.github.seed.service.sys.OperationLogService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,12 +31,12 @@ public class OperationLogServiceTest {
 
     @Test
     public void pageQuery() {
-        PageQuery<OperationLogQuery> pageQuery = new PageQuery<>();
+        PageQuery<OperationLogTextQuery> pageQuery = new PageQuery<>();
         pageQuery.setPage(1);
         pageQuery.setSize(10);
         // pageQuery.setOrderBy("id desc");
         pageQuery.setOrderBy(null);
-        OperationLogQuery params = new OperationLogQuery();
+        OperationLogTextQuery params = new OperationLogTextQuery();
         // params.setUserId(1L);
         params.setEndTime("2025-10-20");
         pageQuery.setParams(params);

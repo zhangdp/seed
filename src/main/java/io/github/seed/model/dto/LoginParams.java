@@ -1,4 +1,4 @@
-package io.github.seed.model.params;
+package io.github.seed.model.dto;
 
 import io.github.seed.common.enums.LoginType;
 import io.swagger.v3.oas.annotations.media.Schema;

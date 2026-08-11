@@ -1,4 +1,4 @@
-package io.github.seed.model.params;
+package io.github.seed.model.query;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -9,7 +9,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * 2023/6/21 基本查询对象
+ * 2023/6/21 基本文本查询对象
  *
  * @author zhangdp
  * @since 1.0.0
@@ -17,8 +17,8 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(title = "查询入参")
-public class BaseQueryParams implements Serializable {
+@Schema(title = "文本查询入参")
+public class BaseTextQuery implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

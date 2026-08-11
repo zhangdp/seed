@@ -6,8 +6,8 @@ import io.github.seed.common.constant.TableNameConst;
 import io.github.seed.common.enums.OperateType;
 import io.github.seed.entity.sys.Config;
 import io.github.seed.model.PageData;
-import io.github.seed.model.params.BaseQueryParams;
-import io.github.seed.model.params.PageQuery;
+import io.github.seed.model.query.BaseTextQuery;
+import io.github.seed.model.query.PageQuery;
 import io.github.seed.service.sys.ConfigService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -84,7 +84,7 @@ public class ConfigController {
     @PostMapping("/page")
     @PreAuthorize("hasAuthority('sys:config:read')")
     @Operation(summary = "分页查询配置")
-    public PageData<Config> queryPage(@RequestBody @Valid PageQuery<BaseQueryParams> pageQuery) {
+    public PageData<Config> queryPage(@RequestBody @Valid PageQuery<BaseTextQuery> pageQuery) {
         return configService.queryPage(pageQuery);
     }
 

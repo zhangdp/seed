@@ -2,8 +2,9 @@ package io.github.seed.controller.sys;
 
 import io.github.seed.entity.sys.LoginLog;
 import io.github.seed.model.PageData;
-import io.github.seed.model.params.LoginLogQuery;
-import io.github.seed.model.params.PageQuery;
+import io.github.seed.model.query.CursorPageQuery;
+import io.github.seed.model.query.LoginLogQuery;
+import io.github.seed.model.query.PageQuery;
 import io.github.seed.service.sys.LoginLogService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -36,8 +37,8 @@ public class LoginLogController {
      */
     @PostMapping("/page")
     @Operation(summary = "分页查询登录日志")
-    public PageData<LoginLog> page(@RequestBody @Valid PageQuery<LoginLogQuery> pageQuery) {
-        return loginLogService.queryPage(pageQuery);
+    public PageData<LoginLog> page(@RequestBody @Valid CursorPageQuery<LoginLogQuery> pageQuery) {
+        return loginLogService.cursorQueryPage(pageQuery);
     }
 
 }

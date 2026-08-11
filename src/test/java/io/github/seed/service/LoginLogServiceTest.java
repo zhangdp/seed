@@ -2,9 +2,11 @@ package io.github.seed.service;
 
 import io.github.seed.entity.sys.LoginLog;
 import io.github.seed.model.PageData;
-import io.github.seed.model.params.LoginLogQuery;
-import io.github.seed.model.params.PageQuery;
+import io.github.seed.model.query.CursorPageQuery;
+import io.github.seed.model.query.LoginLogQuery;
+import io.github.seed.model.query.PageQuery;
 import io.github.seed.service.sys.LoginLogService;
+import jakarta.validation.Valid;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,10 +30,26 @@ public class LoginLogServiceTest {
         pageQuery.setSize(10);
         pageQuery.setOrderBy("id desc");
         LoginLogQuery params = new LoginLogQuery();
-        // params.setUserId(1L);
+        params.setUserId(1L);
         params.setEndTime("2020-10-20");
         pageQuery.setParams(params);
         PageData<LoginLog> pd = loginLogService.queryPage(pageQuery);
+        System.out.println(pd);
+    }
+
+    @Test
+    public void cursorQueryPage() {
+        CursorPageQuery<LoginLogQuery> pageQuery = new CursorPageQuery<>();
+        pageQuery.setPage(1);
+        pageQuery.setSize(10);
+        pageQuery.setCursor(10000L);
+        pageQuery.setDesc(true);
+        pageQuery.setCountTotal(true);
+        LoginLogQuery params = new LoginLogQuery();
+        params.setUserId(1L);
+        params.setEndTime("2020-10-20");
+        pageQuery.setParams(params);
+        PageData<LoginLog> pd = loginLogService.cursorQueryPage(pageQuery);
         System.out.println(pd);
     }
 }

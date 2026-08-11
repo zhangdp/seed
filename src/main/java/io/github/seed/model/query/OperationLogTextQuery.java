@@ -1,4 +1,4 @@
-package io.github.seed.model.params;
+package io.github.seed.model.query;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -18,7 +18,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Schema(title = "操作日志查询")
-public class OperationLogQuery extends BaseQueryParams implements Serializable {
+public class OperationLogTextQuery extends BaseTextQuery implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

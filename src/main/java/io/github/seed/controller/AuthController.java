@@ -6,7 +6,7 @@ import io.github.seed.common.security.data.LoginUser;
 import io.github.seed.common.security.service.SecurityService;
 import io.github.seed.model.dto.PermissionTreeNode;
 import io.github.seed.model.dto.UserInfo;
-import io.github.seed.model.params.LoginParams;
+import io.github.seed.model.dto.LoginParams;
 import io.github.seed.service.sys.PermissionService;
 import io.github.seed.service.sys.UserService;
 import io.swagger.v3.oas.annotations.Operation;

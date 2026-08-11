@@ -5,8 +5,8 @@ import com.mybatisflex.core.paginate.Page;
 import com.mybatisflex.core.query.QueryWrapper;
 import io.github.seed.entity.sys.Config;
 import io.github.seed.model.PageData;
-import io.github.seed.model.params.BaseQueryParams;
-import io.github.seed.model.params.PageQuery;
+import io.github.seed.model.query.BaseTextQuery;
+import io.github.seed.model.query.PageQuery;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -34,8 +34,8 @@ public interface ConfigMapper extends BaseMapper<Config> {
      * @param pageQuery
      * @return
      */
-    default PageData<Config> queryPage(PageQuery<BaseQueryParams> pageQuery) {
-        BaseQueryParams params = pageQuery.getParams();
+    default PageData<Config> queryPage(PageQuery<BaseTextQuery> pageQuery) {
+        BaseTextQuery params = pageQuery.getParams();
         QueryWrapper wrapper = QueryWrapper.create().orderBy(pageQuery.getOrderBy());
         if (params != null) {
             wrapper.like(Config::getConfigKey, params.getQuery());

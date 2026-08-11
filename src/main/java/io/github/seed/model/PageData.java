@@ -78,7 +78,7 @@ public class PageData<T> implements Serializable {
         // 如果当前页小于1，则重置为第1页
         this.page = Math.max(page, 1);
         this.list = list == null ? Collections.emptyList() : list;
-        this.total = Math.max(total, 0L);
+        this.total = total;
         this.size = size;
     }
 
@@ -152,6 +152,8 @@ public class PageData<T> implements Serializable {
     public long getTotalPages() {
         if (total == 0L) {
             return 0;
+        } else if (total < 0) {
+            return -1;
         }
         return (int) (total / size) + (total % size > 0 ? 1L : 0L);
     }

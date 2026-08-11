@@ -3,8 +3,8 @@ package io.github.seed.service.sys.impl;
 import io.github.seed.entity.sys.OperationLog;
 import io.github.seed.mapper.sys.OperationLogMapper;
 import io.github.seed.model.PageData;
-import io.github.seed.model.params.OperationLogQuery;
-import io.github.seed.model.params.PageQuery;
+import io.github.seed.model.query.OperationLogTextQuery;
+import io.github.seed.model.query.PageQuery;
 import io.github.seed.service.sys.OperationLogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -37,7 +37,7 @@ public class OperationLogServiceImpl implements OperationLogService {
     }
 
     @Override
-    public PageData<OperationLog> queryPage(PageQuery<OperationLogQuery> pageQuery) {
+    public PageData<OperationLog> queryPage(PageQuery<OperationLogTextQuery> pageQuery) {
         return operationLogMapper.selectPage(pageQuery);
     }
 }

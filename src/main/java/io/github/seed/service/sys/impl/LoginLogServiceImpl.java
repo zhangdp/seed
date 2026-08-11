@@ -3,8 +3,9 @@ package io.github.seed.service.sys.impl;
 import io.github.seed.entity.sys.LoginLog;
 import io.github.seed.mapper.sys.LoginLogMapper;
 import io.github.seed.model.PageData;
-import io.github.seed.model.params.LoginLogQuery;
-import io.github.seed.model.params.PageQuery;
+import io.github.seed.model.query.CursorPageQuery;
+import io.github.seed.model.query.LoginLogQuery;
+import io.github.seed.model.query.PageQuery;
 import io.github.seed.service.sys.LoginLogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,5 +32,10 @@ public class LoginLogServiceImpl implements LoginLogService {
     @Override
     public PageData<LoginLog> queryPage(PageQuery<LoginLogQuery> pageQuery) {
         return loginLogMapper.selectPage(pageQuery);
+    }
+
+    @Override
+    public PageData<LoginLog> cursorQueryPage(CursorPageQuery<LoginLogQuery> pageQuery) {
+        return loginLogMapper.cursorSelectPage(pageQuery);
     }
 }

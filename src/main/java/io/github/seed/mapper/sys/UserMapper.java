@@ -7,8 +7,8 @@ import com.mybatisflex.core.query.QueryWrapper;
 import io.github.seed.entity.sys.User;
 import io.github.seed.model.PageData;
 import io.github.seed.model.dto.UserInfo;
-import io.github.seed.model.params.PageQuery;
-import io.github.seed.model.params.UserQuery;
+import io.github.seed.model.query.PageQuery;
+import io.github.seed.model.query.UserQuery;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;

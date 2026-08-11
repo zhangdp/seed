@@ -5,8 +5,8 @@ import com.mybatisflex.core.paginate.Page;
 import com.mybatisflex.core.query.QueryWrapper;
 import io.github.seed.entity.sys.OperationLog;
 import io.github.seed.model.PageData;
-import io.github.seed.model.params.OperationLogQuery;
-import io.github.seed.model.params.PageQuery;
+import io.github.seed.model.query.OperationLogTextQuery;
+import io.github.seed.model.query.PageQuery;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -24,8 +24,8 @@ public interface OperationLogMapper extends BaseMapper<OperationLog> {
      * @param pageQuery
      * @return
      */
-    default PageData<OperationLog> selectPage(PageQuery<OperationLogQuery> pageQuery) {
-        OperationLogQuery params = pageQuery.getParams();
+    default PageData<OperationLog> selectPage(PageQuery<OperationLogTextQuery> pageQuery) {
+        OperationLogTextQuery params = pageQuery.getParams();
         QueryWrapper wrapper = QueryWrapper.create().orderBy(pageQuery.getOrderBy());
         if (params != null) {
             wrapper.eq(OperationLog::getUserId, params.getUserId())

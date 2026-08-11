@@ -3,8 +3,8 @@ package io.github.seed.service;
 import io.github.seed.common.constant.Const;
 import io.github.seed.entity.sys.Config;
 import io.github.seed.model.PageData;
-import io.github.seed.model.params.BaseQueryParams;
-import io.github.seed.model.params.PageQuery;
+import io.github.seed.model.query.BaseTextQuery;
+import io.github.seed.model.query.PageQuery;
 import io.github.seed.service.sys.ConfigService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -54,7 +54,7 @@ public class ConfigServiceTest {
 
     @Test
     public void page() {
-        PageQuery<BaseQueryParams> pageQuery = new PageQuery<>(1, 10, new BaseQueryParams("a"));
+        PageQuery<BaseTextQuery> pageQuery = new PageQuery<>(1, 10, new BaseTextQuery("a"));
         pageQuery.setOrderBy("config_key asc, id desc");
         PageData<Config> pd = configService.queryPage(pageQuery);
         System.out.println(jsonMapper.writeValueAsString(pd));

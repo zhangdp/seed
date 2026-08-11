@@ -5,7 +5,7 @@ import io.github.seed.common.security.SecurityConst;
 import io.github.seed.common.security.SecurityUtils;
 import io.github.seed.common.security.data.*;
 import io.github.seed.common.util.SpringWebContextHolder;
-import io.github.seed.model.params.LoginParams;
+import io.github.seed.model.dto.LoginParams;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

@@ -2,8 +2,8 @@ package io.github.seed.service.sys;
 
 import io.github.seed.entity.sys.Config;
 import io.github.seed.model.PageData;
-import io.github.seed.model.params.BaseQueryParams;
-import io.github.seed.model.params.PageQuery;
+import io.github.seed.model.query.BaseTextQuery;
+import io.github.seed.model.query.PageQuery;
 
 import java.util.List;
 
@@ -53,7 +53,7 @@ public interface ConfigService {
      * @param pageQuery
      * @return
      */
-    PageData<Config> queryPage(PageQuery<BaseQueryParams> pageQuery);
+    PageData<Config> queryPage(PageQuery<BaseTextQuery> pageQuery);
 
     /**
      * 获取所有列表

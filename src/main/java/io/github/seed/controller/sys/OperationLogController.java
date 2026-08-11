@@ -2,8 +2,8 @@ package io.github.seed.controller.sys;
 
 import io.github.seed.entity.sys.OperationLog;
 import io.github.seed.model.PageData;
-import io.github.seed.model.params.OperationLogQuery;
-import io.github.seed.model.params.PageQuery;
+import io.github.seed.model.query.OperationLogTextQuery;
+import io.github.seed.model.query.PageQuery;
 import io.github.seed.service.sys.OperationLogService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -36,7 +36,7 @@ public class OperationLogController {
      */
     @PostMapping("/page")
     @Operation(summary = "分页查询操作日志")
-    public PageData<OperationLog> page(@RequestBody @Valid PageQuery<OperationLogQuery> pageQuery) {
+    public PageData<OperationLog> page(@RequestBody @Valid PageQuery<OperationLogTextQuery> pageQuery) {
         return operationLogService.queryPage(pageQuery);
     }
 
