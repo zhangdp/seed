@@ -6,7 +6,6 @@ import io.github.seed.model.query.CursorPageQuery;
 import io.github.seed.model.query.LoginLogQuery;
 import io.github.seed.model.query.PageQuery;
 import io.github.seed.service.sys.LoginLogService;
-import jakarta.validation.Valid;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

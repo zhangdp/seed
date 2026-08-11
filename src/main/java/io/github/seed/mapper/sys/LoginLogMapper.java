@@ -9,7 +9,6 @@ import io.github.seed.model.query.CursorPageQuery;
 import io.github.seed.model.query.LoginLogQuery;
 import io.github.seed.model.query.PageQuery;
 import org.apache.ibatis.annotations.Mapper;
-import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
