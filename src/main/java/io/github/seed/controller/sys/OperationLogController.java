@@ -2,8 +2,8 @@ package io.github.seed.controller.sys;
 
 import io.github.seed.entity.sys.OperationLog;
 import io.github.seed.model.PageData;
-import io.github.seed.model.query.OperationLogTextQuery;
-import io.github.seed.model.query.PageQuery;
+import io.github.seed.model.query.CursorPageQuery;
+import io.github.seed.model.query.OperationLogQuery;
 import io.github.seed.service.sys.OperationLogService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/log/operation")
+@RequestMapping("/sys/operationLog")
 @Tag(name = "操作日志", description = "操作日志相关接口")
 public class OperationLogController {
 
@@ -36,8 +36,8 @@ public class OperationLogController {
      */
     @PostMapping("/page")
     @Operation(summary = "分页查询操作日志")
-    public PageData<OperationLog> page(@RequestBody @Valid PageQuery<OperationLogTextQuery> pageQuery) {
-        return operationLogService.queryPage(pageQuery);
+    public PageData<OperationLog> page(@RequestBody @Valid CursorPageQuery<OperationLogQuery> pageQuery) {
+        return operationLogService.cursorQueryPage(pageQuery);
     }
 
 }

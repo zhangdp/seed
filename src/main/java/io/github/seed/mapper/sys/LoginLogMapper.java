@@ -40,16 +40,15 @@ public interface LoginLogMapper extends BaseMapper<LoginLog> {
         return new PageData<>(page.getRecords(), page.getTotalRow(), page.getPageNumber(), page.getPageSize());
     }
 
+    /**
+     * 游标分页查询
+     *
+     * @param pageQuery
+     * @return
+     */
     default PageData<LoginLog> cursorSelectPage(CursorPageQuery<LoginLogQuery> pageQuery) {
         LoginLogQuery params = pageQuery.getParams();
         QueryWrapper wrapper = QueryWrapper.create();
-        if (pageQuery.getCursor() != null) {
-            if (pageQuery.isDesc()) {
-                wrapper.lt(LoginLog::getId, pageQuery.getCursor());
-            } else {
-                wrapper.gt(LoginLog::getId, pageQuery.getCursor());
-            }
-        }
         if (params != null) {
             wrapper.eq(LoginLog::getUserId, params.getUserId())
                     .eq(LoginLog::getType, params.getLoginType())
@@ -62,6 +61,13 @@ public interface LoginLogMapper extends BaseMapper<LoginLog> {
         }
         List<LoginLog> list = null;
         if (total == -1 || total > 0) {
+            if (pageQuery.getCursor() != null) {
+                if (pageQuery.isDesc()) {
+                    wrapper.lt(LoginLog::getId, pageQuery.getCursor());
+                } else {
+                    wrapper.gt(LoginLog::getId, pageQuery.getCursor());
+                }
+            }
             wrapper.orderBy(LoginLog::getId, !pageQuery.isDesc()).limit(pageQuery.getSize());
             list = this.selectListByQuery(wrapper);
         }

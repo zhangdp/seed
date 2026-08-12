@@ -2,7 +2,8 @@ package io.github.seed.service.sys;
 
 import io.github.seed.entity.sys.OperationLog;
 import io.github.seed.model.PageData;
-import io.github.seed.model.query.OperationLogTextQuery;
+import io.github.seed.model.query.CursorPageQuery;
+import io.github.seed.model.query.OperationLogQuery;
 import io.github.seed.model.query.PageQuery;
 
 import java.util.Collection;
@@ -37,5 +38,13 @@ public interface OperationLogService {
      * @param pageQuery
      * @return
      */
-    PageData<OperationLog> queryPage(PageQuery<OperationLogTextQuery> pageQuery);
+    PageData<OperationLog> queryPage(PageQuery<OperationLogQuery> pageQuery);
+
+    /**
+     * 游标分页查询
+     *
+     * @param pageQuery
+     * @return
+     */
+    PageData<OperationLog> cursorQueryPage(CursorPageQuery<OperationLogQuery> pageQuery);
 }

@@ -33,7 +33,6 @@ public interface FileInfoService {
      * @return
      */
     default String generateId() {
-        // 雪花id
-        return IdUtil.getSnowflakeNextIdStr();
+        return IdUtil.objectId();
     }
 }

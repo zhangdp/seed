@@ -2,8 +2,6 @@ package io.github.seed.model.query;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -15,10 +13,8 @@ import java.io.Serializable;
  * @since 1.0.0
  */
 @Data
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
 @Schema(title = "操作日志查询")
-public class OperationLogTextQuery extends BaseTextQuery implements Serializable {
+public class OperationLogQuery implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

@@ -3,7 +3,8 @@ package io.github.seed.service.sys.impl;
 import io.github.seed.entity.sys.OperationLog;
 import io.github.seed.mapper.sys.OperationLogMapper;
 import io.github.seed.model.PageData;
-import io.github.seed.model.query.OperationLogTextQuery;
+import io.github.seed.model.query.CursorPageQuery;
+import io.github.seed.model.query.OperationLogQuery;
 import io.github.seed.model.query.PageQuery;
 import io.github.seed.service.sys.OperationLogService;
 import lombok.RequiredArgsConstructor;
@@ -33,11 +34,16 @@ public class OperationLogServiceImpl implements OperationLogService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public int deleteBatch(Collection<Long> ids) {
-        return this.operationLogMapper.deleteBatchByIds(ids);
+        return operationLogMapper.deleteBatchByIds(ids);
     }
 
     @Override
-    public PageData<OperationLog> queryPage(PageQuery<OperationLogTextQuery> pageQuery) {
+    public PageData<OperationLog> queryPage(PageQuery<OperationLogQuery> pageQuery) {
         return operationLogMapper.selectPage(pageQuery);
+    }
+
+    @Override
+    public PageData<OperationLog> cursorQueryPage(CursorPageQuery<OperationLogQuery> pageQuery) {
+        return operationLogMapper.cursorSelectPage(pageQuery);
     }
 }

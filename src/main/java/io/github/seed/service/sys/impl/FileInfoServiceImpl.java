@@ -46,4 +46,5 @@ public class FileInfoServiceImpl implements FileInfoService {
     public FileInfo getByFileId(String fileId) {
         return fileInfoMapper.selectByFileId(fileId);
     }
+
 }
