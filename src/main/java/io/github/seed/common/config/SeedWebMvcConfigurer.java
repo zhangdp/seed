@@ -1,6 +1,6 @@
 package io.github.seed.common.config;
 
-import io.github.seed.common.component.LoginUserArgumentResolver;
+import io.github.seed.common.security.component.LoginUserArgumentResolver;
 import io.github.seed.common.constant.Const;
 import io.github.seed.common.filter.BodyCachingRequestFilter;
 import io.github.seed.common.filter.ExceptionResolverFilter;

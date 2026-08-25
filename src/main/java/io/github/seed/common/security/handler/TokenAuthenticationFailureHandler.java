@@ -1,6 +1,6 @@
 package io.github.seed.common.security.handler;
 
-import io.github.seed.common.data.LoginEvent;
+import io.github.seed.event.data.LoginEvent;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

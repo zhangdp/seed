@@ -1,7 +1,7 @@
 package io.github.seed.controller;
 
 import cn.hutool.v7.core.lang.Assert;
-import io.github.seed.common.component.FileManager;
+import io.github.seed.manager.FileManager;
 import io.github.seed.common.security.data.LoginUser;
 import io.github.seed.common.util.WebUtils;
 import io.github.seed.model.dto.FileInfoDto;

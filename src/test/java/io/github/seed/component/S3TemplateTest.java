@@ -1,7 +1,7 @@
 package io.github.seed.component;
 
 import cn.hutool.v7.core.date.TimeUtil;
-import io.github.seed.common.component.S3Template;
+import io.github.seed.common.stoge.s3.S3Template;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

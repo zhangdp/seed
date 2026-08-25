@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequestWrapper;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 2025/12/22 缓存http request请求body内容，方便多次读取
@@ -18,6 +19,7 @@ public class CachedBodyHttpServletRequestWrapper extends HttpServletRequestWrapp
 
     private byte[] cachedBody;
     private volatile boolean cachedFlag = false;
+    private final ReentrantLock lock = new ReentrantLock();
 
     public CachedBodyHttpServletRequestWrapper(HttpServletRequest request) {
         super(request);
@@ -48,15 +50,20 @@ public class CachedBodyHttpServletRequestWrapper extends HttpServletRequestWrapp
      *
      * @throws IOException
      */
-    private synchronized void caching() throws IOException {
-        // 双重检查，防止并发重复读
-        if (cachedFlag) {
-            return;
+    private void caching() throws IOException {
+        lock.lock();
+        try {
+            // 双重检查，防止并发重复读
+            if (cachedFlag) {
+                return;
+            }
+            try (InputStream is = super.getInputStream()) {
+                cachedBody = is.readAllBytes();
+            }
+            cachedFlag = true;
+        } finally {
+            lock.unlock();
         }
-        try (InputStream is = super.getInputStream()) {
-            cachedBody = is.readAllBytes();
-        }
-        cachedFlag = true;
     }
 
     /**
@@ -64,15 +71,15 @@ public class CachedBodyHttpServletRequestWrapper extends HttpServletRequestWrapp
      */
     public static class CachedBodyServletInputStream extends ServletInputStream {
 
-        private final ByteArrayInputStream caching;
+        private final ByteArrayInputStream byteArrayInputStream;
 
         public CachedBodyServletInputStream(byte[] cachedBody) {
-            this.caching = new ByteArrayInputStream(cachedBody);
+            this.byteArrayInputStream = new ByteArrayInputStream(cachedBody);
         }
 
         @Override
         public boolean isFinished() {
-            return caching.available() == 0;
+            return byteArrayInputStream.available() == 0;
         }
 
         @Override
@@ -82,12 +89,17 @@ public class CachedBodyHttpServletRequestWrapper extends HttpServletRequestWrapp
 
         @Override
         public void setReadListener(ReadListener readListener) {
-            // no-op (sync request)
+            throw new UnsupportedOperationException("CachedBodyServletInputStream does not support async read listeners.");
         }
 
         @Override
         public int read() throws IOException {
-            return caching.read();
+            return byteArrayInputStream.read();
+        }
+
+        @Override
+        public int read(byte[] b, int off, int len) throws IOException {
+            return this.byteArrayInputStream.read(b, off, len);
         }
     }
 }

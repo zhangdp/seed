@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.1.0</version>
+        <version>4.1.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>io.github</groupId>
@@ -19,9 +19,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <hutool.version>7.0.0-M7</hutool.version>
         <mybatis-flex.version>1.11.8</mybatis-flex.version>
-        <springdoc.version>3.0.3</springdoc.version>
-        <aws-s3.version>2.47.5</aws-s3.version>
-        <spring-boot-admin.version>4.1.1</spring-boot-admin.version>
+        <springdoc.version>3.1.0</springdoc.version>
+        <aws-s3.version>2.54.2</aws-s3.version>
+        <spring-boot-admin.version>4.1.2</spring-boot-admin.version>
     </properties>
 
     <dependencies>
@@ -128,6 +128,24 @@
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>s3</artifactId>
             <version>${aws-s3.version}</version>
+            <exclusions>
+                <!-- 下面排除一些用不到的异步传输的依赖，普通上传下载使用同步传输 -->
+                <!-- 剔除 Netty (异步非阻塞传输) -->
+                <exclusion>
+                    <groupId>software.amazon.awssdk</groupId>
+                    <artifactId>netty-nio-client</artifactId>
+                </exclusion>
+                <!-- 剔除 EventStream (S3 Select 订阅事件流) -->
+                <exclusion>
+                    <groupId>software.amazon.eventstream</groupId>
+                    <artifactId>eventstream</artifactId>
+                </exclusion>
+                <!-- 剔除 C++ 加速核心库 -->
+                <exclusion>
+                    <groupId>software.amazon.awssdk</groupId>
+                    <artifactId>crt-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
     </dependencies>

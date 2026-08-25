@@ -2,7 +2,7 @@ package io.github.seed.controller;
 
 import cn.hutool.v7.core.thread.ThreadUtil;
 import cn.hutool.v7.core.util.RandomUtil;
-import io.github.seed.common.annotation.IgnoreAuth;
+import io.github.seed.common.security.data.IgnoreAuth;
 import io.github.seed.common.annotation.NoJsonTrim;
 import io.github.seed.common.annotation.PublishEvent;
 import io.github.seed.common.annotation.RecordLog;

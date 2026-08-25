@@ -2,7 +2,7 @@ package io.github.seed.common.aspect;
 
 import cn.hutool.v7.core.text.StrUtil;
 import io.github.seed.common.annotation.PublishEvent;
-import io.github.seed.common.data.ServiceEvent;
+import io.github.seed.event.data.ServiceEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;

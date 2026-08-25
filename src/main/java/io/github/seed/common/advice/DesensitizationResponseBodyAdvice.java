@@ -25,7 +25,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 @Order(1)
 @RequiredArgsConstructor
 // 只包含自己写的controller，不能影响其他框架自带的controller
-@RestControllerAdvice(basePackages = "io.github.seed")
+@RestControllerAdvice(basePackages = "io.github.seed.controller")
 public class DesensitizationResponseBodyAdvice implements ResponseBodyAdvice<Object> {
 
     @Override

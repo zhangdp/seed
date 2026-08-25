@@ -3,7 +3,7 @@ package io.github.seed.common.component;
 import com.mybatisflex.annotation.InsertListener;
 import com.mybatisflex.annotation.UpdateListener;
 import io.github.seed.common.constant.Const;
-import io.github.seed.common.security.SecurityUtils;
+import io.github.seed.common.security.component.SecurityUtils;
 import io.github.seed.common.security.data.LoginUser;
 import io.github.seed.entity.BaseEntity;
 import io.github.seed.entity.BaseLogicAuditableEntity;

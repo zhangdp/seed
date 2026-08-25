@@ -3,7 +3,7 @@ package io.github.seed.common.security.handler;
 import io.github.seed.common.security.data.RefreshAuthenticationToken;
 import io.github.seed.common.security.data.RefreshToken;
 import io.github.seed.common.security.data.SmsAuthenticationToken;
-import io.github.seed.common.security.service.TokenService;
+import io.github.seed.common.security.component.TokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationProvider;

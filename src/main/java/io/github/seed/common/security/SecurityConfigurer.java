@@ -1,10 +1,11 @@
 package io.github.seed.common.security;
 
-import io.github.seed.common.annotation.IgnoreAuth;
-import io.github.seed.common.component.IgnoreAuthPathRegistry;
+import io.github.seed.common.security.component.*;
+import io.github.seed.common.security.data.IgnoreAuth;
+import io.github.seed.common.security.data.SecurityConst;
+import io.github.seed.common.security.data.SecurityProperties;
 import io.github.seed.common.security.filter.TokenResolveAuthenticationFilter;
 import io.github.seed.common.security.handler.*;
-import io.github.seed.common.security.service.*;
 import io.github.seed.service.sys.PermissionService;
 import io.github.seed.service.sys.RoleService;
 import io.github.seed.service.sys.UserService;
@@ -16,8 +17,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;

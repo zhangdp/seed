@@ -1,8 +1,8 @@
 package io.github.seed.common.security.handler;
 
 import cn.hutool.v7.core.text.StrUtil;
-import io.github.seed.common.security.SecurityUtils;
-import io.github.seed.common.security.service.TokenService;
+import io.github.seed.common.security.component.SecurityUtils;
+import io.github.seed.common.security.component.TokenService;
 import io.github.seed.common.util.JsonUtils;
 import io.github.seed.common.util.WebUtils;
 import jakarta.servlet.ServletException;

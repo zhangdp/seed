@@ -2,10 +2,10 @@ package io.github.seed.common.security.filter;
 
 import cn.hutool.v7.core.text.StrUtil;
 import io.github.seed.common.enums.SensitiveType;
-import io.github.seed.common.security.SecurityConst;
-import io.github.seed.common.security.SecurityUtils;
+import io.github.seed.common.security.data.SecurityConst;
+import io.github.seed.common.security.component.SecurityUtils;
 import io.github.seed.common.security.data.AccessToken;
-import io.github.seed.common.security.service.TokenService;
+import io.github.seed.common.security.component.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,7 +21,6 @@ import org.springframework.util.PatternMatchUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Set;
 
 /**
  * spring security解析token过滤器

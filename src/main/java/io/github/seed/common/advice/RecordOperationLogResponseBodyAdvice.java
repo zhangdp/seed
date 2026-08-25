@@ -2,7 +2,7 @@ package io.github.seed.common.advice;
 
 import io.github.seed.common.annotation.RecordLog;
 import io.github.seed.common.constant.Const;
-import io.github.seed.common.data.OperateEvent;
+import io.github.seed.event.data.OperateEvent;
 import io.github.seed.common.data.R;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,9 +1,9 @@
 package io.github.seed.controller;
 
-import io.github.seed.common.annotation.IgnoreAuth;
+import io.github.seed.common.security.data.IgnoreAuth;
 import io.github.seed.common.security.data.LoginResult;
 import io.github.seed.common.security.data.LoginUser;
-import io.github.seed.common.security.service.SecurityService;
+import io.github.seed.common.security.component.SecurityService;
 import io.github.seed.model.dto.PermissionTreeNode;
 import io.github.seed.model.dto.UserInfo;
 import io.github.seed.model.dto.LoginParams;

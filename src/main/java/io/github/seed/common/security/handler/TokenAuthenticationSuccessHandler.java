@@ -1,7 +1,7 @@
 package io.github.seed.common.security.handler;
 
 import io.github.seed.common.constant.Const;
-import io.github.seed.common.data.LoginEvent;
+import io.github.seed.event.data.LoginEvent;
 import io.github.seed.common.security.data.LoginUser;
 import io.github.seed.common.util.WebUtils;
 import jakarta.servlet.ServletException;

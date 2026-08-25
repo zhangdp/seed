@@ -1,9 +1,8 @@
 package io.github.seed.controller;
 
-import io.github.seed.common.annotation.IgnoreAuth;
+import io.github.seed.common.security.data.IgnoreAuth;
 import io.github.seed.common.annotation.NoWrapperResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
