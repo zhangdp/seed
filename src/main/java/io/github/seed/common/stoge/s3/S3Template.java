@@ -39,10 +39,22 @@ import java.util.*;
 @Slf4j
 public class S3Template implements InitializingBean, DisposableBean {
 
+    private final String bucket;
+
     private final String endpoint;
     private final String accessKey;
     private final String secretKey;
-    private final String bucket;
+    private final String region;
+    private final boolean pathStyleAccessEnabled;
+    private final boolean chunkedEncodingEnabled;
+
+    public S3Template(String bucket, String endpoint, String accessKey, String secretKey) {
+        this(bucket, endpoint, accessKey, secretKey, Region.US_EAST_1.id(), true, true);
+    }
+
+    public S3Template(String bucket, String endpoint, String accessKey, String secretKey, String region) {
+        this(bucket, endpoint, accessKey, secretKey, region, true, true);
+    }
 
     private S3Client s3Client;
 
@@ -76,6 +88,7 @@ public class S3Template implements InitializingBean, DisposableBean {
         Assert.hasText(accessKey, "accessKey不能为空");
         Assert.hasText(secretKey, "secretKey不能为空");
         Assert.hasText(bucket, "bucket不能为空");
+        Assert.hasText(region, "region不能为空");
         s3Client = S3Client.builder()
                 .endpointOverride(URI.create(endpoint))
                 .credentialsProvider(
@@ -84,10 +97,11 @@ public class S3Template implements InitializingBean, DisposableBean {
                         )
                 )
                 // 没用但必须填
-                .region(Region.US_EAST_1)
+                .region(Region.of(region))
                 .serviceConfiguration(
                         S3Configuration.builder()
-                                .pathStyleAccessEnabled(true)
+                                .pathStyleAccessEnabled(pathStyleAccessEnabled)
+                                .chunkedEncodingEnabled(chunkedEncodingEnabled)
                                 .build()
                 )
                 .build();

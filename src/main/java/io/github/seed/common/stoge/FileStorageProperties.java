@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import software.amazon.awssdk.regions.Region;
 
 import java.time.Duration;
 import java.util.LinkedHashMap;
@@ -91,6 +92,21 @@ public class FileStorageProperties {
          * 桶名称
          */
         private String bucket;
+
+        /**
+         * 地域
+         */
+        private String region = Region.US_EAST_1.id();
+
+        /**
+         * DNS格式是否开启路径格式模式
+         */
+        private boolean pathStyleAccessEnabled = true;
+
+        /**
+         * 请求负载时是否开启分块编码
+         */
+        private boolean chunkedEncodingEnabled = true;
     }
 
     /**
