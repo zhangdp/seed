@@ -19,6 +19,8 @@ import software.amazon.awssdk.services.s3.paginators.ListObjectsV2Iterable;
 
 import java.io.*;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 /**
@@ -48,6 +50,13 @@ public class S3Template implements InitializingBean, DisposableBean {
     private final boolean pathStyleAccessEnabled;
     private final boolean chunkedEncodingEnabled;
 
+    private S3Client s3Client;
+
+    // s3批量处理一次性最多1000条
+    public static final int BATCH_SIZE = 1000;
+    // 缓存到内存中的大小阈值
+    public static final long MEMORY_BUFFER_THRESHOLD = 8 * 1024 * 1024;
+
     public S3Template(String bucket, String endpoint, String accessKey, String secretKey) {
         this(bucket, endpoint, accessKey, secretKey, Region.US_EAST_1.id(), true, true);
     }
@@ -55,11 +64,6 @@ public class S3Template implements InitializingBean, DisposableBean {
     public S3Template(String bucket, String endpoint, String accessKey, String secretKey, String region) {
         this(bucket, endpoint, accessKey, secretKey, region, true, true);
     }
-
-    private S3Client s3Client;
-
-    // s3批量处理一次性最多1000条
-    public static final int BATCH_SIZE = 1000;
 
     @Override
     public void afterPropertiesSet() {
@@ -470,13 +474,25 @@ public class S3Template implements InitializingBean, DisposableBean {
      * return
      */
     public PutObjectResponse upload(String path, File file) {
+        return this.upload(path, file, MimeType.guessMimeType(file));
+    }
+
+    /**
+     * 上传本地文件
+     *
+     * @param path
+     * @param file
+     * @param mimeType
+     * @return
+     */
+    private PutObjectResponse upload(String path, File file, String mimeType) {
         Assert.isTrue(!file.isDirectory(), "不支持上传文件夹");
         path = this.normalizePath(path);
         PutObjectResponse res = s3Client.putObject(
                 PutObjectRequest.builder()
                         .bucket(bucket)
                         .key(path)
-                        .contentType(MimeType.guessMimeType(file))
+                        .contentType(mimeType)
                         .build(),
                 RequestBody.fromFile(file)
         );
@@ -550,15 +566,47 @@ public class S3Template implements InitializingBean, DisposableBean {
      */
     public PutObjectResponse upload(String path, InputStream inputStream, long size, String mimeType) {
         path = this.normalizePath(path);
-        PutObjectResponse res = s3Client.putObject(
-                PutObjectRequest.builder()
-                        .bucket(bucket)
-                        .key(path)
-                        .contentType(mimeType)
-                        .build(),
-                RequestBody.fromInputStream(inputStream, size)
-        );
-        log.debug("[{}]上传inputStream文件, path={}, size={}, result={}", bucket, path, size, res);
+        PutObjectResponse res = null;
+        if (inputStream.markSupported()) {
+            res = s3Client.putObject(
+                    PutObjectRequest.builder()
+                            .bucket(bucket)
+                            .key(path)
+                            .contentType(mimeType)
+                            .build(),
+                    RequestBody.fromInputStream(inputStream, size)
+            );
+            log.debug("[{}]上传inputStream文件, path={}, size={}, result={}", bucket, path, size, res);
+        }
+        // s3需要可重复读取的输入流用来计算校验码或者失败重试，因此不可重复读的输入流需要特殊处理
+        else {
+            // 小文件的直接缓存到内存中上传
+            if (size <= MEMORY_BUFFER_THRESHOLD) {
+                try {
+                    log.debug("[{}]输入流不可重复读，且大小小于阀值{}，因此缓存到内存再上传, path={}", bucket, MEMORY_BUFFER_THRESHOLD, path);
+                    byte[] bytes = inputStream.readAllBytes();
+                    res = this.upload(path, bytes, mimeType);
+                } catch (IOException e) {
+                    throw new UncheckedIOException("将不可重复读输入流缓存到内存再上传到S3出错", e);
+                }
+            }
+            // 大文件先存为本地临时文件再上传
+            else {
+                File tmpFile = null;
+                try {
+                    log.debug("[{}]输入流不可重复读，且大小大于阀值{}，因此缓存到磁盘再上传, path={}", bucket, MEMORY_BUFFER_THRESHOLD, path);
+                    tmpFile = File.createTempFile("s3_upload_", ".tmp");
+                    Files.copy(inputStream, tmpFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    res = this.upload(path, tmpFile, mimeType);
+                } catch (IOException e) {
+                    throw new UncheckedIOException("将不可重复读输入流缓存到临时文件再上传到S3出错", e);
+                } finally {
+                    if (tmpFile != null) {
+                        tmpFile.delete();
+                    }
+                }
+            }
+        }
         return res;
     }
 
