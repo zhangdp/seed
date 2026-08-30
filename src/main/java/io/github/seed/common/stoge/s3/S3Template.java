@@ -583,8 +583,9 @@ public class S3Template implements InitializingBean, DisposableBean {
             // 小文件的直接缓存到内存中上传
             if (size <= MEMORY_BUFFER_THRESHOLD) {
                 try {
-                    log.debug("[{}]输入流不可重复读，且大小小于阀值{}，因此缓存到内存再上传, path={}", bucket, MEMORY_BUFFER_THRESHOLD, path);
+                    log.debug("[{}]输入流不可重复读，且大小{}小于阀值{}，缓存到内存再上传, path={}", bucket, size, MEMORY_BUFFER_THRESHOLD, path);
                     byte[] bytes = inputStream.readAllBytes();
+                    Assert.isTrue(bytes.length == size, "输入流可读大小" + bytes.length + "与传参大小" + size + " 不一致");
                     res = this.upload(path, bytes, mimeType);
                 } catch (IOException e) {
                     throw new UncheckedIOException("将不可重复读输入流缓存到内存再上传到S3出错", e);
@@ -594,9 +595,10 @@ public class S3Template implements InitializingBean, DisposableBean {
             else {
                 File tmpFile = null;
                 try {
-                    log.debug("[{}]输入流不可重复读，且大小大于阀值{}，因此缓存到磁盘再上传, path={}", bucket, MEMORY_BUFFER_THRESHOLD, path);
+                    log.debug("[{}]输入流不可重复读，且大小{}大于阀值{}，缓存到磁盘再上传, path={}", bucket, size, MEMORY_BUFFER_THRESHOLD, path);
                     tmpFile = File.createTempFile("s3_upload_", ".tmp");
                     Files.copy(inputStream, tmpFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    Assert.isTrue(tmpFile.length() == size, "输入流可读大小" + tmpFile.length() + "与传参大小" + size + " 不一致");
                     res = this.upload(path, tmpFile, mimeType);
                 } catch (IOException e) {
                     throw new UncheckedIOException("将不可重复读输入流缓存到临时文件再上传到S3出错", e);
