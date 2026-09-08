@@ -8,10 +8,10 @@ import io.github.seed.common.exception.NotFoundException;
 import io.github.seed.common.util.MimeType;
 import io.github.seed.common.stoge.StogeAdapter;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.nio.file.StandardCopyOption;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -31,12 +31,23 @@ public class LocalStogeAdapter implements StogeAdapter {
         this.rootPath = rootPath == null ? "" : rootPath.trim();
     }
 
-    @SneakyThrows
+    @Override
+    public StogeData upload(String path, InputStream inputStream, long size, String fileName) {
+        File f = new File(this.normalizePath(path));
+        FileUtil.mkParentDirs(f);
+        FileUtil.copy(inputStream, f, StandardCopyOption.REPLACE_EXISTING);
+        return this.toStogeData(f);
+    }
+
     @Override
     public StogeData upload(String path, MultipartFile file) {
         File f = new File(this.normalizePath(path));
         FileUtil.mkParentDirs(f);
-        file.transferTo(f);
+        try {
+            file.transferTo(f);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
         return this.toStogeData(f);
     }
 

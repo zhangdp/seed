@@ -1,8 +1,11 @@
 package io.github.seed.common.stoge;
 
+import io.github.seed.common.enums.ErrorCode;
+import io.github.seed.common.exception.BadRequestException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collection;
@@ -17,13 +20,30 @@ import java.util.List;
 public interface StogeAdapter {
 
     /**
+     * 上传输入流文件
+     *
+     * @param path
+     * @param inputStream
+     * @param size
+     * @param fileName
+     * @return
+     */
+    StogeData upload(String path, InputStream inputStream, long size, String fileName);
+
+    /**
      * 上传从前端上传的文件
      *
      * @param path
      * @param file
      * @return
      */
-    StogeData upload(String path, MultipartFile file);
+    default StogeData upload(String path, MultipartFile file) {
+        try (InputStream in = file.getInputStream()) {
+            return this.upload(path, in, file.getSize(), file.getOriginalFilename());
+        } catch (IOException e) {
+            throw new BadRequestException(ErrorCode.REQUEST_BODY_NOT_READABLE.code(), file.getOriginalFilename() + "上传失败", e);
+        }
+    }
 
     /**
      * 上传本地文件

@@ -11,6 +11,7 @@ import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.http.ContentStreamProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3Configuration;
@@ -567,7 +568,8 @@ public class S3Template implements InitializingBean, DisposableBean {
     public PutObjectResponse upload(String path, InputStream inputStream, long size, String mimeType) {
         path = this.normalizePath(path);
         PutObjectResponse res = null;
-        if (inputStream.markSupported()) {
+        // 开启了分段chunkedEncodingEnabled或者流支持重置读则可直接读原流上传
+        if (chunkedEncodingEnabled || inputStream.markSupported()) {
             res = s3Client.putObject(
                     PutObjectRequest.builder()
                             .bucket(bucket)
@@ -578,7 +580,7 @@ public class S3Template implements InitializingBean, DisposableBean {
             );
             log.debug("[{}]上传inputStream文件, path={}, size={}, result={}", bucket, path, size, res);
         }
-        // s3需要可重复读取的输入流用来计算校验码或者失败重试，因此不可重复读的输入流需要特殊处理
+        // 未开启分段或者流不支持重置时，s3需要多次读取输入流用来计算校验码或者失败重试，因此不可重复读的输入流需要特殊处理
         else {
             // 小文件的直接缓存到内存中上传
             if (size <= MEMORY_BUFFER_THRESHOLD) {
@@ -613,43 +615,27 @@ public class S3Template implements InitializingBean, DisposableBean {
     }
 
     /**
-     * 上传未知大小文件流，尽量避免使用此方法而应该使用带大小的上传，不会自动关闭文件流
+     * 上传内容流提供者的可重复获取的输入流
+     * 用于关闭了chunkedEncodingEnabled情况下且还是不可重置的但是支持重新创建的输入流（比如FileInputStream、springboot上传的
+     * MultipartFile.getInputStream()等每次都是全新的从头开始读的流）
      *
      * @param path
-     * @param inputStream
-     * @return
-     */
-    public PutObjectResponse upload(String path, InputStream inputStream) {
-        return this.upload(path, inputStream, MimeType.guessMimeType(path));
-    }
-
-    /**
-     * 上传未知大小文件流，尽量避免使用此方法而应该使用带大小的上传，不会自动关闭文件流
-     *
-     * @param path
-     * @param inputStream
+     * @param provider
      * @param mimeType
+     * @param size
      * @return
      */
-    public PutObjectResponse upload(String path, InputStream inputStream, String mimeType) {
+    public PutObjectResponse upload(String path, ContentStreamProvider provider, String mimeType, long size) {
         path = this.normalizePath(path);
-        try {
-            PutObjectResponse res = s3Client.putObject(PutObjectRequest.builder()
-                            .bucket(bucket)
-                            .key(path)
-                            .contentType(mimeType)
-                            .build(),
-                    RequestBody.fromContentProvider(() -> inputStream, mimeType));
-            log.debug("[{}]上传inputStream文件, path={}, result={}", bucket, path, res);
-            return res;
-        } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException ignore) {
-                }
-            }
-        }
+        PutObjectResponse res = s3Client.putObject(
+                PutObjectRequest.builder()
+                        .bucket(bucket)
+                        .key(path)
+                        .contentType(mimeType)
+                        .build(),
+                RequestBody.fromContentProvider(provider, size, mimeType));
+        log.debug("[{}]上传内容流提供者的可重复获取的输入流, path={}, result={}", bucket, path, res);
+        return res;
     }
 
     /**
