@@ -546,7 +546,7 @@ public class S3Template implements InitializingBean, DisposableBean {
     }
 
     /**
-     * 上传文件流，会自动关闭输入流
+     * 上传文件流，不会自动关闭输入流
      *
      * @param path
      * @param inputStream
@@ -634,7 +634,7 @@ public class S3Template implements InitializingBean, DisposableBean {
                         .contentType(mimeType)
                         .build(),
                 RequestBody.fromContentProvider(provider, size, mimeType));
-        log.debug("[{}]上传内容流提供者的可重复获取的输入流, path={}, result={}", bucket, path, res);
+        log.debug("[{}]上传ContentStreamProvider, path={}, result={}", bucket, path, res);
         return res;
     }
 
@@ -669,13 +669,15 @@ public class S3Template implements InitializingBean, DisposableBean {
         Assert.isTrue(length > 0, "length必须大于0");
         path = this.normalizePath(path);
         String range = "bytes=" + offset + "-" + (offset + length - 1);
-        return s3Client.getObject(
+        ResponseInputStream<GetObjectResponse> res = s3Client.getObject(
                 GetObjectRequest.builder()
-                    .bucket(bucket)
-                    .key(path)
-                    .range(range)
-                    .build()
+                        .bucket(bucket)
+                        .key(path)
+                        .range(range)
+                        .build()
         );
+        log.debug("[{}]分段下载文件，path={}, offset={}, length={}, result={}", bucket, path, offset, length, res.response());
+        return res;
     }
 
     /**
@@ -784,9 +786,6 @@ public class S3Template implements InitializingBean, DisposableBean {
      * 例：srcPrefix = "a/b/", destPrefix = "x/y/", key = "a/b/c.txt" → "x/y/c.txt"
      */
     public String replacePrefix(String path, String srcPrefix, String destPrefix) {
-        if (!path.startsWith(srcPrefix)) {
-            throw new IllegalArgumentException("不以源前缀开头: " + path);
-        }
         Assert.isTrue(path.startsWith(srcPrefix), path + " 不以源前缀 " + srcPrefix + " 开头");
         return destPrefix + path.substring(srcPrefix.length());
     }
