@@ -19,8 +19,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <hutool.version>7.0.0-M7</hutool.version>
         <mybatis-flex.version>1.11.8</mybatis-flex.version>
-        <springdoc.version>3.1.0</springdoc.version>
-        <aws-s3.version>2.54.9</aws-s3.version>
+        <springdoc.version>3.1.1</springdoc.version>
+        <aws-s3.version>2.54.18</aws-s3.version>
         <spring-boot-admin.version>4.1.2</spring-boot-admin.version>
     </properties>
 
