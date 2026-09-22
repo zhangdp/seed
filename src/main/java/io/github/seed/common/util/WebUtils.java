@@ -100,10 +100,8 @@ public class WebUtils {
     public static String appendParameter(String url, String name, Object value) {
         StringBuilder sb = new StringBuilder(url);
         if (url.contains("?")) {
-            if (!url.endsWith("&")) {
-                sb.append('&');
-            }
-        } else if (!url.endsWith("?")) {
+            sb.append('&');
+        } else {
             sb.append('?');
         }
         sb.append(name.trim());
@@ -280,9 +278,7 @@ public class WebUtils {
         }
         response.setHeader("Content-Disposition", disposition);
         response.setContentType(contentType == null || contentType.isEmpty() ? "application/octet-stream" : contentType);
-        if (fileSize > 0L) {
-            response.setContentLengthLong(fileSize);
-        }
+        response.setContentLengthLong(fileSize);
     }
 
     /**
@@ -401,7 +397,7 @@ public class WebUtils {
     }
 
     /**
-     * 响应文件流。会自动关闭输入流
+     * 响应文件流
      *
      * @param response
      * @param in
@@ -415,7 +411,7 @@ public class WebUtils {
     }
 
     /**
-     * 响应文件流。会自动关闭输入流
+     * 响应文件流
      *
      * @param response
      * @param in
@@ -429,7 +425,7 @@ public class WebUtils {
     }
 
     /**
-     * 响应文件流。会自动关闭输入流
+     * 响应文件流
      *
      * @param response
      * @param in
@@ -440,7 +436,7 @@ public class WebUtils {
      * @return
      */
     public static long responseFile(HttpServletResponse response, InputStream in, String fileName, long fileSize, String contentType, boolean isInline) {
-        try (in) {
+        try {
             responseDispositionHeader(response, fileName, fileSize, contentType, isInline);
             OutputStream out = response.getOutputStream();
             long size = in.transferTo(out);

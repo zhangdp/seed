@@ -193,8 +193,8 @@ public class S3Template implements InitializingBean, DisposableBean {
      * @return
      */
     public ListObjectsV2Response listObjects(String path, Integer maxKeys) {
-        path = this.directoryStylePath(this.normalizePath(path));
         Assert.isTrue(maxKeys == null || maxKeys > 0 && maxKeys <= BATCH_SIZE, "maxKey必须大于0且小于等于" + BATCH_SIZE);
+        path = this.normalizePath(path);
         return s3Client.listObjectsV2(
                 ListObjectsV2Request.builder()
                     .bucket(bucket)
@@ -222,8 +222,8 @@ public class S3Template implements InitializingBean, DisposableBean {
      * @return
      */
     public ListObjectsV2Iterable listObjectsPaginator(String path, Integer maxKeys) {
-        path = this.directoryStylePath(this.normalizePath(path));
         Assert.isTrue(maxKeys == null || maxKeys > 0 && maxKeys <= BATCH_SIZE, "maxKey必须大于0且小于等于" + BATCH_SIZE);
+        path = this.normalizePath(path);
         return s3Client.listObjectsV2Paginator(
                 ListObjectsV2Request.builder()
                         .bucket(bucket)
@@ -240,6 +240,7 @@ public class S3Template implements InitializingBean, DisposableBean {
      * @return
      */
     public boolean isExists(String path) {
+        path = this.normalizePath(path);
         try {
             return this.headObject(path) != null;
         } catch (NoSuchKeyException e) {
@@ -254,6 +255,7 @@ public class S3Template implements InitializingBean, DisposableBean {
      * @return
      */
     public boolean isEmptyDirectory(String path) {
+        path = this.directoryStylePath(path);
         ListObjectsV2Response res = this.listObjects(path, 1);
         return res == null || !res.hasContents();
     }
@@ -385,6 +387,7 @@ public class S3Template implements InitializingBean, DisposableBean {
      * @return
      */
     public DeleteObjectsResponse deleteDirectory(String path) {
+        path = this.directoryStylePath(path);
         List<DeletedObject> allDeleted = new ArrayList<>();
         List<S3Error> allErrors = new ArrayList<>();
         // s3没有目录的概念，因此只能列出子文件循环删除
@@ -438,6 +441,7 @@ public class S3Template implements InitializingBean, DisposableBean {
      * 批量删除，可选参数是否静默模式，即是否只返回失败的不包含删除成功的。s3没有目录的概念，不支持目录
      *
      * @param paths
+     * @param quiteMode
      * @return
      */
     public DeleteObjectsResponse deleteBatch(Collection<String> paths, boolean quiteMode) {
@@ -777,7 +781,7 @@ public class S3Template implements InitializingBean, DisposableBean {
      * @param path
      * @return
      */
-    private String directoryStylePath(String path) {
+    public String directoryStylePath(String path) {
         return this.isPathDirectoryStyle(path) ? path : path + "/";
     }
 
