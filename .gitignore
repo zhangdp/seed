@@ -32,9 +32,17 @@ build/
 ### VS Code ###
 .vscode/
 
-### AI 工具本地目录 ###
-# 每个人各自生成、且可能换用别的工具（Codex 等），属于本地副产物，不入库
+### AI 工具 ###
+# 原则：团队约定要提交，本地个人状态才忽略
+# 共享（不要忽略）：.claude/settings.json(权限/hooks/plugins)、.claude/agents/、.claude/commands/、
+#                   .cursor/rules/*.mdc、.cursor/commands/、.cursorignore、.mcp.json、根目录 AGENTS.md / CLAUDE.md
+# 下面只忽略个人本机产物，各人用的工具不同，这些不该进仓库
 .workbuddy/
-.codex/
+.claude/settings.local.json
+.claude/*.local.md
+.cursor/settings.json
+.cursor/keybindings.json
+.codex/sessions/
+.codex/history/
 
 application-dev.yml
