@@ -2,6 +2,7 @@ package io.github.seed.module.security.handler;
 
 import io.github.seed.common.constant.Const;
 import io.github.seed.event.data.LoginEvent;
+import io.github.seed.module.security.component.SecurityUtils;
 import io.github.seed.module.security.data.LoginUser;
 import io.github.seed.common.util.WebUtils;
 import jakarta.servlet.ServletException;
@@ -34,12 +35,21 @@ public class TokenAuthenticationSuccessHandler implements AuthenticationSuccessH
 
         // todo 修改上次登录时间、地点等业务
 
-        // 发出登录日志事件，有需要的话订阅
+        // 发出登录日志事件，由LoginEventListener入库
         LoginEvent event = new LoginEvent(this);
-        // event.setLoginType();
-        // event.setUsername();
+        // 优先用提交的原始认证对象：认证后的authentication的登录类型不一定准（如续签），
+        // 且登录日志记的是「谁用什么方式登录」，以提交内容为准
+        Authentication submit = SecurityUtils.getLoginAuthentication(request);
+        if (submit == null) {
+            submit = authentication;
+        }
+        LoginUser loginUser = authentication.getPrincipal() instanceof LoginUser principal ? principal : null;
+        event.setLoginType(SecurityUtils.resolveLoginType(submit));
+        // 续签提交的认证对象里是refresh token明文，取不到账号，回退到认证后的用户
+        String username = SecurityUtils.resolveUsername(submit);
+        event.setUsername(username != null ? username : (loginUser == null ? null : loginUser.getUsername()));
         event.setLoginTime(LocalDateTime.now());
-        event.setLoginUser((LoginUser) authentication.getPrincipal());
+        event.setLoginUser(loginUser);
         event.setClientIp(WebUtils.getClientIP(request));
         event.setUserAgent(request.getHeader("User-Agent"));
         event.setResultCode(Const.RESULT_SUCCESS);

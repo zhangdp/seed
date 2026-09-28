@@ -2,11 +2,16 @@ package io.github.seed.module.security.component;
 
 import cn.hutool.v7.core.lang.Assert;
 import cn.hutool.v7.core.text.StrUtil;
+import io.github.seed.common.enums.LoginType;
 import io.github.seed.module.security.data.LoginUser;
+import io.github.seed.module.security.data.RefreshAuthenticationToken;
 import io.github.seed.module.security.data.SecurityConst;
+import io.github.seed.module.security.data.SmsAuthenticationToken;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Base64;
 
@@ -17,6 +22,68 @@ import java.util.Base64;
  * @since 2024/7/3
  */
 public class SecurityUtils {
+
+    /**
+     * 取当前请求中登录时提交的原始认证对象
+     * <br>由{@code SecurityService}在认证前写入request，登录失败时认证异常一般不携带authentication，
+     * 只有这里拿得到提交上来的账号
+     *
+     * @param request
+     * @return 没有时返回null
+     */
+    public static Authentication getLoginAuthentication(HttpServletRequest request) {
+        if (request == null) {
+            return null;
+        }
+        Object attribute = request.getAttribute(SecurityConst.REQUEST_ATTR_LOGIN_AUTHENTICATION);
+        return attribute instanceof Authentication authentication ? authentication : null;
+    }
+
+    /**
+     * 推断登录类型
+     *
+     * @param authentication 认证对象，为null时返回null
+     * @return 登录类型，无法识别时返回null
+     */
+    public static LoginType resolveLoginType(Authentication authentication) {
+        if (authentication == null) {
+            return null;
+        }
+        if (authentication instanceof RefreshAuthenticationToken) {
+            return LoginType.REFRESH_TOKEN;
+        }
+        if (authentication instanceof SmsAuthenticationToken) {
+            return LoginType.SMS;
+        }
+        if (authentication instanceof UsernamePasswordAuthenticationToken) {
+            return LoginType.PASSWORD;
+        }
+        return null;
+    }
+
+    /**
+     * 解析登录账号，取用户提交的标识，如账号、手机号、邮箱等
+     * <br>续签的认证对象里principal是refresh token明文，不能当账号记录，返回null
+     *
+     * @param authentication 认证对象，为null时返回null
+     * @return 登录账号，取不到时返回null
+     */
+    public static String resolveUsername(Authentication authentication) {
+        if (authentication == null) {
+            return null;
+        }
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof LoginUser loginUser) {
+            return loginUser.getUsername();
+        }
+        if (principal instanceof UserDetails userDetails) {
+            return userDetails.getUsername();
+        }
+        if (authentication instanceof RefreshAuthenticationToken) {
+            return null;
+        }
+        return authentication.getName();
+    }
 
     /**
      * 从请求中解析出bearer token

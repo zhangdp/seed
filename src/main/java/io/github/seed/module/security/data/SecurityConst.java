@@ -69,6 +69,12 @@ public interface SecurityConst {
      * request attr 访问令牌
      */
     String REQUEST_ATTR_ACCESS_TOKEN = "security_access_token";
+    /**
+     * request attr 登录时提交的原始认证对象
+     * <br>由{@code SecurityService}在调用spring security认证前写入，供登录成功/失败处理器回填登录日志的
+     * 登录类型与账号——认证异常通常不携带authentication，失败时只能从这里取到提交的用户名
+     */
+    String REQUEST_ATTR_LOGIN_AUTHENTICATION = "security_login_authentication";
 
     /**
      * ACTUATOR端点需要的角色
