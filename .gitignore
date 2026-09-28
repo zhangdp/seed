@@ -37,7 +37,11 @@ build/
 # 共享（不要忽略）：.claude/settings.json(权限/hooks/plugins)、.claude/agents/、.claude/commands/、
 #                   .cursor/rules/*.mdc、.cursor/commands/、.cursorignore、.mcp.json、根目录 AGENTS.md / CLAUDE.md
 # 下面只忽略个人本机产物，各人用的工具不同，这些不该进仓库
-.workbuddy/
+# .workbuddy/memory 是本机流水笔记，含开发库地址与账号密码等，绝不能入库；
+# .workbuddy/skills 是项目级技能、设计上给团队共用，单独放行
+# 注意必须写成 .workbuddy/* 而非 .workbuddy/，否则下一行的 ! 不生效（git 不会进入被忽略的目录去匹配）
+.workbuddy/*
+!.workbuddy/skills/
 .claude/settings.local.json
 .claude/*.local.md
 .cursor/settings.json
