@@ -2,6 +2,7 @@ package io.github.seed.common.util;
 
 import cn.hutool.v7.core.lang.Assert;
 import tools.jackson.core.JacksonException;
+import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.json.JsonMapper;
 
 /**
@@ -45,6 +46,21 @@ public class JsonUtils {
             return null;
         }
         return MAPPER.readValue(json, clazz);
+    }
+
+    /**
+     * json字符串转bean，支持泛型
+     *
+     * @param json          json字符串
+     * @param typeReference 目标类型，如 new TypeReference&lt;Map&lt;String, Object&gt;&gt;(){}
+     * @param <T>
+     * @return
+     */
+    public static <T> T fromJson(String json, TypeReference<T> typeReference) {
+        if (json == null) {
+            return null;
+        }
+        return MAPPER.readValue(json, typeReference);
     }
 
     /**

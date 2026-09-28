@@ -6,12 +6,12 @@ import cn.hutool.v7.core.io.file.FileNameUtil;
 import cn.hutool.v7.core.text.StrUtil;
 import cn.hutool.v7.core.util.ObjUtil;
 import io.github.seed.common.constant.Const;
-import io.github.seed.common.stoge.StogeData;
+import io.github.seed.module.storage.StorageData;
 import io.github.seed.common.exception.NotFoundException;
 import io.github.seed.common.util.WebUtils;
 import io.github.seed.entity.sys.FileInfo;
-import io.github.seed.common.stoge.FileStorageProperties;
-import io.github.seed.common.stoge.StogeAdapter;
+import io.github.seed.module.storage.FileStorageProperties;
+import io.github.seed.module.storage.StorageAdapter;
 import io.github.seed.model.dto.FileInfoDto;
 import io.github.seed.service.sys.FileInfoService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,7 +36,7 @@ import java.time.LocalDateTime;
 public class FileManager {
 
     private final FileInfoService fileInfoService;
-    private final StogeAdapter stogeAdapter;
+    private final StorageAdapter storageAdapter;
     private final FileStorageProperties fileProperties;
 
     /**
@@ -71,7 +71,7 @@ public class FileManager {
         }
 
         // 保存文件到存储服务
-        StogeData stoge = stogeAdapter.upload(remotePath, file);
+        StorageData storage = storageAdapter.upload(remotePath, file);
 
         // 记录保存到数据库
         FileInfo entity = new FileInfo();
@@ -79,9 +79,9 @@ public class FileManager {
         entity.setUserId(uploadUserId);
         entity.setFileName(fileName);
         entity.setExtension(extension);
-        entity.setMimeType(stoge.getMimeType());
+        entity.setMimeType(storage.getMimeType());
         entity.setSize(file.getSize());
-        entity.setChecksum(stoge.getChecksum());
+        entity.setChecksum(storage.getChecksum());
         entity.setStoragePath(remotePath);
         entity.setDownloadUrl(this.generateDownloadUrl(fileId, fileName));
         entity.setUploadAt(now);
@@ -130,7 +130,7 @@ public class FileManager {
         // 设置下载相关的http头
         WebUtils.responseDispositionHeader(response, StrUtil.defaultIfBlank(fileName, fileInfo.getFileName()), fileInfo.getSize(), fileInfo.getMimeType(), isInline);
         // 从远端读取文件并输出到输出流，无需flush()或者关闭输出流，web容器会自行处理
-        stogeAdapter.download(fileInfo.getStoragePath(), response.getOutputStream());
+        storageAdapter.download(fileInfo.getStoragePath(), response.getOutputStream());
     }
 
     /**

@@ -1,0 +1,42 @@
+package io.github.seed.module.security.data;
+
+import lombok.Data;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.io.Serial;
+import java.io.Serializable;
+
+/**
+ * 2024/6/28 访问令牌
+ *
+ * @author zhangdp
+ * @since 1.0.0
+ */
+@Data
+public class AccessToken implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * 令牌
+     */
+    private String token;
+    /**
+     * 刷新令牌
+     */
+    private RefreshToken refreshToken;
+    /**
+     * 剩余有效时间（秒）
+     */
+    private Long expiresIn;
+    /**
+     * 签发时间
+     */
+    private Long issuedAt;
+    /**
+     * 用户
+     */
+    private UserDetails userDetails;
+
+}

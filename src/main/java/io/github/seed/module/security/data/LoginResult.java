@@ -1,0 +1,67 @@
+package io.github.seed.module.security.data;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+
+import java.io.Serial;
+import java.io.Serializable;
+
+/**
+ * 登录结果
+ *
+ * @author zhangdp
+ * @since 1.0.0
+ */
+@Data
+@Schema(title = "登录结果")
+public class LoginResult implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * 访问令牌
+     */
+    @Schema(title = "访问令牌", description = "后续请求API时需设置Authorization Header")
+    private String accessToken;
+    /**
+     * 令牌类型
+     */
+    @Schema(title = "令牌类型")
+    private String tokenType;
+    /**
+     * 刷新令牌
+     */
+    @Schema(title = "刷新令牌")
+    private String refreshToken;
+    /**
+     * 访问令牌剩余有效期，单位：秒
+     */
+    @Schema(title = "访问令牌剩余有效期", description = "单位：秒")
+    private Long expiresIn;
+    /**
+     * 用户id
+     */
+    @Schema(title = "用户id")
+    private Long userId;
+    /**
+     * 用户
+     */
+    // @Schema(title = "登录用户信息")
+    // private LoginUser user;
+    /**
+     * 账号
+     */
+    @Schema(title = "账号")
+    private String username;
+    /**
+     * 姓名
+     */
+    @Schema(title = "姓名")
+    private String name;
+    /**
+     * 头像
+     */
+    @Schema(title = "头像")
+    private String avatar;
+}

@@ -67,4 +67,8 @@ public interface TableNameConst {
      * 操作日志表
      */
     String OPERATION_LOG = PREFIX_SYS + SPLIT + "operation_log";
+    /**
+     * 短信日志表
+     */
+    String SYS_SMS_LOG = PREFIX_SYS + SPLIT + "sms_log";
 }

@@ -9,7 +9,7 @@ import io.github.seed.model.dto.AddUserDto;
 import io.github.seed.model.dto.UserInfo;
 import io.github.seed.model.query.PageQuery;
 import io.github.seed.model.query.UserQuery;
-import io.github.seed.common.security.data.LoginUser;
+import io.github.seed.module.security.data.LoginUser;
 import io.github.seed.service.sys.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

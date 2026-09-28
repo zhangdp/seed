@@ -106,6 +106,12 @@
             <artifactId>hutool-crypto</artifactId>
             <version>${hutool.version}</version>
         </dependency>
+        <!-- 图片验证码，验证码类位于 cn.hutool.v7.swing.captcha 包 -->
+        <dependency>
+            <groupId>cn.hutool.v7</groupId>
+            <artifactId>hutool-swing</artifactId>
+            <version>${hutool.version}</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/com.mybatis-flex/mybatis-flex-spring-boot3-starter -->
         <dependency>
             <groupId>com.mybatis-flex</groupId>

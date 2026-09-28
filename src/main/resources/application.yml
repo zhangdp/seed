@@ -124,3 +124,52 @@ app:
       urlTemplate: /file/download/{fileId}/{fileName}
     local:
       upload-dir: tmp/
+  captcha:
+    # 图片验证码
+    image-expire: 5m
+    image-width: 200
+    image-height: 50
+    # 宽高会按下面的范围做夹取，防止构造超大图片
+    image-min-width: 80
+    image-max-width: 400
+    image-min-height: 30
+    image-max-height: 200
+    image-code-length: 4
+    image-line-count: 30
+    # 短信验证码
+    sms-expire: 5m
+    # 相同场景下同一手机号的发送间隔，不同场景互不影响
+    sms-send-interval: 60s
+    sms-code-length: 6
+    sms-max-per-mobile-per-day: 20
+    # 短信场景白名单，防止前端轮换场景绕过发送频率限制，为空则不限制
+    sms-scenes:
+      - login
+      - register
+      - reset_password
+      - bind_mobile
+      - change_mobile
+    # 验证码在短信模板参数中的占位名，配合 app.sms.templates 中配置的场景模板使用
+    sms-code-param: code
+    # 未配置短信模板时发送的文本短信内容，{}依次为验证码、有效分钟数
+    sms-content-template: "您的验证码是{}，{}分钟内有效，请勿泄露给他人。"
+  sms:
+    # 短信签名，需与服务商报备的名称一致
+    sign-name:
+    # 业务场景 -> 短信模板编码：命中场景用对应模板，未命中用default，都没有则退化为发送文本内容
+    # 国内服务商基本都要求模板先报备，接入后把下面的示例换成真实模板编码即可
+    # templates:
+    #   default: SMS_100000001
+    #   login: SMS_100000002
+    #   reset_password: SMS_100000003
+    # 短信发送为「新增落库排队 -> 调度发送」两段式，以下为内置定时派发任务的配置：
+    # 是否启用定时派发：false 时不注册派发任务Bean（后续改为消息队列调度时用，发送入口不变）
+    send-enabled: true
+    # 轮询间隔（毫秒），上一轮派发完后再间隔该时间发起下一轮
+    send-poll-interval: 5000
+    # 每轮最多派发的短信条数
+    send-batch-size: 100
+    # 发送失败后允许的最大重试次数（总发送次数 = 1 + 该值）：失败次数未超过该值时状态退回待发送，超过则置为发送失败终态
+    max-retry: 3
+    # 发送中状态的超时时间（毫秒）：节点发送过程中异常中断时记录会停留在发送中，超过该时间可被其他节点重新领取
+    sending-timeout: 300000

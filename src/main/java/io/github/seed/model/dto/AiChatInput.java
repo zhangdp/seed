@@ -1,6 +1,6 @@
 package io.github.seed.model.dto;
 
-import io.github.seed.common.security.data.LoginUser;
+import io.github.seed.module.security.data.LoginUser;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;

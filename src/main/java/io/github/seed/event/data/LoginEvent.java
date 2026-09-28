@@ -1,7 +1,7 @@
 package io.github.seed.event.data;
 
 import io.github.seed.common.enums.LoginType;
-import io.github.seed.common.security.data.LoginUser;
+import io.github.seed.module.security.data.LoginUser;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

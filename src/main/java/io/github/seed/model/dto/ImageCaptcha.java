@@ -27,6 +27,6 @@ public class ImageCaptcha implements Serializable {
     /**
      * 图片base64
      */
-    @Schema(title = "图片base64")
+    @Schema(title = "图片base64", description = "带data:image/png;base64,前缀，可直接用于img标签的src")
     private String image;
 }

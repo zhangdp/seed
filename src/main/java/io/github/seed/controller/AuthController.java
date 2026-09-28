@@ -1,12 +1,16 @@
 package io.github.seed.controller;
 
-import io.github.seed.common.security.data.IgnoreAuth;
-import io.github.seed.common.security.data.LoginResult;
-import io.github.seed.common.security.data.LoginUser;
-import io.github.seed.common.security.component.SecurityService;
+import io.github.seed.module.captcha.annotation.VerifyCaptcha;
+import io.github.seed.module.captcha.data.CaptchaScene;
+import io.github.seed.module.captcha.data.CaptchaType;
+import io.github.seed.module.security.data.IgnoreAuth;
+import io.github.seed.module.security.data.LoginResult;
+import io.github.seed.module.security.data.LoginUser;
+import io.github.seed.module.security.component.SecurityService;
 import io.github.seed.model.dto.PermissionTreeNode;
 import io.github.seed.model.dto.UserInfo;
-import io.github.seed.model.dto.LoginParams;
+import io.github.seed.model.dto.PasswordLoginParams;
+import io.github.seed.model.dto.SmsLoginParams;
 import io.github.seed.service.sys.PermissionService;
 import io.github.seed.service.sys.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,16 +39,36 @@ public class AuthController {
     private final PermissionService permissionService;
 
     /**
-     * 登录
+     * 密码登录
+     * <br>图形验证码的校验与消费由{@link VerifyCaptcha}切面完成，校验失败不会进入认证流程
      *
-     * @param loginParams
+     * @param params
      * @return
      */
     @IgnoreAuth
-    @PostMapping("/login")
-    @Operation(summary = "登录")
-    public LoginResult login(@RequestBody @Valid LoginParams loginParams) throws Throwable {
-        return securityService.login(loginParams);
+    @PostMapping("/login/password")
+    @Operation(summary = "密码登录", description = "需要先调用GET /captcha/image?scene=login获取图形验证码，"
+            + "把返回的key作为captchaKey、用户输入的验证码作为code一并提交")
+    @VerifyCaptcha(type = CaptchaType.IMAGE, scene = CaptchaScene.LOGIN,
+            keyEl = "#params.captchaKey", codeEl = "#params.code")
+    public LoginResult loginByPassword(@RequestBody @Valid PasswordLoginParams params) throws Throwable {
+        return securityService.loginByPassword(params);
+    }
+
+    /**
+     * 短信验证码登录
+     * <br>验证码的校验与消费由{@link VerifyCaptcha}切面完成，校验失败不会进入认证流程
+     *
+     * @param params
+     * @return
+     */
+    @IgnoreAuth
+    @PostMapping("/login/sms")
+    @Operation(summary = "短信验证码登录", description = "需要先调用/captcha/sms发送验证码，同一场景下同一手机号发送间隔内不能重复发送")
+    @VerifyCaptcha(type = CaptchaType.SMS, scene = CaptchaScene.LOGIN,
+            keyEl = "#params.mobile", codeEl = "#params.code")
+    public LoginResult loginBySms(@RequestBody @Valid SmsLoginParams params) throws Throwable {
+        return securityService.loginBySms(params);
     }
 
     /**

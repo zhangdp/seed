@@ -140,6 +140,26 @@ public enum ErrorCode {
      * 系统级别的参数不允许删除
      */
     SYSTEM_PARAM_CAN_NOT_DELETE(20401, "系统级别的参数不允许删除"),
+    /**
+     * 验证码错误
+     */
+    CAPTCHA_INCORRECT(20500, "验证码错误"),
+    /**
+     * 验证码不存在或已失效
+     */
+    CAPTCHA_EXPIRED(20501, "验证码不存在或已失效"),
+    /**
+     * 验证码发送过于频繁
+     */
+    CAPTCHA_SEND_TOO_FREQUENTLY(20510, "验证码发送过于频繁，请稍后再试"),
+    /**
+     * 验证码发送失败
+     */
+    CAPTCHA_SEND_FAILED(20511, "验证码发送失败"),
+    /**
+     * 不支持的验证码场景
+     */
+    CAPTCHA_SCENE_INVALID(20512, "不支持的验证码场景"),
 
     /// 3xxxx开头，错误来源是系统
     /**
