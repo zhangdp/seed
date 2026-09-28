@@ -32,4 +32,9 @@ build/
 ### VS Code ###
 .vscode/
 
+### AI 工具本地目录 ###
+# 每个人各自生成、且可能换用别的工具（Codex 等），属于本地副产物，不入库
+.workbuddy/
+.codex/
+
 application-dev.yml
