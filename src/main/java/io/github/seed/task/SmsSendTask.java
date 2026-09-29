@@ -39,7 +39,8 @@ public class SmsSendTask {
      */
     @Scheduled(fixedDelayString = "${app.sms.send-poll-interval:5000}", initialDelay = 10000L)
     public void dispatchPending() {
-        List<SmsLog> dispatchable = smsLogService.listDispatchable(smsProperties.getSendBatchSize());
+        List<SmsLog> dispatchable = smsLogService.listDispatchable(smsProperties.sendingStaleBefore(),
+                smsProperties.getSendBatchSize());
         if (dispatchable.isEmpty()) {
             return;
         }

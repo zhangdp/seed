@@ -75,7 +75,8 @@ public class SmsManager {
      */
     public SmsResult dispatch(SmsLog smsLog) {
         // 抢占：CAS把状态改为发送中，多节点并发时只有一个节点能抢到，抢不到的直接跳过不发送
-        if (!smsLogService.claim(smsLog)) {
+        // 超时阈值与调度方取件时用的必须一致（都取自app.sms.sending-timeout），否则会出现取到件却抢不到
+        if (!smsLogService.claim(smsLog, smsProperties.sendingStaleBefore())) {
             log.debug("短信记录未被抢占，跳过本次派发：smsNo={}，可能已被其他节点领取或已处于终态",
                     smsLog.getSmsNo());
             return null;

@@ -1,7 +1,6 @@
 package io.github.seed.service.sys.impl;
 
 import io.github.seed.module.sms.data.SmsStatus;
-import io.github.seed.module.sms.SmsProperties;
 import io.github.seed.module.sms.data.SmsResult;
 import io.github.seed.entity.sys.SmsLog;
 import io.github.seed.mapper.sys.SmsLogMapper;
@@ -26,7 +25,6 @@ import java.util.List;
 public class SmsLogServiceImpl implements SmsLogService {
 
     private final SmsLogMapper smsLogMapper;
-    private final SmsProperties smsProperties;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -35,13 +33,13 @@ public class SmsLogServiceImpl implements SmsLogService {
     }
 
     @Override
-    public List<SmsLog> listDispatchable(int limit) {
-        return smsLogMapper.listDispatchable(smsProperties.sendingStaleBefore(), limit);
+    public List<SmsLog> listDispatchable(LocalDateTime sendingStaleBefore, int limit) {
+        return smsLogMapper.listDispatchable(sendingStaleBefore, limit);
     }
 
     @Override
-    public boolean claim(SmsLog smsLog) {
-        int rows = smsLogMapper.claim(smsLog.getId(), smsProperties.sendingStaleBefore());
+    public boolean claim(SmsLog smsLog, LocalDateTime sendingStaleBefore) {
+        int rows = smsLogMapper.claim(smsLog.getId(), sendingStaleBefore);
         if (rows > 0) {
             // 抢占成功，同步到内存对象，避免后续判断仍用旧状态
             smsLog.setStatus(SmsStatus.SENDING.status());

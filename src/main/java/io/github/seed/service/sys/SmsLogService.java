@@ -25,12 +25,14 @@ public interface SmsLogService {
 
     /**
      * 查询可派发的短信记录：待发送的，以及发送中但已超时（抢占节点异常中断）的
-     * <br>发送中的超时阈值由{@code app.sms.sending-timeout}决定，调用方无需关心
+     * <br>结果按「优先级降序、主键升序」排序，高优先级先发、同优先级按入库顺序
      *
-     * @param limit 最大条数
+     * @param sendingStaleBefore 发送中超时阈值，updated_at早于该时间的发送中记录视为可重新领取；
+     *                           由调用方按自己的超时配置计算后传入
+     * @param limit              最大条数
      * @return
      */
-    List<SmsLog> listDispatchable(int limit);
+    List<SmsLog> listDispatchable(LocalDateTime sendingStaleBefore, int limit);
 
     /**
      * 抢占一条短信记录用于发送：把状态从待发送（或已超时的发送中）CAS更新为发送中
@@ -38,10 +40,12 @@ public interface SmsLogService {
      * <br>该方法一般不需要业务代码直接调用：{@code SmsManager#dispatch}已包含抢占，
      * 是唯一的发送入口
      *
-     * @param smsLog 待抢占的记录，需带上主键
+     * @param smsLog             待抢占的记录，需带上主键
+     * @param sendingStaleBefore 发送中超时阈值，含义同{@link #listDispatchable}，
+     *                           需与取件时用的阈值一致，否则取到件却抢不到
      * @return 是否抢占成功
      */
-    boolean claim(SmsLog smsLog);
+    boolean claim(SmsLog smsLog, LocalDateTime sendingStaleBefore);
 
     /**
      * 回写发送结果：状态、失败次数、发送时间与服务商返回信息
