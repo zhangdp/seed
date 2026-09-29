@@ -1,6 +1,7 @@
 package io.github.seed.module.sms;
 
 import cn.hutool.v7.core.text.StrUtil;
+import io.github.seed.module.sms.data.SmsMessage;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -12,7 +13,6 @@ import java.util.Map;
 
 /**
  * 短信配置（{@code app.sms}）
- * <br>发送器只用签名与模板，调度与重试相关的项由编排层{@code SmsManager}与调度方{@code SmsSendTask}消费
  *
  * @author zhangdp
  * @since 1.0.0

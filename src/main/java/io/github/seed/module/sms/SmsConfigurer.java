@@ -11,9 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * 短信模块装配：只提供发送能力（{@link SmsSender}），不感知数据库，
- * 短信记录的落库与回写由编排层{@code SmsManager}完成
- * <br>Bean统一在此装配，替换实现时不用到处找{@code @Component}
+ * 短信模块装配
  *
  * @author zhangdp
  * @since 1.0.0

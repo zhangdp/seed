@@ -10,9 +10,6 @@ import java.util.Set;
 
 /**
  * 验证码自动配置类
- * <br>本模块只负责验证码的生成、存储与校验，短信的实际发送由
- * {@link io.github.seed.module.sms.SmsConfigurer} 配置的
- * {@link io.github.seed.module.sms.sender.SmsSender} 承担
  *
  * @author zhangdp
  * @since 1.0.0

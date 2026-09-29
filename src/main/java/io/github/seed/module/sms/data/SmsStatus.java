@@ -2,8 +2,6 @@ package io.github.seed.module.sms.data;
 
 /**
  * 短信发送状态，流程为「新增落库排队 -> 调度抢占 -> 发送 -> 回写状态」
- * <br>{@link #SENDING}由CAS更新产生（见{@code SmsLogMapper#claim}），
- * 因此多节点并发调度时同一记录只会被一个节点领取
  *
  * @author zhangdp
  * @since 1.0.0

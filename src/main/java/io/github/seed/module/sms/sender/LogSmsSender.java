@@ -1,6 +1,5 @@
 package io.github.seed.module.sms.sender;
 
-import io.github.seed.module.sms.sender.AbstractSmsSender;
 import io.github.seed.module.sms.data.SmsMessage;
 import io.github.seed.module.sms.SmsProperties;
 import io.github.seed.module.sms.data.SmsResult;

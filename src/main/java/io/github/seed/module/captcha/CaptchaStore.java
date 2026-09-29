@@ -14,8 +14,6 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 验证码redis读写
- * <br>统一使用{@link StringRedisTemplate}，不用项目自定义的{@code RedisTemplate<String, Object>}：
- * 后者的value序列化器会写入{@code @class}类型信息并据此反序列化，而验证码只需要存一个字符串
  *
  * @author zhangdp
  * @since 1.0.0
@@ -183,8 +181,7 @@ public class CaptchaStore {
     }
 
     /**
-     * 释放发送锁；目前只用于当日额度已达上限时，避免用户被白白锁住一个发送间隔
-     * <br>短信发送失败不释放：频率限制按时间走，与是否送达无关
+     * 释放发送锁
      *
      * @param type  验证码类型
      * @param scene 场景

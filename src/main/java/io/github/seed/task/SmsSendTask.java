@@ -12,9 +12,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import java.util.List;
 
 /**
- * 短信定时派发任务：轮询待发送记录，逐条交给{@link SmsManager#dispatch}
- * <br>改为消息队列调度时把{@code app.sms.send-enabled}置为false停掉本任务，
- * 消费者同样调用{@link SmsManager#dispatch}
+ * 短信定时派发任务
  *
  * @author zhangdp
  * @since 1.0.0
@@ -28,7 +26,7 @@ public class SmsSendTask {
     private final SmsProperties smsProperties;
 
     /**
-     * 轮询并派发；fixedDelay指上一轮派发完后再间隔{@code app.sms.send-poll-interval}发起下一轮，避免任务堆积
+     * 轮询并派发；上一轮派发完后再间隔{@code app.sms.send-poll-interval}发起下一轮
      */
     @Scheduled(fixedDelayString = "${app.sms.send-poll-interval:5000}", initialDelay = 10000L)
     public void dispatchPending() {

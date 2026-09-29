@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 
 /**
  * 登录日志监听器：认证成功/失败处理器发出{@link LoginEvent}后由这里落库
- * <br>同步写入：一次登录只写一条，异步在容器关闭时有丢日志风险；写失败只记error日志，不影响登录结果
  *
  * @author zhangdp
  * @since 1.0.0

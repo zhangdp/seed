@@ -7,8 +7,6 @@ import org.springframework.stereotype.Component;
 
 /**
  * 验证码生成器
- * <br>图片验证码使用hutool-swing（{@code cn.hutool.v7.swing.captcha}包），
- * 服务端启动时会自动设置{@code java.awt.headless=true}，无需额外配置
  *
  * @author zhangdp
  * @since 1.0.0
