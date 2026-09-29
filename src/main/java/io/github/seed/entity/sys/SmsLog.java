@@ -3,6 +3,7 @@ package io.github.seed.entity.sys;
 import com.mybatisflex.annotation.Table;
 import io.github.seed.common.constant.Const;
 import io.github.seed.common.constant.TableNameConst;
+import io.github.seed.module.sms.data.SmsPriority;
 import io.github.seed.module.sms.data.SmsStatus;
 import io.github.seed.entity.BaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -74,6 +75,15 @@ public class SmsLog extends BaseEntity implements Serializable {
      */
     @Schema(description = "发送状态：0待发送、1发送中、2发送成功、3发送失败")
     private int status;
+    /**
+     * 优先级，越大越优先发送
+     * <br>用包装类型而非int：ORM按实体更新时只写非空字段，用int的话发送结果回写等更新
+     * 会把优先级冲成0，重试时高优先级短信就退化成普通了
+     *
+     * @see SmsPriority
+     */
+    @Schema(description = "优先级：0普通、1重要、2紧急，越大越优先发送")
+    private Integer priority;
     /**
      * 发送失败次数：每次发送失败自增，未达到最大重试次数时状态退回待发送等待重试，
      * 达到上限后置为发送失败终态

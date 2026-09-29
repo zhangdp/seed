@@ -48,6 +48,7 @@ public class SmsManager {
     /**
      * 新增短信：生成待发送记录并同步入库，状态为待发送
      * <br>本方法只负责新增排队，不会发送短信；发送由{@code SmsSendTask}等调度方完成
+     * <br>优先级取{@link SmsMessage#getPriority()}，调度方按优先级从高到低取件发送
      *
      * @param message 短信内容
      * @param scene   业务场景，如login、reset_password
@@ -155,6 +156,7 @@ public class SmsManager {
             smsLog.setTemplateParams(JsonUtils.toJson(message.getTemplateParams()));
         }
         smsLog.setStatus(SmsStatus.PENDING.status());
+        smsLog.setPriority(message.getPriority().priority());
         smsLog.setRetryCount(0);
         return smsLog;
     }

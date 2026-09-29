@@ -31,6 +31,7 @@ public interface SmsLogMapper extends BaseMapper<SmsLog> {
 
     /**
      * 查询可派发的短信记录：待发送的，以及发送中但已超时（抢占节点异常中断）的
+     * <br>排序：优先级高的先发，同优先级按入库顺序（主键升序），避免老记录被新记录无限挤后
      *
      * @param sendingStaleBefore 发送中超时阈值，updated_at早于该时间的发送中记录视为可重新领取
      * @param limit              最大条数
@@ -39,6 +40,7 @@ public interface SmsLogMapper extends BaseMapper<SmsLog> {
     default List<SmsLog> listDispatchable(LocalDateTime sendingStaleBefore, int limit) {
         return this.selectListByQuery(QueryWrapper.create()
                 .where(CLAIMABLE_CONDITION, SmsStatus.PENDING.status(), SmsStatus.SENDING.status(), sendingStaleBefore)
+                .orderBy(SmsLog::getPriority, false)
                 .orderBy(SmsLog::getId, true)
                 .limit(limit <= 0 ? 1 : limit));
     }

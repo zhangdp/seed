@@ -383,6 +383,7 @@ CREATE TABLE sys_sms_log (
     template_params varchar(1024),
     content         varchar(1024),
     status          integer      NOT NULL DEFAULT 0,
+    priority        integer      NOT NULL DEFAULT 0,
     retry_count     integer      NOT NULL DEFAULT 0,
     request_id      varchar(64),
     biz_id          varchar(64),
@@ -401,6 +402,7 @@ COMMENT ON COLUMN sys_sms_log.template_code   IS '短信模板编码，文本短
 COMMENT ON COLUMN sys_sms_log.template_params IS '短信模板参数，json格式';
 COMMENT ON COLUMN sys_sms_log.content         IS '短信文本内容，模板短信为空';
 COMMENT ON COLUMN sys_sms_log.status          IS '发送状态：0待发送、1发送中、2发送成功、3发送失败';
+COMMENT ON COLUMN sys_sms_log.priority        IS '优先级：0普通、1重要、2紧急，越大越优先发送';
 COMMENT ON COLUMN sys_sms_log.retry_count     IS '发送失败次数，未超过最大重试次数时状态退回待发送';
 COMMENT ON COLUMN sys_sms_log.request_id      IS '服务商请求id';
 COMMENT ON COLUMN sys_sms_log.biz_id          IS '服务商回执id';
@@ -410,5 +412,7 @@ COMMENT ON COLUMN sys_sms_log.send_at         IS '最近一次发送时间';
 CREATE UNIQUE INDEX uidx_sys_sms_log_sms_no ON sys_sms_log (sms_no);
 -- 为后续基于数据库做发送频率限制与统计预留：按手机号+场景统计某时间段的发送量
 CREATE INDEX idx_sys_sms_log_mobile_created_at ON sys_sms_log (mobile, created_at);
+-- 调度取件：筛选可派发记录后按「优先级降序、主键升序」取一批，索引与该排序一致
+CREATE INDEX idx_sys_sms_log_dispatch ON sys_sms_log (status, priority DESC, id);
 CREATE INDEX idx_sys_sms_log_scene_created_at  ON sys_sms_log (scene, created_at);
 CREATE INDEX idx_sys_sms_log_status            ON sys_sms_log (status);

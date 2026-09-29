@@ -43,6 +43,10 @@ public class SmsMessage {
      * 短信模板参数，保持插入顺序
      */
     private final Map<String, Object> templateParams;
+    /**
+     * 优先级，越大越优先发送，默认{@link SmsPriority#NORMAL}
+     */
+    private SmsPriority priority = SmsPriority.NORMAL;
 
     private SmsMessage(String mobile, String content, String templateCode, Map<String, Object> templateParams) {
         if (StrUtil.isBlank(mobile)) {
@@ -91,6 +95,19 @@ public class SmsMessage {
      */
     public SmsMessage signName(String signName) {
         this.signName = signName;
+        return this;
+    }
+
+    /**
+     * 指定本条消息的优先级，不指定则为{@link SmsPriority#NORMAL}
+     *
+     * @param priority 优先级
+     * @return 当前对象，便于链式调用
+     */
+    public SmsMessage priority(SmsPriority priority) {
+        if (priority != null) {
+            this.priority = priority;
+        }
         return this;
     }
 
