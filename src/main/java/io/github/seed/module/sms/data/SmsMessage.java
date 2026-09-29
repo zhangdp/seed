@@ -8,14 +8,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * 短信发送入参，支持两种形式：
- * <ol>
- *     <li><b>文本短信</b>：{@link #text(String, String)}，直接把内容作为短信正文发送，
- *     接入简单但国内服务商普遍要求内容报备，一般只在国际短信或测试环境可用</li>
- *     <li><b>模板短信</b>：{@link #template(String, String, Map)}，由服务商按模板编码与参数渲染后发送，
- *     国内服务商基本都要求模板先报备，生产环境推荐使用本形式</li>
- * </ol>
- * 两种形式互斥，不能同时指定内容与模板编码
+ * 短信发送入参，两种形式互斥：文本内容与模板编码必须且只能指定一个
+ * <ul>
+ *     <li>{@link #text}：内容即正文，接入简单，但国内服务商普遍要求内容报备</li>
+ *     <li>{@link #template}：由服务商按模板编码与参数渲染，生产环境推荐</li>
+ * </ul>
  *
  * @author zhangdp
  * @since 1.0.0
@@ -40,7 +37,7 @@ public class SmsMessage {
      */
     private final String templateCode;
     /**
-     * 短信模板参数，保持插入顺序
+     * 模板参数，保持插入顺序：腾讯云等厂商的模板参数是有序占位符{1}{2}，靠顺序对应
      */
     private final Map<String, Object> templateParams;
     /**
@@ -58,7 +55,6 @@ public class SmsMessage {
         this.mobile = mobile.trim();
         this.content = content;
         this.templateCode = templateCode;
-        // 保持插入顺序：腾讯云等厂商的模板参数是有序占位符{1}{2}，靠顺序与参数对应
         this.templateParams = templateParams == null || templateParams.isEmpty()
                 ? Collections.emptyMap()
                 : Collections.unmodifiableMap(new LinkedHashMap<>(templateParams));
@@ -66,10 +62,6 @@ public class SmsMessage {
 
     /**
      * 文本短信
-     *
-     * @param mobile  手机号
-     * @param content 短信正文
-     * @return
      */
     public static SmsMessage text(String mobile, String content) {
         return new SmsMessage(mobile, content, null, null);
@@ -77,21 +69,13 @@ public class SmsMessage {
 
     /**
      * 模板短信
-     *
-     * @param mobile         手机号
-     * @param templateCode   模板编码
-     * @param templateParams 模板参数，可为空
-     * @return
      */
     public static SmsMessage template(String mobile, String templateCode, Map<String, Object> templateParams) {
         return new SmsMessage(mobile, null, templateCode, templateParams);
     }
 
     /**
-     * 指定本条消息的短信签名，不指定则使用全局配置的签名
-     *
-     * @param signName 短信签名
-     * @return 当前对象，便于链式调用
+     * 指定签名，不指定则使用全局配置的签名
      */
     public SmsMessage signName(String signName) {
         this.signName = signName;
@@ -99,10 +83,7 @@ public class SmsMessage {
     }
 
     /**
-     * 指定本条消息的优先级，不指定则为{@link SmsPriority#NORMAL}
-     *
-     * @param priority 优先级
-     * @return 当前对象，便于链式调用
+     * 指定优先级，不指定则为{@link SmsPriority#NORMAL}
      */
     public SmsMessage priority(SmsPriority priority) {
         if (priority != null) {
@@ -113,8 +94,6 @@ public class SmsMessage {
 
     /**
      * 是否模板短信
-     *
-     * @return
      */
     public boolean isTemplate() {
         return this.templateCode != null;

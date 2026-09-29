@@ -14,11 +14,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * 验证码管理器
- * <br>编排层：把「生成验证码」与「把验证码送出去」两件事串起来——
- * {@link CaptchaService}只管验证码的生成、缓存与频率控制，{@link SmsManager}只管短信的落库与发送，
- * 本类负责编排二者，因此模块层不必知道编排层与短信模块的存在
- * <br>短信由{@link SmsManager}「新增落库排队 -> 调度发送」两段式处理，本方法只新增不发送、不阻塞调用方
+ * 验证码编排层：把「生成验证码」与「投递」串起来——{@link CaptchaService}只管生成、缓存与频率控制，
+ * {@link SmsManager}只管短信落库与发送，因此模块层不必知道另外两方的存在
+ * <br>短信为「落库排队 -> 调度发送」两段式，本方法只新增不发送、不阻塞调用方
  *
  * @author zhangdp
  * @since 1.0.0
@@ -34,14 +32,10 @@ public class CaptchaManager {
     private final SmsManager smsManager;
 
     /**
-     * 生成短信验证码并投递
-     * <br>先由{@link CaptchaService#generateSmsCode}完成频率校验与验证码生成，
-     * 再把验证码渲染成短信交给{@link SmsManager}入队，发送由调度方（定时任务/消息队列）完成
-     * <br>短信内容：场景在{@code app.sms.templates}中配置了模板时走模板短信，
-     * 未配置则按{@code app.captcha.sms-content-template}发送文本短信
+     * 生成短信验证码并投递：场景在{@code app.sms.templates}配了模板时走模板短信，
+     * 否则按{@code app.captcha.sms-content-template}发文本短信
      *
-     * @param scene  场景，如login、reset_password，为空使用默认场景
-     * @param mobile 手机号
+     * @param scene 场景，如login、reset_password，为空使用默认场景
      */
     public void sendSms(String scene, String mobile) {
         // 场景先规范化，保证验证码缓存的场景与短信记录的场景是同一个
@@ -51,12 +45,7 @@ public class CaptchaManager {
     }
 
     /**
-     * 构造验证码短信：场景配置了模板则走模板短信，否则退化为文本短信
-     *
-     * @param scene  场景
-     * @param mobile 手机号
-     * @param code   验证码
-     * @return
+     * 渲染验证码短信：场景配置了模板则走模板短信，否则退化为文本短信
      */
     private SmsMessage buildSmsMessage(String scene, String mobile, String code) {
         String templateCode = smsProperties.getTemplate(scene);

@@ -24,9 +24,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * 验证码校验切面
- * <br>环绕{@link VerifyCaptcha}注解的controller方法，先校验验证码再执行原方法，
- * 校验失败直接抛出{@link BizException}，因此不会触发操作日志切面
+ * 验证码校验切面：环绕{@link VerifyCaptcha}标注的方法，先校验再执行，
+ * 失败直接抛{@link BizException}，因此不会触发操作日志切面
  *
  * @author zhangdp
  * @since 1.0.0
@@ -47,11 +46,6 @@ public class CaptchaVerifyAspect {
 
     /**
      * 环绕拥有@VerifyCaptcha注解的controller方法
-     *
-     * @param point
-     * @param verifyCaptcha
-     * @return
-     * @throws Throwable
      */
     @Around("within(io.github.seed.controller..*) && @annotation(verifyCaptcha)")
     public Object around(ProceedingJoinPoint point, VerifyCaptcha verifyCaptcha) throws Throwable {
@@ -73,10 +67,6 @@ public class CaptchaVerifyAspect {
 
     /**
      * 构建SpEL上下文：形参名-参数值，以及request、response
-     *
-     * @param signature
-     * @param args
-     * @return
      */
     private Map<String, Object> buildContext(MethodSignature signature, Object[] args) {
         Map<String, Object> context = new LinkedHashMap<>();
@@ -100,11 +90,6 @@ public class CaptchaVerifyAspect {
 
     /**
      * 解析SpEL表达式，解析失败或结果为空白时返回null
-     *
-     * @param expression
-     * @param context
-     * @param name
-     * @return
      */
     private String evaluate(String expression, Map<String, Object> context, String name) {
         if (StrUtil.isBlank(expression)) {

@@ -31,11 +31,6 @@ public class CaptchaStore {
 
     /**
      * 验证码key，格式：captcha::{type}::{scene}::{key}
-     *
-     * @param type
-     * @param scene
-     * @param key
-     * @return
      */
     public String codeKey(CaptchaType type, String scene, String key) {
         return this.buildKey(CaptchaConst.REDIS_CODE_PREFIX, type, scene, key);
@@ -43,11 +38,6 @@ public class CaptchaStore {
 
     /**
      * 校验失败次数key，格式：captcha::fail::{type}::{scene}::{key}
-     *
-     * @param type
-     * @param scene
-     * @param key
-     * @return
      */
     public String failKey(CaptchaType type, String scene, String key) {
         return this.buildKey(CaptchaConst.REDIS_FAIL_PREFIX, type, scene, key);
@@ -55,11 +45,6 @@ public class CaptchaStore {
 
     /**
      * 发送频率限制key，格式：captcha::limit::{type}::{scene}::{key}
-     *
-     * @param type
-     * @param scene
-     * @param key
-     * @return
      */
     public String limitKey(CaptchaType type, String scene, String key) {
         return this.buildKey(CaptchaConst.REDIS_LIMIT_PREFIX, type, scene, key);
@@ -67,9 +52,6 @@ public class CaptchaStore {
 
     /**
      * 短信每日发送次数key，格式：captcha::count::sms::daily::{mobile}
-     *
-     * @param mobile
-     * @return
      */
     public String smsDailyKey(String mobile) {
         return CaptchaConst.REDIS_SMS_DAILY_PREFIX + CaptchaConst.REDIS_SPLIT + mobile;
@@ -82,15 +64,6 @@ public class CaptchaStore {
 
     // ==================== 验证码 ====================
 
-    /**
-     * 保存验证码
-     *
-     * @param type
-     * @param scene
-     * @param key
-     * @param code
-     * @param expire
-     */
     public void saveCode(CaptchaType type, String scene, String key, String code, Duration expire) {
         String codeKey = this.codeKey(type, scene, key);
         this.stringRedisTemplate.opsForValue().set(codeKey, code, expire);
@@ -99,23 +72,11 @@ public class CaptchaStore {
 
     /**
      * 获取验证码，不存在时返回null
-     *
-     * @param type
-     * @param scene
-     * @param key
-     * @return
      */
     public String getCode(CaptchaType type, String scene, String key) {
         return this.stringRedisTemplate.opsForValue().get(this.codeKey(type, scene, key));
     }
 
-    /**
-     * 删除验证码
-     *
-     * @param type
-     * @param scene
-     * @param key
-     */
     public void deleteCode(CaptchaType type, String scene, String key) {
         String codeKey = this.codeKey(type, scene, key);
         this.stringRedisTemplate.delete(codeKey);
@@ -127,9 +88,6 @@ public class CaptchaStore {
     /**
      * 累加校验失败次数
      *
-     * @param type
-     * @param scene
-     * @param key
      * @param expire 过期时间，用于避免产生永不失效的残留key
      * @return 累加后的失败次数
      */
@@ -144,13 +102,6 @@ public class CaptchaStore {
         return value;
     }
 
-    /**
-     * 删除校验失败次数
-     *
-     * @param type
-     * @param scene
-     * @param key
-     */
     public void deleteFail(CaptchaType type, String scene, String key) {
         this.stringRedisTemplate.delete(this.failKey(type, scene, key));
     }
@@ -160,10 +111,6 @@ public class CaptchaStore {
     /**
      * 抢占式设置发送锁
      *
-     * @param type
-     * @param scene
-     * @param key
-     * @param interval
      * @return true表示抢占成功可以发送
      */
     public boolean tryLockSend(CaptchaType type, String scene, String key, Duration interval) {
@@ -174,11 +121,8 @@ public class CaptchaStore {
     }
 
     /**
-     * 释放发送锁，用于发送失败时回滚，避免用户被白白锁住一个发送间隔
-     *
-     * @param type
-     * @param scene
-     * @param key
+     * 释放发送锁；目前只用于当日额度已达上限时，避免用户被白白锁住一个发送间隔
+     * <br>短信发送失败不释放：频率限制按时间走，与是否送达无关
      */
     public void releaseSendLock(CaptchaType type, String scene, String key) {
         this.stringRedisTemplate.delete(this.limitKey(type, scene, key));
@@ -186,9 +130,6 @@ public class CaptchaStore {
 
     /**
      * 获取key剩余过期时间，key不存在或已过期时返回0
-     *
-     * @param key
-     * @return
      */
     public Duration getExpire(String key) {
         Long seconds = this.stringRedisTemplate.getExpire(key, TimeUnit.SECONDS);
@@ -200,7 +141,6 @@ public class CaptchaStore {
     /**
      * 累加手机号当日发送次数，首次发送时设置到当天24点过期
      *
-     * @param mobile
      * @return 累加后的当日发送次数
      */
     public long increaseSmsDaily(String mobile) {

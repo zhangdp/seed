@@ -3,8 +3,7 @@ package io.github.seed.module.sms.data;
 import lombok.Getter;
 
 /**
- * 短信发送结果
- * <br>各服务商的返回字段名称不同，这里统一成同一组语义，便于业务方无差别处理与排查问题
+ * 短信发送结果：各服务商的返回字段名称不同，这里统一成同一组语义
  *
  * @author zhangdp
  * @since 1.0.0
@@ -22,11 +21,11 @@ public class SmsResult {
      */
     private final boolean success;
     /**
-     * 服务商请求id（阿里云RequestId、腾讯云RequestId），提交工单排查问题时需要提供
+     * 服务商请求id，提交工单排查问题时需要提供
      */
     private final String requestId;
     /**
-     * 服务商回执id（阿里云BizId、腾讯云SerialNo），用于向服务商查询该条短信的发送详情
+     * 服务商回执id，用于向服务商查询该条短信的发送详情
      */
     private final String bizId;
     /**
@@ -48,8 +47,6 @@ public class SmsResult {
 
     /**
      * 发送成功，无服务商信息
-     *
-     * @return
      */
     public static SmsResult ok() {
         return SUCCESS;
@@ -57,10 +54,6 @@ public class SmsResult {
 
     /**
      * 发送成功，携带服务商的请求id与回执id
-     *
-     * @param requestId 服务商请求id，可为空
-     * @param bizId     服务商回执id，可为空
-     * @return
      */
     public static SmsResult ok(String requestId, String bizId) {
         return new SmsResult(true, requestId, bizId, null, null);
@@ -71,7 +64,6 @@ public class SmsResult {
      *
      * @param code    服务商返回码或自定义错误标识，可为空
      * @param message 失败原因
-     * @return
      */
     public static SmsResult fail(String code, String message) {
         return new SmsResult(false, null, null, code, message);
@@ -79,8 +71,6 @@ public class SmsResult {
 
     /**
      * 是否发送失败
-     *
-     * @return
      */
     public boolean isFail() {
         return !this.success;

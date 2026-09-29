@@ -14,10 +14,8 @@ import java.time.Duration;
 import java.util.Set;
 
 /**
- * 验证码服务
- * <br>只负责验证码本身的生命周期：生成、缓存、校验与发送频率控制，<b>不负责把验证码送出去</b>
- * <br>短信/邮件等投递方式由编排层{@code CaptchaManager}决定：模块层不反向依赖编排层，
- * 也就不必知道短信模块的存在，换成邮件验证码或去掉短信都不影响本类
+ * 验证码服务：只管验证码的生命周期（生成、缓存、校验、发送频率），<b>不负责投递</b>
+ * <br>投递由编排层{@code CaptchaManager}决定，模块层因此不必知道短信模块的存在，换邮件也不影响本类
  *
  * @author zhangdp
  * @since 1.0.0
@@ -32,13 +30,11 @@ public class CaptchaService {
     private final CaptchaGenerator captchaGenerator;
 
     /**
-     * 生成图片验证码
-     * <br>每次生成都会由服务端生成唯一的key并随图片一起返回，因此多处验证码不会串号
+     * 生成图片验证码；每次生成都由服务端生成唯一key并随图片返回，因此多处验证码不会串号
      *
      * @param scene  场景，为空使用默认场景
-     * @param width  图片宽度，为空或非法时使用配置的默认值，并夹取到配置的范围内
-     * @param height 图片高度，同上
-     * @return
+     * @param width  图片宽高，为空或非法时用配置的默认值，并夹取到配置范围内
+     * @param height 同上
      */
     public ImageCaptcha generateImage(String scene, Integer width, Integer height) {
         String s = StrUtil.defaultIfBlank(scene, CaptchaScene.DEFAULT);
@@ -57,17 +53,12 @@ public class CaptchaService {
     }
 
     /**
-     * 生成短信验证码：校验发送资格后生成并缓存验证码
-     * <br>相同场景下同一手机号在发送间隔内不允许重复生成，不同场景互不影响
-     * <br><b>本方法只生成验证码、不涉及任何投递动作</b>，返回值交给编排层自行决定怎么送达
-     * （短信、邮件、站内信），模块层因此不必依赖短信模块
+     * 生成短信验证码：校验发送资格后生成并缓存，<b>不涉及任何投递动作</b>，返回值交给编排层决定怎么送达
      * <br>发送锁是接口层的频率限制，按时间到期自动释放，与短信最终是否送达无关——
-     * 否则服务商故障时锁会失效，且服务商偶有「返回失败但实际已送达」的情况，
-     * 此时作废验证码反而会让用户手里那条真收到的码失效
+     * 否则服务商故障时锁会失效，且服务商偶有「返回失败但实际已送达」的情况，此时作废验证码
+     * 反而会让用户手里那条真收到的码失效
      *
-     * @param scene  场景，如login、reset_password，为空使用默认场景
-     * @param mobile 手机号
-     * @return 本次生成的验证码
+     * @param scene 场景，如login、reset_password，为空使用默认场景
      */
     public String generateSmsCode(String scene, String mobile) {
         String s = StrUtil.defaultIfBlank(scene, CaptchaScene.DEFAULT);
@@ -98,12 +89,8 @@ public class CaptchaService {
     }
 
     /**
-     * 校验验证码，校验失败或验证码不存在时抛出{@link BizException}
+     * 校验验证码，失败或验证码不存在时抛出{@link BizException}
      *
-     * @param type            验证码类型
-     * @param scene           场景
-     * @param key             验证码key
-     * @param code            待校验的验证码
      * @param failCount       允许失败次数，达到即作废验证码
      * @param removeOnSuccess 校验成功后是否删除验证码
      * @param message         自定义错误提示，为空使用默认提示
@@ -129,11 +116,6 @@ public class CaptchaService {
 
     /**
      * 处理校验失败：累计失败次数，达到上限后作废验证码
-     *
-     * @param type
-     * @param scene
-     * @param key
-     * @param maxFailCount
      */
     private void handleVerifyFail(CaptchaType type, String scene, String key, int maxFailCount) {
         if (maxFailCount <= 1) {
@@ -151,12 +133,6 @@ public class CaptchaService {
 
     /**
      * 把值夹取到指定范围内，值非法时使用默认值
-     *
-     * @param value
-     * @param defaultValue
-     * @param min
-     * @param max
-     * @return
      */
     private int clamp(Integer value, int defaultValue, int min, int max) {
         int v = value == null || value <= 0 ? defaultValue : value;

@@ -12,15 +12,11 @@ import org.springframework.scheduling.annotation.Scheduled;
 import java.util.List;
 
 /**
- * 短信定时派发任务
- * <br>短信采用「新增落库排队 -> 调度派发（内部先抢占再发送）-> 回写状态」流程，本任务即默认的调度方：
- * 定时查询可派发的记录（待发送、以及发送中但已超时），逐条交给{@link SmsManager#dispatch}，
- * 由后者完成抢占、调用发送器与回写
- * <br><b>多节点防重</b>：抢占在dispatch内部完成，是CAS更新（状态待发送/超时的发送中 -> 发送中），
- * 同一记录只会被一个节点抢到，其余节点抢占失败（返回null）直接跳过，因此多实例部署不会重复发送；
- * 若某节点在发送过程中宕机，记录停留在发送中，超过{@code app.sms.sending-timeout}后可被其他节点重新领取
- * <br>后续若改为消息队列调度，把{@code app.sms.send-enabled}置为false停掉本任务即可，
- * 消费者同样调用{@link SmsManager#dispatch}，发送入口不变
+ * 短信定时派发任务：轮询可派发记录（待发送、以及发送中但已超时），逐条交给{@link SmsManager#dispatch}
+ * <br>多实例部署不会重复发送：抢占在dispatch内部用CAS完成，只有抢到的节点真正发送；
+ * 节点发送中宕机时记录停留在发送中，超过{@code app.sms.sending-timeout}后可被重新领取
+ * <br>改为消息队列调度时把{@code app.sms.send-enabled}置为false停掉本任务，
+ * 消费者同样调用{@link SmsManager#dispatch}
  *
  * @author zhangdp
  * @since 1.0.0
@@ -34,8 +30,7 @@ public class SmsSendTask {
     private final SmsProperties smsProperties;
 
     /**
-     * 轮询可派发的短信记录并派发
-     * <br>fixedDelay：上一轮全部派发完后再间隔{@code app.sms.send-poll-interval}发起下一轮，避免任务堆积
+     * 轮询并派发；fixedDelay指上一轮派发完后再间隔{@code app.sms.send-poll-interval}发起下一轮，避免任务堆积
      */
     @Scheduled(fixedDelayString = "${app.sms.send-poll-interval:5000}", initialDelay = 10000L)
     public void dispatchPending() {
@@ -49,7 +44,7 @@ public class SmsSendTask {
         int skipped = 0;
         for (SmsLog smsLog : dispatchable) {
             try {
-                // 抢占与发送都在dispatch内部：抢占失败返回null，说明本轮已被其他节点领取
+                // 抢占失败返回null，说明本轮已被其他节点领取
                 SmsResult result = smsManager.dispatch(smsLog);
                 if (result == null) {
                     skipped++;

@@ -28,7 +28,6 @@ public class CaptchaGenerator {
      * @param height    图片高度
      * @param codeLength 验证码字符个数
      * @param lineCount 干扰线数量
-     * @return
      */
     public GeneratedImage generateImage(int width, int height, int codeLength, int lineCount) {
         LineCaptcha captcha = CaptchaUtil.ofLineCaptcha(width, height, codeLength, Math.max(lineCount, 0));
@@ -41,7 +40,6 @@ public class CaptchaGenerator {
      * 生成短信验证码
      *
      * @param codeLength 验证码位数
-     * @return
      */
     public String generateSmsCode(int codeLength) {
         return RandomUtil.randomNumbers(codeLength);
@@ -49,8 +47,6 @@ public class CaptchaGenerator {
 
     /**
      * 生成验证码key，只使用小写字母和数字，避免大小写歧义
-     *
-     * @return
      */
     public String generateKey() {
         return RandomUtil.randomString(RandomUtil.LETTERS_NUMBERS_LOWER, KEY_LENGTH);

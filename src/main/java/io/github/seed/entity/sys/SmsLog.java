@@ -77,8 +77,7 @@ public class SmsLog extends BaseEntity implements Serializable {
     private int status;
     /**
      * 优先级，越大越优先发送
-     * <br>用包装类型而非int：ORM按实体更新时只写非空字段，用int的话发送结果回写等更新
-     * 会把优先级冲成0，重试时高优先级短信就退化成普通了
+     * <br>包装类型而非int：ORM按实体更新只写非空字段，用int会被回写冲成0，重试时高优先级就退化成普通了
      *
      * @see SmsPriority
      */

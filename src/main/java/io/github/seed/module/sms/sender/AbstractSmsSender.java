@@ -7,9 +7,8 @@ import io.github.seed.module.sms.data.SmsResult;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 短信发送器抽象基类
- * <br>封装了签名兜底、统一日志与异常兜底，对接服务商时只需继承本类并实现
- * {@link #doSend(SmsMessage)}，把{@link SmsMessage}映射到服务商SDK的请求对象即可
+ * 短信发送器抽象基类：封装签名兜底、日志与异常兜底，
+ * 子类只需实现{@link #doSend}，把{@link SmsMessage}映射到服务商SDK的请求对象
  *
  * @author zhangdp
  * @since 1.0.0
@@ -24,11 +23,7 @@ public abstract class AbstractSmsSender implements SmsSender {
     }
 
     /**
-     * 发送短信，不允许子类覆盖，保证签名兜底、日志与异常处理对所有实现一致
-     * <br>本方法不会抛出异常，发送失败或异常时返回失败结果
-     *
-     * @param message 短信内容
-     * @return 发送结果，不会为null
+     * final：保证签名兜底、日志与异常处理对所有实现一致；不会抛出异常，也不会返回null
      */
     @Override
     public final SmsResult send(SmsMessage message) {
@@ -61,19 +56,14 @@ public abstract class AbstractSmsSender implements SmsSender {
     }
 
     /**
-     * 真正调用服务商SDK发送短信，允许抛出异常，由基类统一兜底为失败结果
+     * 调用服务商SDK发送，允许抛出异常，由基类兜底为失败结果
      *
-     * @param message 短信内容，签名已由基类兜底填充
-     * @return 发送结果
-     * @throws Exception 调用服务商SDK失败时抛出
+     * @param message 签名已由基类兜底填充
      */
     protected abstract SmsResult doSend(SmsMessage message) throws Exception;
 
     /**
-     * 描述短信内容，用于日志
-     *
-     * @param message 短信内容
-     * @return
+     * 短信内容描述，用于日志
      */
     protected String describe(SmsMessage message) {
         return message.isTemplate()

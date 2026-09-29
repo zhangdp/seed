@@ -24,12 +24,8 @@ import java.util.Base64;
 public class SecurityUtils {
 
     /**
-     * 取当前请求中登录时提交的原始认证对象
-     * <br>由{@code SecurityService}在认证前写入request，登录失败时认证异常一般不携带authentication，
-     * 只有这里拿得到提交上来的账号
-     *
-     * @param request
-     * @return 没有时返回null
+     * 取登录时提交的原始认证对象，由{@code SecurityService}在认证前写入request
+     * <br>登录失败时认证异常不携带authentication，只有这里拿得到提交上来的账号
      */
     public static Authentication getLoginAuthentication(HttpServletRequest request) {
         if (request == null) {
@@ -40,10 +36,7 @@ public class SecurityUtils {
     }
 
     /**
-     * 推断登录类型
-     *
-     * @param authentication 认证对象，为null时返回null
-     * @return 登录类型，无法识别时返回null
+     * 推断登录类型，无法识别时返回null
      */
     public static LoginType resolveLoginType(Authentication authentication) {
         if (authentication == null) {
@@ -62,11 +55,8 @@ public class SecurityUtils {
     }
 
     /**
-     * 解析登录账号，取用户提交的标识，如账号、手机号、邮箱等
-     * <br>续签的认证对象里principal是refresh token明文，不能当账号记录，返回null
-     *
-     * @param authentication 认证对象，为null时返回null
-     * @return 登录账号，取不到时返回null
+     * 解析登录账号（账号、手机号、邮箱等）
+     * <br>续签的principal是refresh token明文，不能当账号记录，返回null
      */
     public static String resolveUsername(Authentication authentication) {
         if (authentication == null) {

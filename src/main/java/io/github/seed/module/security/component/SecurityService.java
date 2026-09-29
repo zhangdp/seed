@@ -78,8 +78,7 @@ public class SecurityService {
      * @return
      */
     public LoginResult doLogin(Authentication authentication, HttpServletRequest request, HttpServletResponse response) throws Throwable {
-        // 暂存本次登录提交的认证对象：登录成功/失败处理器要靠它回填登录日志的登录类型与账号
-        // （认证异常通常不携带authentication，失败时否则无从得知提交的用户名）
+        // 暂存提交的认证对象：登录处理器靠它回填日志的类型与账号（认证异常不携带authentication）
         if (request != null) {
             request.setAttribute(SecurityConst.REQUEST_ATTR_LOGIN_AUTHENTICATION, authentication);
         }

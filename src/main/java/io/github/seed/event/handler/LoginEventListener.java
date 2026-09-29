@@ -13,9 +13,8 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 
 /**
- * 登录日志事件监听器：登录成功/失败处理器发出{@link LoginEvent}后，由这里落库
- * <br>同步入库：一次登录只写一条记录，开销可忽略，且异步写法在容器关闭时有丢日志的风险；
- * 入库失败只记录error日志，不影响登录结果
+ * 登录日志监听器：认证成功/失败处理器发出{@link LoginEvent}后由这里落库
+ * <br>同步写入：一次登录只写一条，异步在容器关闭时有丢日志风险；写失败只记error日志，不影响登录结果
  *
  * @author zhangdp
  * @since 1.0.0
@@ -25,15 +24,10 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class LoginEventListener {
 
-    /**
-     * 登录日志service
-     */
     private final LoginLogService loginLogService;
 
     /**
      * 监听登录事件
-     *
-     * @param event
      */
     @EventListener(LoginEvent.class)
     public void onEvent(LoginEvent event) {
@@ -41,7 +35,7 @@ public class LoginEventListener {
             log.debug("收到LoginEvent: {}", event);
             LoginUser loginUser = event.getLoginUser();
             LoginLog loginLog = new LoginLog();
-            // 登录失败时没有用户信息，用户id为空
+            // 登录失败时没有用户信息
             loginLog.setUserId(loginUser == null ? null : loginUser.getId());
             loginLog.setUsername(event.getUsername());
             loginLog.setType(event.getLoginType() == null ? null : event.getLoginType().type());

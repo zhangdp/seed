@@ -23,21 +23,10 @@ public class LogSmsSender extends AbstractSmsSender {
     @Override
     protected SmsResult doSend(SmsMessage message) {
         /*
-         * todo 对接云服务商后替换本实现，两种接入姿势：
-         *  a、新增一个继承 AbstractSmsSender 的 @Component 或 @Bean，只实现 doSend，
-         *     SmsConfigurer 中的 @ConditionalOnMissingBean 会自动让位给自定义实现（推荐，本Mock可继续用于本地联调）
-         *  b、直接改本类的方法体
-         *
-         * 常见服务商的适配要点（把 SmsMessage 映射到各自的请求对象即可）：
-         *  1、阿里云 dysmsapi20170525：SendSmsRequest.setPhoneNumbers/setSignName/setTemplateCode/
-         *     setTemplateParam(JSON字符串)，可直接把 getTemplateParams() 序列化为JSON；
-         *     纯文本内容需单独报备，未报备时只能按模板发送
-         *  2、腾讯云 tencentcloud-sdk-java-sms：SendSmsRequest.setPhoneNumberSet/setSignName/setTemplateId/
-         *     setTemplateParamSet，模板参数是<b>有序</b>数组，按 getTemplateParams() 的插入顺序转成数组
-         *  3、其他服务商（云片、容联、Twilio等）：同样只需映射请求对象，返回时用
-         *     SmsResult.ok(requestId, bizId) 或 SmsResult.fail(code, message) 包装
-         *
-         * 注意：SignName 必须使用与服务商报备一致的签名，否则会被服务商拒绝（返回签名不合法）
+         * todo 对接服务商时：新增一个继承 AbstractSmsSender 的实现并注册为Bean（推荐，本Mock留作本地联调），
+         * 或直接改本方法——都只需把 SmsMessage 映射到SDK的请求对象，
+         * 再用 SmsResult.ok(requestId, bizId) / SmsResult.fail(code, message) 包装返回
+         * 注意：腾讯云的模板参数是有序数组，按 getTemplateParams() 的插入顺序转换；签名必须与报备一致
          */
         log.warn("[短信-Mock] 未接入短信服务商，短信未真实发送：mobile={}, signName={}, {}",
                 message.getMobile(), message.getSignName(), this.describe(message));
