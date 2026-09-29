@@ -24,6 +24,9 @@ public abstract class AbstractSmsSender implements SmsSender {
 
     /**
      * final：保证签名兜底、日志与异常处理对所有实现一致；不会抛出异常，也不会返回null
+     *
+     * @param message 短信内容
+     * @return 发送结果，不会为null
      */
     @Override
     public final SmsResult send(SmsMessage message) {
@@ -58,12 +61,17 @@ public abstract class AbstractSmsSender implements SmsSender {
     /**
      * 调用服务商SDK发送，允许抛出异常，由基类兜底为失败结果
      *
-     * @param message 签名已由基类兜底填充
+     * @param message 短信内容，签名已由基类兜底填充
+     * @return 发送结果
+     * @throws Exception 调用服务商SDK失败时抛出
      */
     protected abstract SmsResult doSend(SmsMessage message) throws Exception;
 
     /**
      * 短信内容描述，用于日志
+     *
+     * @param message 短信内容
+     * @return 内容描述
      */
     protected String describe(SmsMessage message) {
         return message.isTemplate()

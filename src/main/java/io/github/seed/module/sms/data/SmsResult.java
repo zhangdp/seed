@@ -47,6 +47,8 @@ public class SmsResult {
 
     /**
      * 发送成功，无服务商信息
+     *
+     * @return 成功结果
      */
     public static SmsResult ok() {
         return SUCCESS;
@@ -54,6 +56,10 @@ public class SmsResult {
 
     /**
      * 发送成功，携带服务商的请求id与回执id
+     *
+     * @param requestId 服务商请求id，可为空
+     * @param bizId     服务商回执id，可为空
+     * @return 成功结果
      */
     public static SmsResult ok(String requestId, String bizId) {
         return new SmsResult(true, requestId, bizId, null, null);
@@ -64,13 +70,14 @@ public class SmsResult {
      *
      * @param code    服务商返回码或自定义错误标识，可为空
      * @param message 失败原因
+     * @return 失败结果
      */
     public static SmsResult fail(String code, String message) {
         return new SmsResult(false, null, null, code, message);
     }
 
     /**
-     * 是否发送失败
+     * @return 是否发送失败
      */
     public boolean isFail() {
         return !this.success;

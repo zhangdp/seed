@@ -61,6 +61,8 @@ public class SmsProperties {
 
     /**
      * 发送中超时阈值：updated_at早于该时间的发送中记录视为可重新领取
+     *
+     * @return 超时时间点的 LocalDateTime
      */
     public LocalDateTime sendingStaleBefore() {
         return LocalDateTime.now().minus(Duration.ofMillis(Math.max(this.sendingTimeout, 0L)));
@@ -68,6 +70,9 @@ public class SmsProperties {
 
     /**
      * 取场景对应的模板编码，未配置时回退到兜底模板，都没有则返回null
+     *
+     * @param scene 业务场景
+     * @return 模板编码，没有则返回null
      */
     public String getTemplate(String scene) {
         if (this.templates == null || this.templates.isEmpty()) {

@@ -12,9 +12,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import java.util.List;
 
 /**
- * 短信定时派发任务：轮询可派发记录（待发送、以及发送中但已超时），逐条交给{@link SmsManager#dispatch}
- * <br>多实例部署不会重复发送：抢占在dispatch内部用CAS完成，只有抢到的节点真正发送；
- * 节点发送中宕机时记录停留在发送中，超过{@code app.sms.sending-timeout}后可被重新领取
+ * 短信定时派发任务：轮询待发送记录，逐条交给{@link SmsManager#dispatch}
  * <br>改为消息队列调度时把{@code app.sms.send-enabled}置为false停掉本任务，
  * 消费者同样调用{@link SmsManager#dispatch}
  *

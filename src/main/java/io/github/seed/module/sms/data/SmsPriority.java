@@ -30,10 +30,16 @@ public enum SmsPriority {
         this.desc = desc;
     }
 
+    /**
+     * @return 优先级值
+     */
     public int priority() {
         return this.priority;
     }
 
+    /**
+     * @return 优先级描述
+     */
     public String desc() {
         return this.desc;
     }

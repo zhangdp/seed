@@ -35,6 +35,7 @@ public class CaptchaService {
      * @param scene  场景，为空使用默认场景
      * @param width  图片宽高，为空或非法时用配置的默认值，并夹取到配置范围内
      * @param height 同上
+     * @return 图片验证码
      */
     public ImageCaptcha generateImage(String scene, Integer width, Integer height) {
         String s = StrUtil.defaultIfBlank(scene, CaptchaScene.DEFAULT);
@@ -58,7 +59,9 @@ public class CaptchaService {
      * 否则服务商故障时锁会失效，且服务商偶有「返回失败但实际已送达」的情况，此时作废验证码
      * 反而会让用户手里那条真收到的码失效
      *
-     * @param scene 场景，如login、reset_password，为空使用默认场景
+     * @param scene  场景，如login、reset_password，为空使用默认场景
+     * @param mobile 手机号
+     * @return 本次生成的验证码
      */
     public String generateSmsCode(String scene, String mobile) {
         String s = StrUtil.defaultIfBlank(scene, CaptchaScene.DEFAULT);
@@ -91,6 +94,10 @@ public class CaptchaService {
     /**
      * 校验验证码，失败或验证码不存在时抛出{@link BizException}
      *
+     * @param type            验证码类型
+     * @param scene           场景
+     * @param key             验证码key
+     * @param code            待校验的验证码
      * @param failCount       允许失败次数，达到即作废验证码
      * @param removeOnSuccess 校验成功后是否删除验证码
      * @param message         自定义错误提示，为空使用默认提示
@@ -116,6 +123,11 @@ public class CaptchaService {
 
     /**
      * 处理校验失败：累计失败次数，达到上限后作废验证码
+     *
+     * @param type         验证码类型
+     * @param scene        场景
+     * @param key          验证码key
+     * @param maxFailCount 允许失败次数，达到即作废验证码
      */
     private void handleVerifyFail(CaptchaType type, String scene, String key, int maxFailCount) {
         if (maxFailCount <= 1) {
@@ -133,6 +145,12 @@ public class CaptchaService {
 
     /**
      * 把值夹取到指定范围内，值非法时使用默认值
+     *
+     * @param value        待夹取的值
+     * @param defaultValue 默认值
+     * @param min          最小值
+     * @param max          最大值
+     * @return 夹取后的值
      */
     private int clamp(Integer value, int defaultValue, int min, int max) {
         int v = value == null || value <= 0 ? defaultValue : value;

@@ -46,6 +46,11 @@ public class CaptchaVerifyAspect {
 
     /**
      * 环绕拥有@VerifyCaptcha注解的controller方法
+     *
+     * @param point         连接点
+     * @param verifyCaptcha 方法上的注解
+     * @return 原方法的返回值
+     * @throws Throwable 原方法或验证码校验抛出的异常
      */
     @Around("within(io.github.seed.controller..*) && @annotation(verifyCaptcha)")
     public Object around(ProceedingJoinPoint point, VerifyCaptcha verifyCaptcha) throws Throwable {
@@ -67,6 +72,10 @@ public class CaptchaVerifyAspect {
 
     /**
      * 构建SpEL上下文：形参名-参数值，以及request、response
+     *
+     * @param signature 方法签名
+     * @param args      方法入参值
+     * @return SpEL上下文
      */
     private Map<String, Object> buildContext(MethodSignature signature, Object[] args) {
         Map<String, Object> context = new LinkedHashMap<>();
@@ -90,6 +99,11 @@ public class CaptchaVerifyAspect {
 
     /**
      * 解析SpEL表达式，解析失败或结果为空白时返回null
+     *
+     * @param expression 表达式
+     * @param context    SpEL上下文
+     * @param name       表达式用途，用于日志
+     * @return 解析结果，取不到时返回null
      */
     private String evaluate(String expression, Map<String, Object> context, String name) {
         if (StrUtil.isBlank(expression)) {

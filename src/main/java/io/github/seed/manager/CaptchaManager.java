@@ -35,7 +35,8 @@ public class CaptchaManager {
      * 生成短信验证码并投递：场景在{@code app.sms.templates}配了模板时走模板短信，
      * 否则按{@code app.captcha.sms-content-template}发文本短信
      *
-     * @param scene 场景，如login、reset_password，为空使用默认场景
+     * @param scene  场景，如login、reset_password，为空使用默认场景
+     * @param mobile 手机号
      */
     public void sendSms(String scene, String mobile) {
         // 场景先规范化，保证验证码缓存的场景与短信记录的场景是同一个
@@ -46,6 +47,11 @@ public class CaptchaManager {
 
     /**
      * 渲染验证码短信：场景配置了模板则走模板短信，否则退化为文本短信
+     *
+     * @param scene  场景
+     * @param mobile 手机号
+     * @param code   验证码
+     * @return 短信内容
      */
     private SmsMessage buildSmsMessage(String scene, String mobile, String code) {
         String templateCode = smsProperties.getTemplate(scene);

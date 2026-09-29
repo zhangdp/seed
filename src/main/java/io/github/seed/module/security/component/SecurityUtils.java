@@ -27,6 +27,12 @@ public class SecurityUtils {
      * 取登录时提交的原始认证对象，由{@code SecurityService}在认证前写入request
      * <br>登录失败时认证异常不携带authentication，只有这里拿得到提交上来的账号
      */
+    /**
+     * 取当前请求中登录时提交的原始认证对象
+     *
+     * @param request 当前请求
+     * @return 认证对象，没有时返回null
+     */
     public static Authentication getLoginAuthentication(HttpServletRequest request) {
         if (request == null) {
             return null;
@@ -37,6 +43,9 @@ public class SecurityUtils {
 
     /**
      * 推断登录类型，无法识别时返回null
+     *
+     * @param authentication 认证对象，为null时返回null
+     * @return 登录类型
      */
     public static LoginType resolveLoginType(Authentication authentication) {
         if (authentication == null) {
@@ -57,6 +66,9 @@ public class SecurityUtils {
     /**
      * 解析登录账号（账号、手机号、邮箱等）
      * <br>续签的principal是refresh token明文，不能当账号记录，返回null
+     *
+     * @param authentication 认证对象，为null时返回null
+     * @return 登录账号，取不到时返回null
      */
     public static String resolveUsername(Authentication authentication) {
         if (authentication == null) {

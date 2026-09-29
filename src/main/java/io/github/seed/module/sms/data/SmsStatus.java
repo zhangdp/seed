@@ -35,10 +35,16 @@ public enum SmsStatus {
         this.desc = desc;
     }
 
+    /**
+     * @return 状态值
+     */
     public int status() {
         return this.status;
     }
 
+    /**
+     * @return 状态描述
+     */
     public String desc() {
         return this.desc;
     }

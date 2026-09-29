@@ -62,6 +62,10 @@ public class SmsMessage {
 
     /**
      * 文本短信
+     *
+     * @param mobile  手机号
+     * @param content 短信正文
+     * @return 短信入参
      */
     public static SmsMessage text(String mobile, String content) {
         return new SmsMessage(mobile, content, null, null);
@@ -69,6 +73,11 @@ public class SmsMessage {
 
     /**
      * 模板短信
+     *
+     * @param mobile         手机号
+     * @param templateCode   服务商模板编码
+     * @param templateParams 模板参数，可为空
+     * @return 短信入参
      */
     public static SmsMessage template(String mobile, String templateCode, Map<String, Object> templateParams) {
         return new SmsMessage(mobile, null, templateCode, templateParams);
@@ -76,6 +85,9 @@ public class SmsMessage {
 
     /**
      * 指定签名，不指定则使用全局配置的签名
+     *
+     * @param signName 短信签名
+     * @return 当前对象，便于链式调用
      */
     public SmsMessage signName(String signName) {
         this.signName = signName;
@@ -83,7 +95,10 @@ public class SmsMessage {
     }
 
     /**
-     * 指定优先级，不指定则为{@link SmsPriority#NORMAL}
+     * 指定优先级，传null时保持默认
+     *
+     * @param priority 优先级，不指定则为{@link SmsPriority#NORMAL}
+     * @return 当前对象，便于链式调用
      */
     public SmsMessage priority(SmsPriority priority) {
         if (priority != null) {
@@ -93,7 +108,7 @@ public class SmsMessage {
     }
 
     /**
-     * 是否模板短信
+     * @return 是否模板短信
      */
     public boolean isTemplate() {
         return this.templateCode != null;

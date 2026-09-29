@@ -39,6 +39,10 @@ public class SmsManager {
     /**
      * 新增短信：落库排队，状态待发送，不发送；发送由{@code SmsSendTask}等调度方完成
      * <br>优先级取{@link SmsMessage#getPriority()}
+     *
+     * @param message 短信内容
+     * @param scene   业务场景
+     * @return 已入库的记录
      */
     public SmsLog create(SmsMessage message, String scene) {
         SmsLog smsLog = this.buildSmsLog(message, scene);
@@ -53,7 +57,8 @@ public class SmsManager {
      * <br>失败次数未超过{@code app.sms.max-retry}时退回待发送等下轮重试；终态记录不会被抢占，
      * 需重发的话把状态重置为待发送即可
      *
-     * @return null表示未被抢占，未产生发送
+     * @param smsLog 待发送的短信记录，需带上主键
+     * @return 发送结果，null表示未被抢占、未产生发送
      */
     public SmsResult dispatch(SmsLog smsLog) {
         // 抢占：CAS把状态改为发送中，多节点并发时只有一个节点能抢到，抢不到的直接跳过不发送
@@ -68,6 +73,9 @@ public class SmsManager {
 
     /**
      * 调用发送器并回写结果，调用方必须先通过{@link #dispatch}抢占
+     *
+     * @param smsLog 已被当前节点抢占的记录
+     * @return 发送结果
      */
     private SmsResult send(SmsLog smsLog) {
         LocalDateTime sendAt = LocalDateTime.now();
@@ -117,6 +125,10 @@ public class SmsManager {
 
     /**
      * 由短信内容构建待发送的记录
+     *
+     * @param message 短信内容
+     * @param scene   业务场景
+     * @return 待发送记录
      */
     private SmsLog buildSmsLog(SmsMessage message, String scene) {
         SmsLog smsLog = new SmsLog();
@@ -138,6 +150,9 @@ public class SmsManager {
 
     /**
      * 由记录还原短信内容，用于发送已入库的记录
+     *
+     * @param smsLog 短信记录
+     * @return 短信内容
      */
     private SmsMessage toSmsMessage(SmsLog smsLog) {
         SmsMessage message;

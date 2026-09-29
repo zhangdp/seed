@@ -28,6 +28,8 @@ public enum CaptchaType {
 
     /**
      * 获取类型标识
+     *
+     * @return 类型标识
      */
     public String type() {
         return this.type;

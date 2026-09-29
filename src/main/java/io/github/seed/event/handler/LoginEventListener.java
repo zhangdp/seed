@@ -27,7 +27,9 @@ public class LoginEventListener {
     private final LoginLogService loginLogService;
 
     /**
-     * 监听登录事件
+     * 监听登录事件，落库登录日志
+     *
+     * @param event 登录事件
      */
     @EventListener(LoginEvent.class)
     public void onEvent(LoginEvent event) {

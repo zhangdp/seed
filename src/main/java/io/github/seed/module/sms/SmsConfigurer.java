@@ -31,6 +31,8 @@ public class SmsConfigurer implements InitializingBean {
 
     /**
      * 默认发送器，业务方注册自定义{@link SmsSender}的Bean后自动让位
+     *
+     * @return 短信发送器
      */
     @Bean
     @ConditionalOnMissingBean(SmsSender.class)

@@ -34,6 +34,8 @@ public interface SmsLogMapper extends BaseMapper<SmsLog> {
      * <br>排序：优先级降序、主键升序，同优先级按入库顺序，避免老记录被新记录无限挤后
      *
      * @param sendingStaleBefore 发送中超时阈值，updated_at早于该时间的发送中记录视为可重新领取
+     * @param limit              最大条数
+     * @return 可派发的记录
      */
     default List<SmsLog> listDispatchable(LocalDateTime sendingStaleBefore, int limit) {
         return this.selectListByQuery(QueryWrapper.create()
@@ -47,6 +49,8 @@ public interface SmsLogMapper extends BaseMapper<SmsLog> {
      * CAS抢占一条记录用于发送：把状态从待发送（或已超时的发送中）改为发送中
      * <br>多节点并发时只有改成功的那个节点会拿到记录，因此同一记录不会被重复发送
      *
+     * @param id                 记录主键
+     * @param sendingStaleBefore 发送中超时阈值，含义同{@link #listDispatchable}
      * @return 1表示抢占成功，0表示已被其他节点抢占或已处于终态
      */
     default int claim(Long id, LocalDateTime sendingStaleBefore) {
@@ -62,7 +66,11 @@ public interface SmsLogMapper extends BaseMapper<SmsLog> {
      * 回写发送结果：状态、失败次数、发送时间与服务商返回信息
      * <br>按业务编号更新，因此不依赖新增时数据库生成的主键
      *
-     * @param result 发送结果，可为空
+     * @param smsNo      短信业务编号
+     * @param status     发送状态
+     * @param retryCount 累计发送失败次数
+     * @param sendAt     最近一次发送时间
+     * @param result     发送结果，可为空
      * @return 受影响行数，为0说明记录不存在
      */
     default int updateSendResult(String smsNo, SmsStatus status, int retryCount, LocalDateTime sendAt,
@@ -84,6 +92,11 @@ public interface SmsLogMapper extends BaseMapper<SmsLog> {
 
     /**
      * 统计发送条数，为后续基于数据库做频率限制与统计预留；三个条件都可为空表示不限
+     *
+     * @param mobile 手机号，为空表示不限
+     * @param scene  业务场景，为空表示不限
+     * @param since  起始时间，为空表示不限
+     * @return 发送条数
      */
     default long countByMobileAndScene(String mobile, String scene, LocalDateTime since) {
         QueryWrapper wrapper = QueryWrapper.create();
@@ -102,6 +115,10 @@ public interface SmsLogMapper extends BaseMapper<SmsLog> {
 
     /**
      * 截断超长字符串；私有方法不会被MyBatis解析为statement
+     *
+     * @param value     原字符串
+     * @param maxLength 最大长度
+     * @return 截断后的字符串
      */
     private static String truncate(String value, int maxLength) {
         return value != null && value.length() > maxLength ? value.substring(0, maxLength) : value;
