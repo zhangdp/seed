@@ -74,6 +74,6 @@ public interface OperationLogMapper extends BaseMapper<OperationLog> {
             wrapper.orderBy(OperationLog::getId, !pageQuery.isDesc()).limit(pageQuery.getSize());
             list = this.selectListByQuery(wrapper);
         }
-        return new PageData<>(list, pageQuery.getPage(), pageQuery.getSize(), total);
+        return new PageData<>(list, total, pageQuery.getPage(), pageQuery.getSize());
     }
 }
