@@ -1,10 +1,15 @@
 package io.github.seed.mapper.sys;
 
 import com.mybatisflex.core.BaseMapper;
+import com.mybatisflex.core.paginate.Page;
 import com.mybatisflex.core.query.QueryWrapper;
 import io.github.seed.module.sms.data.SmsStatus;
 import io.github.seed.module.sms.data.SmsResult;
 import io.github.seed.entity.sys.SmsLog;
+import io.github.seed.model.PageData;
+import io.github.seed.model.query.CursorPageQuery;
+import io.github.seed.model.query.PageQuery;
+import io.github.seed.model.query.SmsLogQuery;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.time.LocalDateTime;
@@ -28,6 +33,50 @@ public interface SmsLogMapper extends BaseMapper<SmsLog> {
      * <br>参数顺序：待发送状态、发送中状态、发送中超时阈值
      */
     String CLAIMABLE_CONDITION = "status = ? or (status = ? and updated_at < ?)";
+    /**
+     * 分页查询未指定排序时的默认排序：新的在前
+     */
+    String DEFAULT_ORDER_BY = "id desc";
+
+    /**
+     * 查询分页
+     *
+     * @param pageQuery 分页与查询参数
+     * @return 分页数据
+     */
+    default PageData<SmsLog> selectPage(PageQuery<SmsLogQuery> pageQuery) {
+        QueryWrapper wrapper = buildQueryWrapper(pageQuery.getParams());
+        wrapper.orderBy(orderByOrDefault(pageQuery.getOrderBy()));
+        Page<SmsLog> page = this.paginate(pageQuery.getPage(), pageQuery.getSize(), pageQuery.getTotal(), wrapper);
+        return new PageData<>(page.getRecords(), page.getTotalRow(), page.getPageNumber(), page.getPageSize());
+    }
+
+    /**
+     * 游标分页查询
+     *
+     * @param pageQuery 游标分页与查询参数
+     * @return 分页数据
+     */
+    default PageData<SmsLog> cursorSelectPage(CursorPageQuery<SmsLogQuery> pageQuery) {
+        QueryWrapper wrapper = buildQueryWrapper(pageQuery.getParams());
+        long total = -1;
+        if (pageQuery.isCountTotal()) {
+            total = this.selectCountByQuery(wrapper);
+        }
+        List<SmsLog> list = null;
+        if (total == -1 || total > 0) {
+            if (pageQuery.getCursor() != null) {
+                if (pageQuery.isDesc()) {
+                    wrapper.lt(SmsLog::getId, pageQuery.getCursor());
+                } else {
+                    wrapper.gt(SmsLog::getId, pageQuery.getCursor());
+                }
+            }
+            wrapper.orderBy(SmsLog::getId, !pageQuery.isDesc()).limit(pageQuery.getSize());
+            list = this.selectListByQuery(wrapper);
+        }
+        return new PageData<>(list, total, pageQuery.getPage(), pageQuery.getSize());
+    }
 
     /**
      * 查询可派发的记录：待发送的，以及发送中但已超时的
@@ -111,6 +160,36 @@ public interface SmsLogMapper extends BaseMapper<SmsLog> {
             wrapper.ge(SmsLog::getCreatedAt, since);
         }
         return this.selectCountByQuery(wrapper);
+    }
+
+    /**
+     * 按查询入参拼查询条件；空值条件会被MyBatis-Flex自动忽略，因此无需逐项判空
+     *
+     * @param params 查询入参，可为空表示不限
+     * @return 查询条件
+     */
+    private static QueryWrapper buildQueryWrapper(SmsLogQuery params) {
+        QueryWrapper wrapper = QueryWrapper.create();
+        if (params != null) {
+            wrapper.eq(SmsLog::getSmsNo, params.getSmsNo())
+                    .eq(SmsLog::getScene, params.getScene())
+                    .eq(SmsLog::getMobile, params.getMobile())
+                    .eq(SmsLog::getStatus, params.getStatus())
+                    .eq(SmsLog::getPriority, params.getPriority())
+                    .lt(SmsLog::getCreatedAt, params.getEndTime())
+                    .gt(SmsLog::getCreatedAt, params.getStartTime());
+        }
+        return wrapper;
+    }
+
+    /**
+     * 取排序字段，未指定时用默认排序
+     *
+     * @param orderBy 传入的排序，可为空
+     * @return 实际使用的排序
+     */
+    private static String orderByOrDefault(String orderBy) {
+        return orderBy == null || orderBy.isBlank() ? DEFAULT_ORDER_BY : orderBy;
     }
 
     /**

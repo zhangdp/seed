@@ -3,6 +3,10 @@ package io.github.seed.service.sys;
 import io.github.seed.module.sms.data.SmsStatus;
 import io.github.seed.module.sms.data.SmsResult;
 import io.github.seed.entity.sys.SmsLog;
+import io.github.seed.model.PageData;
+import io.github.seed.model.query.CursorPageQuery;
+import io.github.seed.model.query.PageQuery;
+import io.github.seed.model.query.SmsLogQuery;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -53,6 +57,22 @@ public interface SmsLogService {
      * @return 受影响行数，为0说明记录不存在
      */
     int updateSendResult(String smsNo, SmsStatus status, int retryCount, LocalDateTime sendAt, SmsResult result);
+
+    /**
+     * 分页查询短信日志，未指定排序时按主键倒序
+     *
+     * @param pageQuery 分页与查询参数
+     * @return 分页数据
+     */
+    PageData<SmsLog> queryPage(PageQuery<SmsLogQuery> pageQuery);
+
+    /**
+     * 游标分页查询短信日志，适合日志类数据的深翻页
+     *
+     * @param pageQuery 游标分页与查询参数
+     * @return 分页数据
+     */
+    PageData<SmsLog> cursorQueryPage(CursorPageQuery<SmsLogQuery> pageQuery);
 
     /**
      * 统计发送条数，为后续限流做准备；三个条件都可为空表示不限

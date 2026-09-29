@@ -1,8 +1,10 @@
 package io.github.seed.entity.sys;
 
 import com.mybatisflex.annotation.Table;
+import io.github.seed.common.annotation.Sensitive;
 import io.github.seed.common.constant.Const;
 import io.github.seed.common.constant.TableNameConst;
+import io.github.seed.common.enums.SensitiveType;
 import io.github.seed.module.sms.data.SmsPriority;
 import io.github.seed.module.sms.data.SmsStatus;
 import io.github.seed.entity.BaseEntity;
@@ -46,7 +48,8 @@ public class SmsLog extends BaseEntity implements Serializable {
     /**
      * 手机号
      */
-    @Schema(description = "手机号")
+    @Schema(description = "手机号，查询接口返回时会脱敏")
+    @Sensitive(SensitiveType.MOBILE)
     private String mobile;
     /**
      * 短信签名
