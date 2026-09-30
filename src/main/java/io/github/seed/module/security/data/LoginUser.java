@@ -10,6 +10,8 @@ import java.util.List;
 
 /**
  * 登录用户信息
+ * <br>由jwt载荷还原，因此只带鉴权必需字段：手机号、邮箱、姓名、头像等档案信息
+ * 走{@code /auth/user/info}按需查，不放进令牌也不放进这里
  *
  * @author zhangdp
  * @since 1.0.0
@@ -31,32 +33,9 @@ public final class LoginUser implements Serializable, UserDetails {
     private String username;
     /**
      * 密码
+     * <br>从令牌还原时为空：已认证的身份不需要再校验密码
      */
     private String password;
-    /**
-     * 手机号
-     */
-    private String mobile;
-    /**
-     * 姓名
-     */
-    private String name;
-    /**
-     * 头像
-     */
-    private String avatar;
-    /**
-     * 性别
-     */
-    private Character gender;
-    /**
-     * 邮箱
-     */
-    private String email;
-    /**
-     * 部门id
-     */
-    private Long deptId;
     /**
      * 拥有的角色权限列表
      */

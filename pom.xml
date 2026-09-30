@@ -19,6 +19,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <hutool.version>7.0.0-M7</hutool.version>
         <mybatis-flex.version>1.11.8</mybatis-flex.version>
+        <jjwt.version>0.12.6</jjwt.version>
         <springdoc.version>3.1.1</springdoc.version>
         <aws-s3.version>2.54.18</aws-s3.version>
         <spring-boot-admin.version>4.1.2</spring-boot-admin.version>
@@ -111,6 +112,24 @@
             <groupId>cn.hutool.v7</groupId>
             <artifactId>hutool-swing</artifactId>
             <version>${hutool.version}</version>
+        </dependency>
+        <!-- jwt：api编译期，impl与jackson运行期即可 -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>${jjwt.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>${jjwt.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>${jjwt.version}</version>
+            <scope>runtime</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.mybatis-flex/mybatis-flex-spring-boot3-starter -->
         <dependency>

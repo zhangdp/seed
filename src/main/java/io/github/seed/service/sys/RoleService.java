@@ -21,6 +21,13 @@ public interface RoleService {
     List<Role> listUserRoles(Long userId);
 
     /**
+     * 获取全部角色，供角色权限缓存预热
+     *
+     * @return 全部角色
+     */
+    List<Role> listAll();
+
+    /**
      * 根据角色标识获取
      *
      * @param code

@@ -1,6 +1,8 @@
 package io.github.seed.service.sys.impl;
 
+import io.github.seed.common.annotation.PublishEvent;
 import io.github.seed.common.constant.Const;
+import io.github.seed.common.constant.EventConst;
 import io.github.seed.entity.sys.UserRole;
 import io.github.seed.mapper.sys.UserRoleMapper;
 import io.github.seed.service.sys.UserRoleService;
@@ -30,12 +32,15 @@ public class UserRoleServiceImpl implements UserRoleService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @PublishEvent(value = EventConst.USER_ROLE_CHANGE, condition = "#result == true")
     public boolean add(UserRole entity) {
         return userRoleMapper.insert(entity) > 0;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    // 内部调用add不会经过代理，事件只能在这里发
+    @PublishEvent(value = EventConst.USER_ROLE_CHANGE, condition = "#result == true")
     public boolean addIfAbsent(Long userId, Long roleId) {
         if (this.exists(userId, roleId)) {
             return true;
@@ -43,7 +48,7 @@ public class UserRoleServiceImpl implements UserRoleService {
         UserRole entity = new UserRole();
         entity.setUserId(userId);
         entity.setRoleId(roleId);
-        return this.add(entity);
+        return userRoleMapper.insert(entity) > 0;
     }
 
     @Override
@@ -53,6 +58,7 @@ public class UserRoleServiceImpl implements UserRoleService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
+    @PublishEvent(value = EventConst.USER_ROLE_CHANGE, condition = "#result > 0")
     public int addBatch(Collection<UserRole> entities) {
         return userRoleMapper.insertBatch(entities, Const.DB_BATCH_SIZE);
     }

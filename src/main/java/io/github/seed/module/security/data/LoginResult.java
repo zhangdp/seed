@@ -54,14 +54,4 @@ public class LoginResult implements Serializable {
      */
     @Schema(title = "账号")
     private String username;
-    /**
-     * 姓名
-     */
-    @Schema(title = "姓名")
-    private String name;
-    /**
-     * 头像
-     */
-    @Schema(title = "头像")
-    private String avatar;
 }

@@ -22,9 +22,9 @@ public class RefreshToken implements Serializable {
      */
     private String token;
     /**
-     * 访问令牌
+     * 对应访问令牌的jti，续签时据此把旧访问令牌拉黑
      */
-    private String accessToken;
+    private String jti;
     /**
      * 剩余有效时间（秒）
      */

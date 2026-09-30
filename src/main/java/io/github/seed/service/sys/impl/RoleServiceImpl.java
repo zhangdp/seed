@@ -1,7 +1,9 @@
 package io.github.seed.service.sys.impl;
 
 import cn.hutool.v7.core.collection.CollUtil;
+import io.github.seed.common.annotation.PublishEvent;
 import io.github.seed.common.constant.CacheConst;
+import io.github.seed.common.constant.EventConst;
 import io.github.seed.common.constant.TableNameConst;
 import io.github.seed.entity.sys.Role;
 import io.github.seed.entity.sys.UserRole;
@@ -47,12 +49,18 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    public List<Role> listAll() {
+        return roleMapper.selectAll();
+    }
+
+    @Override
     public Role getByCode(String code) {
         return roleMapper.selectOneByCode(code);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @PublishEvent(value = EventConst.ROLE_PERMISSION_CHANGE, condition = "#result == true")
     public boolean add(Role entity) {
         return roleMapper.insert(entity) > 0;
     }

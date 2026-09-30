@@ -98,8 +98,6 @@ public class SecurityService {
             loginResult.setExpiresIn(accessToken.getExpiresIn());
             loginResult.setUserId(user.getId());
             loginResult.setUsername(user.getUsername());
-            loginResult.setName(user.getName());
-            loginResult.setAvatar(user.getAvatar());
             loginResult.setTokenType(SecurityConst.AUTH_TYPE_BEARER);
             // 认证成功事件
             this.authenticationSuccessHandler.onAuthenticationSuccess(request, response, authResult);
@@ -141,17 +139,30 @@ public class SecurityService {
         if (token == null || token.isEmpty()) {
             return false;
         }
-        return this.doLogout(token);
+        // 刷新令牌一并带上才能彻底作废，否则客户端还能拿它换新令牌
+        String refreshToken = request.getHeader(SecurityConst.REFRESH_TOKEN_HEADER);
+        return this.doLogout(token, refreshToken);
     }
 
     /**
      * 执行注销
      *
-     * @param token
-     * @return
+     * @param token        访问令牌
+     * @param refreshToken 刷新令牌，可为空
+     * @return 是否注销成功
      */
-    public boolean doLogout(String token) {
-        return tokenService.removeToken(token);
+    public boolean doLogout(String token, String refreshToken) {
+        return tokenService.removeToken(token, refreshToken);
+    }
+
+    /**
+     * 把某个用户已签发的令牌全部作废：改密码、禁用账号、管理员踢人
+     *
+     * @param userId 用户id
+     * @return 作废的凭证数量
+     */
+    public int kickUser(Long userId) {
+        return tokenService.removeUserTokens(userId);
     }
 
     /**

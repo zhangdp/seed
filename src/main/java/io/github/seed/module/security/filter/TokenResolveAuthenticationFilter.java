@@ -4,7 +4,7 @@ import cn.hutool.v7.core.text.StrUtil;
 import io.github.seed.common.enums.SensitiveType;
 import io.github.seed.module.security.data.SecurityConst;
 import io.github.seed.module.security.component.SecurityUtils;
-import io.github.seed.module.security.data.AccessToken;
+import io.github.seed.module.security.data.LoginUser;
 import io.github.seed.module.security.component.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -16,7 +16,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.PatternMatchUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -44,15 +43,13 @@ public class TokenResolveAuthenticationFilter extends OncePerRequestFilter {
             String token = SecurityUtils.resolveBearerToken(request);
             log.debug("TokenAuthenticationFilter: {}, token: {}", uri, SensitiveType.TOKEN.getDesensitizer().apply(token));
             if (StrUtil.isNotBlank(token)) {
-                AccessToken accessToken = tokenService.loadAccessToken(token);
-                if (accessToken != null) {
-                    UserDetails userDetails = accessToken.getUserDetails();
+                // jwt自包含：验签与黑名单都在本地完成，不查redis
+                LoginUser userDetails = tokenService.loadLoginUser(token);
+                if (userDetails != null) {
                     Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     SecurityContext context = SecurityContextHolder.getContext();
                     context.setAuthentication(authentication);
-                    request.setAttribute(SecurityConst.REQUEST_ATTR_ACCESS_TOKEN, accessToken);
-                    // 重置token过期时间
-                    tokenService.resetTokenExpireIfNecessary(token, userDetails);
+                    request.setAttribute(SecurityConst.REQUEST_ATTR_ACCESS_TOKEN, token);
                 }
             }
         }

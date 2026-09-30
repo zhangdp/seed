@@ -33,11 +33,11 @@ public class RefreshTokenAuthenticationProvider implements AuthenticationProvide
         if (refreshToken == null) {
             throw new BadCredentialsException("Invalid refresh token");
         }
-        // 相当于全新登录，签发新的访问令牌、刷新令牌
+        // 相当于全新登录，重新查库拿最新角色，签发新的访问令牌、刷新令牌
         UserDetails userDetails = userDetailsService.loadUserByUsername(refreshToken.getUsername());
         SmsAuthenticationToken result = new SmsAuthenticationToken(userDetails);
-        // 清理掉旧的令牌
-        tokenService.removeToken(refreshToken.getAccessToken());
+        // 旧令牌失效：访问令牌按jti拉黑，刷新令牌一并作废，防止旧刷新令牌被重复使用
+        tokenService.removeToken(refreshToken);
         return result;
     }
 

@@ -2,16 +2,24 @@ package io.github.seed.module.security.component;
 
 import cn.hutool.v7.core.data.id.IdUtil;
 import io.github.seed.module.security.data.AccessToken;
+import io.github.seed.module.security.data.JwtPayload;
+import io.github.seed.module.security.data.LoginUser;
 import io.github.seed.module.security.data.RefreshToken;
+import io.github.seed.module.security.data.RolePermissionGrantedAuthority;
 import io.github.seed.module.security.data.SecurityProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.Duration;
+import java.util.List;
+import java.util.Map;
 
 /**
- * 2024/6/27 token服务
+ * 令牌服务
+ * <br>访问令牌是自包含的jwt：签发后不再落库，校验只靠签名，因此每次请求无需查redis；
+ * 代价是无法就地修改，作废只能靠{@code JtiBlacklist}按jti拉黑
+ * <br>刷新令牌仍需可吊销，留在redis
  *
  * @author zhangdp
  * @since 1.0.0
@@ -22,46 +30,49 @@ public class TokenService {
 
     private final TokenStore tokenStore;
     private final SecurityProperties securityProperties;
-
-    // private FIFOCache<String, AccessToken> accessTokenCache = new FIFOCache<>(200);
+    private final JwtTokenProvider jwtTokenProvider;
+    private final JtiBlacklist jtiBlacklist;
+    private final RolePermissionProvider rolePermissionProvider;
 
     /**
-     * 创建token
+     * 创建令牌
      *
-     * @return
+     * @param userDetails 登录用户，需带上id、账号与角色
+     * @return 访问令牌与刷新令牌
      */
     public AccessToken createToken(UserDetails userDetails) {
         Duration ttl = securityProperties.getAccessTokenTtl();
-        String token = this.generateToken();
+        long now = System.currentTimeMillis();
+        String jti = IdUtil.fastUUID();
+        String token = this.jwtTokenProvider.sign(jti, this.resolveUserId(userDetails), userDetails.getUsername(),
+                this.resolveRoleCodes(userDetails), ttl);
         AccessToken accessToken = new AccessToken();
         accessToken.setToken(token);
+        accessToken.setJti(jti);
         accessToken.setExpiresIn(ttl.toSeconds());
-        accessToken.setUserDetails(userDetails);
-        accessToken.setIssuedAt(System.currentTimeMillis());
+        // 登记到用户-凭证索引，改密码、禁用、踢人时据此一次性作废
+        this.tokenStore.registerUserToken(this.resolveUserId(userDetails), jti, now + ttl.toMillis());
         if (securityProperties.isEnableRefreshToken()) {
-            RefreshToken refreshToken = this.createRefreshToken(token, userDetails);
+            RefreshToken refreshToken = this.createRefreshToken(jti, userDetails);
             accessToken.setRefreshToken(refreshToken);
-        }
-        tokenStore.storeAccessToken(accessToken, ttl);
-        tokenStore.storeUserToAccessToken(userDetails.getUsername(), accessToken.getToken(), ttl);
-        if (accessToken.getRefreshToken() != null) {
-            tokenStore.storeRefreshToken(accessToken.getRefreshToken(), Duration.ofSeconds(accessToken.getRefreshToken().getExpiresIn()));
+            this.tokenStore.storeRefreshToken(refreshToken, Duration.ofSeconds(refreshToken.getExpiresIn()));
+            this.tokenStore.registerUserToken(this.resolveUserId(userDetails), refreshToken.getToken(),
+                    now + refreshToken.getExpiresIn() * 1000);
         }
         return accessToken;
     }
 
     /**
-     * 生成refreshToken
+     * 生成刷新令牌
      *
-     * @param accessToken
-     * @param userDetails
-     * @return
+     * @param jti         访问令牌的唯一标识，刷新时据此把旧令牌拉黑
+     * @param userDetails 登录用户
+     * @return 刷新令牌
      */
-    private RefreshToken createRefreshToken(String accessToken, UserDetails userDetails) {
+    private RefreshToken createRefreshToken(String jti, UserDetails userDetails) {
         RefreshToken refreshToken = new RefreshToken();
-        String token = this.generateToken();
-        refreshToken.setToken(token);
-        refreshToken.setAccessToken(accessToken);
+        refreshToken.setToken(IdUtil.fastUUID());
+        refreshToken.setJti(jti);
         refreshToken.setIssuedAt(System.currentTimeMillis());
         refreshToken.setExpiresIn(securityProperties.getRefreshTokenTtl().toSeconds());
         refreshToken.setUsername(userDetails.getUsername());
@@ -69,144 +80,138 @@ public class TokenService {
     }
 
     /**
-     * 根据accessToken获取登录用户
+     * 解析访问令牌得到登录用户：验签、查黑名单、用内存的角色权限映射还原授权
      *
-     * @param accessToken
-     * @return
+     * @param accessToken 访问令牌字符串
+     * @return 登录用户，令牌无效、已过期或已被拉黑时返回null
      */
-    public UserDetails loadUserDetails(String accessToken) {
-        AccessToken access = this.loadAccessToken(accessToken);
-        if (access == null) {
+    public LoginUser loadLoginUser(String accessToken) {
+        JwtPayload payload = this.jwtTokenProvider.parse(accessToken);
+        if (payload == null || payload.getJti() == null) {
             return null;
         }
-        return access.getUserDetails();
+        if (this.jtiBlacklist.isBlacklisted(payload.getJti())) {
+            log.debug("访问令牌已被拉黑，jti={}", payload.getJti());
+            return null;
+        }
+        LoginUser loginUser = new LoginUser();
+        loginUser.setId(payload.getUserId());
+        loginUser.setUsername(payload.getUsername());
+        loginUser.setAuthorities(this.rolePermissionProvider.listAuthorities(payload.getRoles()));
+        return loginUser;
     }
 
     /**
-     * 获取访问令牌信息
+     * 加载刷新令牌，已被拉黑的一并返回null
      *
-     * @param accessToken
-     * @return
+     * @param refreshToken 刷新令牌字符串
+     * @return 刷新令牌，不存在或已作废时返回null
      */
-    public AccessToken loadAccessToken(String accessToken) {
-        // if (accessTokenCache.containsKey(accessToken)) {
-        //     return accessTokenCache.get(accessToken, false);
-        // }
-        AccessToken token = tokenStore.loadAccessToken(accessToken);
-        // accessTokenCache.put(accessToken, token, 10000L);
-        return token;
+    public RefreshToken loadRefreshToken(String refreshToken) {
+        if (this.jtiBlacklist.isBlacklisted(refreshToken)) {
+            return null;
+        }
+        return this.tokenStore.loadRefreshToken(refreshToken);
     }
 
     /**
-     * 生成token字符串
+     * 作废旧令牌：刷新令牌换新时调用，旧访问令牌与旧刷新令牌一起失效
      *
-     * @return
+     * @param refreshToken 刷新令牌
      */
-    public String generateToken() {
-        return IdUtil.fastUUID();
+    public void removeToken(RefreshToken refreshToken) {
+        this.tokenStore.removeRefreshToken(refreshToken.getToken());
+        this.jtiBlacklist.blacklist(refreshToken.getToken(), refreshToken.getIssuedAt() + refreshToken.getExpiresIn() * 1000);
+        if (refreshToken.getJti() != null) {
+            // 旧访问令牌按令牌有效期拉黑即可，过期后自然没人认，不必永久记着
+            this.jtiBlacklist.blacklist(refreshToken.getJti(),
+                    System.currentTimeMillis() + securityProperties.getAccessTokenTtl().toMillis());
+        }
     }
 
     /**
-     * 删除token
+     * 登出：撤销当前访问令牌及其刷新令牌
      *
-     * @param accessToken
-     * @return
+     * @param accessToken 访问令牌字符串
+     * @return 是否撤销成功，令牌本身无效时返回false
      */
     public boolean removeToken(String accessToken) {
-        AccessToken access = tokenStore.loadAccessToken(accessToken);
-        if (access == null) {
+        JwtPayload payload = this.jwtTokenProvider.parse(accessToken);
+        if (payload == null || payload.getJti() == null) {
             return false;
         }
-        UserDetails userDetails = access.getUserDetails();
-        tokenStore.removeAccessToken(accessToken);
-        tokenStore.removeUserToAccessToken(userDetails.getUsername(), accessToken);
-        RefreshToken refresh = access.getRefreshToken();
-        if (refresh != null) {
-            tokenStore.removeRefreshToken(refresh.getToken());
-        }
+        this.jtiBlacklist.blacklist(payload.getJti(), payload.getExpiresAt() * 1000);
+        this.tokenStore.removeUserToken(payload.getUserId(), payload.getJti());
+        // 刷新令牌没有按用户建索引，登出时由调用方一并提供；此处只保证访问令牌立刻失效
         return true;
     }
 
     /**
-     * 加载刷新令牌
+     * 登出并一并作废刷新令牌
      *
-     * @param refreshToken
-     * @return
+     * @param accessToken  访问令牌字符串
+     * @param refreshToken 刷新令牌字符串，可为空
+     * @return 是否撤销成功
      */
-    public RefreshToken loadRefreshToken(String refreshToken) {
-        return tokenStore.loadRefreshToken(refreshToken);
-    }
-
-    /**
-     * 重置令牌过期时间
-     *
-     * @param accessToken
-     */
-    public boolean resetTokenExpire(String accessToken) {
-        AccessToken access = tokenStore.loadAccessToken(accessToken);
-        if (access == null) {
-            return false;
+    public boolean removeToken(String accessToken, String refreshToken) {
+        boolean removed = this.removeToken(accessToken);
+        if (refreshToken != null && !refreshToken.isBlank()) {
+            this.tokenStore.removeRefreshToken(refreshToken);
+            this.jtiBlacklist.blacklist(refreshToken, System.currentTimeMillis() + securityProperties.getRefreshTokenTtl().toMillis());
+            JwtPayload payload = this.jwtTokenProvider.parse(accessToken);
+            if (payload != null && payload.getUserId() != null) {
+                this.tokenStore.removeUserToken(payload.getUserId(), refreshToken);
+            }
         }
-        return this.resetTokenExpire(access);
+        return removed;
     }
 
     /**
-     * 重置令牌过期时间
+     * 把某个用户已签发的令牌全部作废：改密码、禁用账号、管理员踢人
      *
-     * @param accessToken
-     * @return
+     * @param userId 用户id
+     * @return 作废的凭证数量
      */
-    public boolean resetTokenExpire(AccessToken accessToken) {
-        return this.resetTokenExpire(accessToken.getToken(), accessToken.getUserDetails());
-    }
-
-    /**
-     * 重置令牌过期时间
-     *
-     * @param accessToken
-     * @param userDetails
-     * @return
-     */
-    public boolean resetTokenExpire(String accessToken, UserDetails userDetails) {
-        Duration ttl = securityProperties.getAccessTokenTtl();
-        boolean ret = tokenStore.updateAccessTokenExpire(accessToken, ttl);
-        tokenStore.updateUserToAccessTokenExpire(userDetails.getUsername(), accessToken, ttl);
-        return ret;
-    }
-
-    /**
-     * 如果有必要则重置令牌过期时间
-     *
-     * @param accessToken
-     * @param userDetails
-     */
-    public void resetTokenExpireIfNecessary(String accessToken, UserDetails userDetails) {
-        if (securityProperties.isAutoRenew()) {
-            this.resetTokenExpire(accessToken, userDetails);
+    public int removeUserTokens(Long userId) {
+        Map<String, Long> tokens = this.tokenStore.listUserTokens(userId);
+        if (tokens.isEmpty()) {
+            return 0;
         }
+        this.jtiBlacklist.blacklist(tokens);
+        this.tokenStore.removeUserTokens(userId);
+        for (String token : tokens.keySet()) {
+            // 刷新令牌存在redis里，索引清空后仍需逐个删除，否则还能用来换新令牌
+            this.tokenStore.removeRefreshToken(token);
+        }
+        log.info("已作废用户的全部令牌，userId={}，数量={}", userId, tokens.size());
+        return tokens.size();
     }
 
     /**
-     * 如果有必要则重置令牌过期时间
+     * 取用户id，非{@link LoginUser}时返回null
      *
-     * @param accessToken
+     * @param userDetails 登录用户
+     * @return 用户id
      */
-    public void resetTokenExpireIfNecessary(String accessToken) {
-        if (securityProperties.isAutoRenew()) {
-            this.resetTokenExpire(accessToken);
-        }
+    private Long resolveUserId(UserDetails userDetails) {
+        return userDetails instanceof LoginUser loginUser ? loginUser.getId() : null;
     }
 
     /**
-     * 如果有必要则重置令牌过期时间
+     * 取角色编码列表，只取角色类型的授权
      *
-     * @param accessToken
+     * @param userDetails 登录用户
+     * @return 角色编码列表
      */
-    public void resetTokenExpireIfNecessary(AccessToken accessToken) {
-        if (securityProperties.isAutoRenew()) {
-            this.resetTokenExpire(accessToken);
+    private List<String> resolveRoleCodes(UserDetails userDetails) {
+        if (userDetails == null || userDetails.getAuthorities() == null) {
+            return List.of();
         }
+        return userDetails.getAuthorities().stream()
+                .filter(a -> a instanceof RolePermissionGrantedAuthority rpa
+                        && rpa.getType() == RolePermissionGrantedAuthority.AuthorityType.ROLE)
+                .map(a -> ((RolePermissionGrantedAuthority) a).getAuthority())
+                .toList();
     }
-
 
 }

@@ -24,13 +24,13 @@ public class SecurityProperties {
      */
     private Duration refreshTokenTtl = Duration.ofHours(24);
     /**
-     * 是否自动刷新访问令牌过期时间
-     */
-    private boolean autoRenew = false;
-    /**
      * 是否启动刷新token
      */
     private boolean enableRefreshToken = true;
+    /**
+     * jwt配置
+     */
+    private JwtProperties jwt = new JwtProperties();
     /**
      * 放行的url
      */
@@ -39,6 +39,27 @@ public class SecurityProperties {
      * actuator端点认证配置
      */
     private ActuatorProperties actuator;
+
+    /**
+     * jwt配置
+     */
+    @Data
+    public static class JwtProperties {
+
+        /**
+         * 签名密钥，HS256要求至少32字节
+         * <br>未配置时启动随机生成一个：单节点能跑，多节点会因密钥不同互相验签失败，必须显式配置
+         */
+        private String secret;
+        /**
+         * 签发者
+         */
+        private String issuer = "seed";
+        /**
+         * 允许的时钟偏移，节点间时钟不一致时靠它兜底
+         */
+        private Duration leeway = Duration.ofSeconds(30);
+    }
 
     /**
      * actuator端点认证配置

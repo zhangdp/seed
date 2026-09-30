@@ -18,7 +18,10 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.http.HttpMethod;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
@@ -211,24 +214,54 @@ public class SecurityConfigurer {
      * token持久化
      *
      * @param redisTemplate
+     * @param stringRedisTemplate
      * @return
      */
     @Bean
-    public TokenStore tokenStore(RedisTemplate<String, Object> redisTemplate) {
-        RedisTokenStore store = new RedisTokenStore(redisTemplate);
+    public TokenStore tokenStore(RedisTemplate<String, Object> redisTemplate, StringRedisTemplate stringRedisTemplate) {
+        RedisTokenStore store = new RedisTokenStore(redisTemplate, stringRedisTemplate);
         log.info("Security token访问使用redis：{}", store);
         return store;
+    }
+
+    /**
+     * jwt签发与解析
+     *
+     * @return
+     */
+    @Bean
+    public JwtTokenProvider jwtTokenProvider() {
+        return new JwtTokenProvider(this.securityProperties);
+    }
+
+    /**
+     * jti黑名单：内存判定 + redis持久化 + 跨节点版本同步
+     *
+     * @param stringRedisTemplate
+     * @param listenerContainer
+     * @param taskScheduler
+     * @return
+     */
+    @Bean
+    public JtiBlacklist jtiBlacklist(StringRedisTemplate stringRedisTemplate,
+                                     RedisMessageListenerContainer listenerContainer,
+                                     TaskScheduler taskScheduler) {
+        return new JtiBlacklist(stringRedisTemplate, listenerContainer, taskScheduler);
     }
 
     /**
      * token服务
      *
      * @param tokenStore
+     * @param jwtTokenProvider
+     * @param jtiBlacklist
+     * @param rolePermissionProvider
      * @return
      */
     @Bean
-    public TokenService tokenService(TokenStore tokenStore) {
-        return new TokenService(tokenStore, this.securityProperties);
+    public TokenService tokenService(TokenStore tokenStore, JwtTokenProvider jwtTokenProvider, JtiBlacklist jtiBlacklist,
+                                     RolePermissionProvider rolePermissionProvider) {
+        return new TokenService(tokenStore, this.securityProperties, jwtTokenProvider, jtiBlacklist, rolePermissionProvider);
     }
 
     /**
@@ -240,8 +273,9 @@ public class SecurityConfigurer {
      * @return
      */
     @Bean
-    public UserDetailsService daoUserDetailsService(UserService userService, RoleService roleService, PermissionService permissionService) {
-        return new DaoUserDetailsService(userService, roleService, permissionService);
+    public UserDetailsService daoUserDetailsService(UserService userService, RoleService roleService,
+                                                    RolePermissionProvider rolePermissionProvider) {
+        return new DaoUserDetailsService(userService, roleService, rolePermissionProvider);
     }
 
     /**

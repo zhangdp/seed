@@ -2,8 +2,10 @@ package io.github.seed.service.sys.impl;
 
 import cn.hutool.v7.core.lang.Assert;
 import com.mybatisflex.core.query.QueryWrapper;
+import io.github.seed.common.annotation.PublishEvent;
 import io.github.seed.common.constant.CacheConst;
 import io.github.seed.common.constant.Const;
+import io.github.seed.common.constant.EventConst;
 import io.github.seed.common.constant.TableNameConst;
 import io.github.seed.common.enums.ErrorCode;
 import io.github.seed.common.enums.PermissionType;
@@ -53,6 +55,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @PublishEvent(value = EventConst.ROLE_PERMISSION_CHANGE, condition = "#result == true")
     public boolean add(Permission permission) {
         if (permission.getParentId() != Const.ROOT_ID) {
             Assert.isTrue(this.isExists(permission.getParentId()), () -> new BizException(ErrorCode.RESOURCE_PARENT_NOT_EXISTS));
@@ -62,6 +65,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @PublishEvent(value = EventConst.ROLE_PERMISSION_CHANGE, condition = "#result == true")
     public boolean update(Permission permission) {
         if (permission.getParentId() != Const.ROOT_ID) {
             Assert.isTrue(this.isExists(permission.getParentId()), () -> new BizException(ErrorCode.RESOURCE_PARENT_NOT_EXISTS));
@@ -71,6 +75,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @PublishEvent(value = EventConst.ROLE_PERMISSION_CHANGE, condition = "#result == true")
     public boolean delete(Long id) {
         return this.permissionMapper.deleteById(id) > 0;
     }

@@ -5,11 +5,8 @@ import cn.hutool.v7.core.lang.Validator;
 import io.github.seed.common.constant.Const;
 import io.github.seed.module.security.data.LoginUser;
 import io.github.seed.module.security.data.RolePermissionGrantedAuthority;
-import io.github.seed.module.security.data.SecurityConst;
-import io.github.seed.entity.sys.Permission;
 import io.github.seed.entity.sys.Role;
 import io.github.seed.entity.sys.User;
-import io.github.seed.service.sys.PermissionService;
 import io.github.seed.service.sys.RoleService;
 import io.github.seed.service.sys.UserService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +16,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 从数据库查询用户信息的spring security用户服务
@@ -31,7 +29,7 @@ public class DaoUserDetailsService implements UserDetailsService {
 
     private final UserService userService;
     private final RoleService roleService;
-    private final PermissionService permissionService;
+    private final RolePermissionProvider rolePermissionProvider;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -51,59 +49,32 @@ public class DaoUserDetailsService implements UserDetailsService {
 
     /**
      * 转为UserDetails
+     * <br>只装鉴权需要的字段：姓名、头像等档案信息不进令牌，需要时走{@code /auth/user/info}
+     * <br>权限来自{@code RolePermissionProvider}的内存缓存，登录也不必查权限表
      *
-     * @param user
-     * @return
+     * @param user 用户
+     * @return 登录用户
      */
     public UserDetails toUserDetails(User user) {
         LoginUser userDetails = new LoginUser();
         userDetails.setId(user.getId());
         userDetails.setUsername(user.getUsername());
         userDetails.setPassword(user.getPassword());
-        userDetails.setMobile(user.getMobile());
-        userDetails.setName(user.getName());
-        userDetails.setAvatar(userDetails.getAvatar());
-        userDetails.setEmail(user.getEmail());
-        userDetails.setGender(user.getGender());
-        userDetails.setDeptId(userDetails.getDeptId());
 
         userDetails.setEnabled(user.getStatus() == Const.GOOD);
         userDetails.setAccountNonExpired(true);
         userDetails.setAccountNonLocked(true);
         userDetails.setCredentialsNonExpired(true);
-        List<RolePermissionGrantedAuthority> authorities = new ArrayList<>();
-        userDetails.setAuthorities(authorities);
 
-        // 获取角色
         List<Role> roleList = roleService.listUserRoles(userDetails.getId());
-        if (CollUtil.isNotEmpty(roleList)) {
-            List<Long> roleIds = new ArrayList<>(roleList.size());
-            for (Role role : roleList) {
-                roleIds.add(role.getId());
-                String roleCode = role.getCode();
-                if (roleCode != null && !(roleCode = roleCode.trim()).isEmpty()) {
-                    if (!roleCode.startsWith(SecurityConst.ROLE_PREFIX)) {
-                        roleCode = SecurityConst.ROLE_PREFIX + roleCode;
-                    }
-                    roleCode = roleCode.toUpperCase();
-                    authorities.add(new RolePermissionGrantedAuthority(roleCode,
-                            RolePermissionGrantedAuthority.AuthorityType.ROLE, role.getId()));
-                }
-
-                // 获取权限
-                List<Permission> permissions = permissionService.listRoleResources(roleIds);
-                if (CollUtil.isNotEmpty(permissions)) {
-                    for (Permission permission : permissions) {
-                        String permissionCode = permission.getCode();
-                        if (permissionCode != null && !(permissionCode = permissionCode.trim()).isEmpty()) {
-                            permissionCode = permissionCode.toUpperCase();
-                            authorities.add(new RolePermissionGrantedAuthority(permissionCode,
-                                    RolePermissionGrantedAuthority.AuthorityType.PERMISSION, permission.getId()));
-                        }
-                    }
-                }
-            }
+        List<RolePermissionGrantedAuthority> authorities;
+        if (CollUtil.isEmpty(roleList)) {
+            authorities = new ArrayList<>();
+        } else {
+            List<String> roleCodes = roleList.stream().map(Role::getCode).filter(Objects::nonNull).toList();
+            authorities = rolePermissionProvider.listAuthorities(roleCodes);
         }
+        userDetails.setAuthorities(authorities);
         return userDetails;
     }
 }

@@ -42,5 +42,32 @@ public class RolePermissionGrantedAuthority implements GrantedAuthority {
         ROLE, PERMISSION
     }
 
+    /**
+     * 按角色编码生成角色授权标识，统一前缀与大小写，缓存的key也用它
+     *
+     * @param roleCode 角色编码，为空时返回null
+     * @return 授权标识，形如ROLE_ADMIN
+     */
+    public static String roleAuthority(String roleCode) {
+        if (roleCode == null || (roleCode = roleCode.trim()).isEmpty()) {
+            return null;
+        }
+        String code = roleCode.toUpperCase();
+        return code.startsWith(SecurityConst.ROLE_PREFIX) ? code : SecurityConst.ROLE_PREFIX + code;
+    }
+
+    /**
+     * 按权限编码生成权限授权标识，统一大写
+     *
+     * @param permissionCode 权限编码，为空时返回null
+     * @return 授权标识，形如SYS:USER:READ
+     */
+    public static String permissionAuthority(String permissionCode) {
+        if (permissionCode == null || (permissionCode = permissionCode.trim()).isEmpty()) {
+            return null;
+        }
+        return permissionCode.toUpperCase();
+    }
+
 }
 

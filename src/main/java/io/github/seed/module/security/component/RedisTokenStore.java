@@ -1,16 +1,21 @@
 package io.github.seed.module.security.component;
 
-import io.github.seed.module.security.data.SecurityConst;
-import io.github.seed.module.security.data.AccessToken;
 import io.github.seed.module.security.data.RefreshToken;
+import io.github.seed.module.security.data.SecurityConst;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
- * 2024/6/28 redis方式保存token信息
+ * redis方式保存令牌
+ * <br>刷新令牌存json对象，用户-凭证索引只存字符串与时间戳，用{@code StringRedisTemplate}免去序列化歧义
  *
  * @author zhangdp
  * @since 1.0.0
@@ -20,39 +25,16 @@ import java.time.Duration;
 public class RedisTokenStore implements TokenStore {
 
     private final RedisTemplate<String, Object> redisTemplate;
-
-    @Override
-    public void storeAccessToken(AccessToken accessToken, Duration expire) {
-        String token = accessToken.getToken();
-        String key = this.generateAccessTokenKey(token);
-        redisTemplate.opsForValue().set(key, accessToken, expire);
-    }
-
-    @Override
-    public AccessToken loadAccessToken(String accessToken) {
-        return (AccessToken) redisTemplate.opsForValue().get(this.generateAccessTokenKey(accessToken));
-    }
-
-    @Override
-    public boolean removeAccessToken(String accessToken) {
-        return Boolean.TRUE.equals(redisTemplate.delete(this.generateAccessTokenKey(accessToken)));
-    }
-
-    @Override
-    public boolean updateAccessTokenExpire(String accessToken, Duration expire) {
-        return Boolean.TRUE.equals(redisTemplate.expire(this.generateAccessTokenKey(accessToken), expire));
-    }
+    private final StringRedisTemplate stringRedisTemplate;
 
     @Override
     public void storeRefreshToken(RefreshToken refreshToken, Duration expire) {
-        String key = generateRefreshTokenKey(refreshToken.getToken());
-        redisTemplate.opsForValue().set(key, refreshToken, expire);
+        redisTemplate.opsForValue().set(this.generateRefreshTokenKey(refreshToken.getToken()), refreshToken, expire);
     }
 
     @Override
     public RefreshToken loadRefreshToken(String refreshToken) {
-        String key = generateRefreshTokenKey(refreshToken);
-        return (RefreshToken) redisTemplate.opsForValue().get(key);
+        return (RefreshToken) redisTemplate.opsForValue().get(this.generateRefreshTokenKey(refreshToken));
     }
 
     @Override
@@ -61,71 +43,57 @@ public class RedisTokenStore implements TokenStore {
     }
 
     @Override
-    public boolean updateRefreshTokenExpire(String refreshToken, Duration expire) {
-        return Boolean.TRUE.equals(redisTemplate.expire(this.generateRefreshTokenKey(refreshToken), expire));
+    public void registerUserToken(Long userId, String tokenId, long expireAt) {
+        stringRedisTemplate.opsForZSet().add(this.generateUserTokenKey(userId), tokenId, (double) expireAt);
     }
 
     @Override
-    public void storeUserToAccessToken(String username, String accessToken, Duration expire) {
-        String key = this.generateUserToAccessKey(username);
-        redisTemplate.opsForHash().put(key, accessToken, System.currentTimeMillis());
-        redisTemplate.opsForHash().expiration(key, accessToken).expire(expire);
-        // redisTemplate.opsForZSet().add(key, accessToken, System.currentTimeMillis());
-        // redisTemplate.expire(key, expire);
+    public void removeUserToken(Long userId, String tokenId) {
+        stringRedisTemplate.opsForZSet().remove(this.generateUserTokenKey(userId), tokenId);
     }
 
     @Override
-    public int countUserToAccessToken(String username) {
-        // Long count = redisTemplate.opsForZSet().size(this.generateUserToAccessKey(username));
-        // return count == null ? 0 : count.intValue();
-        String key = this.generateUserToAccessKey(username);
-        Long v = redisTemplate.opsForHash().size(key);
-        return v == null ? 0 : v.intValue();
+    public Map<String, Long> listUserTokens(Long userId) {
+        String key = this.generateUserTokenKey(userId);
+        long now = System.currentTimeMillis();
+        // 已过期的凭证令牌本身也失效了，不必拉黑，顺手清掉避免索引无限增长
+        stringRedisTemplate.opsForZSet().removeRangeByScore(key, 0, now - 1);
+        Set<ZSetOperations.TypedTuple<String>> tuples =
+                stringRedisTemplate.opsForZSet().rangeByScoreWithScores(key, now, Double.MAX_VALUE);
+        Map<String, Long> result = new HashMap<>();
+        if (tuples != null) {
+            for (ZSetOperations.TypedTuple<String> tuple : tuples) {
+                if (tuple.getValue() != null && tuple.getScore() != null) {
+                    result.put(tuple.getValue(), (long) (double) tuple.getScore());
+                }
+            }
+        }
+        return result;
     }
 
     @Override
-    public void updateUserToAccessTokenExpire(String username, String accessToken, Duration expire) {
-        String key = this.generateUserToAccessKey(username);
-        // redisTemplate.opsForZSet().add(key, accessToken, System.currentTimeMillis());
-        // redisTemplate.expire(key, expire);
-        redisTemplate.opsForHash().expiration(key, accessToken).expire(expire);
-    }
-
-    @Override
-    public void removeUserToAccessToken(String username, String accessToken) {
-        String key = this.generateUserToAccessKey(username);
-        // redisTemplate.opsForZSet().remove(key, accessToken);
-        redisTemplate.opsForHash().delete(key, accessToken);
-    }
-
-    /**
-     * 生成accessToken redis key
-     *
-     * @param accessToken
-     * @return
-     */
-    private String generateAccessTokenKey(String accessToken) {
-        return SecurityConst.REDIS_ACCESS_TOKEN_PREFIX + SecurityConst.REDIS_SPLIT + accessToken;
-    }
-
-    /**
-     * 生成用户的access_token redis key
-     *
-     * @param username
-     * @return
-     */
-    private String generateUserToAccessKey(String username) {
-        return SecurityConst.REDIS_USER_TO_ACCESS_PREFIX + SecurityConst.REDIS_SPLIT + username;
+    public void removeUserTokens(Long userId) {
+        stringRedisTemplate.delete(this.generateUserTokenKey(userId));
     }
 
     /**
      * 生成刷新令牌 redis key
      *
-     * @param refreshToken
-     * @return
+     * @param refreshToken 刷新令牌字符串
+     * @return redis key
      */
     private String generateRefreshTokenKey(String refreshToken) {
         return SecurityConst.REDIS_REFRESH_TOKEN_PREFIX + SecurityConst.REDIS_SPLIT + refreshToken;
+    }
+
+    /**
+     * 生成用户-凭证索引 redis key
+     *
+     * @param userId 用户id
+     * @return redis key
+     */
+    private String generateUserTokenKey(Long userId) {
+        return SecurityConst.REDIS_USER_TOKEN_PREFIX + SecurityConst.REDIS_SPLIT + userId;
     }
 
 }

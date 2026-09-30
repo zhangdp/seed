@@ -1,12 +1,14 @@
 package io.github.seed.module.security.component;
 
-import io.github.seed.module.security.data.AccessToken;
 import io.github.seed.module.security.data.RefreshToken;
 
 import java.time.Duration;
+import java.util.Map;
 
 /**
- * 2023/9/1 token存储接口
+ * 令牌存储
+ * <br>只存无法自包含的东西：刷新令牌需要可吊销所以留在redis，访问令牌改jwt后已不再落库
+ * <br>另有用户-凭证索引，用于按用户批量作废（改密码、禁用账号、踢人）
  *
  * @author zhangdp
  * @since 1.0.0
@@ -14,103 +16,59 @@ import java.time.Duration;
 public interface TokenStore {
 
     /**
-     * 保存访问令牌
-     *
-     * @param accessToken
-     * @param expire
-     */
-    void storeAccessToken(AccessToken accessToken, Duration expire);
-
-    /**
-     * 获取访问令牌
-     *
-     * @param accessToken
-     * @return
-     */
-    AccessToken loadAccessToken(String accessToken);
-
-    /**
-     * 删除访问令牌
-     *
-     * @param accessToken
-     * @return
-     */
-    boolean removeAccessToken(String accessToken);
-
-    /**
-     * 更新访问令牌过期时间
-     *
-     * @param accessToken
-     * @param expire
-     * @return
-     */
-    boolean updateAccessTokenExpire(String accessToken, Duration expire);
-
-    /**
      * 保存刷新令牌
      *
-     * @param refreshToken
-     * @param expire
+     * @param refreshToken 刷新令牌
+     * @param expire       有效期
      */
     void storeRefreshToken(RefreshToken refreshToken, Duration expire);
 
     /**
      * 获取刷新令牌
      *
-     * @param refreshToken
-     * @return
+     * @param refreshToken 刷新令牌字符串
+     * @return 刷新令牌，不存在时返回null
      */
     RefreshToken loadRefreshToken(String refreshToken);
 
     /**
      * 删除刷新令牌
      *
-     * @param refreshToken
-     * @return
+     * @param refreshToken 刷新令牌字符串
+     * @return 是否删除成功
      */
     boolean removeRefreshToken(String refreshToken);
 
     /**
-     * 更新刷新令牌过期时间
+     * 登记用户已签发的凭证，供按用户批量作废
      *
-     * @param refreshToken
-     * @param expire
-     * @return
+     * @param userId   用户id
+     * @param tokenId  凭证标识：访问令牌为jti，刷新令牌为其自身
+     * @param expireAt 凭证到期时间戳（毫秒）
      */
-    boolean updateRefreshTokenExpire(String refreshToken, Duration expire);
+    void registerUserToken(Long userId, String tokenId, long expireAt);
 
     /**
-     * 保存用户的访问令牌
+     * 移除用户的某个凭证，登出时调用
      *
-     * @param username
-     * @param accessToken
-     * @param expire
+     * @param userId  用户id
+     * @param tokenId 凭证标识
      */
-    void storeUserToAccessToken(String username, String accessToken, Duration expire);
+    void removeUserToken(Long userId, String tokenId);
 
     /**
-     * 修改用户的访问令牌过期时间
+     * 取用户尚未过期的全部凭证，顺带清掉索引里的过期条目
      *
-     * @param username
-     * @param accessToken
-     * @param expire
+     * @param userId 用户id
+     * @return 凭证标识与到期时间戳（毫秒），无有效凭证时为空
      */
-    void updateUserToAccessTokenExpire(String username, String accessToken, Duration expire);
+    Map<String, Long> listUserTokens(Long userId);
 
     /**
-     * 获取用户访问令牌数
+     * 清空用户的凭证索引
      *
-     * @param username
-     * @return
+     * @param userId 用户id
      */
-    int countUserToAccessToken(String username);
-
-    /**
-     * 删除用户某个访问令牌
-     *
-     * @param username
-     * @param accessToken
-     */
-    void removeUserToAccessToken(String username, String accessToken);
+    void removeUserTokens(Long userId);
 
 }

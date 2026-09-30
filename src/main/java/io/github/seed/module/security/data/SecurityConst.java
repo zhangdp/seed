@@ -64,6 +64,31 @@ public interface SecurityConst {
      * redis 访问令牌-刷新令牌key前缀
      */
     String REDIS_ACCESS_TO_REFRESH_PREFIX = REDIS_PREFIX + REDIS_SPLIT + "access_to_refresh";
+    /**
+     * redis jti黑名单key，zset：member=jti，score=拉黑到期时间戳（毫秒）
+     */
+    String REDIS_JTI_BLACKLIST = REDIS_PREFIX + REDIS_SPLIT + "jti_blacklist";
+    /**
+     * redis jti黑名单版本号key，每次变更自增，节点据此判断内存是否过期
+     */
+    String REDIS_JTI_BLACKLIST_VERSION = REDIS_JTI_BLACKLIST + REDIS_SPLIT + "version";
+    /**
+     * redis jti黑名单变更频道，只广播版本号不广播明细
+     */
+    String REDIS_JTI_BLACKLIST_CHANNEL = REDIS_JTI_BLACKLIST + REDIS_SPLIT + "changed";
+    /**
+     * redis 用户-凭证索引key前缀，zset：member=凭证标识（访问令牌的jti或刷新令牌本身），score=到期时间戳（毫秒）
+     * <br>用于改密码、禁用账号、管理员踢人时把该用户已签发的令牌一次性拉黑
+     */
+    String REDIS_USER_TOKEN_PREFIX = REDIS_PREFIX + REDIS_SPLIT + "user_token";
+    /**
+     * redis 角色权限版本号key，角色权限变更后自增
+     */
+    String REDIS_ROLE_PERMISSION_VERSION = REDIS_PREFIX + REDIS_SPLIT + "role_permission" + REDIS_SPLIT + "version";
+    /**
+     * redis 角色权限变更频道，只广播版本号
+     */
+    String REDIS_ROLE_PERMISSION_CHANNEL = REDIS_PREFIX + REDIS_SPLIT + "role_permission" + REDIS_SPLIT + "changed";
 
     /**
      * request attr 访问令牌
@@ -94,6 +119,10 @@ public interface SecurityConst {
      * 认证头
      */
     String AUTHORIZATION_HEADER = "Authorization";
+    /**
+     * 刷新令牌头，登出时随访问令牌一起提交，用于同时作废刷新令牌
+     */
+    String REFRESH_TOKEN_HEADER = "Refresh-Token";
 
     /**
      * token参数名称
