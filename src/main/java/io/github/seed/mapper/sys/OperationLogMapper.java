@@ -3,7 +3,6 @@ package io.github.seed.mapper.sys;
 import com.mybatisflex.core.BaseMapper;
 import com.mybatisflex.core.paginate.Page;
 import com.mybatisflex.core.query.QueryWrapper;
-import io.github.seed.entity.sys.LoginLog;
 import io.github.seed.entity.sys.OperationLog;
 import io.github.seed.model.PageData;
 import io.github.seed.model.query.CursorPageQuery;
@@ -37,6 +36,12 @@ public interface OperationLogMapper extends BaseMapper<OperationLog> {
                     .eq(OperationLog::getType, params.getType())
                     .lt(OperationLog::getOperatedAt, params.getEndTime())
                     .gt(OperationLog::getOperatedAt, params.getStartTime());
+            if (params.getUri() != null && !params.getUri().isBlank()) {
+                wrapper.like(OperationLog::getRequestUri, params.getUri());
+            }
+            if (params.getDescription() != null && !params.getDescription().isBlank()) {
+                wrapper.like(OperationLog::getDescription, params.getDescription());
+            }
         }
         Page<OperationLog> page = this.paginate(pageQuery.getPage(), pageQuery.getSize(), pageQuery.getTotal(), wrapper);
         return new PageData<>(page.getRecords(), page.getTotalRow(), page.getPageNumber(), page.getPageSize());
@@ -57,6 +62,12 @@ public interface OperationLogMapper extends BaseMapper<OperationLog> {
                     .eq(OperationLog::getType, params.getType())
                     .lt(OperationLog::getOperatedAt, params.getEndTime())
                     .gt(OperationLog::getOperatedAt, params.getStartTime());
+            if (params.getUri() != null && !params.getUri().isBlank()) {
+                wrapper.like(OperationLog::getRequestUri, params.getUri());
+            }
+            if (params.getDescription() != null && !params.getDescription().isBlank()) {
+                wrapper.like(OperationLog::getDescription, params.getDescription());
+            }
         }
         long total = -1;
         if (pageQuery.isCountTotal()) {
@@ -66,9 +77,9 @@ public interface OperationLogMapper extends BaseMapper<OperationLog> {
         if (total == -1 || total > 0) {
             if (pageQuery.getCursor() != null) {
                 if (pageQuery.isDesc()) {
-                    wrapper.lt(LoginLog::getId, pageQuery.getCursor());
+                    wrapper.lt(OperationLog::getId, pageQuery.getCursor());
                 } else {
-                    wrapper.gt(LoginLog::getId, pageQuery.getCursor());
+                    wrapper.gt(OperationLog::getId, pageQuery.getCursor());
                 }
             }
             wrapper.orderBy(OperationLog::getId, !pageQuery.isDesc()).limit(pageQuery.getSize());

@@ -47,7 +47,12 @@ public class OperationLogQuery implements Serializable {
     /**
      * 调用的接口url地址
      */
-    @Schema(title = "调用的url地址")
+    @Schema(title = "调用的url地址", description = "对应实体字段requestUri，模糊匹配")
     private String uri;
+    /**
+     * 操作描述
+     */
+    @Schema(title = "操作描述", description = "模糊匹配")
+    private String description;
 
 }
