@@ -37,7 +37,8 @@ public class TokenAuthenticationSuccessHandler implements AuthenticationSuccessH
 
         // 发出登录日志事件，由LoginEventListener入库
         LoginEvent event = new LoginEvent(this);
-        // 登录类型与账号都取提交的原始认证对象：认证后的对象类型不准（续签返回的是短信登录token）
+        // 登录类型与账号优先取提交的原始认证对象：它携带用户提交的原始账号（手机号之类），
+        // 比认证后对象里规范化过的username更贴近审计需要；续签提交的明文refresh token取不到账号，会回退
         Authentication submit = SecurityUtils.getLoginAuthentication(request);
         if (submit == null) {
             submit = authentication;
