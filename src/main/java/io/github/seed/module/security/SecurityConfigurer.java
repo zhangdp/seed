@@ -17,7 +17,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.http.HttpMethod;
@@ -46,6 +45,7 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
+import tools.jackson.databind.json.JsonMapper;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import java.util.Arrays;
@@ -213,13 +213,13 @@ public class SecurityConfigurer {
     /**
      * token持久化
      *
-     * @param redisTemplate
      * @param stringRedisTemplate
+     * @param jsonMapper
      * @return
      */
     @Bean
-    public TokenStore tokenStore(RedisTemplate<String, Object> redisTemplate, StringRedisTemplate stringRedisTemplate) {
-        RedisTokenStore store = new RedisTokenStore(redisTemplate, stringRedisTemplate);
+    public TokenStore tokenStore(StringRedisTemplate stringRedisTemplate, JsonMapper jsonMapper) {
+        RedisTokenStore store = new RedisTokenStore(stringRedisTemplate, jsonMapper);
         log.info("Security token访问使用redis：{}", store);
         return store;
     }

@@ -4,9 +4,9 @@ import io.github.seed.module.security.data.RefreshToken;
 import io.github.seed.module.security.data.SecurityConst;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.time.Duration;
 import java.util.HashMap;
@@ -15,7 +15,8 @@ import java.util.Set;
 
 /**
  * redis方式保存令牌
- * <br>刷新令牌存json对象，用户-凭证索引只存字符串与时间戳，用{@code StringRedisTemplate}免去序列化歧义
+ * <br>redis里一律是纯文本：刷新令牌序列化成json字符串，用户-凭证索引的member是jti，
+ * 与{@link JtiBlacklist}黑名单里的jti格式保持一致，便于直接查看与排查
  *
  * @author zhangdp
  * @since 1.0.0
@@ -24,22 +25,24 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class RedisTokenStore implements TokenStore {
 
-    private final RedisTemplate<String, Object> redisTemplate;
     private final StringRedisTemplate stringRedisTemplate;
+    private final JsonMapper jsonMapper;
 
     @Override
     public void storeRefreshToken(RefreshToken refreshToken, Duration expire) {
-        redisTemplate.opsForValue().set(this.generateRefreshTokenKey(refreshToken.getToken()), refreshToken, expire);
+        stringRedisTemplate.opsForValue().set(this.generateRefreshTokenKey(refreshToken.getToken()),
+                jsonMapper.writeValueAsString(refreshToken), expire);
     }
 
     @Override
     public RefreshToken loadRefreshToken(String refreshToken) {
-        return (RefreshToken) redisTemplate.opsForValue().get(this.generateRefreshTokenKey(refreshToken));
+        String json = stringRedisTemplate.opsForValue().get(this.generateRefreshTokenKey(refreshToken));
+        return json == null ? null : jsonMapper.readValue(json, RefreshToken.class);
     }
 
     @Override
     public boolean removeRefreshToken(String refreshToken) {
-        return Boolean.TRUE.equals(redisTemplate.delete(this.generateRefreshTokenKey(refreshToken)));
+        return Boolean.TRUE.equals(stringRedisTemplate.delete(this.generateRefreshTokenKey(refreshToken)));
     }
 
     @Override
