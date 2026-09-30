@@ -104,6 +104,7 @@ public interface PermissionService {
                     n.setIsKeepAlive(bean.getKeepAlive());
                     n.setIcon(bean.getIcon());
                     n.setPath(bean.getPath());
+                    n.setComponent(bean.getComponent());
                     n.setDescription(bean.getDescription());
                     // 菜单不是叶子节点
                     n.setIsLeaf(PermissionType.MENU.type().equals(bean.getType()));

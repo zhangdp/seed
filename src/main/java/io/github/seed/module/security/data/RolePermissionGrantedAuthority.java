@@ -57,16 +57,18 @@ public class RolePermissionGrantedAuthority implements GrantedAuthority {
     }
 
     /**
-     * 按权限编码生成权限授权标识，统一大写
+     * 按权限编码生成权限授权标识
+     * <br>权限标识保持与库表、{@code @PreAuthorize}注解一致的原始大小写，不做转换，
+     * 否则库里存小写而此处转大写会导致{@code hasAuthority}永远匹配不上
      *
      * @param permissionCode 权限编码，为空时返回null
-     * @return 授权标识，形如SYS:USER:READ
+     * @return 授权标识，形如sys:user:read
      */
     public static String permissionAuthority(String permissionCode) {
         if (permissionCode == null || (permissionCode = permissionCode.trim()).isEmpty()) {
             return null;
         }
-        return permissionCode.toUpperCase();
+        return permissionCode;
     }
 
 }

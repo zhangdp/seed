@@ -43,6 +43,12 @@ public class PermissionTreeNode extends TreeNode<Long, PermissionTreeNode> imple
     private String path;
 
     /**
+     * 前端组件
+     */
+    @Schema(title = "前端组件", description = "前端路由对应的组件路径，如 system/user/index")
+    private String component;
+
+    /**
      * 是否路由缓冲
      */
     @Schema(title = "是否路由缓冲", description = "0：否；1：是")
