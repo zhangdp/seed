@@ -20,4 +20,27 @@ public interface DictDataService {
      */
     List<DictData> listByDictId(Long dictId);
 
+    /**
+     * 新增
+     *
+     * @param entity
+     * @return
+     */
+    boolean add(DictData entity);
+
+    /**
+     * 修改
+     *
+     * @param entity
+     * @return
+     */
+    boolean update(DictData entity);
+
+    /**
+     * 删除
+     *
+     * @param id
+     * @return
+     */
+    boolean delete(Long id);
 }

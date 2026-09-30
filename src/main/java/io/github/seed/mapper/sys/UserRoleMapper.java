@@ -36,4 +36,14 @@ public interface UserRoleMapper extends BaseMapper<UserRole> {
     default boolean existsByUserIdAndRoleId(Long userId, Long roleId) {
         return this.selectCountByQuery(QueryWrapper.create().eq(UserRole::getUserId, userId).eq(UserRole::getRoleId, roleId)) > 0;
     }
+
+    /**
+     * 根据角色id删除关联记录
+     *
+     * @param roleId
+     * @return
+     */
+    default int deleteByRoleId(Long roleId) {
+        return this.deleteByQuery(QueryWrapper.create().eq(UserRole::getRoleId, roleId));
+    }
 }

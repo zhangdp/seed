@@ -25,4 +25,14 @@ public interface DictDataMapper extends BaseMapper<DictData> {
     default List<DictData> selectListByDictIdOrderBySorts(Long dictId) {
         return this.selectListByQuery(QueryWrapper.create().eq(DictData::getDictId, dictId).orderBy(DictData::getSorts).asc());
     }
+
+    /**
+     * 根据字典id删除其下所有字典项
+     *
+     * @param dictId
+     * @return
+     */
+    default int deleteByDictId(Long dictId) {
+        return this.deleteByQuery(QueryWrapper.create().eq(DictData::getDictId, dictId));
+    }
 }

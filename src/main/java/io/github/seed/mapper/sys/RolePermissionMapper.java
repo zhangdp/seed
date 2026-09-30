@@ -37,4 +37,14 @@ public interface RolePermissionMapper extends BaseMapper<RolePermission> {
         return this.selectListByQuery(QueryWrapper.create().in(RolePermission::getRoleId, roleIds));
     }
 
+    /**
+     * 根据角色id删除关联记录
+     *
+     * @param roleId
+     * @return
+     */
+    default int deleteByRoleId(Long roleId) {
+        return this.deleteByQuery(QueryWrapper.create().eq(RolePermission::getRoleId, roleId));
+    }
+
 }
