@@ -49,21 +49,14 @@ public interface SecurityConst {
     String REDIS_SPLIT = "::";
 
     /**
-     * redis 访问令牌key前缀
-     */
-    String REDIS_ACCESS_TOKEN_PREFIX = REDIS_PREFIX + REDIS_SPLIT + "access_token";
-    /**
-     * redis 用户-访问令牌key前缀
-     */
-    String REDIS_USER_TO_ACCESS_PREFIX = REDIS_PREFIX + REDIS_SPLIT + "user_to_access";
-    /**
      * redis 刷新令牌key前缀
      */
     String REDIS_REFRESH_TOKEN_PREFIX = REDIS_PREFIX + REDIS_SPLIT + "refresh_token";
     /**
-     * redis 访问令牌-刷新令牌key前缀
+     * redis jti-刷新令牌key前缀，value=刷新令牌字符串
+     * <br>登出时访问令牌只带得出jti，靠这份映射反查刷新令牌一并作废，前端无需额外传刷新令牌
      */
-    String REDIS_ACCESS_TO_REFRESH_PREFIX = REDIS_PREFIX + REDIS_SPLIT + "access_to_refresh";
+    String REDIS_JTI_TO_REFRESH_PREFIX = REDIS_PREFIX + REDIS_SPLIT + "jti_to_refresh";
     /**
      * redis jti黑名单key，zset：member=jti，score=拉黑到期时间戳（毫秒）
      */
@@ -119,10 +112,6 @@ public interface SecurityConst {
      * 认证头
      */
     String AUTHORIZATION_HEADER = "Authorization";
-    /**
-     * 刷新令牌头，登出时随访问令牌一起提交，用于同时作废刷新令牌
-     */
-    String REFRESH_TOKEN_HEADER = "Refresh-Token";
 
     /**
      * token参数名称

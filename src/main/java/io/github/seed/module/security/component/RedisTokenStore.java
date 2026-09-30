@@ -46,6 +46,19 @@ public class RedisTokenStore implements TokenStore {
     }
 
     @Override
+    public void bindRefreshToken(String jti, String refreshToken, Duration expire) {
+        stringRedisTemplate.opsForValue().set(this.generateJtiToRefreshKey(jti), refreshToken, expire);
+    }
+
+    @Override
+    public String takeBoundRefreshToken(String jti) {
+        String key = this.generateJtiToRefreshKey(jti);
+        String refreshToken = stringRedisTemplate.opsForValue().get(key);
+        stringRedisTemplate.delete(key);
+        return refreshToken;
+    }
+
+    @Override
     public void registerUserToken(Long userId, String tokenId, long expireAt) {
         stringRedisTemplate.opsForZSet().add(this.generateUserTokenKey(userId), tokenId, (double) expireAt);
     }
@@ -97,6 +110,16 @@ public class RedisTokenStore implements TokenStore {
      */
     private String generateUserTokenKey(Long userId) {
         return SecurityConst.REDIS_USER_TOKEN_PREFIX + SecurityConst.REDIS_SPLIT + userId;
+    }
+
+    /**
+     * 生成jti-刷新令牌 redis key
+     *
+     * @param jti 访问令牌的唯一标识
+     * @return redis key
+     */
+    private String generateJtiToRefreshKey(String jti) {
+        return SecurityConst.REDIS_JTI_TO_REFRESH_PREFIX + SecurityConst.REDIS_SPLIT + jti;
     }
 
 }

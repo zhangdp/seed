@@ -78,7 +78,8 @@ public class AuthController {
      */
     @IgnoreAuth
     @DeleteMapping("/logout")
-    @Operation(summary = "注销", description = "无论结果如何，前端都当做注销成功清除本地token")
+    @Operation(summary = "注销", description = "只需携带访问令牌，服务端会一并作废对应的刷新令牌；"
+            + "无论结果如何，前端都当做注销成功清除本地token")
     // @ResponseStatus(HttpStatus.NO_CONTENT)
     public boolean logout(HttpServletRequest request) {
         return securityService.logout(request);

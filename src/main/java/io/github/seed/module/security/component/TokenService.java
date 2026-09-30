@@ -58,6 +58,7 @@ public class TokenService {
             this.tokenStore.storeRefreshToken(refreshToken, Duration.ofSeconds(refreshToken.getExpiresIn()));
             this.tokenStore.registerUserToken(this.resolveUserId(userDetails), refreshToken.getToken(),
                     now + refreshToken.getExpiresIn() * 1000);
+            this.tokenStore.bindRefreshToken(jti, refreshToken.getToken(), Duration.ofSeconds(refreshToken.getExpiresIn()));
         }
         return accessToken;
     }
@@ -126,11 +127,15 @@ public class TokenService {
             // 旧访问令牌按令牌有效期拉黑即可，过期后自然没人认，不必永久记着
             this.jtiBlacklist.blacklist(refreshToken.getJti(),
                     System.currentTimeMillis() + securityProperties.getAccessTokenTtl().toMillis());
+            // 旧访问令牌已作废，它指向旧刷新令牌的映射也一并解绑，不然后续续签会攒下一堆没人用的key
+            this.tokenStore.takeBoundRefreshToken(refreshToken.getJti());
         }
     }
 
     /**
-     * 登出：撤销当前访问令牌及其刷新令牌
+     * 登出：撤销当前访问令牌及其绑定的刷新令牌
+     * <br>访问令牌是自包含的jwt，只带得出jti，刷新令牌靠{@code jti->刷新令牌}映射反查，
+     * 因此调用方不必再提供刷新令牌；这里是全流程唯一一处为登出查redis的地方，请求鉴权不受影响
      *
      * @param accessToken 访问令牌字符串
      * @return 是否撤销成功，令牌本身无效时返回false
@@ -142,28 +147,15 @@ public class TokenService {
         }
         this.jtiBlacklist.blacklist(payload.getJti(), payload.getExpiresAt() * 1000);
         this.tokenStore.removeUserToken(payload.getUserId(), payload.getJti());
-        // 刷新令牌没有按用户建索引，登出时由调用方一并提供；此处只保证访问令牌立刻失效
-        return true;
-    }
-
-    /**
-     * 登出并一并作废刷新令牌
-     *
-     * @param accessToken  访问令牌字符串
-     * @param refreshToken 刷新令牌字符串，可为空
-     * @return 是否撤销成功
-     */
-    public boolean removeToken(String accessToken, String refreshToken) {
-        boolean removed = this.removeToken(accessToken);
-        if (refreshToken != null && !refreshToken.isBlank()) {
+        String refreshToken = this.tokenStore.takeBoundRefreshToken(payload.getJti());
+        if (refreshToken != null) {
             this.tokenStore.removeRefreshToken(refreshToken);
             this.jtiBlacklist.blacklist(refreshToken, System.currentTimeMillis() + securityProperties.getRefreshTokenTtl().toMillis());
-            JwtPayload payload = this.jwtTokenProvider.parse(accessToken);
-            if (payload != null && payload.getUserId() != null) {
+            if (payload.getUserId() != null) {
                 this.tokenStore.removeUserToken(payload.getUserId(), refreshToken);
             }
         }
-        return removed;
+        return true;
     }
 
     /**

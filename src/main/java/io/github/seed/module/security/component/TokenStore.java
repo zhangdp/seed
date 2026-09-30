@@ -40,6 +40,23 @@ public interface TokenStore {
     boolean removeRefreshToken(String refreshToken);
 
     /**
+     * 记录访问令牌的jti与刷新令牌的对应关系，登出时据此反查
+     *
+     * @param jti          访问令牌的唯一标识
+     * @param refreshToken 刷新令牌字符串
+     * @param expire       有效期，与刷新令牌保持一致
+     */
+    void bindRefreshToken(String jti, String refreshToken, Duration expire);
+
+    /**
+     * 取出访问令牌绑定的刷新令牌并解绑，无绑定时返回null
+     *
+     * @param jti 访问令牌的唯一标识
+     * @return 刷新令牌字符串
+     */
+    String takeBoundRefreshToken(String jti);
+
+    /**
      * 登记用户已签发的凭证，供按用户批量作废
      *
      * @param userId   用户id

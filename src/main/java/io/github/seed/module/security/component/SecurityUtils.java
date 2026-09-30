@@ -95,8 +95,11 @@ public class SecurityUtils {
      */
     public static String resolveBearerToken(HttpServletRequest request) {
         String token = request.getHeader(SecurityConst.AUTHORIZATION_HEADER);
-        if (token != null && !(token = token.trim()).isEmpty() && StrUtil.startWithIgnoreCase(token, SecurityConst.AUTH_TYPE_BEARER)) {
-            token = token.substring(SecurityConst.AUTH_TYPE_BEARER.length() + 1).trim();
+        if (token != null && StrUtil.startWithIgnoreCase(token = token.trim(), SecurityConst.AUTH_TYPE_BEARER)) {
+            // 头里只有"Bearer"六个字母时substring会越界，这种头视为没带令牌
+            token = token.length() > SecurityConst.AUTH_TYPE_BEARER.length()
+                    ? token.substring(SecurityConst.AUTH_TYPE_BEARER.length() + 1).trim()
+                    : "";
         }
         // 如果header中取不到token则从参数中取
         if (token == null || token.isEmpty()) {

@@ -139,20 +139,18 @@ public class SecurityService {
         if (token == null || token.isEmpty()) {
             return false;
         }
-        // 刷新令牌一并带上才能彻底作废，否则客户端还能拿它换新令牌
-        String refreshToken = request.getHeader(SecurityConst.REFRESH_TOKEN_HEADER);
-        return this.doLogout(token, refreshToken);
+        return this.doLogout(token);
     }
 
     /**
      * 执行注销
+     * <br>刷新令牌由服务端按访问令牌的jti反查后一并作废，无需调用方提供
      *
-     * @param token        访问令牌
-     * @param refreshToken 刷新令牌，可为空
+     * @param token 访问令牌
      * @return 是否注销成功
      */
-    public boolean doLogout(String token, String refreshToken) {
-        return tokenService.removeToken(token, refreshToken);
+    public boolean doLogout(String token) {
+        return tokenService.removeToken(token);
     }
 
     /**
