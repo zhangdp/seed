@@ -4,6 +4,8 @@ import io.github.seed.module.job.component.JobCronSupport;
 import io.github.seed.module.job.component.JobDispatcher;
 import io.github.seed.module.job.component.JobInvoker;
 import io.github.seed.module.job.store.JobStore;
+import io.github.seed.module.job.task.JobScheduleTask;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -58,5 +60,18 @@ public class JobConfigurer {
     public JobDispatcher jobDispatcher(JobStore jobStore, JobInvoker jobInvoker, JobCronSupport jobCronSupport,
                                        JobProperties jobProperties, Environment environment) {
         return new JobDispatcher(jobStore, jobInvoker, jobCronSupport, jobProperties, environment);
+    }
+
+    /**
+     * 引擎的定时驱动；{@code app.job.enabled}为false时不注册，本节点退出调度
+     *
+     * @param jobDispatcher 调度引擎
+     * @return 定时驱动；{@code app.job.enabled}为false时整个bean不注册
+     */
+    @Bean
+    @ConditionalOnProperty(prefix = JobProperties.CONFIG_PREFIX, name = "enabled",
+            havingValue = "true", matchIfMissing = true)
+    public JobScheduleTask jobScheduleTask(JobDispatcher jobDispatcher) {
+        return new JobScheduleTask(jobDispatcher);
     }
 }
