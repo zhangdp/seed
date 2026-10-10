@@ -39,14 +39,6 @@ public class SmsProperties {
     private Map<String, String> templates = new LinkedHashMap<>();
 
     /**
-     * 是否启用内置定时派发任务，为false时{@code SmsSendTask}的Bean不注册（改用消息队列调度时置false，发送入口不变）
-     */
-    private boolean sendEnabled = true;
-    /**
-     * 派发任务轮询间隔（毫秒），上一轮结束后间隔该时间再发起下一轮
-     */
-    private long sendPollInterval = 5000L;
-    /**
      * 每轮最多派发的条数
      */
     private int sendBatchSize = 100;

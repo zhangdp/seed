@@ -160,6 +160,22 @@ public enum ErrorCode {
      * 不支持的验证码场景
      */
     CAPTCHA_SCENE_INVALID(20512, "不支持的验证码场景"),
+    /**
+     * 定时任务不存在
+     */
+    JOB_NOT_EXISTS(20600, "定时任务不存在"),
+    /**
+     * 定时任务名称在同分组下重复
+     */
+    JOB_NAME_REPEAT(20601, "同一分组下任务名称重复"),
+    /**
+     * 定时任务的cron表达式不合法
+     */
+    JOB_CRON_INVALID(20602, "cron表达式不合法"),
+    /**
+     * 定时任务的执行目标不合法，应为beanName.methodName
+     */
+    JOB_TARGET_INVALID(20603, "执行目标不合法，应为beanName.methodName"),
 
     /// 3xxxx开头，错误来源是系统
     /**

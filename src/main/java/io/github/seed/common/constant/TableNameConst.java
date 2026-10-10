@@ -71,4 +71,21 @@ public interface TableNameConst {
      * 短信日志表
      */
     String SYS_SMS_LOG = PREFIX_SYS + SPLIT + "sms_log";
+
+    /**
+     * 定时任务表
+     */
+    String SYS_JOB = PREFIX_SYS + SPLIT + "job";
+    /**
+     * 定时任务执行日志表
+     */
+    String SYS_JOB_LOG = PREFIX_SYS + SPLIT + "job_log";
+    /**
+     * 定时任务集群节点表
+     */
+    String SYS_JOB_NODE = PREFIX_SYS + SPLIT + "job_node";
+    /**
+     * 定时任务调度锁表
+     */
+    String SYS_JOB_LOCK = PREFIX_SYS + SPLIT + "job_lock";
 }

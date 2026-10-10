@@ -7,12 +7,12 @@ import io.github.seed.module.sms.data.SmsResult;
 import io.github.seed.service.sys.SmsLogService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.List;
 
 /**
- * 短信定时派发任务
+ * 短信派发任务
+ * <br>由任务表里的{@code smsDispatchJob}驱动，触发频率改任务表的cron即可，不需要改代码发版
  *
  * @author zhangdp
  * @since 1.0.0
@@ -26,9 +26,8 @@ public class SmsSendTask {
     private final SmsProperties smsProperties;
 
     /**
-     * 轮询并派发；上一轮派发完后再间隔{@code app.sms.send-poll-interval}发起下一轮
+     * 取一批待发送短信并逐个派发
      */
-    @Scheduled(fixedDelayString = "${app.sms.send-poll-interval:5000}", initialDelay = 10000L)
     public void dispatchPending() {
         List<SmsLog> dispatchable = smsLogService.listDispatchable(smsProperties.sendingStaleBefore(),
                 smsProperties.getSendBatchSize());

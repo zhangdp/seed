@@ -138,6 +138,16 @@ INSERT INTO sys_config (id, config_key, description, config_value, is_encrypted,
     (3, 'SYS_ICP',       '备案号',     '', 0, 1, 0, '2026-01-01 00:00:00.000', '2026-01-01 00:00:00.000');
 
 -- -----------------------------------------------------------------------------
+-- 定时任务：短信派发任务迁入任务表，由调度器按cron驱动
+-- invoke_target 指向 SmsSendTask 这个bean的dispatchPending方法，改动后无需改代码发版
+-- -----------------------------------------------------------------------------
+INSERT INTO sys_job (id, job_name, job_group, invoke_target, cron_expression, params, status, misfire_policy, remark, created_at, updated_at) VALUES
+    (1, 'smsDispatchJob', 'DEFAULT', 'smsSendTask.dispatchPending', '0/5 * * * * *', NULL, 1, 1,
+     '短信派发，轮询待发送短信并调用发送器', '2026-01-01 00:00:00.000', '2026-01-01 00:00:00.000'),
+    (2, 'heartbeatDemoJob', 'DEFAULT', 'demoJob.tick', '0 0/1 * * * *', NULL, 0, 1,
+     '示例任务，默认停用，用于验证手动执行与启停', '2026-01-01 00:00:00.000', '2026-01-01 00:00:00.000');
+
+-- -----------------------------------------------------------------------------
 -- 重置identity序列：显式指定id插入不会推进序列，不重置的话应用后续insert会主键冲突
 -- is_called=false 表示下一次 nextval 就返回给定的值
 -- -----------------------------------------------------------------------------
@@ -150,3 +160,5 @@ SELECT setval(pg_get_serial_sequence('sys_role_permission', 'id'), (SELECT COALE
 SELECT setval(pg_get_serial_sequence('sys_dict',            'id'), (SELECT COALESCE(MAX(id), 0) + 1 FROM sys_dict),            false);
 SELECT setval(pg_get_serial_sequence('sys_dict_data',       'id'), (SELECT COALESCE(MAX(id), 0) + 1 FROM sys_dict_data),       false);
 SELECT setval(pg_get_serial_sequence('sys_config',          'id'), (SELECT COALESCE(MAX(id), 0) + 1 FROM sys_config),          false);
+SELECT setval(pg_get_serial_sequence('sys_job',             'id'), (SELECT COALESCE(MAX(id), 0) + 1 FROM sys_job),             false);
+SELECT setval(pg_get_serial_sequence('sys_job_log',         'id'), (SELECT COALESCE(MAX(id), 0) + 1 FROM sys_job_log),         false);
