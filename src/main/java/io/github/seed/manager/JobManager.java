@@ -93,9 +93,11 @@ public class JobManager {
      */
     public boolean add(Job job) {
         this.checkTarget(job.getInvokeTarget());
+        this.checkCron(job.getCronExpression());
         // 未指定状态时按已停止入库：新增的任务不该默默就开始跑，由运维确认后再启用
         Integer status = job.getStatus() == null ? JobStatus.STOPPED.value() : job.getStatus();
         job.setStatus(status);
+        job.setMisfirePolicy(job.getMisfirePolicy() == null ? JobMisfirePolicy.SKIP.value() : job.getMisfirePolicy());
         job.setNextFireTime(status == JobStatus.WAITING.value()
                 ? this.nextFireTime(job.getCronExpression(), LocalDateTime.now()) : null);
         Assert.isTrue(jobService.getByJobName(job.getJobName(), job.getJobGroup()) == null,
@@ -112,6 +114,10 @@ public class JobManager {
     public boolean update(Job job) {
         Job exists = this.getById(job.getId());
         this.checkTarget(job.getInvokeTarget());
+        // cron不传表示不改，传了就得是合法的
+        if (job.getCronExpression() != null) {
+            this.checkCron(job.getCronExpression());
+        }
         if (!exists.getJobName().equals(job.getJobName()) || !exists.getJobGroup().equals(job.getJobGroup())) {
             Assert.isTrue(jobService.getByJobName(job.getJobName(), job.getJobGroup()) == null,
                     () -> new BizException(ErrorCode.JOB_NAME_REPEAT));
@@ -339,6 +345,22 @@ public class JobManager {
         }
         try {
             return jobCronSupport.next(cron, after);
+        } catch (IllegalArgumentException e) {
+            throw new BizException(ErrorCode.JOB_CRON_INVALID);
+        }
+    }
+
+    /**
+     * 校验cron是否合法，不合法抛业务异常
+     *
+     * @param cron cron表达式
+     */
+    private void checkCron(String cron) {
+        if (cron == null || cron.isBlank()) {
+            throw new BizException(ErrorCode.JOB_CRON_INVALID);
+        }
+        try {
+            jobCronSupport.parse(cron);
         } catch (IllegalArgumentException e) {
             throw new BizException(ErrorCode.JOB_CRON_INVALID);
         }

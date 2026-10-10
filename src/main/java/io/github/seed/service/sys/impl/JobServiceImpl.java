@@ -55,11 +55,7 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public boolean updateStatus(Long id, Integer status, LocalDateTime nextFireTime) {
-        Job job = new Job();
-        job.setId(id);
-        job.setStatus(status);
-        job.setNextFireTime(nextFireTime);
-        return jobMapper.update(job) > 0;
+        return jobMapper.updateStatus(id, status, nextFireTime) > 0;
     }
 
     @Override

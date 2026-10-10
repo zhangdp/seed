@@ -25,6 +25,7 @@ public class JobNodeServiceImpl implements JobNodeService {
     @Override
     public void heartbeat(JobNode node) {
         if (jobNodeMapper.heartbeat(node) == 0) {
+            node.setCreatedAt(LocalDateTime.now());
             jobNodeMapper.insert(node);
         }
     }

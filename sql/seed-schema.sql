@@ -467,7 +467,9 @@ CREATE TABLE sys_job_log (
     started_at     timestamp(3),
     ended_at       timestamp(3),
     duration_ms    bigint,
-    created_at     timestamp(3)  NOT NULL DEFAULT CURRENT_TIMESTAMP
+    created_at     timestamp(3)  NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    -- 日志是流水数据不更新，该列只为与BaseEntity对齐（实体继承基类后插入会带这一列）
+    updated_at     timestamp(3)
 );
 COMMENT ON TABLE  sys_job_log                IS '定时任务执行日志';
 COMMENT ON COLUMN sys_job_log.job_id         IS '任务id，任务被删除后仍保留历史，故不建外键';

@@ -10,6 +10,7 @@ import io.github.seed.model.query.PageQuery;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,6 +33,11 @@ public interface JobMapper extends BaseMapper<Job> {
      * 分页查询未指定排序时的默认排序
      */
     String DEFAULT_ORDER_BY = "id asc";
+    /**
+     * 可触发的条件：已到触发时间，或压根没设过触发时间
+     * <br>后者是兜底：从库里直接改状态启用、或种子数据没算触发时间时，不该让任务永远躺着不跑
+     */
+    String FIREABLE_CONDITION = "next_fire_time <= ? or next_fire_time is null";
 
     /**
      * 抢占调度锁：对锁行加行级排他锁，保证同一时刻只有一个节点在挑任务
@@ -64,8 +70,8 @@ public interface JobMapper extends BaseMapper<Job> {
     default List<Job> listFireable(LocalDateTime now, int limit) {
         return this.selectListByQuery(QueryWrapper.create()
                 .eq(Job::getStatus, JobStatus.WAITING.value())
-                .le(Job::getNextFireTime, now)
-                .orderBy(Job::getNextFireTime).asc()
+                .where(FIREABLE_CONDITION, now)
+                .orderBy(Job::getId).asc()
                 .limit(limit));
     }
 
@@ -82,10 +88,10 @@ public interface JobMapper extends BaseMapper<Job> {
         update.setStatus(JobStatus.FIRING.value());
         update.setFiredBy(nodeId);
         update.setFiredAt(firedAt);
+        // 取件与抢占的条件必须完全一致，否则会出现「挑到了却抢不到」
         return this.updateByQuery(update, QueryWrapper.create()
-                .eq(Job::getId, jobId)
-                .eq(Job::getStatus, JobStatus.WAITING.value())
-                .le(Job::getNextFireTime, firedAt)) > 0;
+                .where("id = ? and status = ? and (" + FIREABLE_CONDITION + ")",
+                        jobId, JobStatus.WAITING.value(), firedAt)) > 0;
     }
 
     /**
@@ -122,6 +128,19 @@ public interface JobMapper extends BaseMapper<Job> {
         }
         return this.selectListByQuery(wrapper);
     }
+
+    /**
+     * 更新状态与下次触发时间
+     * <br>写原生sql是因为停止时要把next_fire_time置空：按实体更新会跳过null字段，清不掉
+     *
+     * @param id           任务id
+     * @param status       目标状态
+     * @param nextFireTime 下次触发时间，停止时传null
+     * @return 更新的行数
+     */
+    @Update("update sys_job set status = #{status}, next_fire_time = #{nextFireTime}, updated_at = now() where id = #{id}")
+    int updateStatus(@Param("id") Long id, @Param("status") Integer status,
+                     @Param("nextFireTime") LocalDateTime nextFireTime);
 
     /**
      * 按查询参数拼查询条件
