@@ -30,15 +30,15 @@ public class JobLogQuery implements Serializable {
     @Schema(title = "任务名称")
     private String jobName;
     /**
-     * 执行结果：0成功、1失败
+     * 执行结果：SUCCESS成功、FAIL失败
      */
-    @Schema(title = "执行结果", description = "0成功、1失败")
-    private Integer status;
+    @Schema(title = "执行结果", description = "SUCCESS成功、FAIL失败")
+    private String status;
     /**
-     * 触发方式：0自动、1手动
+     * 触发方式：AUTO自动、MANUAL手动
      */
-    @Schema(title = "触发方式", description = "0自动、1手动")
-    private Integer triggerType;
+    @Schema(title = "触发方式", description = "AUTO自动、MANUAL手动")
+    private String triggerType;
     /**
      * 开始时间范围起点，按started_at过滤
      */

@@ -2,6 +2,7 @@ package io.github.seed.module.job.data;
 
 /**
  * 定时任务执行结果
+ * <br>存储值即枚举名，日志表是给人查的，{@code where status = 'FAIL'} 直接可读
  *
  * @author zhangdp
  * @since 1.0.0
@@ -11,19 +12,27 @@ public enum JobLogStatus {
     /**
      * 成功
      */
-    SUCCESS(0),
+    SUCCESS("SUCCESS"),
     /**
      * 失败，message里记异常信息
      */
-    FAIL(1);
+    FAIL("FAIL");
 
-    private final int value;
+    /**
+     * 存储值，显式写死而非取{@link #name()}——将来改枚举常量名不会连带改数据
+     */
+    private final String value;
 
-    JobLogStatus(int value) {
+    JobLogStatus(String value) {
         this.value = value;
     }
 
-    public int value() {
+    /**
+     * 获取存储值
+     *
+     * @return 存储值
+     */
+    public String value() {
         return this.value;
     }
 
@@ -33,10 +42,15 @@ public enum JobLogStatus {
      * @param value 存储值
      * @return 对应的枚举
      */
-    public static JobLogStatus of(Integer value) {
+    public static JobLogStatus of(String value) {
         if (value == null) {
             return null;
         }
-        return value == SUCCESS.value ? SUCCESS : (value == FAIL.value ? FAIL : null);
+        for (JobLogStatus status : values()) {
+            if (status.value.equals(value)) {
+                return status;
+            }
+        }
+        return null;
     }
 }

@@ -76,8 +76,8 @@ public class SmsLog extends BaseEntity implements Serializable {
      *
      * @see SmsStatus
      */
-    @Schema(description = "发送状态：0待发送、1发送中、2发送成功、3发送失败")
-    private int status;
+    @Schema(description = "发送状态：PENDING待发送、SENDING发送中、SUCCESS发送成功、FAIL发送失败")
+    private String status;
     /**
      * 优先级，越大越优先发送
      * <br>包装类型而非int：ORM按实体更新只写非空字段，用int会被回写冲成0，重试时高优先级就退化成普通了

@@ -55,20 +55,20 @@ public class JobLog extends BaseEntity implements Serializable {
     @Schema(description = "执行目标")
     private String invokeTarget;
     /**
-     * 触发方式：0自动、1手动，见{@code JobTriggerType}
+     * 触发方式：AUTO自动、MANUAL手动，见{@code JobTriggerType}
      */
-    @Schema(description = "触发方式：0自动、1手动")
-    private Integer triggerType;
+    @Schema(description = "触发方式：AUTO自动、MANUAL手动")
+    private String triggerType;
     /**
      * 执行节点
      */
     @Schema(description = "执行节点")
     private String nodeId;
     /**
-     * 执行结果：0成功、1失败，见{@code JobLogStatus}
+     * 执行结果：SUCCESS成功、FAIL失败，见{@code JobLogStatus}
      */
-    @Schema(description = "执行结果：0成功、1失败")
-    private Integer status;
+    @Schema(description = "执行结果：SUCCESS成功、FAIL失败")
+    private String status;
     /**
      * 执行结果描述，失败时为异常信息
      */

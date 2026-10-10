@@ -43,7 +43,7 @@ public class SmsLogQuery implements Serializable {
      * @see SmsStatus
      */
     @Schema(title = "发送状态", description = "0待发送、1发送中、2发送成功、3发送失败")
-    private Integer status;
+    private String status;
     /**
      * 优先级
      *

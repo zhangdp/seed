@@ -54,7 +54,7 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public boolean updateStatus(Long id, Integer status, LocalDateTime nextFireTime) {
+    public boolean updateStatus(Long id, String status, LocalDateTime nextFireTime) {
         return jobMapper.updateStatus(id, status, nextFireTime) > 0;
     }
 
@@ -95,7 +95,7 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public int finishFire(Long jobId, LocalDateTime prevFireTime, LocalDateTime nextFireTime, Integer status) {
+    public int finishFire(Long jobId, LocalDateTime prevFireTime, LocalDateTime nextFireTime, String status) {
         return jobMapper.finishFire(jobId, prevFireTime, nextFireTime, status);
     }
 

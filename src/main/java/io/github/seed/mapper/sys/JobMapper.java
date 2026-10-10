@@ -104,7 +104,7 @@ public interface JobMapper extends BaseMapper<Job> {
      * @param status        回写后的状态
      * @return 更新的行数
      */
-    default int finishFire(Long jobId, LocalDateTime prevFireTime, LocalDateTime nextFireTime, Integer status) {
+    default int finishFire(Long jobId, LocalDateTime prevFireTime, LocalDateTime nextFireTime, String status) {
         Job update = new Job();
         update.setPrevFireTime(prevFireTime);
         update.setNextFireTime(nextFireTime);
@@ -139,7 +139,7 @@ public interface JobMapper extends BaseMapper<Job> {
      * @return 更新的行数
      */
     @Update("update sys_job set status = #{status}, next_fire_time = #{nextFireTime}, updated_at = now() where id = #{id}")
-    int updateStatus(@Param("id") Long id, @Param("status") Integer status,
+    int updateStatus(@Param("id") Long id, @Param("status") String status,
                      @Param("nextFireTime") LocalDateTime nextFireTime);
 
     /**

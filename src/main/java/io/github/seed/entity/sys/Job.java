@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
  * 定时任务
  * <br>任务定义与触发信息合并在一张表里（quartz里是job_detail与trigger两张），
  * 一个任务只配一个cron，够用且省掉一次关联查询
- * <br>集群语义与quartz一致：{@code status=2}且{@code fired_by/fired_at}已写入表示被某节点抢占，
+ * <br>集群语义与quartz一致：{@code status='FIRING'}且{@code fired_by/fired_at}已写入表示被某节点抢占，
  * 其余节点不会再挑它
  *
  * @author zhangdp
@@ -58,15 +58,15 @@ public class Job extends BaseEntity implements Serializable {
     @Schema(description = "方法参数，json数组")
     private String params;
     /**
-     * 状态：0已停止、1待触发、2执行中，见{@code JobStatus}
+     * 状态：STOPPED已停止、WAITING待触发、FIRING执行中，见{@code JobStatus}
      */
-    @Schema(description = "状态：0已停止、1待触发、2执行中")
-    private Integer status;
+    @Schema(description = "状态：STOPPED已停止、WAITING待触发、FIRING执行中")
+    private String status;
     /**
-     * 错过触发时的策略：0立即补跑、1放弃，见{@code JobMisfirePolicy}
+     * 错过触发时的策略：FIRE_NOW立即补跑、SKIP放弃，见{@code JobMisfirePolicy}
      */
-    @Schema(description = "错过触发时的策略：0立即补跑、1放弃")
-    private Integer misfirePolicy;
+    @Schema(description = "错过触发时的策略：FIRE_NOW立即补跑、SKIP放弃")
+    private String misfirePolicy;
     /**
      * 下一次触发时间
      */

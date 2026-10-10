@@ -30,8 +30,8 @@ public class JobQuery implements Serializable {
     @Schema(title = "任务分组")
     private String jobGroup;
     /**
-     * 状态：0已停止、1待触发、2执行中
+     * 状态：STOPPED已停止、WAITING待触发、FIRING执行中
      */
-    @Schema(title = "状态", description = "0已停止、1待触发、2执行中")
-    private Integer status;
+    @Schema(title = "状态", description = "STOPPED已停止、WAITING待触发、FIRING执行中")
+    private String status;
 }

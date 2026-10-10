@@ -142,9 +142,9 @@ INSERT INTO sys_config (id, config_key, description, config_value, is_encrypted,
 -- invoke_target 指向 SmsSendTask 这个bean的dispatchPending方法，改动后无需改代码发版
 -- -----------------------------------------------------------------------------
 INSERT INTO sys_job (id, job_name, job_group, invoke_target, cron_expression, params, status, misfire_policy, remark, created_at, updated_at) VALUES
-    (1, 'smsDispatchJob', 'DEFAULT', 'smsSendTask.dispatchPending', '0/5 * * * * *', NULL, 1, 1,
+    (1, 'smsDispatchJob', 'DEFAULT', 'smsSendTask.dispatchPending', '0/5 * * * * *', NULL, 'WAITING', 'SKIP',
      '短信派发，轮询待发送短信并调用发送器', '2026-01-01 00:00:00.000', '2026-01-01 00:00:00.000'),
-    (2, 'heartbeatDemoJob', 'DEFAULT', 'demoJob.tick', '0 0/1 * * * *', NULL, 0, 1,
+    (2, 'heartbeatDemoJob', 'DEFAULT', 'demoJob.tick', '0 0/1 * * * *', NULL, 'STOPPED', 'SKIP',
      '示例任务，默认停用，用于验证手动执行与启停', '2026-01-01 00:00:00.000', '2026-01-01 00:00:00.000');
 
 -- -----------------------------------------------------------------------------

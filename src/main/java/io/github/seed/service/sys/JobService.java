@@ -65,7 +65,7 @@ public interface JobService {
      * @param nextFireTime 下次触发时间，停止时可传null
      * @return 是否更新成功
      */
-    boolean updateStatus(Long id, Integer status, LocalDateTime nextFireTime);
+    boolean updateStatus(Long id, String status, LocalDateTime nextFireTime);
 
     /**
      * 抢占一批到点的任务：先抢调度锁再挑任务，保证同一时刻只有一个节点在挑
@@ -114,7 +114,7 @@ public interface JobService {
      * @param status       回写后的状态
      * @return 更新的行数
      */
-    int finishFire(Long jobId, LocalDateTime prevFireTime, LocalDateTime nextFireTime, Integer status);
+    int finishFire(Long jobId, LocalDateTime prevFireTime, LocalDateTime nextFireTime, String status);
 
     /**
      * 查询抢占后迟迟没有回写的任务

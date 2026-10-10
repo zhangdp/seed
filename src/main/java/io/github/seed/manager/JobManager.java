@@ -95,10 +95,10 @@ public class JobManager {
         this.checkTarget(job.getInvokeTarget());
         this.checkCron(job.getCronExpression());
         // 未指定状态时按已停止入库：新增的任务不该默默就开始跑，由运维确认后再启用
-        Integer status = job.getStatus() == null ? JobStatus.STOPPED.value() : job.getStatus();
+        String status = job.getStatus() == null ? JobStatus.STOPPED.value() : job.getStatus();
         job.setStatus(status);
         job.setMisfirePolicy(job.getMisfirePolicy() == null ? JobMisfirePolicy.SKIP.value() : job.getMisfirePolicy());
-        job.setNextFireTime(status == JobStatus.WAITING.value()
+        job.setNextFireTime(JobStatus.WAITING.value().equals(status)
                 ? this.nextFireTime(job.getCronExpression(), LocalDateTime.now()) : null);
         Assert.isTrue(jobService.getByJobName(job.getJobName(), job.getJobGroup()) == null,
                 () -> new BizException(ErrorCode.JOB_NAME_REPEAT));
@@ -165,7 +165,7 @@ public class JobManager {
      */
     public boolean runOnce(Long id) {
         Job job = this.getById(id);
-        return this.executeAndLog(job, JobTriggerType.MANUAL).getStatus() == JobLogStatus.SUCCESS.value();
+        return JobLogStatus.SUCCESS.value().equals(this.executeAndLog(job, JobTriggerType.MANUAL).getStatus());
     }
 
     // ============================== 调度 ==============================
@@ -198,7 +198,7 @@ public class JobManager {
         LocalDateTime next = this.nextFireTime(job.getCronExpression(), LocalDateTime.now());
         // 回写失败说明任务期间被停掉或已被接管，此时不该再改它的状态
         jobService.finishFire(job.getId(), job.getFiredAt(), next, JobStatus.WAITING.value());
-        if (jobLog.getStatus() == JobLogStatus.FAIL.value()) {
+        if (JobLogStatus.FAIL.value().equals(jobLog.getStatus())) {
             log.warn("任务执行失败：{}，原因：{}", job.getJobName(), jobLog.getMessage());
         }
     }
