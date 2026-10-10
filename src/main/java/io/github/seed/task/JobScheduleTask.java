@@ -1,19 +1,26 @@
 package io.github.seed.task;
 
 import io.github.seed.manager.JobManager;
+import io.github.seed.module.job.JobProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 /**
  * 定时任务调度
  * <br>只做定时驱动，不关心任务怎么抢、怎么跑：到点了就叫{@link JobManager}去挑任务
  * <br>三个动作共用一个调度线程串行执行，挑到任务后真正的执行在虚拟线程里，不会堵住这里
+ * <br>{@code app.job.enabled}为false时本节点不参与调度，集群里可以只让部分节点承担调度
  *
  * @author zhangdp
  * @since 1.0.0
  */
 @Slf4j
+@Component("jobScheduleTask")
+@ConditionalOnProperty(prefix = JobProperties.CONFIG_PREFIX, name = "enabled",
+        havingValue = "true", matchIfMissing = true)
 @RequiredArgsConstructor
 public class JobScheduleTask {
 

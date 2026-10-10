@@ -7,17 +7,21 @@ import io.github.seed.module.sms.data.SmsResult;
 import io.github.seed.service.sys.SmsLogService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 /**
  * 短信派发任务
  * <br>由任务表里的{@code smsDispatchJob}驱动，触发频率改任务表的cron即可，不需要改代码发版
+ * <br>bean名显式写死为{@code smsSendTask}：任务表{@code invoke_target}按beanName.methodName引用它，
+ * 依赖类名推导的默认名会在改名时让任务表配置静默失效（编译期无感知，运行才报找不到bean）
  *
  * @author zhangdp
  * @since 1.0.0
  */
 @Slf4j
+@Component("smsSendTask")
 @RequiredArgsConstructor
 public class SmsSendTask {
 

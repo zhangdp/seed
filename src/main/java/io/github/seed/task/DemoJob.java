@@ -1,18 +1,21 @@
 package io.github.seed.task;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
 /**
  * 示例任务：演示定时任务怎么写
  * <br>任务表里{@code heartbeatDemoJob}指向本类的{@code tick}，默认停用，可在任务列表里启用或手动执行一次
- * <br>业务任务照此写：一个spring bean + 一个public方法，方法参数留空即可
+ * <br>业务任务照此写：一个{@code @Component("beanName")} + 一个public方法，方法参数留空即可
+ * <br>bean名要显式指定：任务表{@code invoke_target}按beanName.methodName引用，改名会让配置静默失效
  *
  * @author zhangdp
  * @since 1.0.0
  */
 @Slf4j
+@Component("demoJob")
 public class DemoJob {
 
     /**
