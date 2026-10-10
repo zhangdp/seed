@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/sys/smsLog")
+@RequestMapping("/sys/sms/log")
 @Tag(name = "短信日志", description = "短信日志相关接口")
 public class SmsLogController {
 

@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/sys/operationLog")
+@RequestMapping("/sys/operation/log")
 @Tag(name = "操作日志", description = "操作日志相关接口")
 public class OperationLogController {
 
