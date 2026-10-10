@@ -1,7 +1,6 @@
-package io.github.seed.task;
+package io.github.seed.module.job;
 
-import io.github.seed.manager.JobManager;
-import io.github.seed.module.job.JobProperties;
+import io.github.seed.module.job.component.JobDispatcher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -9,8 +8,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 /**
- * 定时任务调度
- * <br>只做定时驱动，不关心任务怎么抢、怎么跑：到点了就叫{@link JobManager}去挑任务
+ * 调度引擎的定时驱动
+ * <br>只做定时驱动，不关心任务怎么抢、怎么跑：到点了就叫{@link JobDispatcher}去挑任务
  * <br>三个动作共用一个调度线程串行执行，挑到任务后真正的执行在虚拟线程里，不会堵住这里
  * <br>{@code app.job.enabled}为false时本节点不参与调度，集群里可以只让部分节点承担调度
  *
@@ -24,7 +23,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class JobScheduleTask {
 
-    private final JobManager jobManager;
+    private final JobDispatcher jobDispatcher;
 
     /**
      * 挑出到点的任务并触发；间隔由{@code app.job.poll-interval}控制
@@ -32,7 +31,7 @@ public class JobScheduleTask {
     @Scheduled(initialDelay = 10_000L, fixedDelayString = "${app.job.poll-interval:PT3S}")
     public void fireDueJobs() {
         try {
-            jobManager.fireDueJobs();
+            jobDispatcher.fireDueJobs();
         } catch (Exception e) {
             // 挑件失败不能让调度线程死掉，否则本节点从此不再触发任何任务
             log.error("挑任务失败，本轮跳过", e);
@@ -45,7 +44,7 @@ public class JobScheduleTask {
     @Scheduled(initialDelay = 5_000L, fixedDelayString = "${app.job.heartbeat-interval:PT15S}")
     public void heartbeat() {
         try {
-            jobManager.heartbeat();
+            jobDispatcher.heartbeat();
         } catch (Exception e) {
             log.error("节点心跳续期失败，本轮跳过", e);
         }
@@ -57,7 +56,7 @@ public class JobScheduleTask {
     @Scheduled(initialDelay = 20_000L, fixedDelayString = "${app.job.heartbeat-interval:PT15S}")
     public void takeoverStaleJobs() {
         try {
-            int count = jobManager.takeoverStaleJobs();
+            int count = jobDispatcher.takeoverStaleJobs();
             if (count > 0) {
                 log.warn("本轮接管了{}个卡住的任务", count);
             }
