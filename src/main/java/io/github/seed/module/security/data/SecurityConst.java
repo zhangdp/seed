@@ -62,11 +62,7 @@ public interface SecurityConst {
      */
     String REDIS_JTI_BLACKLIST = REDIS_PREFIX + REDIS_SPLIT + "jti_blacklist";
     /**
-     * redis jti黑名单版本号key，每次变更自增，节点据此判断内存是否过期
-     */
-    String REDIS_JTI_BLACKLIST_VERSION = REDIS_JTI_BLACKLIST + REDIS_SPLIT + "version";
-    /**
-     * redis jti黑名单变更频道，只广播版本号不广播明细
+     * redis jti黑名单变更频道，只广播"变了"这件事，不带明细也不带版本号
      */
     String REDIS_JTI_BLACKLIST_CHANNEL = REDIS_JTI_BLACKLIST + REDIS_SPLIT + "changed";
     /**
@@ -75,13 +71,14 @@ public interface SecurityConst {
      */
     String REDIS_USER_TOKEN_PREFIX = REDIS_PREFIX + REDIS_SPLIT + "user_token";
     /**
-     * redis 角色权限版本号key，角色权限变更后自增
-     */
-    String REDIS_ROLE_PERMISSION_VERSION = REDIS_PREFIX + REDIS_SPLIT + "role_permission" + REDIS_SPLIT + "version";
-    /**
-     * redis 角色权限变更频道，只广播版本号
+     * redis 角色权限变更频道，只广播"变了"这件事，不带版本号
      */
     String REDIS_ROLE_PERMISSION_CHANNEL = REDIS_PREFIX + REDIS_SPLIT + "role_permission" + REDIS_SPLIT + "changed";
+    /**
+     * 变更通知的载荷：不带任何信息，收到即全量重拉
+     * <br>pub/sub是fire-and-forget，丢一条明细就会永久不一致，所以宁可让接收方自己重拉一遍
+     */
+    String REDIS_CHANGE_SIGNAL = "1";
 
     /**
      * request attr 访问令牌

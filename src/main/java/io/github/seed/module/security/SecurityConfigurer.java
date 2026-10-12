@@ -17,7 +17,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.http.HttpMethod;
-import org.springframework.scheduling.TaskScheduler;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
@@ -236,14 +235,12 @@ public class SecurityConfigurer {
      *
      * @param stringRedisTemplate
      * @param listenerContainer
-     * @param taskScheduler
      * @return
      */
     @Bean
     public JtiBlacklist jtiBlacklist(StringRedisTemplate stringRedisTemplate,
-                                     RedisMessageListenerContainer listenerContainer,
-                                     TaskScheduler taskScheduler) {
-        return new JtiBlacklist(stringRedisTemplate, listenerContainer, taskScheduler);
+                                     RedisMessageListenerContainer listenerContainer) {
+        return new JtiBlacklist(stringRedisTemplate, listenerContainer);
     }
 
     /**

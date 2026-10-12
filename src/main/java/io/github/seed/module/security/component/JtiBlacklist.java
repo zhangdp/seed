@@ -10,21 +10,20 @@ import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.serializer.RedisSerializer;
-import org.springframework.scheduling.TaskScheduler;
 
-import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
  * jti黑名单：已登出、被踢下线的令牌在剩余有效期内仍然自带合法签名，只能靠拉黑挡住
  * <br>判定走节点内存，不查redis；redis只当持久化与跨节点同步的介质：
  * zset存「jti -> 拉黑到期时间戳」，条目到期即等于自动解除，无需额外删除
- * <br>跨节点同步发的是版本号而不是明细：pub/sub不持久化，丢一条明细会导致节点间永久不一致，
- * 版本号落后就全量重拉，怎么丢都能自愈
+ * <br>同步只有「通知 + 全量重拉」一条路，不做版本号比对也没有定时兜底：pub/sub不持久化，
+ * 断线期间的通知必然丢失，但重拉是全量的，下一次任何节点拉黑都会顺带把漏掉的补齐；
+ * 要立刻对齐就调{@link #refresh()}（将来的管理后台"刷新缓存"就是调它）
+ * <br>内存用不可变map整体替换：先clear再putAll会留下一段"谁都没被拉黑"的窗口，刷新越频繁越容易踩到
  *
  * @author zhangdp
  * @since 1.0.0
@@ -33,34 +32,24 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class JtiBlacklist implements InitializingBean {
 
-    /**
-     * 兜底对齐间隔：pub/sub断线期间的通知收不到，靠它纠偏
-     */
-    private static final Duration ALIGN_INTERVAL = Duration.ofMinutes(1);
-
     private final StringRedisTemplate stringRedisTemplate;
     private final RedisMessageListenerContainer listenerContainer;
-    private final TaskScheduler taskScheduler;
 
     /**
      * 内存黑名单：jti -> 拉黑到期时间戳（毫秒）
      */
-    private final Map<String, Long> blacklist = new ConcurrentHashMap<>();
-    /**
-     * 内存数据的版本号，与redis里的版本号比对判断是否落后
-     */
-    private volatile long version = -1L;
+    private volatile Map<String, Long> blacklist = Map.of();
 
     @Override
     public void afterPropertiesSet() {
-        this.refresh();
-        MessageListenerAdapter adapter = new MessageListenerAdapter(this, "onVersionChanged");
-        // 广播的是纯数字版本号，序列化方式必须和发送端（StringRedisTemplate）一致
+        // 先挂监听再预热：反过来的话，预热与挂监听之间那几毫秒发出的通知收不到，本节点会漏掉
+        MessageListenerAdapter adapter = new MessageListenerAdapter(this, "onChanged");
+        // 广播的是纯字符串，序列化方式必须和发送端（StringRedisTemplate）一致
         adapter.setSerializer(RedisSerializer.string());
         adapter.afterPropertiesSet();
         this.listenerContainer.addMessageListener(adapter, new ChannelTopic(SecurityConst.REDIS_JTI_BLACKLIST_CHANNEL));
-        this.taskScheduler.scheduleAtFixedRate(this::refreshIfStale, ALIGN_INTERVAL);
-        log.info("jti黑名单已预热，条目数：{}，版本号：{}", this.blacklist.size(), this.version);
+        this.refresh();
+        log.info("jti黑名单已预热，条目数：{}", this.blacklist.size());
     }
 
     /**
@@ -87,56 +76,37 @@ public class JtiBlacklist implements InitializingBean {
                 .collect(Collectors.toSet());
         this.stringRedisTemplate.opsForZSet().add(SecurityConst.REDIS_JTI_BLACKLIST, tuples);
         // 先更新本地再广播：本节点此刻就该生效，不能等消息绕一圈回来
-        this.blacklist.putAll(items);
-        long newVersion = this.incrVersion();
-        this.version = newVersion;
-        this.stringRedisTemplate.convertAndSend(SecurityConst.REDIS_JTI_BLACKLIST_CHANNEL, String.valueOf(newVersion));
+        Map<String, Long> merged = new HashMap<>(this.blacklist);
+        merged.putAll(items);
+        this.blacklist = Map.copyOf(merged);
+        this.stringRedisTemplate.convertAndSend(SecurityConst.REDIS_JTI_BLACKLIST_CHANNEL, SecurityConst.REDIS_CHANGE_SIGNAL);
         if (log.isDebugEnabled()) {
-            log.debug("拉黑jti，数量：{}，版本号：{}", items.size(), newVersion);
+            log.debug("拉黑jti，数量：{}", items.size());
         }
     }
 
     /**
-     * 是否被拉黑；已过期的条目顺手清掉，视为未拉黑
+     * 是否被拉黑；已过期的条目视为未拉黑
      *
      * @param jti 令牌唯一标识
      * @return true表示已拉黑，该令牌不可用
      */
     public boolean isBlacklisted(String jti) {
         Long expireAt = this.blacklist.get(jti);
-        if (expireAt == null) {
-            return false;
-        }
-        if (expireAt <= System.currentTimeMillis()) {
-            this.blacklist.remove(jti);
-            return false;
-        }
-        return true;
+        return expireAt != null && expireAt > System.currentTimeMillis();
     }
 
     /**
-     * redis变更通知：只带版本号，落后于redis就全量重拉
+     * 收到变更通知：直接全量重拉，不做差异比对
      *
-     * @param message 版本号字符串
+     * @param message 通知内容，不使用
      */
-    public void onVersionChanged(String message) {
-        long remote = this.parseVersion(message);
-        if (remote > this.version) {
-            this.refresh();
-        }
+    public void onChanged(String message) {
+        this.refresh();
     }
 
     /**
-     * 版本号落后时重拉，供定时任务兜底
-     */
-    public void refreshIfStale() {
-        if (this.readVersion() > this.version) {
-            this.refresh();
-        }
-    }
-
-    /**
-     * 全量重拉：只拉未过期的条目，已过期的留在redis里由清理任务处理
+     * 全量重拉：只拉未过期的条目，已过期的留在redis里由下次刷新顺手清掉
      */
     public void refresh() {
         long now = System.currentTimeMillis();
@@ -151,49 +121,9 @@ public class JtiBlacklist implements InitializingBean {
                 fresh.put(tuple.getValue(), (long) (double) tuple.getScore());
             }
         }
-        this.blacklist.clear();
-        this.blacklist.putAll(fresh);
-        this.version = this.readVersion();
+        this.blacklist = Map.copyOf(fresh);
         // 顺手清掉redis里已过期的条目，避免zset无限增长
         this.stringRedisTemplate.opsForZSet().removeRangeByScore(SecurityConst.REDIS_JTI_BLACKLIST, 0, now - 1);
-        log.info("jti黑名单已刷新，条目数：{}，版本号：{}", this.blacklist.size(), this.version);
+        log.info("jti黑名单已刷新，条目数：{}", fresh.size());
     }
-
-    /**
-     * 版本号自增
-     *
-     * @return 自增后的版本号
-     */
-    private long incrVersion() {
-        Long v = this.stringRedisTemplate.opsForValue().increment(SecurityConst.REDIS_JTI_BLACKLIST_VERSION);
-        return v == null ? System.currentTimeMillis() : v;
-    }
-
-    /**
-     * 读取redis版本号，key不存在时为0
-     *
-     * @return 版本号
-     */
-    private long readVersion() {
-        String v = this.stringRedisTemplate.opsForValue().get(SecurityConst.REDIS_JTI_BLACKLIST_VERSION);
-        return this.parseVersion(v);
-    }
-
-    /**
-     * 解析版本号，空或非数字时返回0
-     *
-     * @param value 版本号字符串
-     * @return 版本号
-     */
-    private long parseVersion(String value) {
-        if (value == null || value.isBlank()) {
-            return 0L;
-        }
-        try {
-            return Long.parseLong(value.trim());
-        } catch (NumberFormatException e) {
-            return 0L;
-        }
-    }
-
 }

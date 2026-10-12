@@ -19,21 +19,20 @@ import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Component;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 角色权限缓存：jwt只带角色编码，权限映射留在各节点内存里，请求鉴权不再查库也不查redis
  * <br>启动时全量预热——不预热的话冷启动期间权限是空的，请求会直接403
- * <br>同步方式与jti黑名单一致：只广播版本号，落后就全量重拉，避免丢消息导致节点间长期不一致
+ * <br>同步方式与jti黑名单一致：只广播"变了"这件事，收到就全量重拉；不做版本号比对也没有定时兜底，
+ * pub/sub断线期间的通知必然丢失，靠下一次任何节点的变更通知顺带补齐，也可以调{@link #reload()}立刻对齐
+ * <br>缓存用不可变map整体替换：先clear再putAll会留下一段"什么权限都没有"的窗口，正好撞上403
  * <br>权限变更后调用{@link #publishChange()}通知各节点；改动用户角色属于换令牌的事，
  * 走{@code TokenService}把该用户踢下线
  *
@@ -45,35 +44,25 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 public class RolePermissionManager implements RolePermissionProvider, InitializingBean {
 
-    /**
-     * 兜底对齐间隔
-     */
-    private static final Duration ALIGN_INTERVAL = Duration.ofMinutes(1);
-
     private final RoleService roleService;
     private final PermissionService permissionService;
     private final StringRedisTemplate stringRedisTemplate;
     private final RedisMessageListenerContainer listenerContainer;
-    private final TaskScheduler taskScheduler;
 
     /**
      * 角色授权标识 -> 该角色拥有的授权列表（含角色自身）
      */
-    private final Map<String, List<RolePermissionGrantedAuthority>> cache = new ConcurrentHashMap<>();
-    /**
-     * 内存数据版本号
-     */
-    private volatile long version = -1L;
+    private volatile Map<String, List<RolePermissionGrantedAuthority>> cache = Map.of();
 
     @Override
     public void afterPropertiesSet() {
-        this.reload();
-        MessageListenerAdapter adapter = new MessageListenerAdapter(this, "onVersionChanged");
+        // 先挂监听再预热：反过来的话，预热与挂监听之间那几毫秒发出的通知收不到，本节点会漏掉
+        MessageListenerAdapter adapter = new MessageListenerAdapter(this, "onChanged");
         adapter.setSerializer(RedisSerializer.string());
         adapter.afterPropertiesSet();
         this.listenerContainer.addMessageListener(adapter, new ChannelTopic(SecurityConst.REDIS_ROLE_PERMISSION_CHANNEL));
-        this.taskScheduler.scheduleAtFixedRate(this::reloadIfStale, ALIGN_INTERVAL);
-        log.info("角色权限缓存已预热，角色数：{}，版本号：{}", this.cache.size(), this.version);
+        this.reload();
+        log.info("角色权限缓存已预热，角色数：{}", this.cache.size());
     }
 
     @Override
@@ -82,20 +71,24 @@ public class RolePermissionManager implements RolePermissionProvider, Initializi
         if (CollUtil.isEmpty(roleCodes)) {
             return authorities;
         }
+        Map<String, List<RolePermissionGrantedAuthority>> snapshot = this.cache;
         for (String roleCode : roleCodes) {
             String authority = RolePermissionGrantedAuthority.roleAuthority(roleCode);
             if (authority == null) {
                 continue;
             }
-            // 缓存里没有的角色按需补一次，新增角色后不必等其他节点广播
-            List<RolePermissionGrantedAuthority> list = this.cache.computeIfAbsent(authority, this::loadRole);
+            List<RolePermissionGrantedAuthority> list = snapshot.get(authority);
+            // 缓存里没有的角色按需补一次：新建角色后不必等广播，别的节点漏了通知也能自愈
+            if (list == null) {
+                list = this.loadAndCache(authority);
+            }
             authorities.addAll(list);
         }
         return authorities;
     }
 
     /**
-     * 权限或角色数据发生变更：递增版本号并广播，各节点收到后全量重拉
+     * 权限或角色数据发生变更：重拉本节点并广播，各节点收到后各自全量重拉
      *
      * @param event 业务事件，由权限、角色的写操作通过{@code @PublishEvent}发出
      */
@@ -105,34 +98,21 @@ public class RolePermissionManager implements RolePermissionProvider, Initializi
     }
 
     /**
-     * 权限或角色权限关系发生变更后调用：递增版本号并广播，各节点收到后全量重拉
+     * 权限或角色权限关系发生变更后调用：重拉本节点并广播
      */
     public void publishChange() {
-        long newVersion = this.incrVersion();
-        this.version = newVersion;
         this.reload();
-        this.stringRedisTemplate.convertAndSend(SecurityConst.REDIS_ROLE_PERMISSION_CHANNEL, String.valueOf(newVersion));
-        log.info("角色权限变更已广播，版本号：{}，角色数：{}", newVersion, this.cache.size());
+        this.stringRedisTemplate.convertAndSend(SecurityConst.REDIS_ROLE_PERMISSION_CHANNEL, SecurityConst.REDIS_CHANGE_SIGNAL);
+        log.info("角色权限变更已广播，角色数：{}", this.cache.size());
     }
 
     /**
-     * redis变更通知
+     * 收到变更通知：直接全量重拉，不做差异比对
      *
-     * @param message 版本号字符串
+     * @param message 通知内容，不使用
      */
-    public void onVersionChanged(String message) {
-        if (this.parseVersion(message) > this.version) {
-            this.reload();
-        }
-    }
-
-    /**
-     * 版本号落后时重拉，供定时任务兜底
-     */
-    public void reloadIfStale() {
-        if (this.readVersion() > this.version) {
-            this.reload();
-        }
+    public void onChanged(String message) {
+        this.reload();
     }
 
     /**
@@ -150,15 +130,27 @@ public class RolePermissionManager implements RolePermissionProvider, Initializi
                 fresh.put(authority, this.loadRole(authority, role));
             }
         }
-        this.cache.clear();
-        this.cache.putAll(fresh);
-        this.version = this.readVersion();
-        log.info("角色权限缓存已刷新，角色数：{}，授权总数：{}，版本号：{}", this.cache.size(),
-                fresh.values().stream().mapToInt(List::size).sum(), this.version);
+        this.cache = Map.copyOf(fresh);
+        log.info("角色权限缓存已刷新，角色数：{}，授权总数：{}", fresh.size(),
+                fresh.values().stream().mapToInt(List::size).sum());
     }
 
     /**
-     * 加载单个角色的权限，用于按需补齐
+     * 加载单个角色并放进缓存，用于按需补齐
+     *
+     * @param authority 角色授权标识
+     * @return 该角色的授权列表
+     */
+    private List<RolePermissionGrantedAuthority> loadAndCache(String authority) {
+        List<RolePermissionGrantedAuthority> list = this.loadRole(authority);
+        Map<String, List<RolePermissionGrantedAuthority>> merged = new HashMap<>(this.cache);
+        merged.put(authority, List.copyOf(list));
+        this.cache = Map.copyOf(merged);
+        return list;
+    }
+
+    /**
+     * 加载单个角色
      *
      * @param authority 角色授权标识
      * @return 该角色的授权列表
@@ -194,41 +186,4 @@ public class RolePermissionManager implements RolePermissionProvider, Initializi
         }
         return list;
     }
-
-    /**
-     * 版本号自增
-     *
-     * @return 自增后的版本号
-     */
-    private long incrVersion() {
-        Long v = this.stringRedisTemplate.opsForValue().increment(SecurityConst.REDIS_ROLE_PERMISSION_VERSION);
-        return v == null ? System.currentTimeMillis() : v;
-    }
-
-    /**
-     * 读取redis版本号
-     *
-     * @return 版本号，key不存在时为0
-     */
-    private long readVersion() {
-        return this.parseVersion(this.stringRedisTemplate.opsForValue().get(SecurityConst.REDIS_ROLE_PERMISSION_VERSION));
-    }
-
-    /**
-     * 解析版本号
-     *
-     * @param value 版本号字符串
-     * @return 版本号，空或非数字时为0
-     */
-    private long parseVersion(String value) {
-        if (value == null || value.isBlank()) {
-            return 0L;
-        }
-        try {
-            return Long.parseLong(value.trim());
-        } catch (NumberFormatException e) {
-            return 0L;
-        }
-    }
-
 }
