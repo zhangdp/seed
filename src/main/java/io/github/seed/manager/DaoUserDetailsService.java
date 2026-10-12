@@ -1,18 +1,20 @@
-package io.github.seed.module.security.component;
+package io.github.seed.manager;
 
 import cn.hutool.v7.core.collection.CollUtil;
 import cn.hutool.v7.core.lang.Validator;
 import io.github.seed.common.constant.Const;
-import io.github.seed.module.security.data.LoginUser;
-import io.github.seed.module.security.data.RolePermissionGrantedAuthority;
 import io.github.seed.entity.sys.Role;
 import io.github.seed.entity.sys.User;
+import io.github.seed.module.security.component.RolePermissionProvider;
+import io.github.seed.module.security.data.LoginUser;
+import io.github.seed.module.security.data.RolePermissionGrantedAuthority;
 import io.github.seed.service.sys.RoleService;
 import io.github.seed.service.sys.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,10 +22,15 @@ import java.util.Objects;
 
 /**
  * 从数据库查询用户信息的spring security用户服务
+ * <br>放{@code manager}是因为它是宿主提供给spring security的取数适配器：{@code UserDetailsService}
+ * 本身就是框架定义的SPI，读哪个库、用户表长什么样由宿主决定，模块不该认识{@code entity}与{@code service}
+ * <br>Dao前缀表明数据取自数据库，与{@code DaoJobStore}同一命名习惯；换用户体系（对接LDAP、第三方）
+ * 只要另写一个实现类替换掉本类
  *
  * @author zhangdp
  * @since 1.0.0
  */
+@Component
 @RequiredArgsConstructor
 public class DaoUserDetailsService implements UserDetailsService {
 
@@ -55,7 +62,7 @@ public class DaoUserDetailsService implements UserDetailsService {
      * @param user 用户
      * @return 登录用户
      */
-    public UserDetails toUserDetails(User user) {
+    private UserDetails toUserDetails(User user) {
         LoginUser userDetails = new LoginUser();
         userDetails.setId(user.getId());
         userDetails.setUsername(user.getUsername());

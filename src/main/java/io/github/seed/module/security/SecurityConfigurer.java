@@ -6,9 +6,6 @@ import io.github.seed.module.security.data.SecurityConst;
 import io.github.seed.module.security.data.SecurityProperties;
 import io.github.seed.module.security.filter.TokenResolveAuthenticationFilter;
 import io.github.seed.module.security.handler.*;
-import io.github.seed.service.sys.PermissionService;
-import io.github.seed.service.sys.RoleService;
-import io.github.seed.service.sys.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
@@ -262,20 +259,6 @@ public class SecurityConfigurer {
     public TokenService tokenService(TokenStore tokenStore, JwtTokenProvider jwtTokenProvider, JtiBlacklist jtiBlacklist,
                                      RolePermissionProvider rolePermissionProvider) {
         return new TokenService(tokenStore, this.securityProperties, jwtTokenProvider, jtiBlacklist, rolePermissionProvider);
-    }
-
-    /**
-     * spring security 用户服务
-     *
-     * @param userService
-     * @param roleService
-     * @param permissionService
-     * @return
-     */
-    @Bean
-    public UserDetailsService daoUserDetailsService(UserService userService, RoleService roleService,
-                                                    RolePermissionProvider rolePermissionProvider) {
-        return new DaoUserDetailsService(userService, roleService, rolePermissionProvider);
     }
 
     /**
