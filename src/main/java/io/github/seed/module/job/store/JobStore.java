@@ -1,8 +1,8 @@
 package io.github.seed.module.job.store;
 
-import io.github.seed.entity.sys.Job;
-import io.github.seed.entity.sys.JobLog;
-import io.github.seed.entity.sys.JobNode;
+import io.github.seed.module.job.data.JobData;
+import io.github.seed.module.job.data.JobLogData;
+import io.github.seed.module.job.data.JobNodeData;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,7 +11,8 @@ import java.util.List;
  * 调度引擎需要的存储能力，由宿主应用实现后注入
  * <br>模块只认本接口，不认识{@code service}也不认识表：换一套存储（换库、或换成内存实现跑单测）
  * 只要另写一个实现类，调度引擎一行不用改
- * <br>实现方要保证{@link #saveLog(JobLog)}不抛异常——日志写失败不能影响任务本身的结果
+ * <br>出入参一律用模块自己的数据对象，实现方负责与自己的存储结构互相转换
+ * <br>实现方要保证{@link #saveLog(JobLogData)}不抛异常——日志写失败不能影响任务本身的结果
  *
  * @author zhangdp
  * @since 1.0.0
@@ -25,7 +26,7 @@ public interface JobStore {
      * @param limit  本轮最多抢占多少条
      * @return 抢占到的任务，为空表示本轮无任务或已被其他节点领走
      */
-    List<Job> claimDueJobs(String nodeId, int limit);
+    List<JobData> claimDueJobs(String nodeId, int limit);
 
     /**
      * 回写一次触发的结果
@@ -44,14 +45,14 @@ public interface JobStore {
      * @param firedBefore 抢占时间早于该值的才算超时，为null表示不限
      * @return 待回收的任务
      */
-    List<Job> listStaleFired(LocalDateTime firedBefore);
+    List<JobData> listStaleFired(LocalDateTime firedBefore);
 
     /**
      * 写入或续期节点心跳，首次调用会插入节点记录
      *
      * @param node 节点信息
      */
-    void heartbeat(JobNode node);
+    void heartbeat(JobNodeData node);
 
     /**
      * 查询心跳正常的节点
@@ -74,5 +75,5 @@ public interface JobStore {
      *
      * @param jobLog 执行日志
      */
-    void saveLog(JobLog jobLog);
+    void saveLog(JobLogData jobLog);
 }

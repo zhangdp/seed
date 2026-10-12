@@ -1,5 +1,6 @@
 package io.github.seed.manager;
 
+import cn.hutool.v7.core.bean.BeanUtil;
 import cn.hutool.v7.core.lang.Assert;
 import io.github.seed.common.enums.ErrorCode;
 import io.github.seed.common.exception.BizException;
@@ -7,6 +8,7 @@ import io.github.seed.entity.sys.Job;
 import io.github.seed.entity.sys.JobLog;
 import io.github.seed.module.job.component.JobCronSupport;
 import io.github.seed.module.job.component.JobDispatcher;
+import io.github.seed.module.job.data.JobData;
 import io.github.seed.module.job.data.JobLogStatus;
 import io.github.seed.module.job.data.JobMisfirePolicy;
 import io.github.seed.module.job.data.JobStatus;
@@ -140,7 +142,10 @@ public class JobManager {
      */
     public boolean runOnce(Long id) {
         Job job = this.getById(id);
-        return JobLogStatus.SUCCESS.value().equals(jobDispatcher.execute(job, JobTriggerType.MANUAL).getStatus());
+        // 调度引擎只认模块自己的数据对象，这里把entity转成它；字段名一致，按名拷贝即可
+        JobData jobData = new JobData();
+        BeanUtil.copyProperties(job, jobData);
+        return JobLogStatus.SUCCESS.value().equals(jobDispatcher.execute(jobData, JobTriggerType.MANUAL).getStatus());
     }
 
     /**

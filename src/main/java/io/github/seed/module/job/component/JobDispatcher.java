@@ -3,11 +3,11 @@ package io.github.seed.module.job.component;
 import cn.hutool.v7.core.data.id.IdUtil;
 import io.github.seed.common.enums.ErrorCode;
 import io.github.seed.common.exception.BizException;
-import io.github.seed.entity.sys.Job;
-import io.github.seed.entity.sys.JobLog;
-import io.github.seed.entity.sys.JobNode;
 import io.github.seed.module.job.JobProperties;
+import io.github.seed.module.job.data.JobData;
+import io.github.seed.module.job.data.JobLogData;
 import io.github.seed.module.job.data.JobLogStatus;
+import io.github.seed.module.job.data.JobNodeData;
 import io.github.seed.module.job.data.JobMisfirePolicy;
 import io.github.seed.module.job.data.JobStatus;
 import io.github.seed.module.job.data.JobTriggerType;
@@ -56,12 +56,12 @@ public class JobDispatcher {
      * @return 本轮抢占到的任务数
      */
     public int fireDueJobs() {
-        List<Job> claimed = jobStore.claimDueJobs(this.nodeId, jobProperties.getFetchSize());
+        List<JobData> claimed = jobStore.claimDueJobs(this.nodeId, jobProperties.getFetchSize());
         if (claimed.isEmpty()) {
             return 0;
         }
         log.debug("本节点挑到{}个待触发任务，nodeId={}", claimed.size(), this.nodeId);
-        for (Job job : claimed) {
+        for (JobData job : claimed) {
             // 全局已开启虚拟线程，不另建线程池；任务互不影响，单个跑再久也不会堵住下一轮挑件
             Thread.ofVirtual().start(() -> this.fireOne(job));
         }
@@ -75,10 +75,10 @@ public class JobDispatcher {
      * @param triggerType 触发方式
      * @return 执行日志
      */
-    public JobLog execute(Job job, JobTriggerType triggerType) {
+    public JobLogData execute(JobData job, JobTriggerType triggerType) {
         LocalDateTime startedAt = LocalDateTime.now();
         long begin = System.currentTimeMillis();
-        JobLog jobLog = new JobLog();
+        JobLogData jobLog = new JobLogData();
         jobLog.setJobId(job.getId());
         jobLog.setJobName(job.getJobName());
         jobLog.setJobGroup(job.getJobGroup());
@@ -105,7 +105,7 @@ public class JobDispatcher {
      * 续期本节点心跳，同时清理长期离线的节点记录
      */
     public void heartbeat() {
-        JobNode node = new JobNode();
+        JobNodeData node = new JobNodeData();
         node.setNodeId(this.nodeId);
         node.setHostName(this.hostName);
         node.setPort(environment.getProperty("server.port", Integer.class));
@@ -124,9 +124,9 @@ public class JobDispatcher {
     public int takeoverStaleJobs() {
         LocalDateTime now = LocalDateTime.now();
         List<String> aliveNodeIds = jobStore.listAliveNodeIds(now.minus(jobProperties.getNodeTimeout()));
-        List<Job> firing = jobStore.listStaleFired(null);
+        List<JobData> firing = jobStore.listStaleFired(null);
         int count = 0;
-        for (Job job : firing) {
+        for (JobData job : firing) {
             boolean nodeDead = job.getFiredBy() == null || !aliveNodeIds.contains(job.getFiredBy());
             boolean fireTimeout = job.getFiredAt() != null
                     && job.getFiredAt().isBefore(now.minus(jobProperties.getFireTimeout()));
@@ -144,8 +144,8 @@ public class JobDispatcher {
      *
      * @param job 已抢占到的任务
      */
-    private void fireOne(Job job) {
-        JobLog jobLog = this.execute(job, JobTriggerType.AUTO);
+    private void fireOne(JobData job) {
+        JobLogData jobLog = this.execute(job, JobTriggerType.AUTO);
         LocalDateTime next = this.nextFireTime(job.getCronExpression(), LocalDateTime.now());
         // 回写失败说明任务期间被停掉或已被接管，此时不该再改它的状态
         jobStore.finishFire(job.getId(), job.getFiredAt(), next, JobStatus.WAITING.value());
@@ -161,8 +161,8 @@ public class JobDispatcher {
      * @param now    当前时间
      * @param reason 回收原因，写进执行日志
      */
-    private void recover(Job job, LocalDateTime now, String reason) {
-        JobLog jobLog = new JobLog();
+    private void recover(JobData job, LocalDateTime now, String reason) {
+        JobLogData jobLog = new JobLogData();
         jobLog.setJobId(job.getId());
         jobLog.setJobName(job.getJobName());
         jobLog.setJobGroup(job.getJobGroup());
