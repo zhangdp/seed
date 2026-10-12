@@ -30,8 +30,9 @@ import java.util.Map;
 /**
  * 角色权限缓存：jwt只带角色编码，权限映射留在各节点内存里，请求鉴权不再查库也不查redis
  * <br>启动时全量预热——不预热的话冷启动期间权限是空的，请求会直接403
- * <br>同步方式与jti黑名单一致：只广播"变了"这件事，收到就全量重拉；不做版本号比对也没有定时兜底，
- * pub/sub断线期间的通知必然丢失，靠下一次任何节点的变更通知顺带补齐，也可以调{@link #reload()}立刻对齐
+ * <br>同步方式与jti黑名单一致：只广播"变了"这件事，收到就全量重拉；不做版本号比对，
+ * pub/sub断线期间的通知必然丢失，靠下一次任何节点的变更通知顺带补齐，也可以调{@link #reload()}立刻对齐。
+ * 定时兜底不放在模块里：需要时由应用侧{@code RolePermissionRefreshTask}按{@code app.task}配置调本方法
  * <br>缓存用不可变map整体替换：先clear再putAll会留下一段"什么权限都没有"的窗口，正好撞上403
  * <br>权限变更后调用{@link #publishChange()}通知各节点；改动用户角色属于换令牌的事，
  * 走{@code TokenService}把该用户踢下线
@@ -130,9 +131,15 @@ public class RolePermissionManager implements RolePermissionProvider, Initializi
                 fresh.put(authority, this.loadRole(authority, role));
             }
         }
+        Map<String, List<RolePermissionGrantedAuthority>> before = this.cache;
         this.cache = Map.copyOf(fresh);
-        log.info("角色权限缓存已刷新，角色数：{}，授权总数：{}", fresh.size(),
-                fresh.values().stream().mapToInt(List::size).sum());
+        // 定时刷新多数前后一致，只在真正变化时记info，否则高频刷新会把日志刷满
+        if (before.equals(this.cache)) {
+            log.debug("角色权限缓存刷新完成，无变化，角色数：{}", fresh.size());
+        } else {
+            log.info("角色权限缓存已刷新，角色数：{} -> {}，授权总数：{}", before.size(), fresh.size(),
+                    fresh.values().stream().mapToInt(List::size).sum());
+        }
     }
 
     /**

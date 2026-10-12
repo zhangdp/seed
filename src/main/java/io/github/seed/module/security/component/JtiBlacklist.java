@@ -20,9 +20,10 @@ import java.util.stream.Collectors;
  * jti黑名单：已登出、被踢下线的令牌在剩余有效期内仍然自带合法签名，只能靠拉黑挡住
  * <br>判定走节点内存，不查redis；redis只当持久化与跨节点同步的介质：
  * zset存「jti -> 拉黑到期时间戳」，条目到期即等于自动解除，无需额外删除
- * <br>同步只有「通知 + 全量重拉」一条路，不做版本号比对也没有定时兜底：pub/sub不持久化，
- * 断线期间的通知必然丢失，但重拉是全量的，下一次任何节点拉黑都会顺带把漏掉的补齐；
- * 要立刻对齐就调{@link #refresh()}（将来的管理后台"刷新缓存"就是调它）
+ * <br>同步只有「通知 + 全量重拉」一条路，不做版本号比对：pub/sub不持久化，断线期间的通知
+ * 必然丢失，但重拉是全量的，下一次任何节点拉黑都会顺带把漏掉的补齐；
+ * 要立刻对齐就调{@link #refresh()}（将来的管理后台"刷新缓存"就是调它）。
+ * 定时兜底不放在模块里：需要时由应用侧{@code JtiBlacklistRefreshTask}按{@code app.task}配置调本方法
  * <br>内存用不可变map整体替换：先clear再putAll会留下一段"谁都没被拉黑"的窗口，刷新越频繁越容易踩到
  *
  * @author zhangdp
@@ -121,9 +122,15 @@ public class JtiBlacklist implements InitializingBean {
                 fresh.put(tuple.getValue(), (long) (double) tuple.getScore());
             }
         }
+        Map<String, Long> before = this.blacklist;
         this.blacklist = Map.copyOf(fresh);
         // 顺手清掉redis里已过期的条目，避免zset无限增长
         this.stringRedisTemplate.opsForZSet().removeRangeByScore(SecurityConst.REDIS_JTI_BLACKLIST, 0, now - 1);
-        log.info("jti黑名单已刷新，条目数：{}", fresh.size());
+        // 定时刷新多数前后一致，只在真正变化时记info，否则高频刷新会把日志刷满
+        if (before.equals(this.blacklist)) {
+            log.debug("jti黑名单刷新完成，条目数无变化：{}", fresh.size());
+        } else {
+            log.info("jti黑名单已刷新，条目数：{} -> {}", before.size(), fresh.size());
+        }
     }
 }

@@ -183,3 +183,17 @@ app:
     node-timeout: 45s
     # 任务被抢占后超过该时间仍未回写视为卡死，触发回收；要大于单个任务的最长可能耗时
     fire-timeout: 30m
+  task:
+    # 应用侧定时任务的开关与间隔：改了要重启才生效，需要随时调频率的任务走上面的app.job（任务表）
+    jti-blacklist-refresh:
+      # 定时全量重拉jti黑名单，兜住pub/sub丢通知的情况
+      # 默认false：通知正常时刷出来都一样，开了只是多一路redis读取，确认通知易丢再开
+      enabled: false
+      # 刷新间隔，上一轮结束后间隔该时间再发起下一轮
+      interval: 5m
+    role-permission-refresh:
+      # 定时全量重拉角色权限缓存，兜住pub/sub丢通知的情况
+      # 默认false：权限不常变动，且重拉要查全表，确认通知易丢再开
+      enabled: false
+      # 刷新间隔，上一轮结束后间隔该时间再发起下一轮
+      interval: 30m
