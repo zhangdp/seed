@@ -14,7 +14,6 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
@@ -48,9 +47,9 @@ public class JwtTokenProvider {
         if (secret == null || secret.isBlank()) {
             // 未配置时随机生成：单节点能用，多节点必定互相验签失败
             this.secretKey = Jwts.SIG.HS256.key().build();
-            log.warn("未配置{}，已随机生成jwt密钥：{}，多节点部署必须显式配置同一密钥，否则各节点签发的令牌互不认账",
-                    SecurityConst.CONFIG_PREFIX + ".jwt.secret",
-                    Base64.getEncoder().encodeToString(this.secretKey.getEncoded()));
+            // 密钥本身绝不能进日志
+            log.warn("未配置{}，已随机生成临时jwt密钥，多节点部署必须显式配置同一密钥，否则各节点签发的令牌互不认账",
+                    SecurityConst.CONFIG_PREFIX + ".jwt.secret");
         } else {
             this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
         }

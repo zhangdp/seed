@@ -89,6 +89,10 @@ public class UserServiceImpl implements UserService {
         if (StrUtil.isNotBlank(user.getPassword())) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
+        // 先落库再装关联表：id由mybatis-flex在insert时才生成并回填，提前取恒为null
+        if (userMapper.insert(user) <= 0) {
+            return false;
+        }
         if (CollUtil.isNotEmpty(user.getRoleIds())) {
             List<UserRole> userRoles = new ArrayList<>();
             for (Long roleId : user.getRoleIds()) {
@@ -100,12 +104,12 @@ public class UserServiceImpl implements UserService {
             }
             userRoleService.addBatch(userRoles);
         }
-        return userMapper.insert(user) > 0;
+        return true;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @CacheEvict(value = "#user.username", condition = "#result == true")
+    @CacheEvict(key = "#user.username", condition = "#result == true")
     @PublishEvent(value = EventConst.UPDATE_USER, condition = "#result == true")
     public boolean update(AddUserDto user) {
         Assert.isFalse(this.existsUsernameAndIdNot(user.getUsername(), user.getId()), () -> new BizException(ErrorCode.USERNAME_REPEAT.code(), "账号" + user.getUsername() + "已存在"));
@@ -113,7 +117,7 @@ public class UserServiceImpl implements UserService {
             Assert.isTrue(deptService.exists(user.getDeptId()), () -> new BizException(ErrorCode.USERNAME_REPEAT.code(), "所属" + user.getDeptId() + "已不存在"));
         }
         if (StrUtil.isNotBlank(user.getPassword())) {
-            user.setPassword(user.getPassword());
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
         return userMapper.update(user) > 0;
     }
@@ -125,6 +129,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    // 缓存key是username而入参只有id，清不了单条，整个用户缓存一起失效
+    @CacheEvict(allEntries = true)
     public boolean delete(Long id) {
         return userMapper.deleteById(id) > 0;
     }

@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,6 +56,8 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    // 不清缓存的话各节点reload拉到的还是旧的"角色->权限"映射，权限变更最长TTL时间才生效
+    @CacheEvict(allEntries = true, condition = "#result == true")
     @PublishEvent(value = EventConst.ROLE_PERMISSION_CHANGE, condition = "#result == true")
     public boolean add(Permission permission) {
         if (permission.getParentId() != Const.ROOT_ID) {
@@ -65,6 +68,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(allEntries = true, condition = "#result == true")
     @PublishEvent(value = EventConst.ROLE_PERMISSION_CHANGE, condition = "#result == true")
     public boolean update(Permission permission) {
         if (permission.getParentId() != Const.ROOT_ID) {
@@ -75,6 +79,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(allEntries = true, condition = "#result == true")
     @PublishEvent(value = EventConst.ROLE_PERMISSION_CHANGE, condition = "#result == true")
     public boolean delete(Long id) {
         return this.permissionMapper.deleteById(id) > 0;

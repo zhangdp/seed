@@ -21,6 +21,7 @@ import io.github.seed.service.sys.RoleService;
 import io.github.seed.service.sys.UserRoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -97,6 +98,8 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    // 角色删了，名下所有"角色->权限"缓存条目一并失效
+    @CacheEvict(cacheNames = TableNameConst.SYS_PERMISSION, allEntries = true, condition = "#result == true")
     @PublishEvent(value = EventConst.ROLE_PERMISSION_CHANGE, condition = "#result == true")
     public boolean delete(Long id) {
         Role bean = this.roleMapper.selectOneById(id);
@@ -120,6 +123,8 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    // 角色的权限被整体重建，旧映射必须失效
+    @CacheEvict(cacheNames = TableNameConst.SYS_PERMISSION, allEntries = true, condition = "#result == true")
     @PublishEvent(value = EventConst.ROLE_PERMISSION_CHANGE, condition = "#result == true")
     public boolean savePermissions(Long roleId, List<Long> permissionIds) {
         Assert.isTrue(this.roleMapper.exists(roleId), () -> new BizException(ErrorCode.ROLE_NOT_EXISTS));
