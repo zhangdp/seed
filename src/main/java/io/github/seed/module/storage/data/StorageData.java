@@ -1,4 +1,4 @@
-package io.github.seed.module.storage;
+package io.github.seed.module.storage.data;
 
 import lombok.Data;
 

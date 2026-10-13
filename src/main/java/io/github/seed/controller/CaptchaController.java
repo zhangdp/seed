@@ -2,7 +2,7 @@ package io.github.seed.controller;
 
 import io.github.seed.manager.CaptchaManager;
 import io.github.seed.module.captcha.CaptchaService;
-import io.github.seed.module.security.data.IgnoreAuth;
+import io.github.seed.module.security.annotation.IgnoreAuth;
 import io.github.seed.model.dto.ImageCaptcha;
 import io.github.seed.model.dto.SmsCaptchaParams;
 import io.swagger.v3.oas.annotations.Operation;

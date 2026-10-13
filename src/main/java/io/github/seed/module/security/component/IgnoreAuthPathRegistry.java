@@ -1,6 +1,6 @@
 package io.github.seed.module.security.component;
 
-import io.github.seed.module.security.data.IgnoreAuth;
+import io.github.seed.module.security.annotation.IgnoreAuth;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;

@@ -2,6 +2,7 @@ package io.github.seed.module.storage;
 
 import io.github.seed.common.enums.ErrorCode;
 import io.github.seed.common.exception.BadRequestException;
+import io.github.seed.module.storage.data.StorageData;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;

@@ -1,5 +1,6 @@
-package io.github.seed.module.security.data;
+package io.github.seed.module.security;
 
+import io.github.seed.module.security.data.SecurityConst;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

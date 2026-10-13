@@ -2,7 +2,7 @@ package io.github.seed.module.storage.local;
 
 import cn.hutool.v7.core.io.file.FileUtil;
 import cn.hutool.v7.crypto.digest.DigestUtil;
-import io.github.seed.module.storage.StorageData;
+import io.github.seed.module.storage.data.StorageData;
 import io.github.seed.common.enums.ErrorCode;
 import io.github.seed.common.exception.NotFoundException;
 import io.github.seed.common.util.MimeType;

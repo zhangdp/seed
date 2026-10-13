@@ -3,7 +3,7 @@ package io.github.seed.controller;
 import io.github.seed.module.captcha.annotation.VerifyCaptcha;
 import io.github.seed.module.captcha.data.CaptchaScene;
 import io.github.seed.module.captcha.data.CaptchaType;
-import io.github.seed.module.security.data.IgnoreAuth;
+import io.github.seed.module.security.annotation.IgnoreAuth;
 import io.github.seed.module.security.data.LoginResult;
 import io.github.seed.module.security.data.LoginUser;
 import io.github.seed.module.security.component.SecurityService;

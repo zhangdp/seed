@@ -6,7 +6,7 @@ import io.github.seed.module.security.data.JwtPayload;
 import io.github.seed.module.security.data.LoginUser;
 import io.github.seed.module.security.data.RefreshToken;
 import io.github.seed.module.security.data.RolePermissionGrantedAuthority;
-import io.github.seed.module.security.data.SecurityProperties;
+import io.github.seed.module.security.SecurityProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;

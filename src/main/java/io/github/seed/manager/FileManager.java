@@ -6,7 +6,7 @@ import cn.hutool.v7.core.io.file.FileNameUtil;
 import cn.hutool.v7.core.text.StrUtil;
 import cn.hutool.v7.core.util.ObjUtil;
 import io.github.seed.common.constant.Const;
-import io.github.seed.module.storage.StorageData;
+import io.github.seed.module.storage.data.StorageData;
 import io.github.seed.common.exception.NotFoundException;
 import io.github.seed.common.util.WebUtils;
 import io.github.seed.entity.sys.FileInfo;

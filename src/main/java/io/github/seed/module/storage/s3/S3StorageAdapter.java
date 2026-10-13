@@ -1,6 +1,6 @@
 package io.github.seed.module.storage.s3;
 
-import io.github.seed.module.storage.StorageData;
+import io.github.seed.module.storage.data.StorageData;
 import io.github.seed.common.enums.ErrorCode;
 import io.github.seed.common.exception.BadRequestException;
 import io.github.seed.common.exception.InternalServerException;

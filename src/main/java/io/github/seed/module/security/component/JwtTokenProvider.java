@@ -2,7 +2,7 @@ package io.github.seed.module.security.component;
 
 import io.github.seed.module.security.data.JwtPayload;
 import io.github.seed.module.security.data.SecurityConst;
-import io.github.seed.module.security.data.SecurityProperties;
+import io.github.seed.module.security.SecurityProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;

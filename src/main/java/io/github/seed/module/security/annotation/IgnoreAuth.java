@@ -1,4 +1,4 @@
-package io.github.seed.module.security.data;
+package io.github.seed.module.security.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

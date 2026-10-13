@@ -1,9 +1,9 @@
 package io.github.seed.module.security;
 
+import io.github.seed.module.security.SecurityProperties;
+import io.github.seed.module.security.annotation.IgnoreAuth;
 import io.github.seed.module.security.component.*;
-import io.github.seed.module.security.data.IgnoreAuth;
 import io.github.seed.module.security.data.SecurityConst;
-import io.github.seed.module.security.data.SecurityProperties;
 import io.github.seed.module.security.filter.TokenResolveAuthenticationFilter;
 import io.github.seed.module.security.handler.*;
 import lombok.RequiredArgsConstructor;
