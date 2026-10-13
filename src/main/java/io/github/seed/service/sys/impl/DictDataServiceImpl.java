@@ -2,6 +2,7 @@ package io.github.seed.service.sys.impl;
 
 import cn.hutool.v7.core.lang.Assert;
 import io.github.seed.common.constant.CacheConst;
+import io.github.seed.common.constant.Const;
 import io.github.seed.common.constant.TableNameConst;
 import io.github.seed.common.enums.ErrorCode;
 import io.github.seed.common.exception.BizException;
@@ -43,7 +44,7 @@ public class DictDataServiceImpl implements DictDataService {
     @Override
     public boolean add(DictData entity) {
         if (entity.getSorts() == null) {
-            entity.setSorts(0);
+            entity.setSorts(Const.DEFAULT_SORTS);
         }
         return dictDataMapper.insert(entity) > 0;
     }

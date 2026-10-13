@@ -62,7 +62,7 @@ public class DeptServiceImpl implements DeptService {
             dept.setParentId(Const.ROOT_ID);
         }
         if (dept.getSorts() == null) {
-            dept.setSorts(0);
+            dept.setSorts(Const.DEFAULT_SORTS);
         }
         if (!dept.getParentId().equals(Const.ROOT_ID)) {
             Assert.isTrue(this.exists(dept.getParentId()), () -> new BizException(ErrorCode.DEPT_PARENT_NOT_EXISTS.code(), "父部门（id=" + dept.getParentId() + "）已不存在"));

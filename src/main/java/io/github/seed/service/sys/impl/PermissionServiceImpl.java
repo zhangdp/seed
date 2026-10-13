@@ -71,7 +71,7 @@ public class PermissionServiceImpl implements PermissionService {
             permission.setVisible(Const.YES_TRUE);
         }
         if (permission.getSorts() == null) {
-            permission.setSorts(0);
+            permission.setSorts(Const.DEFAULT_SORTS);
         }
         if (permission.getParentId() != Const.ROOT_ID) {
             Assert.isTrue(this.isExists(permission.getParentId()), () -> new BizException(ErrorCode.RESOURCE_PARENT_NOT_EXISTS));

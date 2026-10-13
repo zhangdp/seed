@@ -1,6 +1,7 @@
 package io.github.seed.manager;
 
 import cn.hutool.v7.core.text.StrUtil;
+import io.github.seed.common.constant.Const;
 import io.github.seed.common.util.JsonUtils;
 import io.github.seed.entity.sys.SmsLog;
 import io.github.seed.module.sms.SmsProperties;
@@ -144,7 +145,7 @@ public class SmsManager {
         }
         smsLog.setStatus(SmsStatus.PENDING.status());
         smsLog.setPriority(message.getPriority().priority());
-        smsLog.setRetryCount(0);
+        smsLog.setRetryCount(Const.INIT_RETRY_COUNT);
         return smsLog;
     }
 

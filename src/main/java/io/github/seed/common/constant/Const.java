@@ -70,6 +70,16 @@ public interface Const {
     long ROOT_ID = 0L;
 
     /**
+     * 默认排序值，同级未指定排序时排在最前
+     */
+    int DEFAULT_SORTS = 0;
+
+    /**
+     * 初始重试次数
+     */
+    int INIT_RETRY_COUNT = 0;
+
+    /**
      * 默认分页页数1
      */
     int PAGE = 1;
