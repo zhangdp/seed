@@ -25,13 +25,4 @@ public interface CaptchaConst {
      * 校验失败次数key前缀，完整格式：captcha::fail::{type}::{scene}::{key}
      */
     String REDIS_FAIL_PREFIX = REDIS_PREFIX + REDIS_SPLIT + "fail";
-    /**
-     * 发送频率限制key前缀，完整格式：captcha::limit::{type}::{scene}::{key}
-     */
-    String REDIS_LIMIT_PREFIX = REDIS_PREFIX + REDIS_SPLIT + "limit";
-    /**
-     * 短信每日发送次数key前缀，完整格式：captcha::count::sms::daily::{mobile}
-     */
-    String REDIS_SMS_DAILY_PREFIX = REDIS_PREFIX + REDIS_SPLIT + "count" + REDIS_SPLIT + CaptchaType.SMS.type()
-            + REDIS_SPLIT + "daily";
 }

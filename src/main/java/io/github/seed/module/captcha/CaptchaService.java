@@ -5,7 +5,6 @@ import io.github.seed.module.captcha.component.CaptchaGenerator;
 import io.github.seed.module.captcha.data.CaptchaScene;
 import io.github.seed.module.captcha.data.CaptchaType;
 import io.github.seed.module.captcha.store.CaptchaStore;
-import io.github.seed.module.captcha.store.SmsSendQuota;
 import io.github.seed.common.enums.ErrorCode;
 import io.github.seed.common.exception.BizException;
 import io.github.seed.model.dto.ImageCaptcha;
@@ -29,7 +28,6 @@ public class CaptchaService {
     private final CaptchaProperties captchaProperties;
     private final CaptchaStore captchaStore;
     private final CaptchaGenerator captchaGenerator;
-    private final SmsSendQuota smsSendQuota;
 
     /**
      * 生成图片验证码；每次生成都由服务端生成唯一key并随图片返回，因此多处验证码不会串号
@@ -56,7 +54,8 @@ public class CaptchaService {
     }
 
     /**
-     * 生成短信验证码：校验发送资格后生成并缓存，<b>不涉及任何投递动作</b>
+     * 生成短信验证码：校验场景后生成并缓存，<b>不涉及任何投递动作</b>
+     * <br>发送频率与配额由{@code sms}模块在投递前把关，本方法只保证验证码本身可用
      *
      * @param scene  场景，如login、reset_password，为空使用默认场景
      * @param mobile 手机号
@@ -64,27 +63,12 @@ public class CaptchaService {
      */
     public String generateSmsCode(String scene, String mobile) {
         String s = StrUtil.defaultIfBlank(scene, CaptchaScene.DEFAULT);
-        // 1、场景白名单校验，防止前端轮换场景绕过发送频率限制
+        // 场景白名单校验，防止前端轮换场景绕过发送频率限制
         Set<String> scenes = captchaProperties.getSmsScenes();
         if (scenes != null && !scenes.isEmpty() && !scenes.contains(s)) {
             throw new BizException(ErrorCode.CAPTCHA_SCENE_INVALID.code(),
                     ErrorCode.CAPTCHA_SCENE_INVALID.message() + "：" + s);
         }
-        // 2、抢占式写入发送锁，避免"检查-发送"竞态导致并发短信轰炸
-        //    先于当日计数占用，避免用户频繁重试把当日额度白白耗光
-        if (!captchaStore.tryLockSend(CaptchaType.SMS, s, mobile, captchaProperties.getSmsSendInterval())) {
-            Duration remain = captchaStore.getSendLockExpire(CaptchaType.SMS, s, mobile);
-            throw new BizException(ErrorCode.CAPTCHA_SEND_TOO_FREQUENTLY.code(),
-                    "请" + Math.max(remain.toSeconds(), 1) + "秒后再试");
-        }
-        // 3、手机号当日发送上限
-        int maxPerDay = captchaProperties.getSmsMaxPerMobilePerDay();
-        if (maxPerDay > 0 && smsSendQuota.increaseDaily(mobile) > maxPerDay) {
-            captchaStore.releaseSendLock(CaptchaType.SMS, s, mobile);
-            throw new BizException(ErrorCode.CAPTCHA_SEND_TOO_FREQUENTLY.code(),
-                    "该手机号今日验证码发送次数已达上限");
-        }
-        // 4、生成并缓存验证码
         String code = captchaGenerator.generateSmsCode(captchaProperties.getSmsCodeLength());
         captchaStore.saveCode(CaptchaType.SMS, s, mobile, code, captchaProperties.getSmsExpire());
         return code;

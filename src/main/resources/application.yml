@@ -138,10 +138,7 @@ app:
     image-line-count: 30
     # 短信验证码
     sms-expire: 5m
-    # 相同场景下同一手机号的发送间隔，不同场景互不影响
-    sms-send-interval: 60s
     sms-code-length: 6
-    sms-max-per-mobile-per-day: 20
     # 短信场景白名单，防止前端轮换场景绕过发送频率限制，为空则不限制
     sms-scenes:
       - login
@@ -154,6 +151,8 @@ app:
     # 未配置短信模板时发送的文本短信内容，{}依次为验证码、有效分钟数
     sms-content-template: "您的验证码是{}，{}分钟内有效，请勿泄露给他人。"
   sms:
+    # 相同场景下同一手机号的发送间隔，不同场景互不影响
+    send-interval: 60s
     # 短信签名，需与服务商报备的名称一致
     sign-name:
     # 业务场景 -> 短信模板编码：命中场景用对应模板，未命中用default，都没有则退化为发送文本内容

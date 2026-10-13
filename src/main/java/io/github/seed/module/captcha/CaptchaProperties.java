@@ -64,17 +64,9 @@ public class CaptchaProperties {
      */
     private Duration smsExpire = Duration.ofMinutes(5);
     /**
-     * 相同场景下同一接收目标（如手机号）的发送间隔
-     */
-    private Duration smsSendInterval = Duration.ofSeconds(60);
-    /**
      * 短信验证码位数
      */
     private int smsCodeLength = 6;
-    /**
-     * 同一手机号每日最多发送条数，小于等于0表示不限制
-     */
-    private int smsMaxPerMobilePerDay = 20;
     /**
      * 允许的短信场景白名单，为空表示不限制（存在轮换场景绕过发送频率限制的风险）
      */

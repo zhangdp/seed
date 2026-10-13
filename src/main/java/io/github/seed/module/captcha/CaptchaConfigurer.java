@@ -4,8 +4,6 @@ import io.github.seed.module.captcha.aspect.CaptchaVerifyAspect;
 import io.github.seed.module.captcha.component.CaptchaGenerator;
 import io.github.seed.module.captcha.store.CaptchaStore;
 import io.github.seed.module.captcha.store.RedisCaptchaStore;
-import io.github.seed.module.captcha.store.RedisSmsSendQuota;
-import io.github.seed.module.captcha.store.SmsSendQuota;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
@@ -55,30 +53,17 @@ public class CaptchaConfigurer implements InitializingBean {
     }
 
     /**
-     * 短信发送配额，默认存redis；与验证码存储分开，各自可换实现
-     *
-     * @param stringRedisTemplate 计数存redis，跨节点才拦得住换机器重发
-     * @return 短信发送配额
-     */
-    @Bean
-    @ConditionalOnMissingBean(SmsSendQuota.class)
-    public SmsSendQuota redisSmsSendQuota(StringRedisTemplate stringRedisTemplate) {
-        return new RedisSmsSendQuota(stringRedisTemplate);
-    }
-
-    /**
      * 验证码服务
      *
      * @param captchaProperties 验证码配置
      * @param captchaStore      验证码读写
      * @param captchaGenerator  验证码生成器
-     * @param smsSendQuota      短信发送配额
      * @return 验证码服务
      */
     @Bean
     public CaptchaService captchaService(CaptchaProperties captchaProperties, CaptchaStore captchaStore,
-                                         CaptchaGenerator captchaGenerator, SmsSendQuota smsSendQuota) {
-        return new CaptchaService(captchaProperties, captchaStore, captchaGenerator, smsSendQuota);
+                                         CaptchaGenerator captchaGenerator) {
+        return new CaptchaService(captchaProperties, captchaStore, captchaGenerator);
     }
 
     /**
@@ -99,9 +84,8 @@ public class CaptchaConfigurer implements InitializingBean {
             log.warn("未配置{}.sms-scenes，短信场景不做白名单限制，存在轮换场景绕过发送频率限制的风险",
                     CaptchaProperties.CONFIG_PREFIX);
         } else {
-            log.info("验证码短信场景白名单：{}，图片验证码有效期：{}，短信验证码有效期：{}，发送间隔：{}",
-                    scenes, captchaProperties.getImageExpire(), captchaProperties.getSmsExpire(),
-                    captchaProperties.getSmsSendInterval());
+            log.info("验证码短信场景白名单：{}，图片验证码有效期：{}，短信验证码有效期：{}",
+                    scenes, captchaProperties.getImageExpire(), captchaProperties.getSmsExpire());
         }
     }
 }

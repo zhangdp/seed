@@ -39,6 +39,10 @@ public class SmsProperties {
     private Map<String, String> templates = new LinkedHashMap<>();
 
     /**
+     * 相同场景下同一手机号的发送间隔，不同场景互不影响
+     */
+    private Duration sendInterval = Duration.ofSeconds(60);
+    /**
      * 每轮最多派发的条数
      */
     private int sendBatchSize = 100;

@@ -62,24 +62,6 @@ public class RedisCaptchaStore implements CaptchaStore {
         this.stringRedisTemplate.delete(this.failKey(type, scene, key));
     }
 
-    @Override
-    public boolean tryLockSend(CaptchaType type, String scene, String key, Duration interval) {
-        String limitKey = this.limitKey(type, scene, key);
-        Boolean success = this.stringRedisTemplate.opsForValue().setIfAbsent(limitKey, "1", interval);
-        log.debug("尝试占用发送锁：key={}, interval={}, success={}", limitKey, interval, success);
-        return Boolean.TRUE.equals(success);
-    }
-
-    @Override
-    public void releaseSendLock(CaptchaType type, String scene, String key) {
-        this.stringRedisTemplate.delete(this.limitKey(type, scene, key));
-    }
-
-    @Override
-    public Duration getSendLockExpire(CaptchaType type, String scene, String key) {
-        return this.expire(this.limitKey(type, scene, key));
-    }
-
     /**
      * 验证码key，格式：captcha::{type}::{scene}::{key}
      *
@@ -102,18 +84,6 @@ public class RedisCaptchaStore implements CaptchaStore {
      */
     private String failKey(CaptchaType type, String scene, String key) {
         return this.buildKey(CaptchaConst.REDIS_FAIL_PREFIX, type, scene, key);
-    }
-
-    /**
-     * 发送频率限制key，格式：captcha::limit::{type}::{scene}::{key}
-     *
-     * @param type  验证码类型
-     * @param scene 场景
-     * @param key   验证码key
-     * @return redis key
-     */
-    private String limitKey(CaptchaType type, String scene, String key) {
-        return this.buildKey(CaptchaConst.REDIS_LIMIT_PREFIX, type, scene, key);
     }
 
     /**
