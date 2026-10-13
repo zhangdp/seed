@@ -2,10 +2,14 @@ package io.github.seed.module.captcha;
 
 import io.github.seed.module.captcha.aspect.CaptchaVerifyAspect;
 import io.github.seed.module.captcha.component.CaptchaGenerator;
-import io.github.seed.module.captcha.component.CaptchaStore;
+import io.github.seed.module.captcha.store.CaptchaStore;
+import io.github.seed.module.captcha.store.RedisCaptchaStore;
+import io.github.seed.module.captcha.store.RedisSmsSendQuota;
+import io.github.seed.module.captcha.store.SmsSendQuota;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,14 +43,27 @@ public class CaptchaConfigurer implements InitializingBean {
     }
 
     /**
-     * 验证码读写
+     * 验证码读写，默认存redis；宿主想换存储时自己注册一个{@link CaptchaStore}即可顶掉
      *
      * @param stringRedisTemplate 验证码存redis，多节点共享才不会出现"换台机器就校验失败"
      * @return 验证码读写
      */
     @Bean
-    public CaptchaStore captchaStore(StringRedisTemplate stringRedisTemplate) {
-        return new CaptchaStore(stringRedisTemplate);
+    @ConditionalOnMissingBean(CaptchaStore.class)
+    public CaptchaStore redisCaptchaStore(StringRedisTemplate stringRedisTemplate) {
+        return new RedisCaptchaStore(stringRedisTemplate);
+    }
+
+    /**
+     * 短信发送配额，默认存redis；与验证码存储分开，各自可换实现
+     *
+     * @param stringRedisTemplate 计数存redis，跨节点才拦得住换机器重发
+     * @return 短信发送配额
+     */
+    @Bean
+    @ConditionalOnMissingBean(SmsSendQuota.class)
+    public SmsSendQuota redisSmsSendQuota(StringRedisTemplate stringRedisTemplate) {
+        return new RedisSmsSendQuota(stringRedisTemplate);
     }
 
     /**
@@ -55,12 +72,13 @@ public class CaptchaConfigurer implements InitializingBean {
      * @param captchaProperties 验证码配置
      * @param captchaStore      验证码读写
      * @param captchaGenerator  验证码生成器
+     * @param smsSendQuota      短信发送配额
      * @return 验证码服务
      */
     @Bean
     public CaptchaService captchaService(CaptchaProperties captchaProperties, CaptchaStore captchaStore,
-                                         CaptchaGenerator captchaGenerator) {
-        return new CaptchaService(captchaProperties, captchaStore, captchaGenerator);
+                                         CaptchaGenerator captchaGenerator, SmsSendQuota smsSendQuota) {
+        return new CaptchaService(captchaProperties, captchaStore, captchaGenerator, smsSendQuota);
     }
 
     /**

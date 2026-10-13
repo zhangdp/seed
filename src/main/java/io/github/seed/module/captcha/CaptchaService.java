@@ -2,9 +2,10 @@ package io.github.seed.module.captcha;
 
 import cn.hutool.v7.core.text.StrUtil;
 import io.github.seed.module.captcha.component.CaptchaGenerator;
-import io.github.seed.module.captcha.component.CaptchaStore;
 import io.github.seed.module.captcha.data.CaptchaScene;
 import io.github.seed.module.captcha.data.CaptchaType;
+import io.github.seed.module.captcha.store.CaptchaStore;
+import io.github.seed.module.captcha.store.SmsSendQuota;
 import io.github.seed.common.enums.ErrorCode;
 import io.github.seed.common.exception.BizException;
 import io.github.seed.model.dto.ImageCaptcha;
@@ -28,6 +29,7 @@ public class CaptchaService {
     private final CaptchaProperties captchaProperties;
     private final CaptchaStore captchaStore;
     private final CaptchaGenerator captchaGenerator;
+    private final SmsSendQuota smsSendQuota;
 
     /**
      * 生成图片验证码；每次生成都由服务端生成唯一key并随图片返回，因此多处验证码不会串号
@@ -71,13 +73,13 @@ public class CaptchaService {
         // 2、抢占式写入发送锁，避免"检查-发送"竞态导致并发短信轰炸
         //    先于当日计数占用，避免用户频繁重试把当日额度白白耗光
         if (!captchaStore.tryLockSend(CaptchaType.SMS, s, mobile, captchaProperties.getSmsSendInterval())) {
-            Duration remain = captchaStore.getExpire(captchaStore.limitKey(CaptchaType.SMS, s, mobile));
+            Duration remain = captchaStore.getSendLockExpire(CaptchaType.SMS, s, mobile);
             throw new BizException(ErrorCode.CAPTCHA_SEND_TOO_FREQUENTLY.code(),
                     "请" + Math.max(remain.toSeconds(), 1) + "秒后再试");
         }
         // 3、手机号当日发送上限
         int maxPerDay = captchaProperties.getSmsMaxPerMobilePerDay();
-        if (maxPerDay > 0 && captchaStore.increaseSmsDaily(mobile) > maxPerDay) {
+        if (maxPerDay > 0 && smsSendQuota.increaseDaily(mobile) > maxPerDay) {
             captchaStore.releaseSendLock(CaptchaType.SMS, s, mobile);
             throw new BizException(ErrorCode.CAPTCHA_SEND_TOO_FREQUENTLY.code(),
                     "该手机号今日验证码发送次数已达上限");
@@ -133,7 +135,7 @@ public class CaptchaService {
             captchaStore.deleteFail(type, scene, key);
             return;
         }
-        Duration ttl = captchaStore.getExpire(captchaStore.codeKey(type, scene, key));
+        Duration ttl = captchaStore.getCodeExpire(type, scene, key);
         if (captchaStore.increaseFail(type, scene, key, ttl) >= maxFailCount) {
             captchaStore.deleteCode(type, scene, key);
             captchaStore.deleteFail(type, scene, key);
