@@ -1,9 +1,8 @@
-package io.github.seed.module.captcha;
+package io.github.seed.module.captcha.component;
 
 import cn.hutool.v7.core.util.RandomUtil;
 import cn.hutool.v7.swing.captcha.CaptchaUtil;
 import cn.hutool.v7.swing.captcha.LineCaptcha;
-import org.springframework.stereotype.Component;
 
 /**
  * 验证码生成器
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Component;
  * @author zhangdp
  * @since 1.0.0
  */
-@Component
 public class CaptchaGenerator {
 
     /**

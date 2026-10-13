@@ -1,6 +1,8 @@
 package io.github.seed.module.captcha;
 
 import cn.hutool.v7.core.text.StrUtil;
+import io.github.seed.module.captcha.component.CaptchaGenerator;
+import io.github.seed.module.captcha.component.CaptchaStore;
 import io.github.seed.module.captcha.data.CaptchaScene;
 import io.github.seed.module.captcha.data.CaptchaType;
 import io.github.seed.common.enums.ErrorCode;
@@ -8,19 +10,18 @@ import io.github.seed.common.exception.BizException;
 import io.github.seed.model.dto.ImageCaptcha;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.util.Set;
 
 /**
- * 验证码服务
+ * 验证码服务，模块对外的唯一入口：生成图片/短信验证码、校验验证码
+ * <br>只生成不投递，短信交给{@code CaptchaManager}编排
  *
  * @author zhangdp
  * @since 1.0.0
  */
 @Slf4j
-@Component
 @RequiredArgsConstructor
 public class CaptchaService {
 

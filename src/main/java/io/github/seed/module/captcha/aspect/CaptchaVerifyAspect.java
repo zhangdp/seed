@@ -1,8 +1,8 @@
 package io.github.seed.module.captcha.aspect;
 
 import cn.hutool.v7.core.text.StrUtil;
-import io.github.seed.module.captcha.annotation.VerifyCaptcha;
 import io.github.seed.module.captcha.CaptchaService;
+import io.github.seed.module.captcha.annotation.VerifyCaptcha;
 import io.github.seed.common.enums.ErrorCode;
 import io.github.seed.common.exception.BizException;
 import io.github.seed.common.util.SpELUtils;
@@ -18,7 +18,6 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -32,7 +31,6 @@ import java.util.Map;
  */
 @Slf4j
 @Aspect
-@Component
 @Order(Ordered.HIGHEST_PRECEDENCE + 10)
 @RequiredArgsConstructor
 public class CaptchaVerifyAspect {

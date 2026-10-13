@@ -1,15 +1,21 @@
 package io.github.seed.module.captcha;
 
+import io.github.seed.module.captcha.aspect.CaptchaVerifyAspect;
+import io.github.seed.module.captcha.component.CaptchaGenerator;
+import io.github.seed.module.captcha.component.CaptchaStore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.StringRedisTemplate;
 
 import java.util.Set;
 
 /**
- * 验证码自动配置类
+ * 验证码模块装配：本模块的bean都在这里注册，读一个类就能看清装了什么
+ * <br>对外只暴露{@link CaptchaService}，生成与存储是内部实现
  *
  * @author zhangdp
  * @since 1.0.0
@@ -21,6 +27,52 @@ import java.util.Set;
 public class CaptchaConfigurer implements InitializingBean {
 
     private final CaptchaProperties captchaProperties;
+
+    /**
+     * 验证码生成器
+     *
+     * @return 验证码生成器
+     */
+    @Bean
+    public CaptchaGenerator captchaGenerator() {
+        return new CaptchaGenerator();
+    }
+
+    /**
+     * 验证码读写
+     *
+     * @param stringRedisTemplate 验证码存redis，多节点共享才不会出现"换台机器就校验失败"
+     * @return 验证码读写
+     */
+    @Bean
+    public CaptchaStore captchaStore(StringRedisTemplate stringRedisTemplate) {
+        return new CaptchaStore(stringRedisTemplate);
+    }
+
+    /**
+     * 验证码服务
+     *
+     * @param captchaProperties 验证码配置
+     * @param captchaStore      验证码读写
+     * @param captchaGenerator  验证码生成器
+     * @return 验证码服务
+     */
+    @Bean
+    public CaptchaService captchaService(CaptchaProperties captchaProperties, CaptchaStore captchaStore,
+                                         CaptchaGenerator captchaGenerator) {
+        return new CaptchaService(captchaProperties, captchaStore, captchaGenerator);
+    }
+
+    /**
+     * 验证码校验切面
+     *
+     * @param captchaService 验证码服务
+     * @return 验证码校验切面
+     */
+    @Bean
+    public CaptchaVerifyAspect captchaVerifyAspect(CaptchaService captchaService) {
+        return new CaptchaVerifyAspect(captchaService);
+    }
 
     @Override
     public void afterPropertiesSet() {

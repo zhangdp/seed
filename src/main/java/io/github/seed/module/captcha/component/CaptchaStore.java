@@ -1,11 +1,10 @@
-package io.github.seed.module.captcha;
+package io.github.seed.module.captcha.component;
 
 import io.github.seed.module.captcha.data.CaptchaConst;
 import io.github.seed.module.captcha.data.CaptchaType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -19,7 +18,6 @@ import java.util.concurrent.TimeUnit;
  * @since 1.0.0
  */
 @Slf4j
-@Component
 @RequiredArgsConstructor
 public class CaptchaStore {
 
