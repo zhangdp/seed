@@ -48,6 +48,13 @@ public class ConfigServiceImpl implements ConfigService {
     @Override
     public boolean add(Config entity) {
         entity.setConfigKey(entity.getConfigKey().trim().toUpperCase());
+        // 不传即非加密、非系统内置：全字段insert会把null写进SQL，数据库DEFAULT 0不生效
+        if (entity.getIsEncrypted() == null) {
+            entity.setIsEncrypted(Const.NO_FALSE);
+        }
+        if (entity.getIsSystem() == null) {
+            entity.setIsSystem(Const.NO_FALSE);
+        }
         return configMapper.insert(entity) > 0;
     }
 

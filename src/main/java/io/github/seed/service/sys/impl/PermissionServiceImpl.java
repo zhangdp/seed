@@ -60,6 +60,19 @@ public class PermissionServiceImpl implements PermissionService {
     @CacheEvict(allEntries = true, condition = "#result == true")
     @PublishEvent(value = EventConst.ROLE_PERMISSION_CHANGE, condition = "#result == true")
     public boolean add(Permission permission) {
+        // 不传时的默认值与DDL的DEFAULT一致：全字段insert会把null写进SQL，数据库的DEFAULT不生效
+        if (permission.getParentId() == null) {
+            permission.setParentId(Const.ROOT_ID);
+        }
+        if (permission.getKeepAlive() == null) {
+            permission.setKeepAlive(Const.NO_FALSE);
+        }
+        if (permission.getVisible() == null) {
+            permission.setVisible(Const.YES_TRUE);
+        }
+        if (permission.getSorts() == null) {
+            permission.setSorts(0);
+        }
         if (permission.getParentId() != Const.ROOT_ID) {
             Assert.isTrue(this.isExists(permission.getParentId()), () -> new BizException(ErrorCode.RESOURCE_PARENT_NOT_EXISTS));
         }
@@ -71,7 +84,8 @@ public class PermissionServiceImpl implements PermissionService {
     @CacheEvict(allEntries = true, condition = "#result == true")
     @PublishEvent(value = EventConst.ROLE_PERMISSION_CHANGE, condition = "#result == true")
     public boolean update(Permission permission) {
-        if (permission.getParentId() != Const.ROOT_ID) {
+        // 不传parentId表示不改挂载位置，别拿null去拆箱比较
+        if (permission.getParentId() != null && permission.getParentId() != Const.ROOT_ID) {
             Assert.isTrue(this.isExists(permission.getParentId()), () -> new BizException(ErrorCode.RESOURCE_PARENT_NOT_EXISTS));
         }
         return permissionMapper.update(permission) > 0;

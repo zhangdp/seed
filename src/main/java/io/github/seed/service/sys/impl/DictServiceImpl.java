@@ -50,6 +50,10 @@ public class DictServiceImpl implements DictService {
     public boolean add(Dict entity) {
         Assert.isFalse(dictMapper.existsByTypeAndIdNot(entity.getType(), null),
                 () -> new BizException(ErrorCode.BIZ_ERROR.code(), "字典类型已存在"));
+        // 不传即非系统内置：全字段insert会把null写进SQL，数据库DEFAULT 0不生效
+        if (entity.getIsSystem() == null) {
+            entity.setIsSystem(Const.NO_FALSE);
+        }
         return dictMapper.insert(entity) > 0;
     }
 

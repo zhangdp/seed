@@ -4,6 +4,7 @@ import cn.hutool.v7.core.collection.CollUtil;
 import cn.hutool.v7.core.lang.Assert;
 import cn.hutool.v7.core.text.StrUtil;
 import io.github.seed.common.annotation.PublishEvent;
+import io.github.seed.common.constant.Const;
 import io.github.seed.common.constant.EventConst;
 import io.github.seed.common.constant.TableNameConst;
 import io.github.seed.common.enums.ErrorCode;
@@ -88,6 +89,10 @@ public class UserServiceImpl implements UserService {
         }
         if (StrUtil.isNotBlank(user.getPassword())) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+        // 不传即正常：mybatis-flex的全字段insert会把null写进SQL，数据库DEFAULT 0不生效
+        if (user.getStatus() == null) {
+            user.setStatus(Const.GOOD);
         }
         // 先落库再装关联表：id由mybatis-flex在insert时才生成并回填，提前取恒为null
         if (userMapper.insert(user) <= 0) {

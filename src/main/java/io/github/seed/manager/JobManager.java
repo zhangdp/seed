@@ -35,6 +35,11 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class JobManager {
 
+    /**
+     * 未指定分组时归入默认分组，与sys_job.job_group的DEFAULT一致
+     */
+    private static final String DEFAULT_JOB_GROUP = "DEFAULT";
+
     private final JobService jobService;
     private final JobLogService jobLogService;
     private final JobDispatcher jobDispatcher;
@@ -75,6 +80,8 @@ public class JobManager {
         String status = job.getStatus() == null ? JobStatus.STOPPED.value() : job.getStatus();
         job.setStatus(status);
         job.setMisfirePolicy(job.getMisfirePolicy() == null ? JobMisfirePolicy.SKIP.value() : job.getMisfirePolicy());
+        // 分组同理：全字段insert会把null写进SQL，数据库DEFAULT 'DEFAULT'不生效
+        job.setJobGroup(job.getJobGroup() == null ? DEFAULT_JOB_GROUP : job.getJobGroup());
         job.setNextFireTime(JobStatus.WAITING.value().equals(status)
                 ? this.nextFireTime(job.getCronExpression(), LocalDateTime.now()) : null);
         Assert.isTrue(jobService.getByJobName(job.getJobName(), job.getJobGroup()) == null,

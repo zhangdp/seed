@@ -57,6 +57,13 @@ public class DeptServiceImpl implements DeptService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean add(Dept dept) {
+        // 不传即根部门，顺带避免下面getParentId().equals()空指针；sorts同理，树按int排序时null会拆箱报错
+        if (dept.getParentId() == null) {
+            dept.setParentId(Const.ROOT_ID);
+        }
+        if (dept.getSorts() == null) {
+            dept.setSorts(0);
+        }
         if (!dept.getParentId().equals(Const.ROOT_ID)) {
             Assert.isTrue(this.exists(dept.getParentId()), () -> new BizException(ErrorCode.DEPT_PARENT_NOT_EXISTS.code(), "父部门（id=" + dept.getParentId() + "）已不存在"));
         }
