@@ -67,14 +67,15 @@ public class CaptchaManager {
      * @return 短信内容
      */
     private SmsMessage buildSmsMessage(String scene, String mobile, String code) {
+        CaptchaProperties.Sms sms = captchaProperties.getSms();
         String templateCode = smsProperties.getTemplate(scene);
         if (StrUtil.isBlank(templateCode)) {
-            long minutes = Math.max(captchaProperties.getSmsExpire().toMinutes(), 1);
-            return SmsMessage.text(mobile, StrUtil.format(captchaProperties.getSmsContentTemplate(), code, minutes));
+            long minutes = Math.max(sms.getExpire().toMinutes(), 1);
+            return SmsMessage.text(mobile, StrUtil.format(sms.getContentTemplate(), code, minutes));
         }
         // 模板参数用有序Map，便于对接腾讯云这类以参数顺序对应模板占位符的服务商
         Map<String, Object> templateParams = new LinkedHashMap<>();
-        templateParams.put(captchaProperties.getSmsCodeParam(), code);
+        templateParams.put(sms.getCodeParam(), code);
         return SmsMessage.template(mobile, templateCode, templateParams);
     }
 

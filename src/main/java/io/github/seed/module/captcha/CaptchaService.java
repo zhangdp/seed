@@ -39,14 +39,13 @@ public class CaptchaService {
      */
     public ImageCaptcha generateImage(String scene, Integer width, Integer height) {
         String s = StrUtil.defaultIfBlank(scene, CaptchaScene.DEFAULT);
-        int w = this.clamp(width, captchaProperties.getImageWidth(), captchaProperties.getImageMinWidth(),
-                captchaProperties.getImageMaxWidth());
-        int h = this.clamp(height, captchaProperties.getImageHeight(), captchaProperties.getImageMinHeight(),
-                captchaProperties.getImageMaxHeight());
+        CaptchaProperties.Image image = captchaProperties.getImage();
+        int w = this.clamp(width, image.getWidth(), image.getMinWidth(), image.getMaxWidth());
+        int h = this.clamp(height, image.getHeight(), image.getMinHeight(), image.getMaxHeight());
         CaptchaGenerator.GeneratedImage generated = captchaGenerator.generateImage(w, h,
-                captchaProperties.getImageCodeLength(), captchaProperties.getImageLineCount());
+                image.getCodeLength(), image.getLineCount());
         String key = captchaGenerator.generateKey();
-        captchaStore.saveCode(CaptchaType.IMAGE, s, key, generated.code(), captchaProperties.getImageExpire());
+        captchaStore.saveCode(CaptchaType.IMAGE, s, key, generated.code(), image.getExpire());
         ImageCaptcha imageCaptcha = new ImageCaptcha();
         imageCaptcha.setKey(key);
         imageCaptcha.setImage(generated.image());
@@ -64,13 +63,14 @@ public class CaptchaService {
     public String generateSmsCode(String scene, String mobile) {
         String s = StrUtil.defaultIfBlank(scene, CaptchaScene.DEFAULT);
         // 场景白名单校验，防止前端轮换场景绕过发送频率限制
-        Set<String> scenes = captchaProperties.getSmsScenes();
+        Set<String> scenes = captchaProperties.getSms().getScenes();
         if (scenes != null && !scenes.isEmpty() && !scenes.contains(s)) {
             throw new BizException(ErrorCode.CAPTCHA_SCENE_INVALID.code(),
                     ErrorCode.CAPTCHA_SCENE_INVALID.message() + "：" + s);
         }
-        String code = captchaGenerator.generateSmsCode(captchaProperties.getSmsCodeLength());
-        captchaStore.saveCode(CaptchaType.SMS, s, mobile, code, captchaProperties.getSmsExpire());
+        CaptchaProperties.Sms sms = captchaProperties.getSms();
+        String code = captchaGenerator.generateSmsCode(sms.getCodeLength());
+        captchaStore.saveCode(CaptchaType.SMS, s, mobile, code, sms.getExpire());
         return code;
     }
 

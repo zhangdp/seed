@@ -40,6 +40,32 @@ public class SecurityProperties {
      * actuator端点认证配置
      */
     private ActuatorProperties actuator;
+    /**
+     * jti黑名单定时全量刷新，默认关闭
+     */
+    private Refresh jtiBlacklistRefresh = new Refresh();
+    /**
+     * 角色权限缓存定时全量刷新，默认关闭
+     */
+    private Refresh rolePermissionRefresh = new Refresh();
+
+    /**
+     * 一个缓存的定时全量刷新配置
+     * <br>缓存本身靠变更通知同步，定时刷新只为兜住pub/sub丢通知的场景，
+     * 因此默认关闭——通知可靠时开了只是多一路无谓的读取
+     */
+    @Data
+    public static class Refresh {
+
+        /**
+         * 是否启用定时刷新，为false时只靠变更通知同步
+         */
+        private boolean enabled = false;
+        /**
+         * 刷新间隔，上一轮结束后间隔该时间再发起下一轮
+         */
+        private Duration interval = Duration.ofMinutes(5);
+    }
 
     /**
      * jwt配置

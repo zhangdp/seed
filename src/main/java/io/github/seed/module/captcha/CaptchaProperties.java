@@ -10,7 +10,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * 验证码配置
+ * 验证码配置（{@code app.captcha}），按验证码类型分成{@code image}与{@code sms}两段
  *
  * @author zhangdp
  * @since 1.0.0
@@ -23,64 +23,89 @@ public class CaptchaProperties {
     public static final String CONFIG_PREFIX = "app.captcha";
 
     /**
-     * 图片验证码有效期
+     * 图片验证码配置（{@code app.captcha.image}）
      */
-    private Duration imageExpire = Duration.ofMinutes(5);
+    private Image image = new Image();
     /**
-     * 图片验证码默认宽度
+     * 短信验证码配置（{@code app.captcha.sms}）；发送侧规则（间隔、配额）不在这里，归{@code app.sms}
      */
-    private int imageWidth = 200;
-    /**
-     * 图片验证码默认高度
-     */
-    private int imageHeight = 50;
-    /**
-     * 图片验证码允许的最小宽度，防止被构造超大图片
-     */
-    private int imageMinWidth = 80;
-    /**
-     * 图片验证码允许的最大宽度
-     */
-    private int imageMaxWidth = 400;
-    /**
-     * 图片验证码允许的最小高度
-     */
-    private int imageMinHeight = 30;
-    /**
-     * 图片验证码允许的最大高度
-     */
-    private int imageMaxHeight = 200;
-    /**
-     * 图片验证码字符个数
-     */
-    private int imageCodeLength = 4;
-    /**
-     * 图片验证码干扰线数量，0表示不画干扰线
-     */
-    private int imageLineCount = 30;
+    private Sms sms = new Sms();
 
     /**
-     * 短信验证码有效期
+     * 图片验证码配置
      */
-    private Duration smsExpire = Duration.ofMinutes(5);
+    @Getter
+    @Setter
+    public static class Image {
+
+        /**
+         * 验证码有效期
+         */
+        private Duration expire = Duration.ofMinutes(5);
+        /**
+         * 默认宽度
+         */
+        private int width = 200;
+        /**
+         * 默认高度
+         */
+        private int height = 50;
+        /**
+         * 允许的最小宽度，防止被构造超大图片
+         */
+        private int minWidth = 80;
+        /**
+         * 允许的最大宽度，防止被构造超大图片
+         */
+        private int maxWidth = 400;
+        /**
+         * 允许的最小高度，防止被构造超大图片
+         */
+        private int minHeight = 30;
+        /**
+         * 允许的最大高度，防止被构造超大图片
+         */
+        private int maxHeight = 200;
+        /**
+         * 验证码字符个数
+         */
+        private int codeLength = 4;
+        /**
+         * 干扰线数量，0表示不画干扰线
+         */
+        private int lineCount = 30;
+    }
+
     /**
-     * 短信验证码位数
+     * 短信验证码配置
      */
-    private int smsCodeLength = 6;
-    /**
-     * 允许的短信场景白名单，为空表示不限制（存在轮换场景绕过发送频率限制的风险）
-     */
-    private Set<String> smsScenes = new LinkedHashSet<>(Set.of(CaptchaScene.LOGIN, CaptchaScene.REGISTER,
-            CaptchaScene.RESET_PASSWORD, CaptchaScene.BIND_MOBILE, CaptchaScene.CHANGE_MOBILE));
-    /**
-     * 验证码在短信模板参数中的占位名，
-     * 配合{@code app.sms.templates}中配置的场景模板使用
-     */
-    private String smsCodeParam = "code";
-    /**
-     * 未配置短信模板时使用的文本短信内容模板，
-     * {}依次为验证码、有效分钟数，需与服务商支持的内容报备格式保持一致
-     */
-    private String smsContentTemplate = "您的验证码是{}，{}分钟内有效，请勿泄露给他人。";
+    @Getter
+    @Setter
+    public static class Sms {
+
+        /**
+         * 验证码有效期
+         */
+        private Duration expire = Duration.ofMinutes(5);
+        /**
+         * 验证码位数
+         */
+        private int codeLength = 6;
+        /**
+         * 允许的场景白名单，为空表示不限制（存在轮换场景绕过发送频率限制的风险）
+         */
+        private Set<String> scenes = new LinkedHashSet<>(Set.of(CaptchaScene.LOGIN, CaptchaScene.REGISTER,
+                CaptchaScene.RESET_PASSWORD, CaptchaScene.BIND_MOBILE, CaptchaScene.CHANGE_MOBILE));
+        /**
+         * 验证码在短信模板参数中的占位名，
+         * 配合{@code app.sms.templates}中配置的场景模板使用
+         */
+        private String codeParam = "code";
+        /**
+         * 未配置短信模板时使用的文本短信内容模板，
+         * {}依次为验证码、有效分钟数，需与服务商支持的内容报备格式保持一致
+         */
+        private String contentTemplate = "您的验证码是{}，{}分钟内有效，请勿泄露给他人。";
+    }
 
 }

@@ -32,7 +32,7 @@ import java.util.Map;
  * <br>启动时全量预热——不预热的话冷启动期间权限是空的，请求会直接403
  * <br>同步方式与jti黑名单一致：只广播"变了"这件事，收到就全量重拉；不做版本号比对，
  * pub/sub断线期间的通知必然丢失，靠下一次任何节点的变更通知顺带补齐，也可以调{@link #reload()}立刻对齐。
- * 定时兜底不放在模块里：需要时由应用侧{@code RolePermissionRefreshTask}按{@code app.task}配置调本方法
+ * 定时兜底不放在模块里：需要时由应用侧{@code RolePermissionRefreshTask}按{@code app.security}配置调本方法
  * <br>缓存用不可变map整体替换：先clear再putAll会留下一段"什么权限都没有"的窗口，正好撞上403
  * <br>权限变更后调用{@link #publishChange()}通知各节点；改动用户角色属于换令牌的事，
  * 走{@code TokenService}把该用户踢下线

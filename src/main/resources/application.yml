@@ -3,10 +3,6 @@ server:
   shutdown: graceful
   tomcat:
     max-connections: 20000
-  # 禁止session
-  servlet:
-    session:
-      tracking-modes: []
 spring:
   profiles:
     active: dev
@@ -115,6 +111,13 @@ app:
       password: Seed@2026
       roles: ACTUATOR
       permit-urls: health,info
+    # 缓存定时全量刷新，兜住变更通知丢失（pub/sub不持久化），默认关闭
+    jti-blacklist-refresh:
+      enabled: false
+      interval: 5m
+    role-permission-refresh:
+      enabled: false
+      interval: 30m
   file-storage:
     root-path: upload/
     expire-duration: 0
@@ -126,73 +129,41 @@ app:
       upload-dir: tmp/
   captcha:
     # 图片验证码
-    image-expire: 5m
-    image-width: 200
-    image-height: 50
-    # 宽高会按下面的范围做夹取，防止构造超大图片
-    image-min-width: 80
-    image-max-width: 400
-    image-min-height: 30
-    image-max-height: 200
-    image-code-length: 4
-    image-line-count: 30
-    # 短信验证码
-    sms-expire: 5m
-    sms-code-length: 6
-    # 短信场景白名单，防止前端轮换场景绕过发送频率限制，为空则不限制
-    sms-scenes:
-      - login
-      - register
-      - reset_password
-      - bind_mobile
-      - change_mobile
-    # 验证码在短信模板参数中的占位名，配合 app.sms.templates 中配置的场景模板使用
-    sms-code-param: code
-    # 未配置短信模板时发送的文本短信内容，{}依次为验证码、有效分钟数
-    sms-content-template: "您的验证码是{}，{}分钟内有效，请勿泄露给他人。"
+    image:
+      expire: 5m
+      width: 200
+      height: 50
+      min-width: 80
+      max-width: 400
+      min-height: 30
+      max-height: 200
+      code-length: 4
+      line-count: 30
+    # 短信验证码；发送间隔等发送侧规则在 app.sms
+    sms:
+      expire: 5m
+      code-length: 6
+      # 场景白名单，防止前端轮换场景绕过发送频率限制，为空则不限制
+      scenes:
+        - login
+        - register
+        - reset_password
+        - bind_mobile
+        - change_mobile
+      # 验证码在短信模板参数中的占位名，配合 app.sms.templates 中配置的场景模板使用
+      code-param: code
+      # 未配置短信模板时发送的文本短信内容，{}依次为验证码、有效分钟数
+      content-template: "您的验证码是{}，{}分钟内有效，请勿泄露给他人。"
   sms:
-    # 相同场景下同一手机号的发送间隔，不同场景互不影响
     send-interval: 60s
-    # 短信签名，需与服务商报备的名称一致
     sign-name:
-    # 业务场景 -> 短信模板编码：命中场景用对应模板，未命中用default，都没有则退化为发送文本内容
-    # 国内服务商基本都要求模板先报备，接入后把下面的示例换成真实模板编码即可
-    # templates:
-    #   default: SMS_100000001
-    #   login: SMS_100000002
-    #   reset_password: SMS_100000003
-    # 短信发送为「新增落库排队 -> 调度发送」两段式
-    # 派发由定时任务表里的 smsDispatchJob 驱动（cron 见该任务），启停、频率都在任务管理页改，不再用配置项开关
-    # 每轮最多派发的短信条数
     send-batch-size: 100
-    # 发送失败后允许的最大重试次数（总发送次数 = 1 + 该值）：失败次数未超过该值时状态退回待发送，超过则置为发送失败终态
     max-retry: 3
-    # 发送中状态的超时时间（毫秒）：节点发送过程中异常中断时记录会停留在发送中，超过该时间可被其他节点重新领取
     sending-timeout: 300000
   job:
-    # 本节点是否参与任务调度：false 时本节点不挑任务也不发心跳，纯跑业务
     enabled: true
-    # 挑任务的轮询间隔，上一轮结束后间隔该时间再发起下一轮
     poll-interval: 3s
-    # 每轮最多挑多少个任务，防止一次拉太多把本节点压满
     fetch-size: 20
-    # 节点心跳间隔
-    heartbeat-interval: 15s
-    # 心跳超过该时间没续期就视为节点已下线，它没跑完的任务由存活节点接管；应大于心跳间隔的2~3倍
-    node-timeout: 45s
-    # 任务被抢占后超过该时间仍未回写视为卡死，触发回收；要大于单个任务的最长可能耗时
+    heartbeat-interval: 10s
+    node-timeout: 30s
     fire-timeout: 30m
-  task:
-    # 应用侧定时任务的开关与间隔：改了要重启才生效，需要随时调频率的任务走上面的app.job（任务表）
-    jti-blacklist-refresh:
-      # 定时全量重拉jti黑名单，兜住pub/sub丢通知的情况
-      # 默认false：通知正常时刷出来都一样，开了只是多一路redis读取，确认通知易丢再开
-      enabled: false
-      # 刷新间隔，上一轮结束后间隔该时间再发起下一轮
-      interval: 5m
-    role-permission-refresh:
-      # 定时全量重拉角色权限缓存，兜住pub/sub丢通知的情况
-      # 默认false：权限不常变动，且重拉要查全表，确认通知易丢再开
-      enabled: false
-      # 刷新间隔，上一轮结束后间隔该时间再发起下一轮
-      interval: 30m

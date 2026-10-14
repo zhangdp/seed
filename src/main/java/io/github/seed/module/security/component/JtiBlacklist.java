@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  * <br>同步只有「通知 + 全量重拉」一条路，不做版本号比对：pub/sub不持久化，断线期间的通知
  * 必然丢失，但重拉是全量的，下一次任何节点拉黑都会顺带把漏掉的补齐；
  * 要立刻对齐就调{@link #refresh()}（将来的管理后台"刷新缓存"就是调它）。
- * 定时兜底不放在模块里：需要时由应用侧{@code JtiBlacklistRefreshTask}按{@code app.task}配置调本方法
+ * 定时兜底不放在模块里：需要时由应用侧{@code JtiBlacklistRefreshTask}按{@code app.security}配置调本方法
  * <br>内存用不可变map整体替换：先clear再putAll会留下一段"谁都没被拉黑"的窗口，刷新越频繁越容易踩到
  *
  * @author zhangdp
