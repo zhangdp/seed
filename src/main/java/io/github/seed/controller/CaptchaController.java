@@ -1,10 +1,12 @@
 package io.github.seed.controller;
 
+import cloud.tianai.captcha.application.vo.ImageCaptchaVO;
 import io.github.seed.manager.CaptchaManager;
-import io.github.seed.module.captcha.CaptchaService;
-import io.github.seed.module.security.annotation.IgnoreAuth;
-import io.github.seed.model.dto.ImageCaptcha;
+import io.github.seed.model.dto.ImageCaptchaCheckParams;
 import io.github.seed.model.dto.SmsCaptchaParams;
+import io.github.seed.module.captcha.CaptchaService;
+import io.github.seed.module.captcha.data.CaptchaTicket;
+import io.github.seed.module.security.annotation.IgnoreAuth;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -32,23 +34,31 @@ public class CaptchaController {
     private final CaptchaManager captchaManager;
 
     /**
-     * 图片验证码
-     * <br>注意：scene必须与校验端{@code @VerifyCaptcha(scene = ...)}一致，否则校验必然失败，
-     * 例如密码登录使用{@code scene=login}（对应{@code CaptchaScene.LOGIN}）
+     * 获取行为验证码（滑块/旋转/拼接/文字点选），按返回的type渲染对应的交互组件
      *
-     * @param scene  场景，不同场景的验证码互相隔离，为空使用默认场景
-     * @param width  图片宽度，为空使用默认值，超出配置范围会被夹取
-     * @param height 图片高度，为空使用默认值，超出配置范围会被夹取
-     * @return
+     * @param type 验证码类型，为空从启用的类型中随机
+     * @return 验证码数据
      */
     @IgnoreAuth
     @GetMapping("/image")
-    @Operation(summary = "获取图片验证码", description = "返回验证码标识key与图片base64，校验时需把key与用户输入的验证码一并提交。"
-            + "scene必须与校验端的场景一致，密码登录请传scene=login")
-    public ImageCaptcha imageCaptcha(@RequestParam(required = false) String scene,
-                                     @RequestParam(required = false) Integer width,
-                                     @RequestParam(required = false) Integer height) {
-        return captchaService.generateImage(scene, width, height);
+    @Operation(summary = "获取行为验证码", description = "返回id、类型与图片base64，前端按type渲染交互组件；"
+            + "用户完成交互后调POST /captcha/image/check换取一次性票据")
+    public ImageCaptchaVO imageCaptcha(@RequestParam(required = false) String type) {
+        return captchaService.generateImage(type);
+    }
+
+    /**
+     * 校验行为验证码，成功返回一次性票据
+     *
+     * @param params 验证码id、场景与用户操作轨迹
+     * @return 一次性票据
+     */
+    @IgnoreAuth
+    @PostMapping("/image/check")
+    @Operation(summary = "校验行为验证码", description = "校验用户操作轨迹，成功返回一次性票据{key, code}；"
+            + "校验是一次性的，失败须重新获取验证码。scene必须与业务接口的场景一致，密码登录传login")
+    public CaptchaTicket checkImageCaptcha(@RequestBody @Valid ImageCaptchaCheckParams params) {
+        return captchaService.checkImage(params.getScene(), params.getId(), params.getTrack());
     }
 
     /**

@@ -18,6 +18,7 @@
         <java.version>25</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <hutool.version>7.0.0-M8</hutool.version>
+        <tianai-captcha.version>1.5.5</tianai-captcha.version>
         <mybatis-flex.version>1.11.8</mybatis-flex.version>
         <jjwt.version>0.12.7</jjwt.version>
         <springdoc.version>3.1.1</springdoc.version>
@@ -107,11 +108,12 @@
             <artifactId>hutool-crypto</artifactId>
             <version>${hutool.version}</version>
         </dependency>
-        <!-- 图片验证码，验证码类位于 cn.hutool.v7.swing.captcha 包 -->
+        <!-- 行为验证码（滑块/旋转/拼接/文字点选），只用核心库自己装配：
+             官方starter基于SB 2.2.7编译，其RedisCacheStore调用了Spring 6已删除的StringUtils.isEmpty，SB4下会NoSuchMethodError -->
         <dependency>
-            <groupId>cn.hutool.v7</groupId>
-            <artifactId>hutool-swing</artifactId>
-            <version>${hutool.version}</version>
+            <groupId>cloud.tianai.captcha</groupId>
+            <artifactId>tianai-captcha</artifactId>
+            <version>${tianai-captcha.version}</version>
         </dependency>
         <!-- jwt：api编译期，impl与jackson运行期即可 -->
         <dependency>

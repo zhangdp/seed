@@ -47,8 +47,9 @@ public class AuthController {
      */
     @IgnoreAuth
     @PostMapping("/login/password")
-    @Operation(summary = "密码登录", description = "需要先调用GET /captcha/image?scene=login获取图形验证码，"
-            + "把返回的key作为captchaKey、用户输入的验证码作为code一并提交")
+    @Operation(summary = "密码登录", description = "需要先完成行为验证码：GET /captcha/image获取验证码，"
+            + "完成交互后POST /captcha/image/check?scene=login换取一次性票据，"
+            + "把票据的key作为captchaKey、code作为code一并提交")
     @VerifyCaptcha(type = CaptchaType.IMAGE, scene = CaptchaScene.LOGIN,
             keyEl = "#params.captchaKey", codeEl = "#params.code")
     public LoginResult loginByPassword(@RequestBody @Valid PasswordLoginParams params) throws Throwable {

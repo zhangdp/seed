@@ -1,22 +1,29 @@
 package io.github.seed.module.captcha;
 
 import cn.hutool.v7.core.text.StrUtil;
-import io.github.seed.module.captcha.component.CaptchaGenerator;
-import io.github.seed.module.captcha.data.CaptchaScene;
-import io.github.seed.module.captcha.data.CaptchaType;
-import io.github.seed.module.captcha.store.CaptchaStore;
+import cloud.tianai.captcha.application.ImageCaptchaApplication;
+import cloud.tianai.captcha.application.vo.ImageCaptchaVO;
+import cloud.tianai.captcha.common.response.ApiResponse;
+import cloud.tianai.captcha.validator.common.model.dto.ImageCaptchaTrack;
 import io.github.seed.common.enums.ErrorCode;
 import io.github.seed.common.exception.BizException;
-import io.github.seed.model.dto.ImageCaptcha;
+import io.github.seed.module.captcha.component.CaptchaGenerator;
+import io.github.seed.module.captcha.data.CaptchaScene;
+import io.github.seed.module.captcha.data.CaptchaTicket;
+import io.github.seed.module.captcha.data.CaptchaType;
+import io.github.seed.module.captcha.store.CaptchaStore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.security.SecureRandom;
 import java.time.Duration;
+import java.util.List;
 import java.util.Set;
 
 /**
- * 验证码服务，模块对外的唯一入口：生成图片/短信验证码、校验验证码
- * <br>只生成不投递，短信交给{@code CaptchaManager}编排
+ * 验证码服务，模块对外的唯一入口：行为验证码（滑块/旋转/拼接/文字点选）的生成与校验、短信验证码的生成
+ * <br>行为验证码统一出入口：generateImage生成、checkImage校验轨迹并签发一次性票据，
+ * 不同类型对调用方完全透明；短信码只生成不投递，交给{@code CaptchaManager}编排
  *
  * @author zhangdp
  * @since 1.0.0
@@ -25,31 +32,66 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class CaptchaService {
 
+    /**
+     * 一次性票据码位数
+     */
+    private static final int TICKET_CODE_LENGTH = 6;
+
     private final CaptchaProperties captchaProperties;
     private final CaptchaStore captchaStore;
     private final CaptchaGenerator captchaGenerator;
+    private final ImageCaptchaApplication imageCaptchaApplication;
+    /**
+     * 类型随机用，与SecureRandom相比这里只影响选图，Random足够
+     */
+    private final SecureRandom random = new SecureRandom();
 
     /**
-     * 生成图片验证码；每次生成都由服务端生成唯一key并随图片返回，因此多处验证码不会串号
+     * 生成行为验证码，不传类型时从启用的类型中随机；返回的图片与类型交给前端渲染对应的交互组件
      *
-     * @param scene  场景，为空使用默认场景
-     * @param width  图片宽高，为空或非法时用配置的默认值，并夹取到配置范围内
-     * @param height 同上
-     * @return 图片验证码
+     * @param type 验证码类型（SLIDER/ROTATE/CONCAT/WORD_IMAGE_CLICK），为空随机
+     * @return 验证码数据（id、类型、背景图与模板图base64、尺寸）
      */
-    public ImageCaptcha generateImage(String scene, Integer width, Integer height) {
+    public ImageCaptchaVO generateImage(String type) {
+        Set<String> types = captchaProperties.getImage().getTypes();
+        if (StrUtil.isBlank(type)) {
+            List<String> candidates = List.copyOf(types);
+            type = candidates.get(random.nextInt(candidates.size()));
+        } else if (!types.contains(type)) {
+            throw new BizException(ErrorCode.CAPTCHA_TYPE_INVALID.code(),
+                    ErrorCode.CAPTCHA_TYPE_INVALID.message() + "：" + type);
+        }
+        ApiResponse<ImageCaptchaVO> response = imageCaptchaApplication.generateCaptcha(type);
+        if (!response.isSuccess() || response.getData() == null) {
+            log.error("行为验证码生成失败：type={}, code={}, msg={}", type, response.getCode(), response.getMsg());
+            throw new BizException(ErrorCode.CAPTCHA_SEND_FAILED.code(), "验证码生成失败，请稍后再试");
+        }
+        return response.getData();
+    }
+
+    /**
+     * 校验行为验证码轨迹：校验是一次性消费——无论成败，服务端的校验数据即被移除，
+     * 失败必须重新获取验证码；成功后签发一次性票据，业务接口凭票据的key与code走
+     * {@code @VerifyCaptcha}切面校验
+     *
+     * @param scene 场景，必须与业务接口{@code @VerifyCaptcha(scene=...)}一致，为空使用默认场景
+     * @param id    验证码id
+     * @param track 用户操作轨迹
+     * @return 一次性票据
+     */
+    public CaptchaTicket checkImage(String scene, String id, ImageCaptchaTrack track) {
         String s = StrUtil.defaultIfBlank(scene, CaptchaScene.DEFAULT);
-        CaptchaProperties.Image image = captchaProperties.getImage();
-        int w = this.clamp(width, image.getWidth(), image.getMinWidth(), image.getMaxWidth());
-        int h = this.clamp(height, image.getHeight(), image.getMinHeight(), image.getMaxHeight());
-        CaptchaGenerator.GeneratedImage generated = captchaGenerator.generateImage(w, h,
-                image.getCodeLength(), image.getLineCount());
+        ApiResponse<?> response = imageCaptchaApplication.matching(id, track);
+        if (!response.isSuccess()) {
+            throw new BizException(ErrorCode.CAPTCHA_INCORRECT.code(),
+                    StrUtil.defaultIfBlank(response.getMsg(), ErrorCode.CAPTCHA_INCORRECT.message()));
+        }
+        // 票据存进通用验证码存储，复用@VerifyCaptcha切面的既有校验与消费逻辑
         String key = captchaGenerator.generateKey();
-        captchaStore.saveCode(CaptchaType.IMAGE, s, key, generated.code(), image.getExpire());
-        ImageCaptcha imageCaptcha = new ImageCaptcha();
-        imageCaptcha.setKey(key);
-        imageCaptcha.setImage(generated.image());
-        return imageCaptcha;
+        String code = captchaGenerator.generateCode(TICKET_CODE_LENGTH);
+        Duration expire = captchaProperties.getImage().getTicketExpire();
+        captchaStore.saveCode(CaptchaType.IMAGE, s, key, code, expire);
+        return new CaptchaTicket(key, code);
     }
 
     /**
@@ -69,7 +111,7 @@ public class CaptchaService {
                     ErrorCode.CAPTCHA_SCENE_INVALID.message() + "：" + s);
         }
         CaptchaProperties.Sms sms = captchaProperties.getSms();
-        String code = captchaGenerator.generateSmsCode(sms.getCodeLength());
+        String code = captchaGenerator.generateCode(sms.getCodeLength());
         captchaStore.saveCode(CaptchaType.SMS, s, mobile, code, sms.getExpire());
         return code;
     }
@@ -124,20 +166,6 @@ public class CaptchaService {
             captchaStore.deleteCode(type, scene, key);
             captchaStore.deleteFail(type, scene, key);
         }
-    }
-
-    /**
-     * 把值夹取到指定范围内，值非法时使用默认值
-     *
-     * @param value        待夹取的值
-     * @param defaultValue 默认值
-     * @param min          最小值
-     * @param max          最大值
-     * @return 夹取后的值
-     */
-    private int clamp(Integer value, int defaultValue, int min, int max) {
-        int v = value == null || value <= 0 ? defaultValue : value;
-        return Math.min(Math.max(v, min), max);
     }
 
 }

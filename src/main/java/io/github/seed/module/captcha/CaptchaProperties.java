@@ -1,5 +1,6 @@
 package io.github.seed.module.captcha;
 
+import cloud.tianai.captcha.common.constant.CaptchaTypeConstant;
 import io.github.seed.module.captcha.data.CaptchaScene;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,48 +33,27 @@ public class CaptchaProperties {
     private Sms sms = new Sms();
 
     /**
-     * 图片验证码配置
+     * 图片验证码配置，基于tianai-captcha的行为验证码（滑块/旋转/拼接/文字点选）
      */
     @Getter
     @Setter
     public static class Image {
 
         /**
-         * 验证码有效期
+         * 验证码有效期：从获取验证码到完成行为校验的窗口，超时需重新获取
          */
         private Duration expire = Duration.ofMinutes(5);
         /**
-         * 默认宽度
+         * 行为校验通过后签发的一次性票据有效期：
+         * 校验成功到业务接口（如登录）提交的窗口，票据用过即作废
          */
-        private int width = 200;
+        private Duration ticketExpire = Duration.ofMinutes(2);
         /**
-         * 默认高度
+         * 启用的验证码类型，取值见tianai的CaptchaTypeConstant（SLIDER滑块、ROTATE旋转、
+         * CONCAT拼接、WORD_IMAGE_CLICK文字点选）；获取验证码不指定类型时从其中随机
          */
-        private int height = 50;
-        /**
-         * 允许的最小宽度，防止被构造超大图片
-         */
-        private int minWidth = 80;
-        /**
-         * 允许的最大宽度，防止被构造超大图片
-         */
-        private int maxWidth = 400;
-        /**
-         * 允许的最小高度，防止被构造超大图片
-         */
-        private int minHeight = 30;
-        /**
-         * 允许的最大高度，防止被构造超大图片
-         */
-        private int maxHeight = 200;
-        /**
-         * 验证码字符个数
-         */
-        private int codeLength = 4;
-        /**
-         * 干扰线数量，0表示不画干扰线
-         */
-        private int lineCount = 30;
+        private Set<String> types = new LinkedHashSet<>(Set.of(CaptchaTypeConstant.SLIDER,
+                CaptchaTypeConstant.ROTATE, CaptchaTypeConstant.CONCAT, CaptchaTypeConstant.WORD_IMAGE_CLICK));
     }
 
     /**

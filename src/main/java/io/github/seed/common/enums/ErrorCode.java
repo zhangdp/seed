@@ -161,6 +161,10 @@ public enum ErrorCode {
      */
     CAPTCHA_SCENE_INVALID(20512, "不支持的验证码场景"),
     /**
+     * 不支持的验证码类型
+     */
+    CAPTCHA_TYPE_INVALID(20513, "不支持的验证码类型"),
+    /**
      * 定时任务不存在
      */
     JOB_NOT_EXISTS(20600, "定时任务不存在"),

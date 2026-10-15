@@ -128,17 +128,19 @@ app:
     local:
       upload-dir: tmp/
   captcha:
-    # 图片验证码
+    # 行为验证码（tianai-captcha）：滑块/旋转/拼接/文字点选，背景图在 classpath:captcha/image/bg/
     image:
+      # 获取到完成行为校验的窗口
       expire: 5m
-      width: 200
-      height: 50
-      min-width: 80
-      max-width: 400
-      min-height: 30
-      max-height: 200
-      code-length: 4
-      line-count: 30
+      # 校验通过后签发的一次性票据有效期，票据提交给登录等业务接口
+      ticket-expire: 2m
+      # 启用的类型：SLIDER滑块、ROTATE旋转、CONCAT拼接、WORD_IMAGE_CLICK文字点选
+      # 获取时不指定type则从中随机；想关掉某种交互直接从这里移除
+      types:
+        - SLIDER
+        - ROTATE
+        - CONCAT
+        - WORD_IMAGE_CLICK
     # 短信验证码；发送间隔等发送侧规则在 app.sms
     sms:
       expire: 5m
