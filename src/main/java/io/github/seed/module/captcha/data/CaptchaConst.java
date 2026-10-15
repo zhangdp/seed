@@ -26,7 +26,7 @@ public interface CaptchaConst {
      */
     String REDIS_FAIL_PREFIX = REDIS_PREFIX + REDIS_SPLIT + "fail";
     /**
-     * 行为验证码（tianai）的缓存key前缀，完整格式：captcha::image::{id}
+     * 行为验证码（tianai）的缓存key前缀，完整格式：captcha::behavior::{id}
      */
-    String REDIS_IMAGE_PREFIX = REDIS_PREFIX + REDIS_SPLIT + "image";
+    String REDIS_BEHAVIOR_PREFIX = REDIS_PREFIX + REDIS_SPLIT + "behavior";
 }

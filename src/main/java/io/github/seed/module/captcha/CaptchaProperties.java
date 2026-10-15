@@ -11,7 +11,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * 验证码配置（{@code app.captcha}），按验证码类型分成{@code image}与{@code sms}两段
+ * 验证码配置（{@code app.captcha}），按验证码类型分成{@code behavior}、{@code image}与{@code sms}三段
  *
  * @author zhangdp
  * @since 1.0.0
@@ -24,8 +24,15 @@ public class CaptchaProperties {
     public static final String CONFIG_PREFIX = "app.captcha";
 
     /**
-     * 图片验证码配置（{@code app.captcha.image}）
+     * 行为验证码配置（{@code app.captcha.behavior}）
      */
+    private Behavior behavior = new Behavior();
+    /**
+     * 图片验证码配置（{@code app.captcha.image}）
+     *
+     * @deprecated 图片验证码已废弃，改用{@link #behavior}
+     */
+    @Deprecated
     private Image image = new Image();
     /**
      * 短信验证码配置（{@code app.captcha.sms}）；发送侧规则（间隔、配额）不在这里，归{@code app.sms}
@@ -33,11 +40,11 @@ public class CaptchaProperties {
     private Sms sms = new Sms();
 
     /**
-     * 图片验证码配置，基于tianai-captcha的行为验证码（滑块/旋转/拼接/文字点选）
+     * 行为验证码配置，基于tianai-captcha（滑块/旋转/拼接/文字点选）
      */
     @Getter
     @Setter
-    public static class Image {
+    public static class Behavior {
 
         /**
          * 验证码有效期：从获取验证码到完成行为校验的窗口，超时需重新获取
@@ -54,6 +61,54 @@ public class CaptchaProperties {
          */
         private Set<String> types = new LinkedHashSet<>(Set.of(CaptchaTypeConstant.SLIDER,
                 CaptchaTypeConstant.ROTATE, CaptchaTypeConstant.CONCAT, CaptchaTypeConstant.WORD_IMAGE_CLICK));
+    }
+
+    /**
+     * 图片验证码配置
+     *
+     * @deprecated 字符型图片验证码易被OCR识别，改用{@link Behavior}
+     */
+    @Getter
+    @Setter
+    @Deprecated
+    public static class Image {
+
+        /**
+         * 验证码有效期
+         */
+        private Duration expire = Duration.ofMinutes(5);
+        /**
+         * 默认宽度
+         */
+        private int width = 200;
+        /**
+         * 默认高度
+         */
+        private int height = 50;
+        /**
+         * 允许的最小宽度，防止被构造超大图片
+         */
+        private int minWidth = 80;
+        /**
+         * 允许的最大宽度，防止被构造超大图片
+         */
+        private int maxWidth = 400;
+        /**
+         * 允许的最小高度，防止被构造超大图片
+         */
+        private int minHeight = 30;
+        /**
+         * 允许的最大高度，防止被构造超大图片
+         */
+        private int maxHeight = 200;
+        /**
+         * 验证码字符个数
+         */
+        private int codeLength = 4;
+        /**
+         * 干扰线数量，0表示不画干扰线
+         */
+        private int lineCount = 30;
     }
 
     /**

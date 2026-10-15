@@ -108,6 +108,13 @@
             <artifactId>hutool-crypto</artifactId>
             <version>${hutool.version}</version>
         </dependency>
+        <!-- 图片验证码，验证码类位于 cn.hutool.v7.swing.captcha 包；
+             仅为兼容旧前端保留（字符型易被OCR），新接入一律用上面的行为验证码 -->
+        <dependency>
+            <groupId>cn.hutool.v7</groupId>
+            <artifactId>hutool-swing</artifactId>
+            <version>${hutool.version}</version>
+        </dependency>
         <!-- 行为验证码（滑块/旋转/拼接/文字点选），只用核心库自己装配：
              官方starter基于SB 2.2.7编译，其RedisCacheStore调用了Spring 6已删除的StringUtils.isEmpty，SB4下会NoSuchMethodError -->
         <dependency>

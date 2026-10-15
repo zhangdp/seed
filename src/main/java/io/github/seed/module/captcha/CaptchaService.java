@@ -8,22 +8,28 @@ import cloud.tianai.captcha.validator.common.model.dto.ImageCaptchaTrack;
 import io.github.seed.common.enums.ErrorCode;
 import io.github.seed.common.exception.BizException;
 import io.github.seed.module.captcha.component.CaptchaGenerator;
+import io.github.seed.module.captcha.data.BehaviorCaptcha;
+import io.github.seed.module.captcha.data.BehaviorCaptchaTrack;
 import io.github.seed.module.captcha.data.CaptchaScene;
 import io.github.seed.module.captcha.data.CaptchaTicket;
 import io.github.seed.module.captcha.data.CaptchaType;
+import io.github.seed.module.captcha.data.ImageCaptcha;
 import io.github.seed.module.captcha.store.CaptchaStore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.security.SecureRandom;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 /**
- * 验证码服务，模块对外的唯一入口：行为验证码（滑块/旋转/拼接/文字点选）的生成与校验、短信验证码的生成
- * <br>行为验证码统一出入口：generateImage生成、checkImage校验轨迹并签发一次性票据，
- * 不同类型对调用方完全透明；短信码只生成不投递，交给{@code CaptchaManager}编排
+ * 验证码服务，模块对外的唯一入口：行为验证码（滑块/旋转/拼接/文字点选）与短信验证码
+ * <br>行为验证码统一出入口：generateBehavior生成、checkBehavior校验轨迹并签发一次性票据，
+ * 不同类型对调用方完全透明；票据与短信码走同一个{@link #verify}，
+ * 因此业务接口上的{@code @VerifyCaptcha}无需区分验证码形态
+ * <br>短信码只生成不投递，交给{@code CaptchaManager}编排
  *
  * @author zhangdp
  * @since 1.0.0
@@ -50,10 +56,10 @@ public class CaptchaService {
      * 生成行为验证码，不传类型时从启用的类型中随机；返回的图片与类型交给前端渲染对应的交互组件
      *
      * @param type 验证码类型（SLIDER/ROTATE/CONCAT/WORD_IMAGE_CLICK），为空随机
-     * @return 验证码数据（id、类型、背景图与模板图base64、尺寸）
+     * @return 行为验证码（id、类型、背景图与模板图base64、尺寸）
      */
-    public ImageCaptchaVO generateImage(String type) {
-        Set<String> types = captchaProperties.getImage().getTypes();
+    public BehaviorCaptcha generateBehavior(String type) {
+        Set<String> types = captchaProperties.getBehavior().getTypes();
         if (StrUtil.isBlank(type)) {
             List<String> candidates = List.copyOf(types);
             type = candidates.get(random.nextInt(candidates.size()));
@@ -66,22 +72,22 @@ public class CaptchaService {
             log.error("行为验证码生成失败：type={}, code={}, msg={}", type, response.getCode(), response.getMsg());
             throw new BizException(ErrorCode.CAPTCHA_SEND_FAILED.code(), "验证码生成失败，请稍后再试");
         }
-        return response.getData();
+        return this.toBehaviorCaptcha(response.getData());
     }
 
     /**
      * 校验行为验证码轨迹：校验是一次性消费——无论成败，服务端的校验数据即被移除，
      * 失败必须重新获取验证码；成功后签发一次性票据，业务接口凭票据的key与code走
-     * {@code @VerifyCaptcha}切面校验
+     * {@code @VerifyCaptcha}切面校验（{@code type=CaptchaType.BEHAVIOR}）
      *
      * @param scene 场景，必须与业务接口{@code @VerifyCaptcha(scene=...)}一致，为空使用默认场景
      * @param id    验证码id
      * @param track 用户操作轨迹
      * @return 一次性票据
      */
-    public CaptchaTicket checkImage(String scene, String id, ImageCaptchaTrack track) {
+    public CaptchaTicket checkBehavior(String scene, String id, BehaviorCaptchaTrack track) {
         String s = StrUtil.defaultIfBlank(scene, CaptchaScene.DEFAULT);
-        ApiResponse<?> response = imageCaptchaApplication.matching(id, track);
+        ApiResponse<?> response = imageCaptchaApplication.matching(id, this.toTianaiTrack(track));
         if (!response.isSuccess()) {
             throw new BizException(ErrorCode.CAPTCHA_INCORRECT.code(),
                     StrUtil.defaultIfBlank(response.getMsg(), ErrorCode.CAPTCHA_INCORRECT.message()));
@@ -89,9 +95,33 @@ public class CaptchaService {
         // 票据存进通用验证码存储，复用@VerifyCaptcha切面的既有校验与消费逻辑
         String key = captchaGenerator.generateKey();
         String code = captchaGenerator.generateCode(TICKET_CODE_LENGTH);
-        Duration expire = captchaProperties.getImage().getTicketExpire();
-        captchaStore.saveCode(CaptchaType.IMAGE, s, key, code, expire);
+        captchaStore.saveCode(CaptchaType.BEHAVIOR, s, key, code, captchaProperties.getBehavior().getTicketExpire());
         return new CaptchaTicket(key, code);
+    }
+
+    /**
+     * 生成图片验证码并缓存
+     *
+     * @param scene  场景，如login，为空使用默认场景
+     * @param width  图片宽度，为空使用配置值
+     * @param height 图片高度，为空使用配置值
+     * @return 图片验证码
+     * @deprecated 字符型图片验证码易被OCR识别，改用{@link #generateBehavior}
+     */
+    @Deprecated
+    public ImageCaptcha generateImage(String scene, Integer width, Integer height) {
+        String s = StrUtil.defaultIfBlank(scene, CaptchaScene.DEFAULT);
+        CaptchaProperties.Image image = captchaProperties.getImage();
+        int w = this.clamp(width, image.getWidth(), image.getMinWidth(), image.getMaxWidth());
+        int h = this.clamp(height, image.getHeight(), image.getMinHeight(), image.getMaxHeight());
+        CaptchaGenerator.GeneratedImage generated = captchaGenerator.generateImage(w, h,
+                image.getCodeLength(), image.getLineCount());
+        String key = captchaGenerator.generateKey();
+        captchaStore.saveCode(CaptchaType.IMAGE, s, key, generated.code(), image.getExpire());
+        ImageCaptcha imageCaptcha = new ImageCaptcha();
+        imageCaptcha.setKey(key);
+        imageCaptcha.setImage(generated.image());
+        return imageCaptcha;
     }
 
     /**
@@ -166,6 +196,72 @@ public class CaptchaService {
             captchaStore.deleteCode(type, scene, key);
             captchaStore.deleteFail(type, scene, key);
         }
+    }
+
+    /**
+     * 把值夹取到指定范围内，值非法时使用默认值
+     *
+     * @param value        待夹取的值
+     * @param defaultValue 默认值
+     * @param min          最小值
+     * @param max          最大值
+     * @return 夹取后的值
+     */
+    private int clamp(Integer value, int defaultValue, int min, int max) {
+        int v = value == null || value <= 0 ? defaultValue : value;
+        return Math.min(Math.max(v, min), max);
+    }
+
+    /**
+     * 把tianai的验证码转成模块自己的数据对象，避免第三方类型外泄到controller与前端契约里
+     *
+     * @param vo tianai验证码
+     * @return 行为验证码
+     */
+    private BehaviorCaptcha toBehaviorCaptcha(ImageCaptchaVO vo) {
+        BehaviorCaptcha captcha = new BehaviorCaptcha();
+        captcha.setId(vo.getId());
+        captcha.setType(vo.getType());
+        captcha.setBackgroundImage(vo.getBackgroundImage());
+        captcha.setTemplateImage(vo.getTemplateImage());
+        captcha.setBackgroundImageWidth(vo.getBackgroundImageWidth());
+        captcha.setBackgroundImageHeight(vo.getBackgroundImageHeight());
+        captcha.setTemplateImageWidth(vo.getTemplateImageWidth());
+        captcha.setTemplateImageHeight(vo.getTemplateImageHeight());
+        captcha.setData(vo.getData());
+        return captcha;
+    }
+
+    /**
+     * 把模块自己的轨迹转成tianai的轨迹：两者字段名一致，这里是纯粹的逐点搬运
+     *
+     * @param track 模块轨迹
+     * @return tianai轨迹
+     */
+    private ImageCaptchaTrack toTianaiTrack(BehaviorCaptchaTrack track) {
+        ImageCaptchaTrack tianaiTrack = new ImageCaptchaTrack();
+        if (track == null) {
+            return tianaiTrack;
+        }
+        tianaiTrack.setBgImageWidth(track.getBgImageWidth());
+        tianaiTrack.setBgImageHeight(track.getBgImageHeight());
+        tianaiTrack.setTemplateImageWidth(track.getTemplateImageWidth());
+        tianaiTrack.setTemplateImageHeight(track.getTemplateImageHeight());
+        tianaiTrack.setStartTime(track.getStartTime());
+        tianaiTrack.setStopTime(track.getStopTime());
+        tianaiTrack.setLeft(track.getLeft());
+        tianaiTrack.setTop(track.getTop());
+        tianaiTrack.setData(track.getData());
+        List<BehaviorCaptchaTrack.Point> points = track.getTrackList();
+        if (points != null) {
+            List<ImageCaptchaTrack.Track> tianaiPoints = new ArrayList<>(points.size());
+            for (BehaviorCaptchaTrack.Point point : points) {
+                tianaiPoints.add(new ImageCaptchaTrack.Track(point.getX(), point.getY(), point.getT(),
+                        point.getType()));
+            }
+            tianaiTrack.setTrackList(tianaiPoints);
+        }
+        return tianaiTrack;
     }
 
 }

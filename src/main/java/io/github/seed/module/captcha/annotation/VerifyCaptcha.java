@@ -27,9 +27,11 @@ import java.lang.annotation.Target;
 public @interface VerifyCaptcha {
 
     /**
-     * 验证码类型，默认图片验证码
+     * 验证码类型，默认行为验证码
+     * <br>行为验证码校验的是校验通过后签发的一次性票据，不是验证码图片本身——
+     * 票据与短信验证码同构（key+code），因此三种形态共用这一个注解
      */
-    CaptchaType type() default CaptchaType.IMAGE;
+    CaptchaType type() default CaptchaType.BEHAVIOR;
 
     /**
      * 场景，生成与校验两端必须一致，同时用于隔离不同业务的验证码

@@ -33,7 +33,7 @@ import java.util.Set;
 /**
  * 验证码模块装配：本模块的bean都在这里注册，读一个类就能看清装了什么
  * <br>对外只暴露{@link CaptchaService}；行为验证码基于tianai-captcha，背景图在
- * {@code classpath:captcha/image/bg/}，滑块/旋转模板与点选字体用tianai内置资源
+ * {@code classpath:captcha/behavior/bg/}，滑块/旋转模板与点选字体用tianai内置资源
  *
  * @author zhangdp
  * @since 1.0.0
@@ -47,7 +47,7 @@ public class CaptchaConfigurer implements InitializingBean {
     /**
      * 行为验证码背景图的classpath目录，jpg格式、600x360，替换图片只需增删此目录下的文件
      */
-    private static final String BACKGROUND_IMAGE_DIR = "captcha/image/bg/";
+    private static final String BACKGROUND_IMAGE_DIR = "captcha/behavior/bg/";
 
     private final CaptchaProperties captchaProperties;
 
@@ -95,7 +95,7 @@ public class CaptchaConfigurer implements InitializingBean {
      * @throws IOException 背景图扫描失败
      */
     @Bean(destroyMethod = "close")
-    public ImageCaptchaApplication imageCaptchaApplication(CacheStore cacheStore) throws IOException {
+    public ImageCaptchaApplication behaviorCaptchaApplication(CacheStore cacheStore) throws IOException {
         LocalMemoryResourceStore resourceStore = new LocalMemoryResourceStore();
         this.registerBackgroundImages(resourceStore);
         ImageCaptchaProperties tianaiProps = this.buildTianaiProperties();
@@ -111,17 +111,17 @@ public class CaptchaConfigurer implements InitializingBean {
     /**
      * 验证码服务
      *
-     * @param captchaProperties       验证码配置
-     * @param captchaStore            验证码读写（短信码与一次性票据）
-     * @param captchaGenerator        随机码与key生成
-     * @param imageCaptchaApplication tianai行为验证码应用
+     * @param captchaProperties         验证码配置
+     * @param captchaStore              验证码读写（短信码、图片验证码、一次性票据）
+     * @param captchaGenerator          随机码、key与图片验证码图片生成
+     * @param behaviorCaptchaApplication tianai行为验证码应用
      * @return 验证码服务
      */
     @Bean
     public CaptchaService captchaService(CaptchaProperties captchaProperties, CaptchaStore captchaStore,
                                          CaptchaGenerator captchaGenerator,
-                                         ImageCaptchaApplication imageCaptchaApplication) {
-        return new CaptchaService(captchaProperties, captchaStore, captchaGenerator, imageCaptchaApplication);
+                                         ImageCaptchaApplication behaviorCaptchaApplication) {
+        return new CaptchaService(captchaProperties, captchaStore, captchaGenerator, behaviorCaptchaApplication);
     }
 
     /**
@@ -136,7 +136,7 @@ public class CaptchaConfigurer implements InitializingBean {
     }
 
     /**
-     * 把背景图注册到每个启用的验证码类型下；增删图片只需增删{@code captcha/image/bg/}下的jpg
+     * 把背景图注册到每个启用的验证码类型下；增删图片只需增删{@code captcha/behavior/bg/}下的jpg
      *
      * @param resourceStore tianai资源存储
      * @throws IOException classpath扫描失败
@@ -149,7 +149,7 @@ public class CaptchaConfigurer implements InitializingBean {
             log.warn("未找到验证码背景图：classpath:{}，行为验证码将无法生成", BACKGROUND_IMAGE_DIR);
             return;
         }
-        Set<String> types = captchaProperties.getImage().getTypes();
+        Set<String> types = captchaProperties.getBehavior().getTypes();
         for (String type : types) {
             for (org.springframework.core.io.Resource image : images) {
                 resourceStore.addResource(type, new Resource(ClassPathResourceProvider.NAME,
@@ -160,17 +160,17 @@ public class CaptchaConfigurer implements InitializingBean {
     }
 
     /**
-     * 把本模块配置翻译成tianai的配置：前缀沿用本模块redis key风格，各类型有效期统一取{@code image.expire}
+     * 把本模块配置翻译成tianai的配置：前缀沿用本模块redis key风格，各类型有效期统一取{@code behavior.expire}
      *
      * @return tianai配置
      */
     private ImageCaptchaProperties buildTianaiProperties() {
         ImageCaptchaProperties tianaiProps = new ImageCaptchaProperties();
-        tianaiProps.setPrefix(CaptchaConst.REDIS_IMAGE_PREFIX);
-        long expireMillis = captchaProperties.getImage().getExpire().toMillis();
+        tianaiProps.setPrefix(CaptchaConst.REDIS_BEHAVIOR_PREFIX);
+        long expireMillis = captchaProperties.getBehavior().getExpire().toMillis();
         Map<String, Long> expire = new HashMap<>(8);
         expire.put("default", expireMillis);
-        for (String type : captchaProperties.getImage().getTypes()) {
+        for (String type : captchaProperties.getBehavior().getTypes()) {
             expire.put(type, expireMillis);
         }
         tianaiProps.setExpire(expire);
@@ -186,8 +186,8 @@ public class CaptchaConfigurer implements InitializingBean {
             log.warn("未配置{}.sms.scenes，短信场景不做白名单限制，存在轮换场景绕过发送频率限制的风险",
                     CaptchaProperties.CONFIG_PREFIX);
         } else {
-            log.info("验证码类型：{}，行为验证码有效期：{}，短信场景白名单：{}，短信验证码有效期：{}",
-                    captchaProperties.getImage().getTypes(), captchaProperties.getImage().getExpire(),
+            log.info("行为验证码类型：{}，有效期：{}；短信场景白名单：{}，短信验证码有效期：{}",
+                    captchaProperties.getBehavior().getTypes(), captchaProperties.getBehavior().getExpire(),
                     scenes, captchaProperties.getSms().getExpire());
         }
     }

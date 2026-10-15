@@ -33,16 +33,16 @@ public class PasswordLoginParams implements Serializable {
     @Schema(title = "密码", description = "需要rsa加密")
     private String password;
     /**
-     * 图形验证码标识，来自行为验证码校验接口返回的票据key
+     * 验证码票据标识，来自行为验证码校验接口返回的票据key
      */
     @NotBlank(message = "验证码标识不能为空")
-    @Schema(title = "验证码标识", description = "来自POST /captcha/image/check返回的票据key")
+    @Schema(title = "验证码标识", description = "来自POST /captcha/behavior/check返回的票据key")
     private String captchaKey;
     /**
-     * 图形验证码
+     * 验证码票据码
      */
     @NotBlank(message = "验证码不能为空")
-    @Schema(title = "验证码", description = "来自POST /captcha/image/check返回的票据code")
+    @Schema(title = "验证码", description = "来自POST /captcha/behavior/check返回的票据code")
     private String code;
 
 }

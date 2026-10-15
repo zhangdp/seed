@@ -1,6 +1,6 @@
 package io.github.seed.model.dto;
 
-import cloud.tianai.captcha.validator.common.model.dto.ImageCaptchaTrack;
+import io.github.seed.module.captcha.data.BehaviorCaptchaTrack;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -17,7 +17,7 @@ import java.io.Serializable;
  */
 @Data
 @Schema(title = "行为验证码校验")
-public class ImageCaptchaCheckParams implements Serializable {
+public class BehaviorCaptchaCheckParams implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -26,7 +26,7 @@ public class ImageCaptchaCheckParams implements Serializable {
      * 验证码id，来自获取验证码接口返回
      */
     @NotBlank(message = "验证码id不能为空")
-    @Schema(title = "验证码id", description = "来自GET /captcha/image返回的id")
+    @Schema(title = "验证码id", description = "来自GET /captcha/behavior返回的id")
     private String id;
     /**
      * 场景，必须与业务接口上@VerifyCaptcha(scene=...)一致，如密码登录传login
@@ -39,6 +39,6 @@ public class ImageCaptchaCheckParams implements Serializable {
      */
     @NotNull(message = "验证码轨迹不能为空")
     @Schema(title = "操作轨迹", description = "用户完成滑块/旋转/点选等交互后由前端组件采集")
-    private ImageCaptchaTrack track;
+    private BehaviorCaptchaTrack track;
 
 }

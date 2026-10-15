@@ -9,13 +9,21 @@ package io.github.seed.module.captcha.data;
 public enum CaptchaType {
 
     /**
-     * 图片验证码
+     * 行为验证码（滑块/旋转/拼接/文字点选），校验通过后签发的一次性票据也按本类型存储，
+     * 因此业务接口上的{@code @VerifyCaptcha}校验票据时同样用本类型
      */
-    IMAGE("image"),
+    BEHAVIOR("behavior"),
     /**
      * 短信验证码
      */
-    SMS("sms");
+    SMS("sms"),
+    /**
+     * 图片验证码（字符型）
+     *
+     * @deprecated 改用{@link #BEHAVIOR}，字符型图片验证码易被OCR识别，仅为兼容旧前端保留
+     */
+    @Deprecated
+    IMAGE("image");
 
     /**
      * 类型标识，同时作为redis key中的一段
