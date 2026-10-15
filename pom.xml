@@ -17,12 +17,12 @@
     <properties>
         <java.version>25</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <hutool.version>7.0.0-M7</hutool.version>
+        <hutool.version>7.0.0-M8</hutool.version>
         <mybatis-flex.version>1.11.8</mybatis-flex.version>
-        <jjwt.version>0.12.6</jjwt.version>
+        <jjwt.version>0.12.7</jjwt.version>
         <springdoc.version>3.1.1</springdoc.version>
-        <aws-s3.version>2.55.11</aws-s3.version>
-        <spring-boot-admin.version>4.1.2</spring-boot-admin.version>
+        <aws-s3.version>2.55.12</aws-s3.version>
+        <spring-boot-admin.version>4.1.4</spring-boot-admin.version>
     </properties>
 
     <dependencies>
