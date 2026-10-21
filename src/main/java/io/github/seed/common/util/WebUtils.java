@@ -613,21 +613,21 @@ public class WebUtils {
         if (!has) {
             ip = request.getRemoteAddr();
         }
-        return firstClientIp(ip);
+        return firstClientIP(ip);
     }
 
     /**
      * 获取多级反向代理后的第一个非unknown ip
      *
-     * @param clientIp
+     * @param clientIP
      * @return
      */
-    public static String firstClientIp(String clientIp) {
-        if (clientIp == null || (clientIp.trim()).isEmpty()) {
+    public static String firstClientIP(String clientIP) {
+        if (clientIP == null || (clientIP.trim()).isEmpty()) {
             return null;
         }
-        for (String ip : clientIp.split(",")) {
-            if (!ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
+        for (String ip : clientIP.split(",")) {
+            if (!(ip = ip.trim()).isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
                 return ip;
             }
         }
