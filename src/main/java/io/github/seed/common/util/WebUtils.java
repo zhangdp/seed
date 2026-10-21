@@ -627,9 +627,10 @@ public class WebUtils {
             return null;
         }
         for (String ip : clientIP.split(",")) {
-            if (!(ip = ip.trim()).isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
-                return ip;
+            if ((ip = ip.trim()).isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+                continue;
             }
+            return ip;
         }
         return null;
     }
