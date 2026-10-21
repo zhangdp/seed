@@ -623,7 +623,7 @@ public class WebUtils {
      * @return
      */
     public static String firstClientIP(String clientIP) {
-        if (clientIP == null || (clientIP.trim()).isEmpty()) {
+        if (clientIP == null || (clientIP = clientIP.trim()).isEmpty()) {
             return null;
         }
         for (String ip : clientIP.split(",")) {
