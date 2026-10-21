@@ -29,19 +29,19 @@ public class WebUtils {
     /**
      * ip header
      */
-    private static final String[] IP_HEADERS = {"X-Forwarded-For", "X-Real-IP", "Proxy-Client-IP", "WL-Proxy-Client-IP", "HTTP_CLIENT_IP", "HTTP_X_FORWARDED_FOR"};
+    public static final String[] IP_HEADERS = {"X-Forwarded-For", "X-Real-IP", "Proxy-Client-IP", "WL-Proxy-Client-IP", "HTTP_CLIENT_IP", "HTTP_X_FORWARDED_FOR"};
     /**
      * 默认true参数列表
      */
-    private static final String[] TRUE_PARAMS = {"1", "true", "yes", "y", "on"};
+    public static final String[] TRUE_PARAMS = {"1", "true", "yes", "y", "on"};
     /**
      * 默认false的参数列表
      */
-    private static final String[] FALSE_PARAMS = {"0", "false", "no", "n", "off"};
+    public static final String[] FALSE_PARAMS = {"0", "false", "no", "n", "off"};
     /**
      * User-Agent 版本号正则
      */
-    private static final String UA_VERSION_REGEX = "/([^\\s;]+)(?: \\(([^\\)]+)\\))?";
+    public static final String UA_VERSION_REGEX = "/([^\\s;]+)(?: \\(([^\\)]+)\\))?";
     /**
      * 默认编码
      */
@@ -583,31 +583,55 @@ public class WebUtils {
     }
 
     /**
-     * 获取客户端ip
-     *
-     * @param request
-     * @return
-     */
-    public static String getClientIP(HttpServletRequest request) {
-        return getClientIP(request, IP_HEADERS);
-    }
-
-    /**
-     * 获取客户端ip
+     * 获取真实客户端ip，同时可优先按照传进来的header获取
      *
      * @param request
      * @param headers
      * @return
      */
     public static String getClientIP(HttpServletRequest request, String... headers) {
-        for (String header : headers) {
-            String ip = request.getHeader(header);
-            if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
-                // 多级代理，第一个才是真实 IP
-                return ip.split(",")[0].trim();
+        boolean has = false;
+        String ip = null;
+        if (headers != null) {
+            for (String header : headers) {
+                ip = request.getHeader(header);
+                if (ip != null && !(ip = ip.trim()).isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
+                    has = true;
+                    break;
+                }
             }
         }
-        return request.getRemoteAddr();
+        if (!has) {
+            for (String header : IP_HEADERS) {
+                ip = request.getHeader(header);
+                if (ip != null && !(ip = ip.trim()).isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
+                    has = true;
+                    break;
+                }
+            }
+        }
+        if (!has) {
+            ip = request.getRemoteAddr();
+        }
+        return firstClientIp(ip);
+    }
+
+    /**
+     * 获取多级反向代理后的第一个非unknown ip
+     *
+     * @param clientIp
+     * @return
+     */
+    public static String firstClientIp(String clientIp) {
+        if (clientIp == null || (clientIp.trim()).isEmpty()) {
+            return null;
+        }
+        for (String ip : clientIp.split(",")) {
+            if (!ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
+                return ip;
+            }
+        }
+        return null;
     }
 
     /**
