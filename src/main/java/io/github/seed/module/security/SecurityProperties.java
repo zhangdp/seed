@@ -77,7 +77,7 @@ public class SecurityProperties {
          * 签名密钥，HS256要求至少32字节
          * <br>未配置时启动随机生成一个：单节点能跑，多节点会因密钥不同互相验签失败，必须显式配置
          */
-        private String secret;
+        private String secret = "seed-secret-key-abcdefg-1234567890";
         /**
          * 签发者
          */

@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.1.1</version>
+        <version>4.1.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>io.github</groupId>
@@ -21,8 +21,8 @@
         <tianai-captcha.version>1.5.5</tianai-captcha.version>
         <mybatis-flex.version>1.11.8</mybatis-flex.version>
         <jjwt.version>0.12.7</jjwt.version>
-        <springdoc.version>3.1.1</springdoc.version>
-        <aws-s3.version>2.55.12</aws-s3.version>
+        <springdoc.version>3.2.0</springdoc.version>
+        <aws-s3.version>2.57.6</aws-s3.version>
         <spring-boot-admin.version>4.1.4</spring-boot-admin.version>
     </properties>
 
