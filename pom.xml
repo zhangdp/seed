@@ -22,7 +22,7 @@
         <mybatis-flex.version>1.11.8</mybatis-flex.version>
         <jjwt.version>0.12.7</jjwt.version>
         <springdoc.version>3.2.0</springdoc.version>
-        <aws-s3.version>2.57.6</aws-s3.version>
+        <aws-s3.version>2.57.10</aws-s3.version>
         <spring-boot-admin.version>4.1.4</spring-boot-admin.version>
     </properties>
 
