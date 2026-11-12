@@ -56,7 +56,7 @@ spring:
     url: jdbc:postgresql://127.0.0.1:5432/seed_db?currentSchema=public&connectTimeout=5&socketTimeout=60&tcpKeepAlive=true&stringtype=unspecified
     username: seed
     password: 123456
-    lazy: true
+    connection-fetch: lazy
     hikari:
       # 启用虚拟线程可以大幅提升连接数
       maximum-pool-size: 50
